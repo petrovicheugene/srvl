@@ -1,11 +1,13 @@
 //===============================================================
 #include "MainWindow.h"
+#include "ZStartDialog.h"
+#include "ZConstants.h"
+
 #include <QApplication>
 #include <QTextCodec>
 #include <QSplashScreen>
 #include <QTranslator>
 #include <QDir>
-#include "ZConstants.h"
 //===============================================================
 extern const QString glAppExeBaseName =  APP_EXE_BASE_NAME;
 extern const QString glAppProduct =  APP_PRODUCT;
@@ -19,12 +21,18 @@ extern const QString glExitAppIconString = "";
 extern const QString glAboutIconString = "";
 extern const QString glHelpIconString = "";
 
+// Common strings
+extern const QString glDefaultDBSuffixString = "sqlite";
 
+extern const QString glErrorString = QObject::tr("Error");
+extern const QString glWarningString = QObject::tr("Warning");
+extern const QString glButtonOkString = QObject::tr("OK");
+extern const QString glButtonCancelString = QObject::tr("Cancel");
 //===============================================================
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QPixmap pixmap(":/images/ZImages/SDC_TA3.png");
+    QPixmap pixmap(":/images/ZImages/chemUtensil-1.jpg");
     QSplashScreen splash(pixmap);
     splash.show();
     splash.showMessage("Loading codecs...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
@@ -32,7 +40,6 @@ int main(int argc, char *argv[])
 
     QTextCodec* codec = QTextCodec::codecForName("windows-1251");
     QTextCodec::setCodecForLocale(codec);
-
 
     QApplication::setOrganizationName(glAppCompany);
     QApplication::setApplicationName(glAppExeBaseName);
@@ -79,7 +86,27 @@ int main(int argc, char *argv[])
     splash.showMessage("Loading modules...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
+    // start
+    ZStartDialog* dialog = new ZStartDialog();
+    splash.hide();
+
+    if(dialog->exec() == QDialog::Rejected)
+    {
+        delete dialog;
+        return 0;
+    }
+
+    splash.show();
+    splash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+    a.processEvents();
+
+    // main window
     MainWindow w;
+
+    // transfer db to main window
+
+    delete dialog;
+
     w.show();
     splash.finish(&w);
 

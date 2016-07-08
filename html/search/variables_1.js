@@ -1,6 +1,21 @@
 var searchData=
 [
   ['zv_5faboutaction',['zv_aboutAction',['../class_main_window.html#a8fe74c82699e2f06bc8b3da05ae6d257',1,'MainWindow']]],
+  ['zv_5fbrowsebutton',['zv_browseButton',['../class_z_database_properties_dialog.html#ab51655a1640a121803921e4fd4e5248e',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fcancelbutton',['zv_cancelButton',['../class_z_database_properties_dialog.html#ad2679054498e7a069f6b04e619308773',1,'ZDatabasePropertiesDialog::zv_cancelButton()'],['../class_z_start_dialog.html#a42e61e64ef9d8cec81c2007a618d84db',1,'ZStartDialog::zv_cancelButton()']]],
+  ['zv_5fconnectbutton',['zv_connectButton',['../class_z_start_dialog.html#ada68cae8e1723f29cdeafd349dcc62a9',1,'ZStartDialog']]],
+  ['zv_5fcurrentpathlabel',['zv_currentPathLabel',['../class_z_start_dialog.html#a0c2dc151e24e7c6e54c5d99578ebb37c',1,'ZStartDialog']]],
+  ['zv_5fdatabasefolderpath',['zv_databaseFolderPath',['../class_z_database_properties_dialog.html#a079deeeae27c335a11f0c2d31655a4ad',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fdbtablewidget',['zv_dbTableWidget',['../class_z_start_dialog.html#a07fbc46333f51019cbfcf00ce5ed6ef4',1,'ZStartDialog']]],
+  ['zv_5fdefaultdatabasefoldersectionname',['zv_defaultDatabaseFolderSectionName',['../class_z_database_properties_dialog.html#a85e5a5d03815a6a02a5cba41d497c514',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fdefaultdatabasename',['zv_defaultDatabaseName',['../class_z_start_dialog.html#af786c9404732cf09686c9958fd6044f9',1,'ZStartDialog']]],
+  ['zv_5feditbutton',['zv_editButton',['../class_z_start_dialog.html#a0d3810f20bd80318a209ccecc9a5dbfd',1,'ZStartDialog']]],
+  ['zv_5feditedrow',['zv_editedRow',['../class_z_start_dialog.html#a5744268ca63ea2d4f3e3487fcf9520b2',1,'ZStartDialog']]],
   ['zv_5fexitaction',['zv_exitAction',['../class_main_window.html#a29f63807c6f5fc849faf4adf77a694b2',1,'MainWindow']]],
-  ['zv_5fhelpaction',['zv_helpAction',['../class_main_window.html#ad308a7dd2fd6631dce64787350e3705c',1,'MainWindow']]]
+  ['zv_5fhelpaction',['zv_helpAction',['../class_main_window.html#ad308a7dd2fd6631dce64787350e3705c',1,'MainWindow']]],
+  ['zv_5fnamelineedit',['zv_nameLineEdit',['../class_z_database_properties_dialog.html#a0018afb684c85771dc2086a18925f66c',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fnewbutton',['zv_newButton',['../class_z_start_dialog.html#a70c70bae72ae2cef4aa68a98c2ac70a0',1,'ZStartDialog']]],
+  ['zv_5fokbutton',['zv_okButton',['../class_z_database_properties_dialog.html#ab1512fff6305459922330ed9bd57c334',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fpathlineedit',['zv_pathLineEdit',['../class_z_database_properties_dialog.html#a88bd2a5676aa25566f075e1f5f4e5f80',1,'ZDatabasePropertiesDialog']]],
+  ['zv_5fremovebutton',['zv_removeButton',['../class_z_start_dialog.html#a8e0ac8b9f1bd3ea276aae4751293c3e6',1,'ZStartDialog']]]
 ];

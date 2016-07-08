@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>SD Analyser: main.cpp File Reference</title>
+<title>SD Analyzer: main.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SD Analyser
+   <div id="projectname">SD Analyzer
    &#160;<span id="projectnumber">0.0.0.a</span>
    </div>
   </td>
@@ -111,12 +111,13 @@ $(document).ready(function(){initNavTree('main_8cpp.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_main_window_8h_source.html">MainWindow.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_z_start_dialog_8h_source.html">ZStartDialog.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_z_constants_8h_source.html">ZConstants.h</a>&quot;</code><br />
 <code>#include &lt;QApplication&gt;</code><br />
 <code>#include &lt;QTextCodec&gt;</code><br />
 <code>#include &lt;QSplashScreen&gt;</code><br />
 <code>#include &lt;QTranslator&gt;</code><br />
 <code>#include &lt;QDir&gt;</code><br />
-<code>#include &quot;<a class="el" href="_z_constants_8h_source.html">ZConstants.h</a>&quot;</code><br />
 </div>
 <p><a href="main_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -145,6 +146,12 @@ Variables</h2></td></tr>
 <tr class="separator:aa193f619a1c8dad86c276657c43c2fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e50252ca5c6846120f9f4f8e2ade812"><td class="memItemLeft" align="right" valign="top">const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a7e50252ca5c6846120f9f4f8e2ade812">glHelpIconString</a> = &quot;&quot;</td></tr>
 <tr class="separator:a7e50252ca5c6846120f9f4f8e2ade812"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3940dfd6aaffa3d7fb7510e7a628c5a"><td class="memItemLeft" align="right" valign="top">const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#aa3940dfd6aaffa3d7fb7510e7a628c5a">glDefaultDBSuffixString</a> = &quot;sqlite&quot;</td></tr>
+<tr class="separator:aa3940dfd6aaffa3d7fb7510e7a628c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96eb46b4ef26c1389c9bd4ef934f1c0c"><td class="memItemLeft" align="right" valign="top">const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a96eb46b4ef26c1389c9bd4ef934f1c0c">glErrorString</a> = QObject::tr(&quot;Error&quot;)</td></tr>
+<tr class="separator:a96eb46b4ef26c1389c9bd4ef934f1c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae33c3c38f788499db0f5856ea9012b7a"><td class="memItemLeft" align="right" valign="top">const QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae33c3c38f788499db0f5856ea9012b7a">glWarningString</a> = QObject::tr(&quot;Warning&quot;)</td></tr>
+<tr class="separator:ae33c3c38f788499db0f5856ea9012b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a0ddf1224851353fc92bfbff6f499fa97"></a>
@@ -171,7 +178,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="main_8cpp_source.html#l00024">24</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p>Definition at line <a class="el" href="main_8cpp_source.html#l00030">30</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 </div>
 </div>
@@ -260,6 +267,30 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aa3940dfd6aaffa3d7fb7510e7a628c5a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const QString glDefaultDBSuffixString = &quot;sqlite&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a96eb46b4ef26c1389c9bd4ef934f1c0c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const QString glErrorString = QObject::tr(&quot;Error&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a8f08dd36c509a2ce846602dcd6751c0d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -278,6 +309,18 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">const QString glHelpIconString = &quot;&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae33c3c38f788499db0f5856ea9012b7a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const QString glWarningString = QObject::tr(&quot;Warning&quot;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

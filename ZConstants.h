@@ -22,6 +22,11 @@ extern const QString glExitAppIconString; /*!< TODO: describe */
 extern const QString glAboutIconString; /*!< TODO: describe */
 extern const QString glHelpIconString; /*!< TODO: describe */
 
-
+// Common strings
+extern const QString glDefaultDBSuffixString;
+extern const QString glErrorString; /*!< TODO: describe */
+extern const QString glWarningString; /*!< TODO: describe */
+extern const QString glButtonOkString; /*!< TODO: describe */
+extern const QString glButtonCancelString; /*!< TODO: describe */
 //===========================================================
 #endif // ZCONSTANTS_H

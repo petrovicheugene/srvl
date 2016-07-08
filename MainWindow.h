@@ -19,7 +19,16 @@ class MainWindow : public QMainWindow
 public:
 
 
+    /*!
+     \brief
+
+     \param parent
+    */
     MainWindow(QWidget *parent = 0);
+    /*!
+     \brief
+
+    */
     ~MainWindow();
 
 private:
@@ -33,19 +42,64 @@ private:
 
     // FUNCS
 
+    /*!
+     \brief
+
+     \param e
+    */
     void closeEvent(QCloseEvent* e);
+    /*!
+     \brief
+
+    */
     void zh_createActions();
+    /*!
+     \brief
+
+    */
     void zh_createComponents();
+    /*!
+     \brief
+
+    */
     void zh_createWidgets();
+    /*!
+     \brief
+
+    */
     void zh_createMenu();
+    /*!
+     \brief
+
+    */
     void zh_createToolbar();
+    /*!
+     \brief
+
+    */
     void zh_createConnections();
+    /*!
+     \brief
+
+    */
     void zh_restoreSettings();
+    /*!
+     \brief
+
+    */
     void zh_saveSettings();
 
 private slots:
 
+    /*!
+     \brief
+
+    */
     void zh_onAboutAction();
+    /*!
+     \brief
+
+    */
     void zh_onHelpAction();
 
 

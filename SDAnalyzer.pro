@@ -5,10 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-
 
 #PRO VARS
 #Application version
@@ -55,12 +54,23 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 #TARGET = SDAnalyzer
 TEMPLATE = app
 
+INCLUDEPATH += ZDialogs \
+    ZComponents
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    ZDialogs/ZStartDialog.cpp \
+    ZDialogs/ZDatabasePropertiesDialog.cpp \
+    ZComponents/ZDatabaseInspector.cpp
 
 HEADERS  += MainWindow.h \
-    ZConstants.h
+    ZConstants.h \
+    ZDialogs/ZStartDialog.h \
+    ZDialogs/ZDatabasePropertiesDialog.h \
+    ZComponents/ZDatabaseInspector.h
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    Sprints.txt
