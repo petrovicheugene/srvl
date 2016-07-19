@@ -76,6 +76,10 @@ private:
 
     // VARS
     const QString zv_defaultDatabaseName = tr("Database #"); /*!< TODO: describe */
+    const QString zv_databaseArrayCapture = "databases";
+    const QString zv_databaseNameValueCaption = "name";
+    const QString zv_databasePathValueCaption = "path";
+
     QTableWidget* zv_dbTableWidget; /*!< TODO: describe */
     QLabel* zv_currentPathLabel; /*!< TODO: describe */
     QPushButton* zv_newButton; /*!< TODO: describe */
@@ -100,7 +104,9 @@ private:
      \brief
 
     */
-    void zh_loadExistingDatabases();
+    void zh_loadDatabaseList();
+    void zh_saveDatabaseList() const;
+
 
     /*!
      \brief

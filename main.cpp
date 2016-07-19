@@ -9,8 +9,8 @@
 #include <QTranslator>
 #include <QDir>
 //===============================================================
-extern const QString glAppExeBaseName =  APP_EXE_BASE_NAME;
-extern const QString glAppProduct =  APP_PRODUCT;
+extern const QString glAppExeBaseName = APP_EXE_BASE_NAME;
+extern const QString glAppProduct = APP_PRODUCT;
 extern const QString glAppVersion = APP_VERSION;
 extern const QString glAppCompany = APP_COMPANY;
 extern const QString glAppCopyright = APP_COPYRIGHT;
@@ -104,6 +104,8 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     // transfer db to main window
+
+
 
     delete dialog;
 
