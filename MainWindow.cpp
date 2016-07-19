@@ -18,7 +18,7 @@
 
  \param parent TODO: describe
 */
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle(glAppProduct);

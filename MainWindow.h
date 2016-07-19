@@ -24,7 +24,9 @@ public:
 
      \param parent
     */
-    MainWindow(QWidget *parent = 0);
+    MainWindow(const QString& dbName,
+               const QString& dbPath,
+               QWidget *parent = 0);
     /*!
      \brief
 

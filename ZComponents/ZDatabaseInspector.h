@@ -15,7 +15,9 @@ public:
     explicit ZDatabaseInspector(QObject *parent = 0);
 
     // FUNCS
-    static bool zp_inspectDataBase(const QString &name, const QString& path, QString& msg);
+    static bool zp_inspectNewDataBase(const QString &name, const QString& path, QString& msg);
+    static bool zp_inspectExistingDataBase(const QString &name, const QString& path, QString& msg);
+
 
     static bool zp_checkDatabasePath(const QString& path, QString& msg);
     static bool zp_checkDatabaseFileExistance(const QString& path, QString& msg);

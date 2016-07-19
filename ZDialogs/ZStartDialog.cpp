@@ -9,7 +9,7 @@
 #include <QDialogButtonBox>
 
 #include <QPushButton>
-#include <QTableWidget>
+#include <QListWidget>
 #include <QItemSelectionModel>
 #include <QHeaderView>
 #include <QTableWidgetItem>
@@ -29,6 +29,8 @@ ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
    zh_createComponents();
    zh_createConnections();
    zh_loadDatabaseList();
+   zv_dbListWidget->setCurrentRow(0);
+   zh_interfaceEnablingControl(0);
 }
 //=========================================================
 void ZStartDialog::zh_createComponents()
@@ -54,12 +56,12 @@ void ZStartDialog::zh_createComponents()
    mainLayout->addWidget(bottomButtonBox);
 
    // components
-   zv_dbTableWidget = new QTableWidget(this);
-   zv_dbTableWidget->setColumnCount(2);
-   zv_dbTableWidget->horizontalHeader()->setVisible(false);
-   zv_dbTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   zv_dbTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-   topLayout->insertWidget(0, zv_dbTableWidget);
+   zv_dbListWidget = new QListWidget(this);
+//   zv_dbListWidget->setColumnCount(2);
+//   zv_dbListWidget->horizontalHeader()->setVisible(false);
+//   zv_dbListWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+   //zv_dbListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+   topLayout->insertWidget(0, zv_dbListWidget);
 
    zv_currentPathLabel = new QLabel(this);
    mainLayout->insertWidget(1, zv_currentPathLabel);
@@ -106,10 +108,16 @@ void ZStartDialog::zh_createConnections()
            this, &ZStartDialog::reject);
 
    // selection model signals
-   connect(zv_dbTableWidget->selectionModel(), &QItemSelectionModel::currentRowChanged,
+   connect(zv_dbListWidget->selectionModel(), &QItemSelectionModel::currentRowChanged,
            this, &ZStartDialog::zh_onCurrentRowChange);
-   connect(zv_dbTableWidget->selectionModel(), &QItemSelectionModel::selectionChanged,
+   connect(zv_dbListWidget->selectionModel(), &QItemSelectionModel::selectionChanged,
            this, &ZStartDialog::zh_onSelectionChange);
+}
+//=========================================================
+void ZStartDialog::zp_databaseProperties(QString& name, QString& path) const
+{
+   name = zv_dbName;
+   path = zv_dbPath;
 }
 //=========================================================
 void ZStartDialog::zh_onCurrentRowChange(const QModelIndex& current, const QModelIndex& previous)
@@ -120,32 +128,45 @@ void ZStartDialog::zh_onCurrentRowChange(const QModelIndex& current, const QMode
 void ZStartDialog::zh_interfaceEnablingControl(int currentRow)
 {
    // buttons
-   bool disabled = currentRow < 0 || currentRow >= zv_dbTableWidget->rowCount();
+   bool disabled = currentRow < 0 || currentRow >= zv_dbListWidget->count();
    zv_editButton->setDisabled(disabled);
    zv_connectButton->setDisabled(disabled);
 
    // set current path label text
    QString path;
+   QString comment;
    if(!disabled)
    {
-      QTableWidgetItem* pathItem = zv_dbTableWidget->item(currentRow, 1);
-      if(pathItem)
+      QListWidgetItem* item = zv_dbListWidget->item(currentRow);
+      if(item)
       {
-         QVariant vData =  pathItem->data(Qt::UserRole + 1);
+         QVariant vData =  item->data(Qt::UserRole + 1);
          if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
          {
             path = vData.toString();
          }
+         vData =  item->data(Qt::UserRole + 2);
+         if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
+         {
+            comment = vData.toString();
+         }
       }
    }
 
-   zv_currentPathLabel->setText(QString("<b>%1<></b>").arg(path));
+   QString pathLabelString = QString("<b>%1<></b>").arg(path);
+   if(!comment.isEmpty())
+   {
+      pathLabelString += QString("<b> - %1<></b>").arg(comment);
+      pathLabelString = "<font color=red>" + pathLabelString + "</font>";
+   }
+
+   zv_currentPathLabel->setText(pathLabelString);
 }
 //=========================================================
 void ZStartDialog::zh_onSelectionChange(const QItemSelection &selected,
                                         const QItemSelection &deselected)
 {
-   QList<QTableWidgetItem*>selectedItemList = zv_dbTableWidget->selectedItems();
+   QList<QListWidgetItem*>selectedItemList = zv_dbListWidget->selectedItems();
    zv_removeButton->setDisabled(selectedItemList.isEmpty());
 }
 //=========================================================
@@ -187,7 +208,7 @@ void ZStartDialog::zh_checkAndStoreDatabase(const QString &name,
       }
    }
 
-   if(!ZDatabaseInspector::zp_inspectDataBase(name, newPath, msg))
+   if(!ZDatabaseInspector::zp_inspectNewDataBase(name, newPath, msg))
    {
       QMessageBox::critical(this, glErrorString, msg, QMessageBox::Ok);
       res = false;
@@ -201,9 +222,9 @@ void ZStartDialog::zh_checkAndStoreDatabase(const QString &name,
    int row = zh_recordRow(name, newPath, comment, zv_editedRow);
 
    // set edited row as current and manage UI
-   if(row >= 0 && row < zv_dbTableWidget->rowCount())
+   if(row >= 0 && row < zv_dbListWidget->count())
    {
-      zv_dbTableWidget->setCurrentCell(row, 0);
+      zv_dbListWidget->setCurrentRow(row);
       zh_interfaceEnablingControl(row);
    }
 
@@ -228,6 +249,10 @@ void ZStartDialog::zh_loadDatabaseList()
       settings.setArrayIndex(row);
       name = settings.value(zv_databaseNameValueCaption).toString();
       path = settings.value(zv_databasePathValueCaption).toString();
+      if(ZDatabaseInspector::zp_inspectExistingDataBase(name, path, comment))
+      {
+         comment = QString();
+      }
       zh_recordRow(name, path, comment, -1);
    }
 
@@ -245,13 +270,13 @@ void ZStartDialog::zh_saveDatabaseList() const
    QString path;
    QVariant vData;
 
-   for(int row = 0; row < zv_dbTableWidget->rowCount(); row++)
+   for(int row = 0; row < zv_dbListWidget->count(); row++)
    {
       // get name
-      name = zv_dbTableWidget->item(row, 0)->text();
+      name = zv_dbListWidget->item(row)->text();
 
       // get path
-      vData = zv_dbTableWidget->item(row, 1)->data(Qt::UserRole + 1);
+      vData = zv_dbListWidget->item(row)->data(Qt::UserRole + 1);
       if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
       {
          path = vData.toString();
@@ -274,25 +299,28 @@ void ZStartDialog::zh_saveDatabaseList() const
 int ZStartDialog::zh_recordRow(const QString& name, const QString& path,
                                const QString& comment, int row)
 {
+   QListWidgetItem* item;
    // check row and create row if necessary
-   if(row < 0 || row > zv_dbTableWidget->rowCount())
+   if(row < 0 || row > zv_dbListWidget->count())
    {
-      row = zv_dbTableWidget->rowCount();
-      zv_dbTableWidget->insertRow(row);
+      row = zv_dbListWidget->count();
+      //zv_dbListWidget->insertRow(row);
+      item = new QListWidgetItem();
+      zv_dbListWidget->insertItem(row, item);
+   }
+   else
+   {
+      item = zv_dbListWidget->item(row);
    }
 
    // name
-   QTableWidgetItem* item = new QTableWidgetItem();
+   // QListWidgetItem* item = new QListWidgetItem();
    item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
    item->setText(name);
-   zv_dbTableWidget->setItem(row, 0, item);
 
    // path and comment
-   item = new QTableWidgetItem();
-   item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
    item->setData(Qt::UserRole + 1, QVariant(path));
-   item->setText(comment);
-   zv_dbTableWidget->setItem(row, 1, item);
+   item->setData(Qt::UserRole + 2, QVariant(comment));
 
    return row;
 }
@@ -359,7 +387,7 @@ bool ZStartDialog::zh_existanceOfRecordCheck(const QString &name,
    QString currentPath;
    QVariant vData;
 
-   for(int row = 0; row < zv_dbTableWidget->rowCount(); row++)
+   for(int row = 0; row < zv_dbListWidget->count(); row++)
    {
       if(row == zv_editedRow)
       {
@@ -368,7 +396,7 @@ bool ZStartDialog::zh_existanceOfRecordCheck(const QString &name,
       }
 
       // name check
-      currentName = zv_dbTableWidget->item(row, 0)->text();
+      currentName = zv_dbListWidget->item(row)->text();
       if(name == currentName)
       {
          msg = tr("Database name \"%1\" is already exist! The name of database must be unique!").arg(name);
@@ -376,7 +404,7 @@ bool ZStartDialog::zh_existanceOfRecordCheck(const QString &name,
       }
 
       // path check
-      vData = zv_dbTableWidget->item(row, 1)->data(Qt::UserRole + 1);
+      vData = zv_dbListWidget->item(row)->data(Qt::UserRole + 1);
       if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
       {
          currentPath = vData.toString();
@@ -405,9 +433,9 @@ void ZStartDialog::zh_onNewDatabase()
    int currentTailNumber = 0;
    int maxTailNumber = 0;
    bool ok = false;
-   for(int row = 0; row < zv_dbTableWidget->rowCount(); row++)
+   for(int row = 0; row < zv_dbListWidget->count(); row++)
    {
-      currentName = zv_dbTableWidget->item(row, 0)->text();
+      currentName = zv_dbListWidget->item(row)->text();
       if(!currentName.startsWith(zv_defaultDatabaseName))
       {
          continue;
@@ -433,17 +461,17 @@ void ZStartDialog::zh_onNewDatabase()
 void ZStartDialog::zh_onEditDatabase()
 {
    // get edited row
-   zv_editedRow = zv_dbTableWidget->currentRow();
-   if(zv_editedRow < 0 || zv_editedRow >= zv_dbTableWidget->rowCount())
+   zv_editedRow = zv_dbListWidget->currentRow();
+   if(zv_editedRow < 0 || zv_editedRow >= zv_dbListWidget->count())
    {
       zv_editButton->setDisabled(true);
       return;
    }
 
    // get edited data
-   QString name = zv_dbTableWidget->item(zv_editedRow, 0)->text();
+   QString name = zv_dbListWidget->item(zv_editedRow)->text();
    QString path;
-   QVariant vData = zv_dbTableWidget->item(zv_editedRow, 1)->data(Qt::UserRole + 1);
+   QVariant vData = zv_dbListWidget->item(zv_editedRow)->data(Qt::UserRole + 1);
    if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
    {
       path = vData.toString();
@@ -455,7 +483,7 @@ void ZStartDialog::zh_onEditDatabase()
 void ZStartDialog::zh_onRemoveDatabase()
 {
    // get selection
-   QList<QTableWidgetItem*>selectedItemList = zv_dbTableWidget->selectedItems();
+   QList<QListWidgetItem*>selectedItemList = zv_dbListWidget->selectedItems();
    if(selectedItemList.isEmpty())
    {
       zv_removeButton->setDisabled(true);
@@ -479,26 +507,26 @@ void ZStartDialog::zh_onRemoveDatabase()
 
    // get selected rows from selection
    QList<int> selectedRowList;
-   QTableWidgetItem* pathItem;
+//   QListWidgetItem* pathItem;
    QVariant vData;
    QString currentDBPath;
    QList<int> dublicateRecordList;
 
-   foreach(QTableWidgetItem* item, selectedItemList)
+   foreach(QListWidgetItem* item, selectedItemList)
    {
-      if(!selectedRowList.contains(item->row()))
+      if(!selectedRowList.contains(zv_dbListWidget->row(item)))
       {
-         selectedRowList.append(item->row());
+         selectedRowList.append(zv_dbListWidget->row(item));
       }
 
       // find records with the same database
-      pathItem = zv_dbTableWidget->item(item->row(), 1);
-      if(!pathItem)
-      {
-         continue;
-      }
+//      pathItem = zv_dbListWidget->item(item->row());
+//      if(!pathItem)
+//      {
+//         continue;
+//      }
 
-      vData = pathItem->data(Qt::UserRole + 1);
+      vData = item->data(Qt::UserRole + 1);
       if(!vData.isValid() || vData.isNull() || !vData.canConvert<QString>())
       {
          continue;
@@ -544,7 +572,7 @@ void ZStartDialog::zh_onRemoveDatabase()
       // delete files in nesessary
       if(deleteFiles)
       {
-         QTableWidgetItem* item = zv_dbTableWidget->item(selectedRowList.value(i), 1);
+         QListWidgetItem* item = zv_dbListWidget->item(selectedRowList.value(i));
          if(item)
          {
             vData = item->data(Qt::UserRole + 1);
@@ -557,7 +585,11 @@ void ZStartDialog::zh_onRemoveDatabase()
          }
       }
 
-      zv_dbTableWidget->removeRow(selectedRowList.value(i));
+      QListWidgetItem* item = zv_dbListWidget->takeItem(selectedRowList.value(i));
+      if(item)
+      {
+         delete item;
+      }
    }
 
    zh_saveDatabaseList();
@@ -565,19 +597,42 @@ void ZStartDialog::zh_onRemoveDatabase()
 //=========================================================
 void ZStartDialog::zh_onConnectToDatabase()
 {
+   QString name;
+   QString path;
+
+   QListWidgetItem* item = zv_dbListWidget->currentItem();
+   if(item)
+   {
+      name = item->text();
+      QVariant vData = item->data(Qt::UserRole + 1);
+      if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
+      {
+         path = vData.toString();
+      }
+   }
+
+   QString msg;
+   if(!ZDatabaseInspector::zp_inspectExistingDataBase(name, path, msg))
+   {
+      QMessageBox::critical(this, glErrorString, msg, QMessageBox::Ok);
+      return;
+   }
+
+
+   zv_dbName = name;
+   zv_dbPath = path;
    accept();
 }
 //=========================================================
 void ZStartDialog::zh_findDublicateRows(const QString& dbPath, QList<int>&rowList)
 {
    // search database table for another records contains physically deleted file
-   QTableWidgetItem* item;
+   QListWidgetItem* item;
    QVariant vData;
    QString currentDBPath;
-   for(int row = 0; row < zv_dbTableWidget->rowCount(); row++)
+   for(int row = 0; row < zv_dbListWidget->count(); row++)
    {
-
-      item = zv_dbTableWidget->item(row, 1);
+      item = zv_dbListWidget->item(row);
       if(!item)
       {
          continue;

@@ -100,8 +100,11 @@ int main(int argc, char *argv[])
     splash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
+    QString dbName;
+    QString dbPath;
+    dialog->zp_databaseProperties(dbName, dbPath);
     // main window
-    MainWindow w;
+    MainWindow w(dbName, dbPath);
 
     // transfer db to main window
 
