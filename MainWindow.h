@@ -3,6 +3,7 @@
 #define MAINWINDOW_H
 //============================================================
 #include <QMainWindow>
+#include <QSqlDatabase>
 //============================================================
 class QAction;
 //============================================================
@@ -32,10 +33,13 @@ public:
 
     */
     ~MainWindow();
+    bool zp_isDatabaseOpen() const;
 
 private:
 
     // VARS
+    QSqlDatabase zv_database;
+
     // actions
     QAction* zv_exitAction;       /*!< TODO: describe */
     QAction* zv_aboutAction;    /*!< TODO: describe */

@@ -1,6 +1,7 @@
 //============================================================
 #include "MainWindow.h"
 #include "ZConstants.h"
+#include "ZDatabaseInspector.h"
 
 // Qt
 #include <QCloseEvent>
@@ -21,6 +22,15 @@
 MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *parent)
     : QMainWindow(parent)
 {
+    // connect to database
+    QString msg;
+    if(!ZDatabaseInspector::zp_connectToDatabase(dbName, dbPath, zv_database, msg))
+    {
+        QMessageBox::critical(this, glErrorString, msg, QMessageBox::Ok);
+        return;
+    }
+    
+    
     setWindowTitle(glAppProduct);
 
     zv_exitAction = 0;
@@ -52,7 +62,12 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
 */
 MainWindow::~MainWindow()
 {
-
+    ZDatabaseInspector::zp_disconnectFromDatabase(zv_database);
+}
+//============================================================
+bool MainWindow::zp_isDatabaseOpen() const
+{
+    return zv_database.isOpen();
 }
 //============================================================
 /*!

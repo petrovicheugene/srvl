@@ -2,5 +2,6 @@
     <qresource prefix="/images">
         <file>ZImages/gnome4.ico</file>
         <file>ZImages/chemUtensil-1.jpg</file>
+        <file>ZImages/Chemistry.png</file>
     </qresource>
 </RCC>

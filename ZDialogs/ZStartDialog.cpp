@@ -500,6 +500,7 @@ void ZStartDialog::zh_onRemoveDatabase()
    messageBox.setText(tr("Do you want to remove the selected databases from the list?"));
    messageBox.setIcon(QMessageBox::Warning);
    messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
    if(messageBox.exec() == QMessageBox::Cancel)
    {
       return;
@@ -507,7 +508,7 @@ void ZStartDialog::zh_onRemoveDatabase()
 
    // get selected rows from selection
    QList<int> selectedRowList;
-//   QListWidgetItem* pathItem;
+   //   QListWidgetItem* pathItem;
    QVariant vData;
    QString currentDBPath;
    QList<int> dublicateRecordList;

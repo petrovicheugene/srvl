@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
     // start
     ZStartDialog* dialog = new ZStartDialog();
-    splash.hide();
+    splash.finish(dialog);
 
     if(dialog->exec() == QDialog::Rejected)
     {
@@ -96,8 +96,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    splash.show();
-    splash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+    pixmap = QPixmap(":/images/ZImages/Chemistry.png");
+    QSplashScreen dbSplash(pixmap);
+    dbSplash.show();
+    dbSplash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
     QString dbName;
@@ -107,13 +109,15 @@ int main(int argc, char *argv[])
     MainWindow w(dbName, dbPath);
 
     // transfer db to main window
-
-
+    if(!w.zp_isDatabaseOpen())
+    {
+        return 0;
+    }
 
     delete dialog;
 
     w.show();
-    splash.finish(&w);
+    dbSplash.finish(&w);
 
     return a.exec();
 }
