@@ -22,8 +22,8 @@ VER_RELEASE=b
 EXE_BASE_NAME=SDAnalyzer
 QMAKE_TARGET_PRODUCT="SD Analyzer"
 QMAKE_TARGET_DESCRIPTION="Chemical analysis of X-ray spectra"
-QMAKE_TARGET_COMPANY="TechnoAnalyt Ltd."
-QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} 2016.  All rights reserved."
+QMAKE_TARGET_COMPANY="TechnoAnalyt"
+QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} Ltd. 2016.  All rights reserved."
 COMPANY_URL=tehnoanalit.com
 
 CONFIG += $$VER_RELEASE
@@ -55,19 +55,88 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 TEMPLATE = app
 
 INCLUDEPATH += ZDialogs \
-    ZComponents
+    ZComponents \
+    ZModelViewWidgets \
+    ZWidgets
 
 SOURCES += main.cpp\
         MainWindow.cpp \
     ZDialogs/ZStartDialog.cpp \
     ZDialogs/ZDatabasePropertiesDialog.cpp \
-    ZComponents/ZDatabaseInspector.cpp
+    ZComponents/ZDatabaseInspector.cpp \
+    ZDialogs/ZAddCalibrationDialog.cpp \
+    ZComponents/ZXMLCalibrationIOHandler.cpp \
+    ZComponents/ZCalibration.cpp \
+    ZComponents/ZCalibrationWindow.cpp \
+    ZComponents/ZTermNormalizer.cpp \
+    ZComponents/ZCalibrationQualityData.cpp \
+    ZComponents/ZRawTerm.cpp \
+    ZComponents/ZRawWindow.cpp \
+    ZComponents/ZAbstractSpectrum.cpp \
+    ZComponents/ZAbstractSpectrumAuxData.cpp \
+    ZComponents/ZCustomTerm.cpp \
+    ZComponents/ZMixedTerm.cpp \
+    ZComponents/ZQuadraticTerm.cpp \
+    ZComponents/ZSimpleTerm.cpp \
+    ZComponents/ZEquationSettingsData.cpp \
+    ZComponents/ZNormaSettingsData.cpp \
+    ZComponents/ZQrealToStringConverter.cpp \
+    ZModelViewWidgets/ZResultTableWidget.cpp \
+    ZWidgets/ZProcessTimeRoundIndicator.cpp \
+    ZWidgets/QRoundProgressBar.cpp \
+    ZGLConstantsAndDefines.cpp \
+    ZDialogs/ZSettingsDialog.cpp \
+    ZWidgets/ZDashboardSettingsWidget.cpp \
+    ZWidgets/ZDashboard.cpp \
+    ZWidgets/ZColorLabel.cpp \
+    ZWidgets/ZStartStopButton.cpp \
+    ZWidgets/ZCentralWidget.cpp \
+    ZComponents/ZAbstractTerm.cpp \
+    ZComponents/ZDashboardSettings.cpp \
+    ZComponents/ZAppSettings.cpp \
+    ZWidgets/ZAbstractProcessTimeIndicator.cpp \
+    ZWidgets/ZProcessTimeClassicIndicator.cpp \
+    ZComponents/ZProgressBarOptions.cpp \
+    ZWidgets/ZLabeledSliderWidget.cpp
 
 HEADERS  += MainWindow.h \
-    ZConstants.h \
     ZDialogs/ZStartDialog.h \
     ZDialogs/ZDatabasePropertiesDialog.h \
-    ZComponents/ZDatabaseInspector.h
+    ZComponents/ZDatabaseInspector.h \
+    ZDialogs/ZAddCalibrationDialog.h \
+    ZComponents/ZXMLCalibrationIOHandler.h \
+    ZComponents/ZCalibration.h \
+    ZComponents/ZCalibrationWindow.h \
+    ZComponents/ZAbstractTerm.h \
+    ZComponents/ZTermNormalizer.h \
+    ZComponents/ZCalibrationQualityData.h \
+    ZComponents/ZRawTerm.h \
+    ZComponents/ZRawWindow.h \
+    ZComponents/ZAbstractSpectrum.h \
+    ZComponents/ZAbstractSpectrumAuxData.h \
+    ZComponents/ZCustomTerm.h \
+    ZComponents/ZMixedTerm.h \
+    ZComponents/ZQuadraticTerm.h \
+    ZComponents/ZSimpleTerm.h \
+    ZComponents/ZEquationSettingsData.h \
+    ZComponents/ZNormaSettingsData.h \
+    ZComponents/ZQrealToStringConverter.h \
+    ZModelViewWidgets/ZResultTableWidget.h \
+    ZWidgets/ZProcessTimeRoundIndicator.h \
+    ZWidgets/QRoundProgressBar.h \
+    ZGLConstantsAndDefines.h \
+    ZDialogs/ZSettingsDialog.h \
+    ZWidgets/ZDashboardSettingsWidget.h \
+    ZWidgets/ZDashboard.h \
+    ZWidgets/ZColorLabel.h \
+    ZWidgets/ZStartStopButton.h \
+    ZWidgets/ZCentralWidget.h \
+    ZComponents/ZDashboardSettings.h \
+    ZComponents/ZAppSettings.h \
+    ZWidgets/ZAbstractProcessTimeIndicator.h \
+    ZWidgets/ZProcessTimeClassicIndicator.h \
+    ZComponents/ZProgressBarOptions.h \
+    ZWidgets/ZLabeledSliderWidget.h
 
 RESOURCES += \
     resources.qrc

@@ -1,7 +1,7 @@
 //===============================================================
 #include "MainWindow.h"
 #include "ZStartDialog.h"
-#include "ZConstants.h"
+#include "ZGLConstantsAndDefines.h"
 
 #include <QApplication>
 #include <QTextCodec>
@@ -16,23 +16,57 @@ extern const QString glAppCompany = APP_COMPANY;
 extern const QString glAppCopyright = APP_COPYRIGHT;
 extern const QString glAppCompanyURL = APP_COMPANY_URL;
 
-// Icons
-extern const QString glExitAppIconString = "";
-extern const QString glAboutIconString = "";
-extern const QString glHelpIconString = "";
+//// Icons
+//extern const QString glSettingsIconString = "";
+//extern const QString glExitAppIconString = "";
+//extern const QString glAboutIconString = "";
+//extern const QString glHelpIconString = "";
 
-// Common strings
-extern const QString glDefaultDBSuffixString = "sqlite";
+//// Common non translatable strings
+//extern const QString glDefaultDBSuffixString = "sqlite";
+//extern const QString glDefaultChemElementString = "Not defined";
+//// object Names
+//extern const QString glMenuFileObjectNameString = "File";
+//extern const QString glMenuEditObjectNameString = "Edit";
+//extern const QString glMenuViewObjectNameString = "View";
+//extern const QString glMenuActionsObjectNameString = "Actions";
+//extern const QString glMenuHelpObjectNameString = "Help";
 
-extern const QString glErrorString = QObject::tr("Error");
-extern const QString glWarningString = QObject::tr("Warning");
-extern const QString glButtonOkString = QObject::tr("OK");
-extern const QString glButtonCancelString = QObject::tr("Cancel");
+//// Common strings
+//extern const QString glSettingsString = QObject::tr("Settings");
+//extern const QString glSettingsToolTipString = QObject::tr("Run settings of the application");
+//extern const QString glExitString = QObject::tr("Exit");
+//extern const QString glExitToolTipString = QObject::tr("Exit the application");
+//extern const QString glAboutString = QObject::tr("About");
+//extern const QString glAboutToolTipString = QObject::tr("About the application");
+//extern const QString glHelpString = QObject::tr("Help");
+//extern const QString glHelpToolTipString = QObject::tr("Show user guide");
+
+//extern const QString NS_NS_CommonStrings::glError = QObject::tr("Error");
+//extern const QString NS_CommonStrings::glWarning = QObject::tr("Warning");
+//extern const QString glCommonString = QObject::tr("Common");
+
+//// Menu strings
+//extern const QString glMenuFileString = QObject::tr("File");
+//extern const QString glMenuEditString = QObject::tr("Edit");
+//extern const QString glMenuViewString = QObject::tr("View");
+//extern const QString glMenuActionsString = QObject::tr("Actions");
+//extern const QString glMenuHelpString = QObject::tr("Help");
+
+//// button strings
+//extern const QString glButtonOkString = QObject::tr("OK");
+//extern const QString glButtonApplyString = QObject::tr("Apply");
+//extern const QString glButtonCancelString = QObject::tr("Cancel");
+//extern const QString glButtonBrowseString = QObject::tr("Browse");
+
+//// window captions
+//extern const QString glOpenFileString = QObject::tr("Open file");
+
 //===============================================================
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QPixmap pixmap(":/images/ZImages/chemUtensil-1.jpg");
+    QPixmap pixmap(":/images/ZImages/Chemistry.png");
     QSplashScreen splash(pixmap);
     splash.show();
     splash.showMessage("Loading codecs...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
@@ -96,11 +130,11 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    pixmap = QPixmap(":/images/ZImages/Chemistry.png");
-    QSplashScreen dbSplash(pixmap);
-    dbSplash.show();
-    dbSplash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
-    a.processEvents();
+    //  pixmap = QPixmap(":/images/ZImages/Chemistry.png");
+    //  QSplashScreen dbSplash(pixmap);
+    //  dbSplash.show();
+    //  dbSplash.showMessage("Connecting to database...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+    //  a.processEvents();
 
     QString dbName;
     QString dbPath;
@@ -117,7 +151,7 @@ int main(int argc, char *argv[])
     delete dialog;
 
     w.show();
-    dbSplash.finish(&w);
+    // dbSplash.finish(&w);
 
     return a.exec();
 }

@@ -75,6 +75,8 @@ private:
 
     // VARS
     const QString zv_defaultDatabaseFolderSectionName = "defaultDatabaseFolder"; /*!< TODO: describe */
+    const QString zv_settingsGroupName = "dbPropertiesDialog";
+
     QString zv_databaseFolderPath; /*!< TODO: describe */
     QLineEdit* zv_nameLineEdit; /*!< TODO: describe */
     QLineEdit* zv_pathLineEdit; /*!< TODO: describe */

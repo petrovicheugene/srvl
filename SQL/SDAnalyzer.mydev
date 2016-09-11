@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Devart (www.devart.com), the Project File -->
+<!-- Modifying this generated file will probably render it invalid -->
+<DatabaseProject Version="1.0.1" Guid="de959f62-5423-42fc-ba1f-ad7ec2d5677b">
+  <Provider Guid="59f90733-4d68-4fdf-82a7-f0fcbf5460aa" />
+  <Include>
+    <File RelPath="" Link=".\sdanalyzer.sql" />
+  </Include>
+  <Configurations Active="По умолчанию">
+    <Configuration Name="По умолчанию" CheckReferences="True" IgnoreErrors="False" OutputPath="" Target="" OutputType="SingleFile" KeepOriginalObjects="True" RecreateObjects="False" RecreateDatabase="False" ServerVersion="5.7.14" Database="sdanalyzer" UseRegions="False" FullPaths="False" Definer="CURRENT_USER" ScriptDelimiter="$$" StorageEngine="INNODB" Collation="utf8_general_ci" ConvertToLowercase="True" DefinerEffect="Keep">
+      <Connection Name="MySQL57" Category="00000000-0000-0000-0000-000000000000" ConnectionString="User Id=root;Host=localhost;Character Set=compatibility" />
+      <Build>
+        <File RelPath="" Name="sdanalyzer.sql" BuildAction="Build" />
+      </Build>
+    </Configuration>
+  </Configurations>
+</DatabaseProject>

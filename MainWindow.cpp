@@ -1,7 +1,10 @@
 //============================================================
 #include "MainWindow.h"
-#include "ZConstants.h"
+#include "ZGLConstantsAndDefines.h"
 #include "ZDatabaseInspector.h"
+#include "ZResultTableWidget.h"
+#include "ZSettingsDialog.h"
+#include "ZCentralWidget.h"
 
 // Qt
 #include <QCloseEvent>
@@ -9,16 +12,16 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QDockWidget>
+#include <QVBoxLayout>
+#include <QMenuBar>
+#include <QDockWidget>
+
 // Qt controls
 
+// TEMP
+#include "ZAddCalibrationDialog.h"
+
 //============================================================
-/*!
- \brief TODO: describe main function
-
- Detailed description
-
- \param parent TODO: describe
-*/
 MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *parent)
     : QMainWindow(parent)
 {
@@ -26,21 +29,24 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     QString msg;
     if(!ZDatabaseInspector::zp_connectToDatabase(dbName, dbPath, zv_database, msg))
     {
-        QMessageBox::critical(this, glErrorString, msg, QMessageBox::Ok);
+        QMessageBox::critical(this, NS_CommonStrings::glError, msg, QMessageBox::Ok);
         return;
     }
-    
-    
+
+    // register ZAppSettings class for reading and writting to settings
+    qRegisterMetaType<ZDashboardSettings>("ZDashboardSettings");
+    qRegisterMetaTypeStreamOperators<ZDashboardSettings>("ZDashboardSettings");
+    qRegisterMetaType<ZAppSettings>("ZAppSettings");
+    qRegisterMetaTypeStreamOperators<ZAppSettings>("ZAppSettings");
+
     setWindowTitle(glAppProduct);
 
     zv_exitAction = 0;
     zv_aboutAction = 0;
     zv_helpAction = 0;
 
-
     zh_createActions();
     zh_createComponents();
-    zh_createWidgets();
     zh_createMenu();
     zh_createToolbar();
     zh_createConnections();
@@ -53,13 +59,10 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     //                                  Qt::QueuedConnection);
     //    }
 
-
+    //    ZAddCalibrationDialog dialog;
+    //    dialog.exec();
 }
 //============================================================
-/*!
- \brief
-
-*/
 MainWindow::~MainWindow()
 {
     ZDatabaseInspector::zp_disconnectFromDatabase(zv_database);
@@ -70,134 +73,250 @@ bool MainWindow::zp_isDatabaseOpen() const
     return zv_database.isOpen();
 }
 //============================================================
-/*!
- \brief
-
- \param e
-*/
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-    QString questionString = tr("Quit the application?");
-    if(QMessageBox::question(this, tr("Quit the application"), questionString,
-                             QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
-    {
-        e->ignore();
-        return;
-    }
+    //    QString questionString = tr("Quit the application?");
+    //    if(QMessageBox::question(this, tr("Quit the application"), questionString,
+    //                             QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
+    //    {
+    //        e->ignore();
+    //        return;
+    //    }
 
     zh_saveSettings();
 }
 //============================================================
-/*!
- \brief
-
-*/
 void MainWindow::zh_createActions()
 {
+    zv_settingsAction = new QAction(this);
+    zv_settingsAction->setIcon(QIcon(NS_Icons::glIconStringSettings));
+    zv_settingsAction->setText(NS_CommonStrings::glSettings);
+    zv_settingsAction->setToolTip(NS_CommonStrings::glSettingsToolTip);
+
     zv_exitAction = new QAction(this);
-    zv_exitAction->setIcon(QIcon(glExitAppIconString));
-    zv_exitAction->setText(tr("Exit"));
-    zv_exitAction->setToolTip(tr("Exit the application"));
+    zv_exitAction->setIcon(QIcon(NS_Icons::glIconStringExitApp));
+    zv_exitAction->setText(NS_CommonStrings::glExit);
+    zv_exitAction->setToolTip(NS_CommonStrings::glExitToolTip);
 
     zv_aboutAction = new QAction(this);
-    zv_aboutAction->setIcon(QIcon(glAboutIconString));
-    zv_aboutAction->setText(tr("About"));
-    zv_aboutAction->setToolTip(tr("About the application"));
+    zv_aboutAction->setIcon(QIcon(NS_Icons::glIconStringAbout));
+    zv_aboutAction->setText(NS_CommonStrings::glAbout);
+    zv_aboutAction->setToolTip(NS_CommonStrings::glAboutToolTip);
 
     zv_helpAction = new QAction(this);
-    zv_helpAction->setIcon(QIcon(glHelpIconString));
-    zv_helpAction->setText(tr("Help"));
-    zv_helpAction->setToolTip(tr("Show user guide"));
+    zv_helpAction->setIcon(QIcon(NS_Icons::glIconStringHelp));
+    zv_helpAction->setText(NS_CommonStrings::glHelp);
+    zv_helpAction->setToolTip(NS_CommonStrings::glHelpToolTip);
 
 }
 //============================================================
-/*!
- \brief TODO: describe zh_createComponents function
-
- Detailed description zh_createComponents
-
- \param parent TODO: describe
-*/
 void MainWindow::zh_createComponents()
 {
+    // create central widget
+    zv_resultTableWidget = new ZResultTableWidget();
+    zv_centralWidget = new ZCentralWidget(zv_resultTableWidget, this);
+    setCentralWidget(zv_centralWidget);
 
 }
 //============================================================
-/*!
- \brief TODO: describe zh_createWidgets function
-
- Detailed description zh_createWidgets
-
- \param parent TODO: describe
-*/
-void MainWindow::zh_createWidgets()
-{
-
-}
-//============================================================
-/*!
- \brief TODO: describe main function
-
- Detailed description
-
- \param parent TODO: describe
-*/
 void MainWindow::zh_createMenu()
 {
+    QMenuBar* menubar = menuBar();
+    menubar->setCursor(Qt::PointingHandCursor);
+    // File
+    QMenu* menu = menubar->addMenu(NS_Menus::glMenuFile);
+    menu->setCursor(Qt::PointingHandCursor);
+    menu->setObjectName(NS_ObjectNames::glObjectNameMenuFile);
+    zh_appendActionsToMenu(menu);
+
+    // Edit
+    menu = menubar->addMenu(NS_Menus::glMenuEdit);
+    menu->setCursor(Qt::PointingHandCursor);
+    menu->setObjectName(NS_ObjectNames::glObjectNameMenuEdit);
+    zh_appendActionsToMenu(menu);
+
+    // View
+    menu = menubar->addMenu(NS_Menus::glMenuView);
+    menu->setCursor(Qt::PointingHandCursor);
+    menu->setObjectName(NS_ObjectNames::glObjectNameMenuView);
+    zh_appendActionsToMenu(menu);
+
+    // Actions
+    menu = menubar->addMenu(NS_Menus::glMenuActions);
+    // menu->setCursor(Qt::PointingHandCursor);
+    menu->setObjectName(NS_ObjectNames::glObjectNameMenuActions);
+    zh_appendActionsToMenu(menu);
+
+    // Help
+    menu = menubar->addMenu(NS_Menus::glMenuHelp);
+    menu->setCursor(Qt::PointingHandCursor);
+    menu->setObjectName(NS_ObjectNames::glObjectNameMenuHelp);
+    zh_appendActionsToMenu(menu);
 
 }
 //============================================================
-/*!
- \brief
-
-*/
 void MainWindow::zh_createToolbar()
 {
 
 }
 //============================================================
-/*!
- \brief
-
-*/
 void MainWindow::zh_createConnections()
 {
+    //
+    connect(zv_settingsAction, &QAction::triggered,
+            this, &MainWindow::zh_onSettingsAction);
 
 }
 //============================================================
-/*!
- \brief
-
-*/
 void MainWindow::zh_restoreSettings()
 {
+    QSettings settings;
+    settings.beginGroup(glAppVersion);
+    QVariant vData;
+    // geometry
+    vData = settings.value(glAppGeometryKeyName);
+    if(vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
+    {
+        restoreGeometry(vData.toByteArray());
+    }
+
+    // state
+    vData = settings.value(glAppStateKeyName);
+    if(vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
+    {
+        restoreState(vData.toByteArray());
+    }
+
+    // close settings
+    settings.endGroup();
+
+    // appSettings
+    ZAppSettings appSettings;
+    zh_getAppSettingsFromSettings(appSettings);
+    zh_applyAppSettingsToComponents(appSettings);
 
 }
 //============================================================
-/*!
- \brief
-
-*/
 void MainWindow::zh_saveSettings()
 {
+    QSettings settings;
+    settings.beginGroup(glAppVersion);
+    // geometry
+    settings.setValue(glAppGeometryKeyName, QVariant(saveGeometry()));
+    // state
+    settings.setValue(glAppStateKeyName, QVariant(saveState()));
 
+    settings.endGroup();
 }
 //============================================================
-/*!
- \brief
+void MainWindow::zh_saveAppSettingsToSettings(const ZAppSettings& appSettings)
+{
+    QSettings settings;
+    settings.beginGroup(glAppVersion);
+    settings.setValue(glAppSettingsKeyName, QVariant::fromValue<ZAppSettings>(appSettings));
+    settings.endGroup();
+}
+//============================================================
+void MainWindow::zh_getAppSettingsFromSettings(ZAppSettings& appSettings)
+{
+    QSettings settings;
+    settings.beginGroup(glAppVersion);
 
-*/
-void MainWindow::zh_onAboutAction()
+    QVariant vData = settings.value(glAppSettingsKeyName);
+    if(vData.isValid() && !vData.isNull() && vData.canConvert<ZAppSettings>())
+    {
+        appSettings = vData.value<ZAppSettings>();
+    }
+
+    settings.endGroup();
+}
+//============================================================
+void MainWindow::zh_appendActionsToMenu(QMenu* menu)
+{
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuFile)
+    {
+        menu->addSeparator();
+        menu->addAction(zv_exitAction);
+        menu->addSeparator();
+        return;
+    }
+
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuActions)
+    {
+        menu->addSeparator();
+        menu->addAction(zv_settingsAction);
+        return;
+    }
+
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuView)
+    {
+        foreach(QDockWidget* dock, zv_dockList)
+        {
+            //            QAction* viewAction = new QAction(this);
+            //            viewAction->setText(dock->windowTitle());
+            //            viewAction->setCheckable(true);
+            //            QAction* viewAction = new QAction(this);
+            //            viewAction->setText(dock->windowTitle());
+            //            viewAction->setCheckable(true);
+
+            //            connect(viewAction, &QAction::toggled,
+            //                    dock, &QDockWidget::setVisible);
+            //            connect(dock, &QDockWidget::visibilityChanged,
+            //                    viewAction, &QAction::setChecked);
+
+            menu->addAction(dock->toggleViewAction());
+        }
+        menu->addSeparator();
+        return;
+    }
+
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuHelp)
+    {
+        menu->addAction(zv_helpAction);
+        menu->addAction(zv_aboutAction);
+        menu->addSeparator();
+        return;
+    }
+}
+//============================================================
+void MainWindow::zh_onAboutAction() const
 {
 
 }
 //============================================================
-/*!
- \brief
-
-*/
-void MainWindow::zh_onHelpAction()
+void MainWindow::zh_onHelpAction() const
 {
 
+}
+//============================================================
+void MainWindow::zh_onSettingsAction()
+{
+    ZSettingsDialog dialog;
+    ZAppSettings appSettings;
+    zh_getAppSettingsFromSettings(appSettings);
+    dialog.zh_setAppSettings(appSettings);
+    connect(&dialog, &ZSettingsDialog::zg_applySettings,
+            this, &MainWindow::zh_applyAppSettingsToComponents);
+
+    if(dialog.exec())
+    {
+        // get settings from dialog and save to
+        dialog.zh_appSettings(appSettings);
+        zh_applyAppSettingsToComponents(appSettings);
+        zh_saveAppSettingsToSettings(appSettings);
+    }
+    else
+    {
+        // restore settings from QSettings
+        ZAppSettings appSettings;
+        zh_getAppSettingsFromSettings(appSettings);
+        zh_applyAppSettingsToComponents(appSettings);
+    }
+
+}
+//============================================================
+void MainWindow::zh_applyAppSettingsToComponents(const ZAppSettings& appSettings)
+{
+    zv_centralWidget->zp_applyAppSettings(appSettings);
 }
 //============================================================

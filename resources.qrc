@@ -4,4 +4,7 @@
         <file>ZImages/chemUtensil-1.jpg</file>
         <file>ZImages/Chemistry.png</file>
     </qresource>
+    <qresource prefix="/sql">
+        <file>SQL/sdanalyzer.sql</file>
+    </qresource>
 </RCC>

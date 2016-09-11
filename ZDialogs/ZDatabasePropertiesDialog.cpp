@@ -1,6 +1,6 @@
 //==========================================================
 #include "ZDatabasePropertiesDialog.h"
-#include "ZConstants.h"
+#include "ZGLConstantsAndDefines.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -108,7 +108,7 @@ void ZDatabasePropertiesDialog::zh_restoreSettings()
 {
     QSettings settings;
     settings.beginGroup(glAppVersion);
-    settings.beginGroup("Start");
+    settings.beginGroup(zv_settingsGroupName);
 
     QVariant vData = settings.value(zv_defaultDatabaseFolderSectionName);
 
@@ -139,7 +139,7 @@ void ZDatabasePropertiesDialog::zh_saveSettings() const
 {
     QSettings settings;
     settings.beginGroup(glAppVersion);
-    settings.beginGroup("Start");
+    settings.beginGroup(zv_settingsGroupName);
     settings.setValue(zv_defaultDatabaseFolderSectionName, QVariant(zv_databaseFolderPath));
     settings.endGroup();
     settings.endGroup();

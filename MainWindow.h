@@ -4,8 +4,16 @@
 //============================================================
 #include <QMainWindow>
 #include <QSqlDatabase>
+
+#include "ZAppSettings.h"
 //============================================================
+class ZResultTableWidget;
+class ZDashboard;
+class ZCentralWidget;
+
 class QAction;
+class QMenu;
+class QDockWidget;
 //============================================================
 /*!
  \brief the MainWindow is an application main class.
@@ -35,15 +43,40 @@ public:
     ~MainWindow();
     bool zp_isDatabaseOpen() const;
 
+private slots:
+
+    /*!
+     \brief
+
+    */
+    void zh_onAboutAction() const;
+    /*!
+     \brief
+
+    */
+    void zh_onHelpAction() const;
+    void zh_onSettingsAction();
+
+    void zh_applyAppSettingsToComponents(const ZAppSettings &appSettings);
+
 private:
 
     // VARS
-    QSqlDatabase zv_database;
+    QSqlDatabase zv_database; /*!< TODO: describe */
+    QList<QDockWidget*> zv_dockList; /*!< TODO: describe */
 
     // actions
+    QAction* zv_settingsAction;       /*!< TODO: describe */
     QAction* zv_exitAction;       /*!< TODO: describe */
     QAction* zv_aboutAction;    /*!< TODO: describe */
     QAction* zv_helpAction;      /*!< TODO: describe */
+
+    // widgets
+    ZCentralWidget* zv_centralWidget;
+    ZResultTableWidget* zv_resultTableWidget;
+    ZDashboard* zv_dashBoard; /*!< TODO: describe */
+
+
 
 
     // FUNCS
@@ -64,11 +97,6 @@ private:
 
     */
     void zh_createComponents();
-    /*!
-     \brief
-
-    */
-    void zh_createWidgets();
     /*!
      \brief
 
@@ -94,20 +122,9 @@ private:
 
     */
     void zh_saveSettings();
-
-private slots:
-
-    /*!
-     \brief
-
-    */
-    void zh_onAboutAction();
-    /*!
-     \brief
-
-    */
-    void zh_onHelpAction();
-
+    void zh_saveAppSettingsToSettings(const ZAppSettings &);
+    void zh_getAppSettingsFromSettings(ZAppSettings& appSettings);
+    void zh_appendActionsToMenu(QMenu* menu);
 
 };
 //============================================================

@@ -1,15 +1,18 @@
 //=========================================================
 #include "ZDatabaseInspector.h"
-#include "ZConstants.h"
+#include "ZGLConstantsAndDefines.h"
+#include "ZGLConstantsAndDefines.h"
 
 #include <QMessageBox>
 #include <QFile>
+#include <QFileDialog>
 #include <QDir>
 #include <QFileInfo>
 #include <QDataStream>
 #include <QIODevice>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QStandardPaths>
 //=========================================================
 const int ZDatabaseInspector::zv_userVersion = 41086;
 //=========================================================
@@ -33,7 +36,8 @@ bool ZDatabaseInspector::zp_inspectNewDataBase(const QString &name, const QStrin
         // check db content
         if(zp_checkFileEmptyness(name, path, msg))
         {
-            // file is empty
+            // file is empty msg is not necessary here
+            msg.clear();
             // create database
             return zp_createDatabase(name, path, msg);
         }
@@ -131,19 +135,98 @@ bool ZDatabaseInspector::zp_createDatabase(const QString& name, const QString& p
         return false;
     }
 
-
     // create tables
+    res = zp_createTables(db, msg);
 
-
-    // set database version
-    QString sqlPragma = "PRAGMA user_version=" + QString::number(zv_userVersion);
-    QSqlQuery query(db);
-    query.setForwardOnly(true);
-    query.exec(sqlPragma);
-    db.commit();
+    if(res)
+    {
+        // set database version
+        QString sqlPragma = "PRAGMA user_version=" + QString::number(zv_userVersion);
+        QSqlQuery query(db);
+        query.setForwardOnly(true);
+        query.exec(sqlPragma);
+        db.commit();
+    }
 
     // close database
     zp_disconnectFromDatabase(db);
+    return res;
+}
+//=========================================================
+bool ZDatabaseInspector::zp_createTables(QSqlDatabase& db, QString& msg)
+{
+    // ask for SQL file source
+    QString sqlFilePath;
+
+#ifdef DBG
+    qDebug() << "CREATE TABLES";
+#endif
+
+    QMessageBox msgBox;
+    msgBox.setText("The database can be initalized by a script from an external SQL file as well as from an internal SQL script.");
+    msgBox.setInformativeText("Do you want to initialize database from an external SQL file?");
+    // msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.addButton(QMessageBox::Yes);
+    msgBox.addButton(QMessageBox::No);
+
+    int res = msgBox.exec();
+
+    if(res == QMessageBox::Yes)
+    {
+        QString standardLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
+        sqlFilePath = QFileDialog::getOpenFileName(0, tr("Select SQL file"), standardLocation,
+                                                   tr("SQL files(*.sql);;All files(*.*)"));
+    }
+
+    if(sqlFilePath.isEmpty())
+    {
+        sqlFilePath = ":/sql/SQL/sdanalyzer.sql";
+    }
+
+    // get SQL file
+    QFile file(sqlFilePath);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        msg = tr("Cannot open file with error: \"%1\".").arg(file.errorString());
+        return false;
+    }
+
+    // parse sql statements
+    QTextStream textStream(&file);
+    QString line;
+    QString sqlStatement;
+    // query
+    QSqlQuery query(db);
+    query.setForwardOnly(true);
+    while(!textStream.atEnd())
+    {
+        line = textStream.readLine();
+        // comments
+        if(line.isEmpty() || line.startsWith("--") || line.startsWith("//") || line.startsWith("/*"))
+        {
+            continue;
+        }
+
+        sqlStatement += line;
+
+        // end of statement
+        if(!sqlStatement.endsWith(";"))
+        {
+            continue;
+        }
+
+        if(!query.exec(sqlStatement))
+        {
+            msg = tr("The SQL statement \"%1\" has been executed with error: \"%2\"!").arg(sqlStatement, query.lastError().text());
+            file.close();
+            return false;
+        }
+
+        sqlStatement.clear();
+    }
+
+    file.close();
     return true;
 }
 //=========================================================

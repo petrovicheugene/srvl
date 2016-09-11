@@ -82,8 +82,8 @@ private:
    const QString zv_databaseNameValueCaption = "name";
    const QString zv_databasePathValueCaption = "path";
 
-   QString zv_dbName;
-   QString zv_dbPath;
+   QString zv_dbName; /*!< TODO: describe */
+   QString zv_dbPath; /*!< TODO: describe */
 
    QListWidget* zv_dbListWidget; /*!< TODO: describe */
    QLabel* zv_currentPathLabel; /*!< TODO: describe */
@@ -132,7 +132,7 @@ private:
      \param msg
      \return bool
     */
-   bool zh_emptynessCheck(const QString &name,
+   bool zh_nameAndPathEmptynessCheck(const QString &name,
                           const QString& path, QString& msg) const;
    /*!
      \brief
