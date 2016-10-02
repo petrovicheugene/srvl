@@ -286,7 +286,15 @@ bool ZDatabaseInspector::zp_checkDatabaseSuitability(const QString& name, const 
 //=========================================================
 bool ZDatabaseInspector::zp_connectToDatabase(const QString& name, const QString& path, QSqlDatabase& db,QString& msg)
 {
-    db = QSqlDatabase::addDatabase("QSQLITE", name);
+    if(name.isEmpty())
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+    }
+    else
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE", name);
+    }
+
     if(!db.isValid())
     {
         msg = tr("Cannot establish %1 driver connection.").arg("QSQLITE");
@@ -305,6 +313,19 @@ bool ZDatabaseInspector::zp_connectToDatabase(const QString& name, const QString
     }
 
     return true;
+}
+//=========================================================
+bool ZDatabaseInspector::zp_connectToDatabase(const QString& path,
+                                         QSqlDatabase& db,
+                                         QString& msg)
+{
+    return zp_connectToDatabase(QString(), path, db, msg);
+}
+//=========================================================
+void ZDatabaseInspector::zp_disconnectFromDatabase()
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    zp_disconnectFromDatabase(db);
 }
 //=========================================================
 void ZDatabaseInspector::zp_disconnectFromDatabase(QSqlDatabase& db)

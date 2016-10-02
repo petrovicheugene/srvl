@@ -3,6 +3,14 @@
         <file>ZImages/gnome4.ico</file>
         <file>ZImages/chemUtensil-1.jpg</file>
         <file>ZImages/Chemistry.png</file>
+        <file>ZWidgets/sidebarLeftClose.png</file>
+        <file>ZWidgets/sidebarLeftClose-1.png</file>
+        <file>ZWidgets/sidebarLeftOpen.png</file>
+        <file>ZWidgets/sidebarLeftOpen-1.png</file>
+        <file>ZWidgets/sidebarRightClose.png</file>
+        <file>ZWidgets/sidebarRightClose-1.png</file>
+        <file>ZWidgets/sidebarRightOpen.png</file>
+        <file>ZWidgets/sidebarRightOpen-1.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>

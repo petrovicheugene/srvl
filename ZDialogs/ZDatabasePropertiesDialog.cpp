@@ -22,6 +22,8 @@ ZDatabasePropertiesDialog::ZDatabasePropertiesDialog(const QString& name,
                                                      const QString& path,
                                                      QWidget *parent) : QDialog(parent)
 {
+    setWindowTitle(glAppProduct);
+
     zh_createComponents();
     zh_createConnections();
     zh_restoreSettings();

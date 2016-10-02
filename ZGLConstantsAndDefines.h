@@ -31,6 +31,20 @@ extern const QString glIconStringSettings; /*!< TODO: describe */
 extern const QString glIconStringExitApp; /*!< TODO: describe */
 extern const QString glIconStringAbout; /*!< TODO: describe */
 extern const QString glIconStringHelp; /*!< TODO: describe */
+
+extern const QString glIconSidebarLeftOpen;
+extern const QString glIconSidebarLeftClose;
+extern const QString glIconSidebarRightOpen;
+extern const QString glIconSidebarRightClose;
+
+extern const QString glIconShowGrid;
+extern const QString glIconVerticalIncrease;
+extern const QString glIconVerticalDecrease;
+extern const QString glIconHorizontalIncrease;
+extern const QString glIconHorizontalDecrease;
+extern const QString glIconFitInRect;
+
+
 }
 
 // Common non translatable strings
@@ -91,5 +105,8 @@ extern const QString glOpenFile; /*!< TODO: describe */
 extern const QString glSelectColor; /*!< TODO: describe */
 
 }
+
+// FUNCS
+QString glCreateCaption(const QString& simpleText);
 //===========================================================
 #endif // ZGLCONSTANTSANDDEFINES_H

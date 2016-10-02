@@ -102,6 +102,11 @@ public:
                                              const QString& path,
                                              QSqlDatabase& db,
                                              QString& msg);
+    static bool zp_connectToDatabase(const QString& path,
+                                             QSqlDatabase& db,
+                                             QString& msg);
+
+    static void zp_disconnectFromDatabase();
     /*!
      \brief
 

@@ -1,20 +1,36 @@
 //============================================================
 #include "MainWindow.h"
 #include "ZGLConstantsAndDefines.h"
+
+// components
+#include "ZControlAction.h"
+#include "ZCurrentMeasurementCommonWidget.h"
 #include "ZDatabaseInspector.h"
-#include "ZResultTableWidget.h"
 #include "ZSettingsDialog.h"
-#include "ZCentralWidget.h"
+#include "ZWidgetWithSidebar.h"
+
+// views
+#include "ZPlotter.h"
+#include "ZCurrentMeasurementSampleTableWidget.h"
+#include "ZCurrentMeasurementTaskTreeWidget.h"
+
+// models
+#include "ZMeasurementResultTableModel.h"
+#include "ZSeriesTaskTreeModel.h"
+
+//#include "ZCur.h"
 
 // Qt
 #include <QCloseEvent>
 #include <QAction>
-#include <QSettings>
+#include <QDockWidget>
+#include <QFrame>
 #include <QMessageBox>
-#include <QDockWidget>
-#include <QVBoxLayout>
 #include <QMenuBar>
-#include <QDockWidget>
+#include <QSettings>
+#include <QStatusBar>
+#include <QSqlRelationalTableModel>
+#include <QVBoxLayout>
 
 // Qt controls
 
@@ -27,7 +43,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
 {
     // connect to database
     QString msg;
-    if(!ZDatabaseInspector::zp_connectToDatabase(dbName, dbPath, zv_database, msg))
+    if(!ZDatabaseInspector::zp_connectToDatabase(dbPath, zv_database, msg))
     {
         QMessageBox::critical(this, NS_CommonStrings::glError, msg, QMessageBox::Ok);
         return;
@@ -45,6 +61,12 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zv_aboutAction = 0;
     zv_helpAction = 0;
 
+    zv_currentMeasurementResultTableModel = 0;
+    zv_currentMeasurementTaskTreeModel = 0;
+    // zv_sqlSeriesModel = 0;
+
+    zv_plotter = 0;
+
     zh_createActions();
     zh_createComponents();
     zh_createMenu();
@@ -53,11 +75,11 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zh_restoreSettings();
 
     // plotter starting settings
-    //    if(zv_plotter != 0)
-    //    {
-    //        QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
-    //                                  Qt::QueuedConnection);
-    //    }
+    if(zv_plotter != 0)
+    {
+        QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
+                                  Qt::QueuedConnection);
+    }
 
     //    ZAddCalibrationDialog dialog;
     //    dialog.exec();
@@ -112,11 +134,32 @@ void MainWindow::zh_createActions()
 //============================================================
 void MainWindow::zh_createComponents()
 {
-    // create central widget
-    zv_resultTableWidget = new ZResultTableWidget();
-    zv_centralWidget = new ZCentralWidget(zv_resultTableWidget, this);
-    setCentralWidget(zv_centralWidget);
+    // Measurement Widget
+    zv_currentMeasurementCommonWidget = new ZCurrentMeasurementCommonWidget(this);
+    setCentralWidget(zv_currentMeasurementCommonWidget);
 
+    // Plotter
+    // create plotter dock
+    zv_plotterDock = new QDockWidget(this);
+    zv_plotterDock->setObjectName("PLOTTER_DOCK");
+    zv_plotterDock->setWindowTitle(tr("Spectra"));
+    zv_dockList << zv_plotterDock;
+    addDockWidget(Qt::BottomDockWidgetArea, zv_plotterDock);
+
+    // create plotter
+    zv_plotter = new ZPlotter(this);
+    QFrame* frame = zh_setWidgetToFrame(zv_plotter);
+
+    // setting to plotter dock
+    zv_plotterDock->setWidget(frame);
+
+    // DATA MODELS
+    // measurement models
+    zv_currentMeasurementTaskTreeModel = new ZSeriesTaskTreeModel(this);
+    zv_currentMeasurementResultTableModel = new ZMeasurementResultTableModel(this);
+
+
+    statusBar();
 }
 //============================================================
 void MainWindow::zh_createMenu()
@@ -143,7 +186,7 @@ void MainWindow::zh_createMenu()
 
     // Actions
     menu = menubar->addMenu(NS_Menus::glMenuActions);
-    // menu->setCursor(Qt::PointingHandCursor);
+    menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuActions);
     zh_appendActionsToMenu(menu);
 
@@ -165,6 +208,21 @@ void MainWindow::zh_createConnections()
     //
     connect(zv_settingsAction, &QAction::triggered,
             this, &MainWindow::zh_onSettingsAction);
+    connect(this, &MainWindow::zg_saveSettings,
+            zv_currentMeasurementCommonWidget, &ZCurrentMeasurementCommonWidget::zp_saveSettings);
+
+    zv_currentMeasurementCommonWidget->zp_appendTaskButtonActions(zv_currentMeasurementTaskTreeModel->zp_taskActions());
+    zv_currentMeasurementCommonWidget->zp_appendTaskContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextTaskActions());
+    zv_currentMeasurementCommonWidget->zp_appendSampleButtonActions(zv_currentMeasurementTaskTreeModel->zp_sampleActions());
+    zv_currentMeasurementCommonWidget->zp_appendSampleContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextSampleActions());
+
+    // table model <-> source tree model connection
+    zv_currentMeasurementResultTableModel->zp_connectToSourceModel(zv_currentMeasurementTaskTreeModel);
+    //    zv_currentMeasurementTaskTreeModel->zp_connectToMeasurementManager(zv_currentMeasurementManager);
+
+    // widget <-> model connections
+    zv_currentMeasurementCommonWidget->zp_setMeasurementSampleTableModel(zv_currentMeasurementResultTableModel);
+    zv_currentMeasurementCommonWidget->zp_setMeasurementTaskTreeModel(zv_currentMeasurementTaskTreeModel);
 
 }
 //============================================================
@@ -173,6 +231,7 @@ void MainWindow::zh_restoreSettings()
     QSettings settings;
     settings.beginGroup(glAppVersion);
     QVariant vData;
+
     // geometry
     vData = settings.value(glAppGeometryKeyName);
     if(vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
@@ -194,11 +253,13 @@ void MainWindow::zh_restoreSettings()
     ZAppSettings appSettings;
     zh_getAppSettingsFromSettings(appSettings);
     zh_applyAppSettingsToComponents(appSettings);
-
 }
 //============================================================
 void MainWindow::zh_saveSettings()
 {
+    // emit signal to another components
+    emit zg_saveSettings();
+
     QSettings settings;
     settings.beginGroup(glAppVersion);
     // geometry
@@ -207,6 +268,18 @@ void MainWindow::zh_saveSettings()
     settings.setValue(glAppStateKeyName, QVariant(saveState()));
 
     settings.endGroup();
+}
+//============================================================
+QFrame* MainWindow::zh_setWidgetToFrame(QWidget* widget)
+{
+    QFrame* frame = new QFrame();
+    QVBoxLayout* frameLayout = new QVBoxLayout(frame);
+    frame->setLayout(frameLayout);
+    frame->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
+    frame->setLineWidth(1);
+
+    frameLayout->addWidget(widget);
+    return frame;
 }
 //============================================================
 void MainWindow::zh_saveAppSettingsToSettings(const ZAppSettings& appSettings)
@@ -317,6 +390,6 @@ void MainWindow::zh_onSettingsAction()
 //============================================================
 void MainWindow::zh_applyAppSettingsToComponents(const ZAppSettings& appSettings)
 {
-    zv_centralWidget->zp_applyAppSettings(appSettings);
+    zv_currentMeasurementCommonWidget->zp_applyAppSettings(appSettings);
 }
 //============================================================

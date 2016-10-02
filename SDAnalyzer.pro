@@ -57,14 +57,16 @@ TEMPLATE = app
 INCLUDEPATH += ZDialogs \
     ZComponents \
     ZModelViewWidgets \
-    ZWidgets
+    ZWidgets \
+    ZPlotter \
+    ZModels \
+    ZModels/ZCurrentMeasurementTaskTreeModel
 
 SOURCES += main.cpp\
         MainWindow.cpp \
     ZDialogs/ZStartDialog.cpp \
     ZDialogs/ZDatabasePropertiesDialog.cpp \
     ZComponents/ZDatabaseInspector.cpp \
-    ZDialogs/ZAddCalibrationDialog.cpp \
     ZComponents/ZXMLCalibrationIOHandler.cpp \
     ZComponents/ZCalibration.cpp \
     ZComponents/ZCalibrationWindow.cpp \
@@ -81,7 +83,6 @@ SOURCES += main.cpp\
     ZComponents/ZEquationSettingsData.cpp \
     ZComponents/ZNormaSettingsData.cpp \
     ZComponents/ZQrealToStringConverter.cpp \
-    ZModelViewWidgets/ZResultTableWidget.cpp \
     ZWidgets/ZProcessTimeRoundIndicator.cpp \
     ZWidgets/QRoundProgressBar.cpp \
     ZGLConstantsAndDefines.cpp \
@@ -90,14 +91,42 @@ SOURCES += main.cpp\
     ZWidgets/ZDashboard.cpp \
     ZWidgets/ZColorLabel.cpp \
     ZWidgets/ZStartStopButton.cpp \
-    ZWidgets/ZCentralWidget.cpp \
     ZComponents/ZAbstractTerm.cpp \
     ZComponents/ZDashboardSettings.cpp \
     ZComponents/ZAppSettings.cpp \
     ZWidgets/ZAbstractProcessTimeIndicator.cpp \
     ZWidgets/ZProcessTimeClassicIndicator.cpp \
     ZComponents/ZProgressBarOptions.cpp \
-    ZWidgets/ZLabeledSliderWidget.cpp
+    ZWidgets/ZLabeledSliderWidget.cpp \
+    ZModelViewWidgets/ZBaseTableWidget.cpp \
+    ZWidgets/ZWidgetWithSidebar.cpp \
+    ZWidgets/ZClickableLabel.cpp \
+    ZPlotter/ZDefaultRectGraphicsItem.cpp \
+    ZPlotter/ZHorizontalDashBoard.cpp \
+    ZPlotter/ZPlotGraphicsScene.cpp \
+    ZPlotter/ZPlotGraphicsView.cpp \
+    ZPlotter/ZPlotter.cpp \
+    ZPlotter/ZRulersAndGridManager.cpp \
+    ZPlotter/ZRulerWidget.cpp \
+    ZPlotter/ZSpectrumGraphicsItem.cpp \
+    ZPlotter/ZWindowGraphicsItem.cpp \
+    ZComponents/ZVisibilityPointF.cpp \
+    ZModelViewWidgets/ZBaseTreeWidget.cpp \
+    ZComponents/ZControlAction.cpp \
+    ZDialogs/ZAddCalibrationDialog.cpp \
+    ZDialogs/ZSampleTaskDialog.cpp \
+    ZModelViewWidgets/ZChemicalTaskTableWidget.cpp \
+    ZModelViewWidgets/ZTaskMeasurementConditionTableWidget.cpp \
+    ZModelViewWidgets/ZTaskCalibrationStackTableWidget.cpp \
+    ZModelViewWidgets/ZCurrentMeasurementCommonWidget.cpp \
+    ZModelViewWidgets/ZCurrentMeasurementSampleTableWidget.cpp \
+    ZModelViewWidgets/ZCurrentMeasurementTaskTreeWidget.cpp \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZSeriesTaskTreeModel.cpp \
+    ZModels/ZMeasurementResultTableModel.cpp \
+    ZDialogs/ZAddSampleDialog.cpp \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.cpp \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.cpp \
+    ZModels/ZMeasuringConditionTableModel.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -121,7 +150,6 @@ HEADERS  += MainWindow.h \
     ZComponents/ZEquationSettingsData.h \
     ZComponents/ZNormaSettingsData.h \
     ZComponents/ZQrealToStringConverter.h \
-    ZModelViewWidgets/ZResultTableWidget.h \
     ZWidgets/ZProcessTimeRoundIndicator.h \
     ZWidgets/QRoundProgressBar.h \
     ZGLConstantsAndDefines.h \
@@ -130,16 +158,44 @@ HEADERS  += MainWindow.h \
     ZWidgets/ZDashboard.h \
     ZWidgets/ZColorLabel.h \
     ZWidgets/ZStartStopButton.h \
-    ZWidgets/ZCentralWidget.h \
     ZComponents/ZDashboardSettings.h \
     ZComponents/ZAppSettings.h \
     ZWidgets/ZAbstractProcessTimeIndicator.h \
     ZWidgets/ZProcessTimeClassicIndicator.h \
     ZComponents/ZProgressBarOptions.h \
-    ZWidgets/ZLabeledSliderWidget.h
+    ZWidgets/ZLabeledSliderWidget.h \
+    ZModelViewWidgets/ZBaseTableWidget.h \
+    ZWidgets/ZWidgetWithSidebar.h \
+    ZWidgets/ZClickableLabel.h \
+    ZPlotter/ZDefaultRectGraphicsItem.h \
+    ZPlotter/ZGraphicsItemUserTypes.h \
+    ZPlotter/ZHorizontalDashBoard.h \
+    ZPlotter/ZPlotGraphicsScene.h \
+    ZPlotter/ZPlotGraphicsView.h \
+    ZPlotter/ZPlotter.h \
+    ZPlotter/ZPlotterDefaulVariables.h \
+    ZPlotter/ZRulersAndGridManager.h \
+    ZPlotter/ZRulerWidget.h \
+    ZPlotter/ZSpectrumGraphicsItem.h \
+    ZPlotter/ZWindowGraphicsItem.h \
+    ZComponents/ZVisibilityPointF.h \
+    ZModelViewWidgets/ZBaseTreeWidget.h \
+    ZComponents/ZControlAction.h \
+    ZDialogs/ZSampleTaskDialog.h \
+    ZModelViewWidgets/ZChemicalTaskTableWidget.h \
+    ZModelViewWidgets/ZTaskMeasurementConditionTableWidget.h \
+    ZModelViewWidgets/ZTaskCalibrationStackTableWidget.h \
+    ZModelViewWidgets/ZCurrentMeasurementCommonWidget.h \
+    ZModelViewWidgets/ZCurrentMeasurementSampleTableWidget.h \
+    ZModelViewWidgets/ZCurrentMeasurementTaskTreeWidget.h \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZSeriesTaskTreeModel.h \
+    ZModels/ZMeasurementResultTableModel.h \
+    ZDialogs/ZAddSampleDialog.h \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.h \
+    ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.h \
+    ZModels/ZMeasuringConditionTableModel.h
 
 RESOURCES += \
     resources.qrc
 
-DISTFILES += \
-    Sprints.txt
+

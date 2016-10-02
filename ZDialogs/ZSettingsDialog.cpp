@@ -44,11 +44,17 @@ void ZSettingsDialog::zh_createComponents()
     mainTabWidget->addTab(zv_dashboardSettingsWidget, NS_CommonStrings::glCommon);
     mainLayout->addWidget(mainTabWidget);
 
+    // Basement
+    // sparator line
+    QFrame* line = new QFrame(this);
+    line->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+    line->setLineWidth(1);
+    mainLayout->addWidget(line);
 
-    // basement
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     mainLayout->addWidget(buttonBox);
 
+    // buttons
     zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
     buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
 

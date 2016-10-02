@@ -7,13 +7,26 @@
 
 #include "ZAppSettings.h"
 //============================================================
-class ZResultTableWidget;
-class ZDashboard;
-class ZCentralWidget;
-
+// Qt
 class QAction;
-class QMenu;
 class QDockWidget;
+class QFrame;
+class QMenu;
+class QSqlRelationalTableModel;
+
+// models
+class ZMeasurementResultTableModel;
+class ZSeriesTaskTreeModel;
+class ZCurrentMeasurementManager;
+
+// widgets
+class ZCurrentMeasurementCommonWidget;
+class ZDashboard;
+class ZPlotter;
+class ZCurrentMeasurementSampleTableWidget;
+class ZCurrentMeasurementTaskTreeWidget;
+class ZWidgetWithSidebar;
+
 //============================================================
 /*!
  \brief the MainWindow is an application main class.
@@ -43,6 +56,10 @@ public:
     ~MainWindow();
     bool zp_isDatabaseOpen() const;
 
+signals:
+
+    void zg_saveSettings();
+
 private slots:
 
     /*!
@@ -63,7 +80,10 @@ private:
 
     // VARS
     QSqlDatabase zv_database; /*!< TODO: describe */
+
+    // docks
     QList<QDockWidget*> zv_dockList; /*!< TODO: describe */
+    QDockWidget* zv_plotterDock;
 
     // actions
     QAction* zv_settingsAction;       /*!< TODO: describe */
@@ -72,12 +92,14 @@ private:
     QAction* zv_helpAction;      /*!< TODO: describe */
 
     // widgets
-    ZCentralWidget* zv_centralWidget;
-    ZResultTableWidget* zv_resultTableWidget;
-    ZDashboard* zv_dashBoard; /*!< TODO: describe */
+    ZPlotter* zv_plotter;
 
+    // views
+    ZCurrentMeasurementCommonWidget* zv_currentMeasurementCommonWidget;
 
-
+    // models
+    ZMeasurementResultTableModel* zv_currentMeasurementResultTableModel;
+    ZSeriesTaskTreeModel* zv_currentMeasurementTaskTreeModel;
 
     // FUNCS
 
@@ -122,6 +144,9 @@ private:
 
     */
     void zh_saveSettings();
+    QFrame* zh_setWidgetToFrame(QWidget* widget);
+
+
     void zh_saveAppSettingsToSettings(const ZAppSettings &);
     void zh_getAppSettingsFromSettings(ZAppSettings& appSettings);
     void zh_appendActionsToMenu(QMenu* menu);

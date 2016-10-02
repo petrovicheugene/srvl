@@ -1,42 +1,44 @@
 //============================================================
-#ifndef ZRESULTTABLEWIDGET_H
-#define ZRESULTTABLEWIDGET_H
+#ifndef ZBASETREEWIDGET_H
+#define ZBASETREEWIDGET_H
 //============================================================
 #include <QWidget>
 //============================================================
-class QTableView;
-class QAction;
+class ZControlAction;
+
+class QTreeView;
+class QAbstractItemModel;
+class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
-
 //============================================================
-/*!
- \brief
-
-*/
-class ZResultTableWidget : public QWidget
+class ZBaseTreeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    /*!
-     \brief
+    explicit ZBaseTreeWidget(QWidget *parent = 0);
 
-     \param parent
-    */
-    explicit ZResultTableWidget(QWidget *parent = 0);
+    // FUNCS
+    virtual void zp_setModel(QAbstractItemModel* model);
+    void zp_setCaption(const QString& caption);
+    void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
+    void zp_appendContextActions(const QList<ZControlAction*>& actionList);
 
 signals:
 
 public slots:
 
-private:
+
+
+protected:
 
     // VARS
-    QTableView* zv_table; /*!< TODO: describe */
+    QTreeView* zv_table; /*!< TODO: describe */
     QHBoxLayout* zv_buttonLayout; /*!< TODO: describe */
     QVBoxLayout* zv_mainLayout; /*!< TODO: describe */
+    QLabel* zv_captionLabel;
 
-    QList<QAction*> zv_contextMenuActionList; /*!< TODO: describe */
+    QList<ZControlAction*> zv_contextMenuActionList; /*!< TODO: describe */
 
     // FUNCS
     /*!
@@ -53,4 +55,4 @@ private:
 
 };
 //============================================================
-#endif // ZRESULTTABLEWIDGET_H
+#endif // ZBASETREEWIDGET_H

@@ -25,6 +25,8 @@
 //=========================================================
 ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 {
+    setWindowTitle(glAppProduct);
+
     zv_editedRow = -1;
     zh_createComponents();
     zh_createConnections();

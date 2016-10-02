@@ -139,6 +139,8 @@ int main(int argc, char *argv[])
     QString dbName;
     QString dbPath;
     dialog->zp_databaseProperties(dbName, dbPath);
+    delete dialog;
+
     // main window
     MainWindow w(dbName, dbPath);
 
@@ -147,8 +149,6 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-
-    delete dialog;
 
     w.show();
     // dbSplash.finish(&w);

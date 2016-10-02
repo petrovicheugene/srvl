@@ -15,6 +15,19 @@ extern const QString glIconStringSettings = "";
 extern const QString glIconStringExitApp = "";
 extern const QString glIconStringAbout = "";
 extern const QString glIconStringHelp = "";
+
+extern const QString glIconSidebarLeftOpen = ":/images/ZWidgets/sidebarLeftOpen-1.png";
+extern const QString glIconSidebarLeftClose = ":/images/ZWidgets/sidebarLeftClose-1.png";
+extern const QString glIconSidebarRightOpen = ":/images/ZWidgets/sidebarRightOpen-1.png";
+extern const QString glIconSidebarRightClose = ":/images/ZWidgets/sidebarRightClose-1.png";
+
+extern const QString glIconShowGrid = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glIconVerticalIncrease = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glIconVerticalDecrease = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glIconHorizontalIncrease = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glIconHorizontalDecrease = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glIconFitInRect = ":/images/ZWidgets/sidebarRightClose-1.png";
+
 }
 
 // Common non translatable strings
@@ -73,3 +86,13 @@ extern const QString glOpenFile = QObject::tr("Open file");
 extern const QString glSelectColor = QObject::tr("Select color");
 }
 
+// FUNCS
+QString glCreateCaption(const QString& simpleText)
+{
+    if(simpleText.isEmpty())
+    {
+        return QString();
+    }
+
+    return QString("<font color=darkGreen><b>%1</b></font>").arg(simpleText);
+}
