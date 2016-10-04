@@ -60,7 +60,8 @@ INCLUDEPATH += ZDialogs \
     ZWidgets \
     ZPlotter \
     ZModels \
-    ZModels/ZCurrentMeasurementTaskTreeModel
+    ZModels/ZCurrentMeasurementTaskTreeModel \
+    ZMeasurementManager \
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -126,7 +127,9 @@ SOURCES += main.cpp\
     ZDialogs/ZAddSampleDialog.cpp \
     ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.cpp \
     ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.cpp \
-    ZModels/ZMeasuringConditionTableModel.cpp
+    ZModels/ZMeasuringConditionTableModel.cpp \
+    ZMeasurementManager/ZMeasurementManager.cpp \
+    ZMeasurementManager/ZSample.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -193,7 +196,9 @@ HEADERS  += MainWindow.h \
     ZDialogs/ZAddSampleDialog.h \
     ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.h \
     ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.h \
-    ZModels/ZMeasuringConditionTableModel.h
+    ZModels/ZMeasuringConditionTableModel.h \
+    ZMeasurementManager/ZMeasurementManager.h \
+    ZMeasurementManager/ZSample.h
 
 RESOURCES += \
     resources.qrc

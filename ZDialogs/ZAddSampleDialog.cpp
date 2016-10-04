@@ -6,11 +6,12 @@
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 
+#include <QComboBox>
 #include <QFrame>
 #include <QLabel>
-#include <QPushButton>
 #include <QLineEdit>
-#include <QComboBox>
+#include <QPushButton>
+#include <QSpinBox>
 //======================================================
 ZAddSampleDialog::ZAddSampleDialog(QWidget *parent) : QDialog(parent)
 {
@@ -51,6 +52,18 @@ void ZAddSampleDialog::zh_createComponents()
 
     mainLayout->addStretch();
 
+    // task quantity
+    label = new QLabel(this);
+    label->setText(glCreateCaption(tr("Quantity:")));
+    mainLayout->addWidget(label);
+
+    levelLayout = new QHBoxLayout(this);
+    mainLayout->addLayout(levelLayout);
+    zv_quantitySpinBox = new QSpinBox(this);
+    zv_quantitySpinBox->setRange(1, 999);
+    levelLayout->addWidget(zv_quantitySpinBox);
+    levelLayout->addStretch();
+
     // basement
     // Separator
     QFrame* line = new QFrame(this);
@@ -63,6 +76,7 @@ void ZAddSampleDialog::zh_createComponents()
 
     // buttons
     zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
+    zv_okButton->setDisabled(true);
     buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
 
     zv_cancelButton = new QPushButton(NS_Buttons::glButtonCancel, this);
@@ -78,6 +92,9 @@ void ZAddSampleDialog::zh_createConnections()
     connect(zv_cancelButton, &QPushButton::clicked,
             this, &ZAddSampleDialog::reject);
 
+     connect(zv_sampleNameLineEdit, &QLineEdit::textChanged,
+             this, &ZAddSampleDialog::zh_onSampleNameChange);
+
 }
 //======================================================
 QString ZAddSampleDialog::zp_sampleName() const
@@ -85,29 +102,28 @@ QString ZAddSampleDialog::zp_sampleName() const
     return zv_sampleNameLineEdit->text();
 }
 //======================================================
-//bool ZAddSampleDialog::zp_setSampleName(const QString& name)
-//{
-//    if(!name.isEmpty() || name == zv_sampleNameLineEdit->text())
-//    {
-//        return false;
-//    }
-
-//    zv_sampleNameLineEdit->setText(name);
-//    return true;
-//}
+int ZAddSampleDialog::zp_sampleQuantity() const
+{
+    return zv_quantitySpinBox->value();
+}
 //======================================================
 void ZAddSampleDialog::zh_onOkButtonClick()
 {
-    // Check data
-    bool res = false;
-    // check sample name
-    emit zg_checkSampleName(zv_sampleNameLineEdit->text(), res);
+//    // Check data
+//    bool res = false;
+//    // check sample name
+//    emit zg_checkSampleName(zv_sampleNameLineEdit->text(), res);
 
-    if(!res)
-    {
-        return;
-    }
+//    if(!res)
+//    {
+//        return;
+//    }
 
     accept();
+}
+//======================================================
+void ZAddSampleDialog::zh_onSampleNameChange(const QString & text)
+{
+    zv_okButton->setDisabled(zv_sampleNameLineEdit->text().isEmpty());
 }
 //======================================================

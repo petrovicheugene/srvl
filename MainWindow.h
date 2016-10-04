@@ -15,9 +15,13 @@ class QMenu;
 class QSqlRelationalTableModel;
 
 // models
-class ZMeasurementResultTableModel;
-class ZSeriesTaskTreeModel;
-class ZCurrentMeasurementManager;
+//class ZMeasurementResultTableModel;
+//class ZSeriesTaskTreeModel;
+//class ZCurrentMeasurementManager;
+
+// components
+class ZMeasurementManager;
+
 
 // widgets
 class ZCurrentMeasurementCommonWidget;
@@ -98,8 +102,11 @@ private:
     ZCurrentMeasurementCommonWidget* zv_currentMeasurementCommonWidget;
 
     // models
-    ZMeasurementResultTableModel* zv_currentMeasurementResultTableModel;
-    ZSeriesTaskTreeModel* zv_currentMeasurementTaskTreeModel;
+
+    ZMeasurementManager* zv_measurementManager;
+
+//    ZMeasurementResultTableModel* zv_currentMeasurementResultTableModel;
+//    ZSeriesTaskTreeModel* zv_currentMeasurementTaskTreeModel;
 
     // FUNCS
 

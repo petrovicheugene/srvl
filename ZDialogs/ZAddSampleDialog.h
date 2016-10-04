@@ -7,7 +7,7 @@
 class QPushButton;
 class QLineEdit;
 class QComboBox;
-
+class QSpinBox;
 //======================================================
 class ZAddSampleDialog : public QDialog
 {
@@ -16,11 +16,11 @@ public:
     explicit ZAddSampleDialog(QWidget *parent = 0);
 
     QString zp_sampleName() const;
-    // bool zp_setSampleName(const QString& name);
+    int zp_sampleQuantity() const;
 
 signals:
 
-    void zg_checkSampleName(const QString& samplename, bool& res);
+    // void zg_checkSampleName(const QString& samplename, bool& res);
 
 public slots:
 
@@ -28,6 +28,7 @@ public slots:
 private slots:
 
     void zh_onOkButtonClick();
+    void zh_onSampleNameChange(const QString &text);
 
 private:
 
@@ -36,6 +37,7 @@ private:
     QPushButton* zv_cancelButton;
 
     QLineEdit* zv_sampleNameLineEdit;
+    QSpinBox* zv_quantitySpinBox;
     QComboBox* zv_taskComboBox;
 
     // FUNCS

@@ -58,25 +58,25 @@ void ZSampleTaskDialog::zh_createComponents(bool withQuantityFlag)
     label->setText(glCreateCaption(tr("Task name:")));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* lavelLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(lavelLayout);
+    QHBoxLayout* levelLayout = new QHBoxLayout(this);
+    mainLayout->addLayout(levelLayout);
     zv_sampleTaskNameLineEdit = new QLineEdit(this);
-    lavelLayout->addWidget(zv_sampleTaskNameLineEdit);
-    lavelLayout->addStretch();
+    levelLayout->addWidget(zv_sampleTaskNameLineEdit);
+    levelLayout->addStretch();
 
     // default sample name
     label = new QLabel(this);
     label->setText(glCreateCaption(tr("Default sample name:")));
     mainLayout->addWidget(label);
 
-    lavelLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(lavelLayout);
+    levelLayout = new QHBoxLayout(this);
+    mainLayout->addLayout(levelLayout);
     zv_defaultSampleNameLineEdit = new QLineEdit(this);
-    lavelLayout->addWidget(zv_defaultSampleNameLineEdit);
+    levelLayout->addWidget(zv_defaultSampleNameLineEdit);
     label = new QLabel(this);
     label->setText(glCreateCaption(tr(" + sample serial number")));
-    lavelLayout->addWidget(label);
-    lavelLayout->addStretch();
+    levelLayout->addWidget(label);
+    levelLayout->addStretch();
 
     if(withQuantityFlag)
     {
@@ -86,12 +86,12 @@ void ZSampleTaskDialog::zh_createComponents(bool withQuantityFlag)
         label->setText(glCreateCaption(tr("Quantity:")));
         mainLayout->addWidget(label);
 
-        lavelLayout = new QHBoxLayout(this);
-        mainLayout->addLayout(lavelLayout);
+        levelLayout = new QHBoxLayout(this);
+        mainLayout->addLayout(levelLayout);
         zv_sampleTaskQuantitySpinBox = new QSpinBox(this);
         zv_sampleTaskQuantitySpinBox->setRange(1, 999);
-        lavelLayout->addWidget(zv_sampleTaskQuantitySpinBox);
-        lavelLayout->addStretch();
+        levelLayout->addWidget(zv_sampleTaskQuantitySpinBox);
+        levelLayout->addStretch();
     }
     // Table level
     zv_tableSplitter = new QSplitter(this);

@@ -15,8 +15,10 @@
 #include "ZCurrentMeasurementTaskTreeWidget.h"
 
 // models
-#include "ZMeasurementResultTableModel.h"
-#include "ZSeriesTaskTreeModel.h"
+//#include "ZMeasurementResultTableModel.h"
+//#include "ZSeriesTaskTreeModel.h"
+#include "ZMeasurementManager.h"
+
 
 //#include "ZCur.h"
 
@@ -61,10 +63,10 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zv_aboutAction = 0;
     zv_helpAction = 0;
 
-    zv_currentMeasurementResultTableModel = 0;
-    zv_currentMeasurementTaskTreeModel = 0;
+//    zv_currentMeasurementResultTableModel = 0;
+//    zv_currentMeasurementTaskTreeModel = 0;
     // zv_sqlSeriesModel = 0;
-
+    zv_measurementManager = 0;
     zv_plotter = 0;
 
     zh_createActions();
@@ -154,9 +156,12 @@ void MainWindow::zh_createComponents()
     zv_plotterDock->setWidget(frame);
 
     // DATA MODELS
+
+    zv_measurementManager = new ZMeasurementManager();
+
     // measurement models
-    zv_currentMeasurementTaskTreeModel = new ZSeriesTaskTreeModel(this);
-    zv_currentMeasurementResultTableModel = new ZMeasurementResultTableModel(this);
+//    zv_currentMeasurementTaskTreeModel = new ZSeriesTaskTreeModel(this);
+//    zv_currentMeasurementResultTableModel = new ZMeasurementResultTableModel(this);
 
 
     statusBar();
@@ -211,18 +216,18 @@ void MainWindow::zh_createConnections()
     connect(this, &MainWindow::zg_saveSettings,
             zv_currentMeasurementCommonWidget, &ZCurrentMeasurementCommonWidget::zp_saveSettings);
 
-    zv_currentMeasurementCommonWidget->zp_appendTaskButtonActions(zv_currentMeasurementTaskTreeModel->zp_taskActions());
-    zv_currentMeasurementCommonWidget->zp_appendTaskContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextTaskActions());
-    zv_currentMeasurementCommonWidget->zp_appendSampleButtonActions(zv_currentMeasurementTaskTreeModel->zp_sampleActions());
-    zv_currentMeasurementCommonWidget->zp_appendSampleContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextSampleActions());
+//    zv_currentMeasurementCommonWidget->zp_appendTaskButtonActions(zv_currentMeasurementTaskTreeModel->zp_taskActions());
+//    zv_currentMeasurementCommonWidget->zp_appendTaskContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextTaskActions());
+    zv_currentMeasurementCommonWidget->zp_appendSampleButtonActions(zv_measurementManager->zp_sampleActions());
+//    zv_currentMeasurementCommonWidget->zp_appendSampleContextMenuActions(zv_currentMeasurementTaskTreeModel->zp_contextSampleActions());
 
     // table model <-> source tree model connection
-    zv_currentMeasurementResultTableModel->zp_connectToSourceModel(zv_currentMeasurementTaskTreeModel);
+//    zv_currentMeasurementResultTableModel->zp_connectToSourceModel(zv_currentMeasurementTaskTreeModel);
     //    zv_currentMeasurementTaskTreeModel->zp_connectToMeasurementManager(zv_currentMeasurementManager);
 
     // widget <-> model connections
-    zv_currentMeasurementCommonWidget->zp_setMeasurementSampleTableModel(zv_currentMeasurementResultTableModel);
-    zv_currentMeasurementCommonWidget->zp_setMeasurementTaskTreeModel(zv_currentMeasurementTaskTreeModel);
+//    zv_currentMeasurementCommonWidget->zp_setMeasurementSampleTableModel(zv_currentMeasurementResultTableModel);
+//    zv_currentMeasurementCommonWidget->zp_setMeasurementTaskTreeModel(zv_currentMeasurementTaskTreeModel);
 
 }
 //============================================================
