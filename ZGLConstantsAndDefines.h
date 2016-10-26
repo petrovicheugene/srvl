@@ -97,6 +97,8 @@ extern const QString glButtonOk; /*!< TODO: describe */
 extern const QString glButtonApply; /*!< TODO: describe */
 extern const QString glButtonCancel; /*!< TODO: describe */
 extern const QString glButtonBrowse; /*!< TODO: describe */
+extern const QString glButtonNew; /*!< TODO: describe */
+
 }
 // window captions
 namespace NS_WindowCaptions

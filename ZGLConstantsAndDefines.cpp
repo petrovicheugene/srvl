@@ -78,6 +78,8 @@ extern const QString glButtonOk = QObject::tr("OK");
 extern const QString glButtonApply = QObject::tr("Apply");
 extern const QString glButtonCancel = QObject::tr("Cancel");
 extern const QString glButtonBrowse = QObject::tr("Browse");
+extern const QString glButtonNew = QObject::tr("New");
+
 }
 // window captions
 namespace NS_WindowCaptions

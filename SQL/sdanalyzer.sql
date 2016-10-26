@@ -41,11 +41,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `measurement_units`
+-- Table `measuring_units`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `measurement_units` ;
+DROP TABLE IF EXISTS `measuring_units` ;
 
-CREATE TABLE IF NOT EXISTS `measurement_units` (
+CREATE TABLE IF NOT EXISTS `measuring_units` (
   `id` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
@@ -65,12 +65,12 @@ CREATE TABLE IF NOT EXISTS `calibrations` (
   `calibration_data` TEXT NOT NULL COMMENT 'Calibration data - text in xml format as in calibration source file.',
   `measuring_conditions_gain_factor` INT NOT NULL,
   `measuring_conditions_exposition` INT NOT NULL,
-  `measurement_units_id` INT NOT NULL,
+  `measuring_units_id` INT NOT NULL,
   PRIMARY KEY (`id`, `chemicals_id`, `measuring_conditions_gain_factor`, `measuring_conditions_exposition`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   INDEX `fk_calibrations_chemicals_idx` (`chemicals_id` ASC),
   INDEX `fk_calibrations_measuring_conditions1_idx` (`measuring_conditions_gain_factor` ASC, `measuring_conditions_exposition` ASC),
-  INDEX `fk_calibrations_measurement_units1_idx` (`measurement_units_id` ASC),
+  INDEX `fk_calibrations_measuring_units1_idx` (`measuring_units_id` ASC),
   CONSTRAINT `fk_calibrations_chemicals`
     FOREIGN KEY (`chemicals_id`)
     REFERENCES `chemicals` (`id`)
@@ -81,9 +81,9 @@ CREATE TABLE IF NOT EXISTS `calibrations` (
     REFERENCES `measuring_conditions` (`gain_factor` , `exposition`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_calibrations_measurement_units1`
-    FOREIGN KEY (`measurement_units_id`)
-    REFERENCES `measurement_units` (`id`)
+  CONSTRAINT `fk_calibrations_measuring_units1`
+    FOREIGN KEY (`measuring_units_id`)
+    REFERENCES `measuring_units` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

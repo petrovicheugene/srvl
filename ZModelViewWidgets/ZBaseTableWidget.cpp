@@ -7,6 +7,7 @@
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QList>
 #include <QLabel>
 #include <QPushButton>
 
@@ -99,5 +100,20 @@ void ZBaseTableWidget::zh_createConnections()
 {
     //    connect(zv_table, &QTableView::customContextMenuRequested,
     //            this, &ZJointSpectrumTableWidget::zh_onContextMenuRequest);
+}
+//=========================================================================
+QList<int> ZBaseTableWidget::zp_selectedRowList()
+{
+    QList<int> selectedRowList;
+    QModelIndexList indexList = zv_table->selectionModel()->selectedIndexes();
+    foreach(QModelIndex index, indexList)
+    {
+        if(!selectedRowList.contains(index.row()) )
+        {
+            selectedRowList.append(index.row());
+        }
+    }
+
+    return selectedRowList;
 }
 //=========================================================================

@@ -1,0 +1,120 @@
+//===========================================================
+#include "ZMeasurementConditionsListDialog.h"
+//===========================================================
+ZMeasurementConditionsListDialog::ZMeasurementConditionsListDialog(QWidget *parent) : 
+    QDialog(parent)
+{
+    setWindowTitle(tr("Measurement conditions"));
+
+    zh_createComponents();
+    zh_createConnections();
+
+}
+//===========================================================
+void ZMeasurementConditionsListDialog::zh_createComponents()
+{
+    // model
+    zv_model = new QSqlTableModel(this);
+    zv_model->setTable("sample_tasks");
+    zv_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    zv_model->select();
+
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    setLayout(mainLayout);
+
+    // name
+    //    QLabel* label = new QLabel(this);
+    //    label->setText(glCreateCaption(tr("Sample tasks:")));
+    //    mainLayout->addWidget(label);
+
+    zv_table = new QTableView(this);
+    mainLayout->addWidget(zv_table);
+
+    // basement
+    // Separator
+    QFrame* line = new QFrame(this);
+    line->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+    line->setLineWidth(1);
+    mainLayout->addWidget(line);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+    mainLayout->addWidget(buttonBox);
+
+    // buttons
+    zv_newTaskButton = new QPushButton(NS_Buttons::glButtonNew, this);
+    buttonBox->addButton(zv_newTaskButton, QDialogButtonBox::ActionRole);
+
+    zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
+    buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
+
+    zv_cancelButton = new QPushButton(NS_Buttons::glButtonCancel, this);
+    buttonBox->addButton(zv_cancelButton, QDialogButtonBox::ActionRole);
+}
+//======================================================
+void ZMeasurementConditionsListDialog::zh_createConnections()
+{
+    zv_table->setModel(zv_model);
+    zv_table->setColumnHidden(0, true);
+
+    connect(zv_okButton, &QPushButton::clicked,
+            this, &ZSampleTaskListDialog::zh_onOkButtonClick);
+    connect(zv_cancelButton, &QPushButton::clicked,
+            this, &ZSampleTaskListDialog::reject);
+    connect(zv_newTaskButton, &QPushButton::clicked,
+            this, &ZSampleTaskListDialog::zh_newTask);
+
+}
+//======================================================
+void ZMeasurementConditionsListDialog::zh_onOkButtonClick() const
+{
+
+}
+//======================================================
+void ZMeasurementConditionsListDialog::zh_newTask() const
+{
+    ZSampleTaskDialog dialog;
+    if(!dialog.exec())
+    {
+        return;
+    }
+
+    QString sampleTaskName = dialog.zp_sampleTaskName();
+    if(sampleTaskName.isEmpty())
+    {
+        return;
+    }
+
+    int newRow = zv_model->rowCount();
+    zv_model->insertRow(newRow);
+    QModelIndex index = zv_model->index(newRow, 1);
+    if(!index.isValid())
+    {
+        zv_model->removeRow(newRow);
+        return;
+    }
+
+    if(!zv_model->setData(index, sampleTaskName))
+    {
+        zv_model->removeRow(newRow);
+        return;
+    }
+
+    index = zv_model->index(newRow, 2);
+    if(!index.isValid())
+    {
+        zv_model->removeRow(newRow);
+        return;
+    }
+
+    if(!zv_model->setData(index, QString("Description %1").arg(QString::number(newRow))))
+    {
+        zv_model->removeRow(newRow);
+        return;
+    }
+
+    if(!zv_model->submitAll())
+    {
+        zv_model->removeRow(newRow);
+    }
+}
+//======================================================

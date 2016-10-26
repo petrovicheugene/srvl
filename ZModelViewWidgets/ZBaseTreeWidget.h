@@ -3,6 +3,8 @@
 #define ZBASETREEWIDGET_H
 //============================================================
 #include <QWidget>
+#include <QHeaderView>
+
 //============================================================
 class ZControlAction;
 
@@ -23,6 +25,9 @@ public:
     void zp_setCaption(const QString& caption);
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
+    void zp_setSectionResizeMode(int section, QHeaderView::ResizeMode);
+    void zp_setStretchLastSection(bool stretch);
+    void zp_setHeaderVisible(bool visible);
 
 signals:
 

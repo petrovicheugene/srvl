@@ -25,6 +25,8 @@ public:
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
 
+    QList<int> zp_selectedRowList();
+
 
 signals:
 

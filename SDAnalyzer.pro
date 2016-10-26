@@ -60,8 +60,12 @@ INCLUDEPATH += ZDialogs \
     ZWidgets \
     ZPlotter \
     ZModels \
-    ZModels/ZCurrentMeasurementTaskTreeModel \
-    ZMeasurementManager \
+    ZModels/ZCurrentMeasuringTaskTreeModel \
+    ZMeasuringManager \
+    ZSampleTask \
+    ZMeasuringConditions \
+    ZChemicalTask \
+    ZMeasuringTaskInitStruct
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -115,21 +119,29 @@ SOURCES += main.cpp\
     ZModelViewWidgets/ZBaseTreeWidget.cpp \
     ZComponents/ZControlAction.cpp \
     ZDialogs/ZAddCalibrationDialog.cpp \
-    ZDialogs/ZSampleTaskDialog.cpp \
     ZModelViewWidgets/ZChemicalTaskTableWidget.cpp \
-    ZModelViewWidgets/ZTaskMeasurementConditionTableWidget.cpp \
-    ZModelViewWidgets/ZTaskCalibrationStackTableWidget.cpp \
-    ZModelViewWidgets/ZCurrentMeasurementCommonWidget.cpp \
-    ZModelViewWidgets/ZCurrentMeasurementSampleTableWidget.cpp \
-    ZModelViewWidgets/ZCurrentMeasurementTaskTreeWidget.cpp \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZSeriesTaskTreeModel.cpp \
-    ZModels/ZMeasurementResultTableModel.cpp \
-    ZDialogs/ZAddSampleDialog.cpp \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.cpp \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.cpp \
-    ZModels/ZMeasuringConditionTableModel.cpp \
-    ZMeasurementManager/ZMeasurementManager.cpp \
-    ZMeasurementManager/ZSample.cpp
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZSeriesTaskTreeModel.cpp \
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZItem.cpp \
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZSampleTaskItem.cpp \
+    ZMeasuringManager/ZSample.cpp \
+    ZMeasuringManager/ZAddSampleDialog.cpp \
+    ZSampleTask/ZSampleTaskListDialog.cpp \
+    ZSampleTask/ZSampleTaskDialog.cpp \
+    ZSampleTask/ZSampleTaskTreeWidget.cpp \
+    ZSampleTask/ZSampleTaskTreeModel.cpp \
+    ZSampleTask/ZSampleTaskTreeItem.cpp \
+    ZMeasuringConditions/ZMeasuringConditionTableModel.cpp \
+    ZMeasuringConditions/ZMeasuringConditionsListDialog.cpp \
+    ZChemicalTask/ZChemicalTaskListDialog.cpp \
+    ZMeasuringConditions/ZMeasuringConditionsDialog.cpp \
+    ZComponents/ZReadOnlyStyledItemDelegate.cpp \
+    ZMeasuringManager/ZMeasuringManager.cpp \
+    ZMeasuringManager/ZMeasuringResultTableModel.cpp \
+    ZModelViewWidgets/ZMeasuringCommonWidget.cpp \
+    ZModelViewWidgets/ZMeasuringSeriesTaskTreeWidget.cpp \
+    ZModelViewWidgets/ZMeasuringResultTableWidget.cpp \
+    ZMeasuringManager/ZSampleTask.cpp \
+    ZMeasuringTaskInitStruct/ZMeasuringTaskInitStruct.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -184,21 +196,29 @@ HEADERS  += MainWindow.h \
     ZComponents/ZVisibilityPointF.h \
     ZModelViewWidgets/ZBaseTreeWidget.h \
     ZComponents/ZControlAction.h \
-    ZDialogs/ZSampleTaskDialog.h \
     ZModelViewWidgets/ZChemicalTaskTableWidget.h \
-    ZModelViewWidgets/ZTaskMeasurementConditionTableWidget.h \
-    ZModelViewWidgets/ZTaskCalibrationStackTableWidget.h \
-    ZModelViewWidgets/ZCurrentMeasurementCommonWidget.h \
-    ZModelViewWidgets/ZCurrentMeasurementSampleTableWidget.h \
-    ZModelViewWidgets/ZCurrentMeasurementTaskTreeWidget.h \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZSeriesTaskTreeModel.h \
-    ZModels/ZMeasurementResultTableModel.h \
-    ZDialogs/ZAddSampleDialog.h \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZItem.h \
-    ZModels/ZCurrentMeasurementTaskTreeModel/ZSampleTaskItem.h \
-    ZModels/ZMeasuringConditionTableModel.h \
-    ZMeasurementManager/ZMeasurementManager.h \
-    ZMeasurementManager/ZSample.h
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZSeriesTaskTreeModel.h \
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZItem.h \
+    ZModels/ZCurrentMeasuringTaskTreeModel/ZSampleTaskItem.h \
+    ZMeasuringManager/ZSample.h \
+    ZMeasuringManager/ZAddSampleDialog.h \
+    ZSampleTask/ZSampleTaskListDialog.h \
+    ZSampleTask/ZSampleTaskDialog.h \
+    ZSampleTask/ZSampleTaskTreeWidget.h \
+    ZSampleTask/ZSampleTaskTreeModel.h \
+    ZSampleTask/ZSampleTaskTreeItem.h \
+    ZMeasuringConditions/ZMeasuringConditionsListDialog.h \
+    ZMeasuringConditions/ZMeasuringConditionTableModel.h \
+    ZChemicalTask/ZChemicalTaskListDialog.h \
+    ZMeasuringConditions/ZMeasuringConditionsDialog.h \
+    ZComponents/ZReadOnlyStyledItemDelegate.h \
+    ZMeasuringManager/ZMeasuringManager.h \
+    ZMeasuringManager/ZMeasuringResultTableModel.h \
+    ZModelViewWidgets/ZMeasuringCommonWidget.h \
+    ZModelViewWidgets/ZMeasuringSeriesTaskTreeWidget.h \
+    ZModelViewWidgets/ZMeasuringResultTableWidget.h \
+    ZMeasuringManager/ZSampleTask.h \
+    ZMeasuringTaskInitStruct/ZMeasuringTaskInitStruct.h
 
 RESOURCES += \
     resources.qrc

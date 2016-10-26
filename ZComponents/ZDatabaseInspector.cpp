@@ -158,10 +158,6 @@ bool ZDatabaseInspector::zp_createTables(QSqlDatabase& db, QString& msg)
     // ask for SQL file source
     QString sqlFilePath;
 
-#ifdef DBG
-    qDebug() << "CREATE TABLES";
-#endif
-
     QMessageBox msgBox;
     msgBox.setText("The database can be initalized by a script from an external SQL file as well as from an internal SQL script.");
     msgBox.setInformativeText("Do you want to initialize database from an external SQL file?");
@@ -316,8 +312,8 @@ bool ZDatabaseInspector::zp_connectToDatabase(const QString& name, const QString
 }
 //=========================================================
 bool ZDatabaseInspector::zp_connectToDatabase(const QString& path,
-                                         QSqlDatabase& db,
-                                         QString& msg)
+                                              QSqlDatabase& db,
+                                              QString& msg)
 {
     return zp_connectToDatabase(QString(), path, db, msg);
 }

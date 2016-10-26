@@ -76,6 +76,21 @@ void ZBaseTreeWidget::zp_appendContextActions(const QList<ZControlAction*>& acti
 
 }
 //============================================================
+void ZBaseTreeWidget::zp_setSectionResizeMode(int section, QHeaderView::ResizeMode mode)
+{
+    zv_table->header()->setSectionResizeMode(section, mode);
+}
+//============================================================
+void ZBaseTreeWidget::zp_setStretchLastSection(bool stretch)
+{
+    zv_table->header()->setStretchLastSection(stretch);
+}
+//============================================================
+void ZBaseTreeWidget::zp_setHeaderVisible(bool visible)
+{
+    zv_table->header()->setVisible(visible);
+}
+//============================================================
 void ZBaseTreeWidget::zh_createComponents()
 {
     zv_mainLayout = new QVBoxLayout(this);
