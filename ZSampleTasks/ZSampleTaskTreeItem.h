@@ -73,7 +73,7 @@ public:
     explicit ZSampleTaskTreeBaseItem(ZSampleTaskTreeItemOptions::ItemType type,
                                      ZSampleTaskTreeBaseItem* parent = 0);
     virtual ~ZSampleTaskTreeBaseItem();
-    
+    enum ItemState {IS_CLEAR, IS_DIRTY};
     enum ItemOperationType {IOT_ABOUT_TO_INSERT_ROW,
                             IOT_ROW_INSERTED,
                             IOT_ABOUT_TO_REMOVE_ROW,
@@ -86,7 +86,8 @@ public:
     ZSampleTaskTreeBaseItem* zp_childAt(int childIndex) const;
     
     ZSampleTaskTreeItemOptions::ItemType zp_itemType() const;
-    int zp_recordId() const;
+    int zp_id() const;
+    ItemState zp_itemState() const;
     bool zp_hasChildren() const;
     int zp_childCount() const;
     int zp_rowOfChild(ZSampleTaskTreeBaseItem *item) const;
@@ -107,8 +108,9 @@ protected:
     // VARS
     QString zv_itemName;
     ZSampleTaskTreeItemOptions::ItemType zv_itemType;
-    int zv_recordId;
-    
+    int zv_id;
+    ItemState zv_itemState;
+
     QList<ZSampleTaskTreeBaseItem*> zv_childList;
     ZSampleTaskTreeBaseItem* zv_parent;
     

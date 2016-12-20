@@ -65,8 +65,12 @@ void ZBaseTreeWidget::zp_appendButtonActions(const QList<ZControlAction*>& actio
         button->setIcon(actionList.at(a)->icon());
         button->setText(actionList.at(a)->text());
         button->setToolTip(actionList.at(a)->toolTip());
+        button->setEnabled(actionList[a]->isEnabled());
         connect(button, &QPushButton::clicked,
                 actionList[a], &QAction::trigger);
+        connect(actionList.at(a), &ZControlAction::zg_enableChanged,
+                button, &QPushButton::setEnabled);
+
         zv_buttonLayout->addWidget(button, 0, Qt::AlignRight);
     }
 }

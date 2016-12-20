@@ -1,20 +1,20 @@
 //==========================================================
-#ifndef ZCHEMICALTASKTABLEWIDGET_H
-#define ZCHEMICALTASKTABLEWIDGET_H
+#ifndef ZCHEMICALTABLEWIDGET_H
+#define ZCHEMICALTABLEWIDGET_H
 //==========================================================
 #include "ZBaseTableWidget.h"
 //==========================================================
 
 //==========================================================
-class ZChemicalTaskTableWidget : public ZBaseTableWidget
+class ZChemicalTableWidget : public ZBaseTableWidget
 {
     Q_OBJECT
 public:
-    explicit ZChemicalTaskTableWidget(QWidget *parent = 0);
+    explicit ZChemicalTableWidget(QWidget *parent = 0);
 
 signals:
 
 public slots:
 };
 //==========================================================
-#endif // ZCHEMICALTASKTABLEWIDGET_H
+#endif // ZCHEMICALTABLEWIDGET_H

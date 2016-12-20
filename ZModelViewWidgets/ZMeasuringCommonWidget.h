@@ -40,9 +40,9 @@ public slots:
 private:
 
     // VARS
-    ZWidgetWithSidebar* zv_sideBarTableWidget;
+    //ZWidgetWithSidebar* zv_sideBarTableWidget;
     ZMeasuringResultTableWidget* zv_measuringResultTableWidget;
-    ZMeasuringSeriesTaskTreeWidget* zv_measuringSeriesTaskWidget;
+    //ZMeasuringSeriesTaskTreeWidget* zv_measuringSeriesTaskWidget;
     ZDashboard* zv_dashboard;
     // FUNCS
 

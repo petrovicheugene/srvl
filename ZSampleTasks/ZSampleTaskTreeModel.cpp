@@ -50,7 +50,7 @@ QVariant ZSampleTaskTreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    ZSampleTaskTreeBaseItem* item = zh_itemForIndex(index);
+    ZSampleTaskTreeBaseItem* item = zp_itemForIndex(index);
     if(item == 0)
     {
         return QVariant();
@@ -75,7 +75,7 @@ Qt::ItemFlags ZSampleTaskTreeModel::flags(const QModelIndex &index) const
 //===================================================
 bool ZSampleTaskTreeModel::hasChildren(const QModelIndex &parent) const
 {
-    ZSampleTaskTreeBaseItem* item = zh_itemForIndex(parent);
+    ZSampleTaskTreeBaseItem* item = zp_itemForIndex(parent);
     if(item == 0)
     {
         return false;
@@ -97,7 +97,7 @@ QModelIndex ZSampleTaskTreeModel::index(int row, int column, const QModelIndex &
         return QModelIndex();
     }
 
-    ZSampleTaskTreeBaseItem* parentItem = zh_itemForIndex(parent);
+    ZSampleTaskTreeBaseItem* parentItem = zp_itemForIndex(parent);
     if(parentItem == 0 || row >= parentItem->zp_childCount())
     {
         return QModelIndex();
@@ -139,7 +139,7 @@ QModelIndex ZSampleTaskTreeModel::parent(const QModelIndex &index) const
     }
 
     // child item
-    ZSampleTaskTreeBaseItem* item = zh_itemForIndex(index);
+    ZSampleTaskTreeBaseItem* item = zp_itemForIndex(index);
     if(item == 0 || item == zv_rootItem)
     {
         return QModelIndex();
@@ -165,7 +165,7 @@ QModelIndex ZSampleTaskTreeModel::parent(const QModelIndex &index) const
 //===================================================
 int ZSampleTaskTreeModel::zp_childCount(QModelIndex parent) const
 {
-    ZSampleTaskTreeBaseItem* parentItem = zh_itemForIndex(parent);
+    ZSampleTaskTreeBaseItem* parentItem = zp_itemForIndex(parent);
     if(parentItem == 0)
     {
         return 0;
@@ -284,7 +284,7 @@ void ZSampleTaskTreeModel::zh_onRemoveCurrentTaskElementAction()
 
 }
 //===================================================
-ZSampleTaskTreeBaseItem* ZSampleTaskTreeModel::zh_itemForIndex(const QModelIndex& index) const
+ZSampleTaskTreeBaseItem* ZSampleTaskTreeModel::zp_itemForIndex(const QModelIndex& index) const
 {
     if(!index.isValid())
     {

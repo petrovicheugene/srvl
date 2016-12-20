@@ -4,23 +4,15 @@
 //============================================
 #include <QString>
 //============================================
-/*!
- \brief
-
-*/
 class ZCalibrationQualityData
 {
 public:
-    /*!
-     \brief
-
-    */
     ZCalibrationQualityData();
 
-    QString determination; /*!< TODO: describe */
-    QString adj_determination; /*!< TODO: describe */
-    QString squareSigma; /*!< TODO: describe */
-    QString standardDeviation; /*!< TODO: describe */
+    QString determination;
+    QString adj_determination;
+    QString squareSigma;
+    QString standardDeviation;
 
 };
 //============================================

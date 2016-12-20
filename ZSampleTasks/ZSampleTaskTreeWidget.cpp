@@ -1,7 +1,8 @@
 //=================================================
 #include "ZSampleTaskTreeWidget.h"
 //=================================================
-ZSampleTaskTreeWidget::ZSampleTaskTreeWidget(QWidget *parent) : ZBaseTreeWidget(parent)
+ZSampleTaskTreeWidget::ZSampleTaskTreeWidget(QWidget *parent)
+    : ZBaseTreeWidget(parent)
 {
 
 }

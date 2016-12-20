@@ -4,13 +4,13 @@
 #include "ZControlAction.h"
 
 #include <QAbstractItemModel>
-#include <QTableView>
+#include <QHeaderView>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QList>
 #include <QLabel>
 #include <QPushButton>
-
+#include <QTableView>
+#include <QVBoxLayout>
 //=========================================================================
 ZBaseTableWidget::ZBaseTableWidget(QWidget *parent) : QWidget(parent)
 {
@@ -22,6 +22,13 @@ ZBaseTableWidget::ZBaseTableWidget(QWidget *parent) : QWidget(parent)
 void ZBaseTableWidget::zp_setModel(QAbstractItemModel* model)
 {
     zv_table->setModel(model);
+    connect(zv_table->selectionModel(), &QItemSelectionModel::currentChanged,
+            this, &ZBaseTableWidget::zg_currentChanged);
+}
+//=========================================================================
+QTableView* ZBaseTableWidget::zp_tableView() const
+{
+    return zv_table;
 }
 //=========================================================================
 void ZBaseTableWidget::zp_setCaption(const QString& caption)
@@ -52,6 +59,26 @@ void ZBaseTableWidget::zp_setCaption(const QString& caption)
     }
 }
 //=========================================================================
+void ZBaseTableWidget::zp_setColumnHidden(int column, bool hidden)
+{
+    zv_table->setColumnHidden(column, hidden);
+}
+//=========================================================================
+void ZBaseTableWidget::zp_setHorizontalHeaderHidden(bool hidden)
+{
+    zv_table->horizontalHeader()->setHidden(hidden);
+}
+//=========================================================================
+void ZBaseTableWidget::zp_setVerticalHeaderHidden(bool hidden)
+{
+    zv_table->verticalHeader()->setHidden(hidden);
+}
+//=========================================================================
+void ZBaseTableWidget::zp_setStretchLastSection(bool stretch)
+{
+    zv_table->horizontalHeader()->setStretchLastSection(stretch);
+}
+//=========================================================================
 void ZBaseTableWidget::zp_appendButtonActions(const QList<ZControlAction*>& actionList)
 {
     zv_buttonLayout->addStretch();
@@ -69,8 +96,12 @@ void ZBaseTableWidget::zp_appendButtonActions(const QList<ZControlAction*>& acti
         button->setIcon(actionList.at(a)->icon());
         button->setText(actionList.at(a)->text());
         button->setToolTip(actionList.at(a)->toolTip());
+        button->setEnabled(actionList[a]->isEnabled());
         connect(button, &QPushButton::clicked,
                 actionList[a], &QAction::trigger);
+        connect(actionList.at(a), &ZControlAction::zg_enableChanged,
+                button, &QPushButton::setEnabled);
+
         zv_buttonLayout->addWidget(button, 0, Qt::AlignRight);
     }
 }

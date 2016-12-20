@@ -110,7 +110,6 @@ void ZMeasuringManager::zh_onAddSamplesToSeriesAction()
 
     // get data from dialog
     int sampleTaskId = dialog.zp_sampleTaskId();
-    qDebug() << "SAMPLE TASK ID " << sampleTaskId;
     QString defaultSampleName = dialog.zp_sampleName();
     int sampleQuantity = dialog.zp_sampleQuantity();
 

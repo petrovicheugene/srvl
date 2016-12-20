@@ -12,7 +12,7 @@ class ZControlAction : public QAction
     Q_OBJECT
 public:
     explicit ZControlAction(QObject *parent = 0);
-    
+
 signals:
     
     void zg_enableChanged(bool);

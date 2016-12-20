@@ -8,7 +8,7 @@
 #include "ZDatabaseInspector.h"
 #include "ZSettingsDialog.h"
 #include "ZWidgetWithSidebar.h"
-
+#include "ZSQLCommanderDialog.h"
 // views
 #include "ZPlotter.h"
 #include "ZMeasuringResultTableWidget.h"
@@ -133,6 +133,11 @@ void MainWindow::zh_createActions()
     zv_helpAction->setText(NS_CommonStrings::glHelp);
     zv_helpAction->setToolTip(NS_CommonStrings::glHelpToolTip);
 
+    zv_runSQLCommandAction = new QAction(this);
+    zv_runSQLCommandAction->setIcon(QIcon());
+    zv_runSQLCommandAction->setText("SQL commander");
+    zv_runSQLCommandAction->setToolTip("Run SQL commander");
+
 }
 //============================================================
 void MainWindow::zh_createComponents()
@@ -214,6 +219,8 @@ void MainWindow::zh_createConnections()
             this, &MainWindow::zh_onSettingsAction);
     connect(this, &MainWindow::zg_saveSettings,
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_saveSettings);
+    connect(zv_runSQLCommandAction, &QAction::triggered,
+            this, &MainWindow::zh_onRunSQLCommandAction);
 
     // all about sample table
     zv_measuringCommonWidget->zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
@@ -221,8 +228,6 @@ void MainWindow::zh_createConnections()
     zv_measuringCommonWidget->zp_setMeasuringResultTableModel(zv_measuringResultTableModel);
     connect(zv_measuringManager, &ZMeasuringManager::zg_requestSelectedSampleList,
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_selectedSampleList);
-
-
 
 }
 //============================================================
@@ -317,6 +322,7 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
     if(menu->objectName() == NS_ObjectNames::glObjectNameMenuActions)
     {
         menu->addSeparator();
+        menu->addAction(zv_runSQLCommandAction);
         menu->addAction(zv_settingsAction);
         return;
     }
@@ -359,6 +365,13 @@ void MainWindow::zh_onAboutAction() const
 //============================================================
 void MainWindow::zh_onHelpAction() const
 {
+
+}
+//============================================================
+void MainWindow::zh_onRunSQLCommandAction() const
+{
+    ZSQLCommanderDialog dialog;
+    dialog.exec();
 
 }
 //============================================================

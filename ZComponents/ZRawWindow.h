@@ -5,23 +5,15 @@
 #include <QString>
 #include <ZCalibrationWindow.h>
 //===============================================
-/*!
- \brief
-
-*/
 class ZRawWindow
 {
 public:
-    /*!
-     \brief
-
-    */
     ZRawWindow();
 
-    QString name; /*!< TODO: describe */
-    ZCalibrationWindow::WindowType windowType; /*!< TODO: describe */
-    QString firstChannel; /*!< TODO: describe */
-    QString lastChannel; /*!< TODO: describe */
+    QString name;
+    ZCalibrationWindow::WindowType windowType;
+    QString firstChannel;
+    QString lastChannel;
 
 };
 //===============================================

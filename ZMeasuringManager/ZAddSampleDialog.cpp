@@ -1,9 +1,11 @@
 //======================================================
 #include "ZAddSampleDialog.h"
 #include "ZGLConstantsAndDefines.h"
-#include "ZSampleTaskDialog.h"
+#include "ZSampleTaskDialog2.h"
+#include "ZControlAction.h"
 #include "ZReadOnlyStyledItemDelegate.h"
 #include "ZMeasuringTaskInitStruct.h"
+#include "ZSampleTaskTableWidget.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -29,11 +31,27 @@
 //======================================================
 ZAddSampleDialog::ZAddSampleDialog(QWidget *parent) : QDialog(parent)
 {
-    setWindowTitle(tr("Sample"));
+    setWindowTitle(tr("Samples"));
     zv_selectedSampleTaskId = -1;
+    zh_createActions();
     zh_createComponents();
     zh_createConnections();
     zh_restoreSettings();
+}
+//======================================================
+void ZAddSampleDialog::zh_createActions()
+{
+    zv_newSampleTaskAction = new ZControlAction(this);
+    zv_newSampleTaskAction->setText(tr("New"));
+
+    zv_editSampleTaskAction = new ZControlAction(this);
+    zv_editSampleTaskAction->setEnabled(false);
+    zv_editSampleTaskAction->setText(tr("Edit"));
+
+    zv_reviewSampleTaskAction = new ZControlAction(this);
+    zv_reviewSampleTaskAction->setEnabled(false);
+    zv_reviewSampleTaskAction->setText(tr("Review"));
+
 }
 //======================================================
 void ZAddSampleDialog::zh_createComponents()
@@ -51,60 +69,69 @@ void ZAddSampleDialog::zh_createComponents()
     QHBoxLayout* levelLayout;
 
     // group box
-    QGroupBox* selectedGroupBox = new QGroupBox(this);
-    selectedGroupBox->setTitle(tr("Selected"));
-    mainLayout->addWidget(selectedGroupBox);
-    QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
-    selectedGroupBox->setLayout(groupBoxLayout);
+//    QGroupBox* selectedGroupBox = new QGroupBox(this);
+//    selectedGroupBox->setTitle(tr("Selected"));
+//    mainLayout->addWidget(selectedGroupBox);
+//    QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
+//    selectedGroupBox->setLayout(groupBoxLayout);
 
     // task name
-    label = new QLabel(this);
-    label->setText(glCreateCaption(tr("Task name:")));
-    groupBoxLayout->addWidget(label);
+//    label = new QLabel(this);
+//    label->setText(glCreateCaption(tr("Task name:")));
+//    groupBoxLayout->addWidget(label);
 
-    levelLayout = new QHBoxLayout(this);
-    groupBoxLayout->addLayout(levelLayout);
+//    levelLayout = new QHBoxLayout(this);
+//    groupBoxLayout->addLayout(levelLayout);
 
-    zv_taskNameLineEdit = new QLineEdit(this);
-    zv_taskNameLineEdit->setReadOnly(true);
-    zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
-    levelLayout->addWidget(zv_taskNameLineEdit);
-    levelLayout->addStretch();
+//    zv_taskNameLineEdit = new QLineEdit(this);
+//    zv_taskNameLineEdit->setReadOnly(true);
+//    zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+//    levelLayout->addWidget(zv_taskNameLineEdit);
+//    levelLayout->addStretch();
+
+
+    // task list
+//    label = new QLabel(this);
+//    label->setText(glCreateCaption(tr("Sample tasks:")));
+//    mainLayout->addWidget(label);
+
+    zv_sampleTaskTableWidget = new ZSampleTaskTableWidget(this);
+    zv_sampleTaskTableWidget->zp_setCaption(glCreateCaption(tr("Sample tasks:")));
+    mainLayout->addWidget(zv_sampleTaskTableWidget);
+
+//    zv_sampleTaskTable = new QTableView(this);
+//    zv_sampleTaskTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    zv_sampleTaskTable->setSelectionMode(QAbstractItemView::SingleSelection);
+//    mainLayout->addWidget(zv_sampleTaskTable);
+
+//    // new, edit and review sample task button
+//    levelLayout = new QHBoxLayout(this);
+//    mainLayout->addLayout(levelLayout);
+//    zv_newSampleTaskButton = new QPushButton(this);
+//    zv_newSampleTaskButton->setText(tr("New"));
+//    levelLayout->addStretch();
+//    levelLayout->addWidget(zv_newSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
+//    zv_editSampleTaskButton = new QPushButton(this);
+//    zv_editSampleTaskButton->setEnabled(false);
+//    zv_editSampleTaskButton->setText(tr("Edit"));
+//    levelLayout->addWidget(zv_editSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
+//    zv_reviewSampleTaskButton = new QPushButton(this);
+//    zv_reviewSampleTaskButton->setEnabled(false);
+//    zv_reviewSampleTaskButton->setText(tr("Review"));
+//    levelLayout->addWidget(zv_reviewSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     // Sample name
     label = new QLabel(this);
     label->setText(glCreateCaption(tr("Sample name template:")));
-    groupBoxLayout->addWidget(label);
+    mainLayout->addWidget(label);
 
     levelLayout = new QHBoxLayout(this);
-    groupBoxLayout->addLayout(levelLayout);
+    mainLayout->addLayout(levelLayout);
 
     zv_sampleNameLineEdit = new QLineEdit(this);
     zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
     levelLayout->addWidget(zv_sampleNameLineEdit);
     levelLayout->addStretch();
-
-    // task list
-    label = new QLabel(this);
-    label->setText(glCreateCaption(tr("Sample tasks:")));
-    mainLayout->addWidget(label);
-
-    zv_sampleTaskTable = new QTableView(this);
-    zv_sampleTaskTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    zv_sampleTaskTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    mainLayout->addWidget(zv_sampleTaskTable);
-
-    // new and review sample task button
-    levelLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(levelLayout);
-    zv_newSampleTaskButton = new QPushButton(this);
-    zv_newSampleTaskButton->setText(tr("New"));
-    levelLayout->addStretch();
-    levelLayout->addWidget(zv_newSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
-    zv_editSampleTaskButton = new QPushButton(this);
-    zv_editSampleTaskButton->setEnabled(false);
-    zv_editSampleTaskButton->setText(tr("Edit"));
-    levelLayout->addWidget(zv_editSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     // task quantity
     label = new QLabel(this);
@@ -143,31 +170,41 @@ void ZAddSampleDialog::zh_createComponents()
 //======================================================
 void ZAddSampleDialog::zh_createConnections()
 {
-    zv_sampleTaskTable->setModel(zv_sampleTaskTableModel);
+    zv_sampleTaskTableWidget->zp_setModel(zv_sampleTaskTableModel);
     // set read only delegate
-    if(zv_sampleTaskTable->itemDelegate())
+    QTableView* sampleTaskTable = zv_sampleTaskTableWidget->zp_tableView();
+    if(sampleTaskTable->itemDelegate())
     {
-        delete zv_sampleTaskTable->itemDelegate();
+        delete sampleTaskTable->itemDelegate();
     }
 
-    ZReadOnlyStyledItemDelegate* delegate = new ZReadOnlyStyledItemDelegate(zv_sampleTaskTable);
-    zv_sampleTaskTable->setItemDelegate(delegate);
-    zv_sampleTaskTable->setColumnHidden(0, true);
-    zv_sampleTaskTable->setColumnHidden(2, true);
+    ZReadOnlyStyledItemDelegate* delegate = new ZReadOnlyStyledItemDelegate;
+    sampleTaskTable->setItemDelegate(delegate);
+    zv_sampleTaskTableWidget->zp_setColumnHidden(0, true);
+    zv_sampleTaskTableWidget->zp_setColumnHidden(2, true);
 
-    zv_sampleTaskTable->horizontalHeader()->setStretchLastSection(true);
-    zv_sampleTaskTable->viewport()->installEventFilter(this);
+    zv_sampleTaskTableWidget->zp_setStretchLastSection(true);
+    sampleTaskTable->viewport()->installEventFilter(this);
 
-    connect(zv_sampleTaskTable->selectionModel(), &QItemSelectionModel::selectionChanged,
+    // add button actions
+    QList<ZControlAction*> actionList;
+    actionList.append(zv_newSampleTaskAction);
+    actionList.append(zv_editSampleTaskAction);
+    actionList.append(zv_reviewSampleTaskAction);
+    zv_sampleTaskTableWidget->zp_appendButtonActions(actionList);
+
+    connect(sampleTaskTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &ZAddSampleDialog::zh_onSelectionChange);
     connect(zv_okButton, &QPushButton::clicked,
             this, &ZAddSampleDialog::zh_onOkButtonClick);
     connect(zv_cancelButton, &QPushButton::clicked,
             this, &ZAddSampleDialog::reject);
-    connect(zv_newSampleTaskButton, &QPushButton::clicked,
+    connect(zv_newSampleTaskAction, &ZControlAction::triggered,
             this, &ZAddSampleDialog::zh_onNewSampleTaskButtonClick);
-    connect(zv_editSampleTaskButton, &QPushButton::clicked,
+    connect(zv_editSampleTaskAction, &ZControlAction::triggered,
             this, &ZAddSampleDialog::zh_onEditSampleTaskButtonClick);
+    connect(zv_reviewSampleTaskAction, &ZControlAction::triggered,
+            this, &ZAddSampleDialog::zh_onReviewSampleTaskButtonClick);
     connect(zv_sampleNameLineEdit, &QLineEdit::textChanged,
             this, &ZAddSampleDialog::zh_onSampleNameChange);
 
@@ -180,7 +217,7 @@ void ZAddSampleDialog::closeEvent(QCloseEvent* event)
 //======================================================
 bool ZAddSampleDialog::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == zv_sampleTaskTable->viewport() && event->type() == QEvent::MouseButtonDblClick)
+    if(object == zv_sampleTaskTableWidget->zp_tableView()->viewport() && event->type() == QEvent::MouseButtonDblClick)
     {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if(mouseEvent && mouseEvent->button() == Qt::LeftButton)
@@ -298,12 +335,9 @@ void ZAddSampleDialog::zh_onOkButtonClick()
 void ZAddSampleDialog::zh_onEditSampleTaskButtonClick() const
 {
     zv_messageLabel->clear();
-    ZSampleTaskDialog dialog;
-    connect(&dialog, &ZSampleTaskDialog::zg_checkTaskName,
-            this, &ZAddSampleDialog::zh_checkTaskName);
 
-    // current row
-    int row = zv_sampleTaskTable->currentIndex().row();
+    // get current sample task id
+    int row = zv_sampleTaskTableWidget->zp_tableView()->currentIndex().row();
     if(row < 0 || row >= zv_sampleTaskTableModel->rowCount())
     {
         QString msg = "Sample task is not selected.";
@@ -321,7 +355,7 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick() const
         return;
     }
 
-    // id
+    // id from record
     bool ok;
     int currentSampleTaskId = record.value(0).toInt(&ok);
     if(!ok)
@@ -331,178 +365,34 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick() const
         return;
     }
 
-    // sample task name
-    QString sampleTaskName = record.value(1).toString();
-    // sample name template
-    QString sampleNameTemplate = record.value(2).toString();
-    // description
-    QString description = record.value(3).toString();
-
-
-    // get QList<ZMeasuringTaskInitStruct>& measuringTaskInitStructList
-    // V V V
-    QList<ZMeasuringTaskInitStruct> measuringTaskInitStructList;
-
-    if(!dialog.zp_loadSampleTask(currentSampleTaskId,
-                                 sampleTaskName,
-                                 sampleNameTemplate,
-                                 description,
-                                 measuringTaskInitStructList
-                                 ))
-    {
-        QString msg = "Cannot load current task data to edit dialog.";
-        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
-        return;
-    }
-
-    if(!dialog.exec())
+    ZSampleTaskDialog2 dialog;
+    if(dialog.exec())
     {
 
     }
 }
 //======================================================
-void ZAddSampleDialog::zh_onNewSampleTaskButtonClick()
+void ZAddSampleDialog::zh_onReviewSampleTaskButtonClick() const
+{
+
+}
+//======================================================
+void ZAddSampleDialog::zh_onNewSampleTaskButtonClick() const
 {
     zv_messageLabel->clear();
-    ZSampleTaskDialog dialog;
-    connect(&dialog, &ZSampleTaskDialog::zg_checkTaskName,
-            this, &ZAddSampleDialog::zh_checkTaskName);
+    ZSampleTaskDialog2 dialog(zv_sampleTaskTableModel);
+//    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
+//            this, &ZAddSampleDialog::zh_checkTaskName);
 
     if(!dialog.exec())
     {
         return;
     }
 
-    // get data from dialog
-    QString sampleTaskName = dialog.zp_sampleTaskName();
-    QString sampleNameTemplate = dialog.zp_sampleNameTemplate();
-    QString description = dialog.zp_description();
-    QList<ZMeasuringTaskInitStruct> measuringTaskInitList = dialog.zp_measuringTaskInitList();
-
-    //    if(sampleTaskName.isEmpty() || sampleNameTemplate.isEmpty())
-    //    {
-    //        return;
-    //    }
-
-    // record new sample task
-    QSqlRecord record;
-    record.append(QSqlField("id", QVariant::Int));
-    record.append(QSqlField("name", QVariant::String));
-    record.append(QSqlField("sample_name_template", QVariant::String));
-    record.append(QSqlField("description", QVariant::String));
-
-    record.setValue(1, QVariant(sampleTaskName));
-    record.setValue(2, QVariant(sampleNameTemplate));
-    record.setValue(3, QVariant(description));
-
-    if(!zv_sampleTaskTableModel->insertRecord(-1, record))
-    {
-        QString msg = zv_sampleTaskTableModel->lastError().text();
-        QMessageBox::critical(this, tr("Model data error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
-        return;
-    }
-
-    if(!zv_sampleTaskTableModel->submitAll())
-    {
-        QString msg = zv_sampleTaskTableModel->lastError().text();
-        QMessageBox::critical(this, tr("Database record error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
-        zv_sampleTaskTableModel->revertAll();
-    }
-
-    // Get sample task id
-    // get sample task index
-    QModelIndex index = zv_sampleTaskTableModel->index(zv_sampleTaskTableModel->rowCount()-1, 0);
-    if(!index.isValid())
-    {
-        QString msg = "Cannot get model index for inserted sample task id.";
-        QMessageBox::critical(this, tr("Error"), tr("%1").arg(msg), QMessageBox::Ok);
-        zh_removeSampleTaskFromTable();
-        return;
-    }
-
-    // get sample task id
-    QVariant vData = index.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<int>())
-    {
-        QString msg = "Cannot get model data for inserted sample task id.";
-        QMessageBox::critical(this, tr("Error"), tr("%1").arg(msg), QMessageBox::Ok);
-        zh_removeSampleTaskFromTable();
-        return;
-    }
-
-    bool res;
-    int sampleTaskId = vData.toInt(&res);
-    if(!res)
-    {
-        QString msg = "Cannot cast sample task id model data from QVariant to int.";
-        QMessageBox::critical(this, tr("Error"), tr("%1").arg(msg), QMessageBox::Ok);
-        zh_removeSampleTaskFromTable();
-        return;
-    }
-
-    // Aux Models
-    // conditions has task (table conditions_has_sample_tasks)
-    // create conditions_has_sample_tasks sql model
-    QSqlTableModel conditionsInTasksModel;
-    conditionsInTasksModel.setTable("conditions_has_sample_tasks");
-    conditionsInTasksModel.select();
-
-    // calibration stacks has measuring conditions table (table calibration_stacks_has_conditions_has_sample_tasks)
-    // create calibration_stacks_has_conditions_has_sample_tasks sql model
-    QSqlTableModel calibrationStacksInTasksModel;
-    calibrationStacksInTasksModel.setTable("calibration_stacks_has_conditions_has_sample_tasks");
-    calibrationStacksInTasksModel.select();
-
-    // Write maesuring conditions
-    for(int i = 0; i < measuringTaskInitList.count(); i++)
-    {
-        // write measuring conditions
-        record.clear();
-
-        record.append(QSqlField("id", QVariant::Int));
-        record.append(QSqlField("measuring_conditions_gain_factor", QVariant::Int));
-        record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
-        record.append(QSqlField("sample_tasks_id", QVariant::Int));
-
-        record.setValue(1, QVariant(measuringTaskInitList.at(i).gainFactor));
-        record.setValue(2, QVariant(measuringTaskInitList.at(i).exposition));
-        record.setValue(3, QVariant(sampleTaskId));
-
-        if(!conditionsInTasksModel.insertRecord(-1, record))
-        {
-            QString msg = conditionsInTasksModel.lastError().text();
-            QMessageBox::critical(this, tr("Model data error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
-            zh_removeSampleTaskFromTable();
-            return;
-        }
-
-        if(!conditionsInTasksModel.submitAll())
-        {
-            QString msg = zv_sampleTaskTableModel->lastError().text();
-            QMessageBox::critical(this, tr("Database record error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
-            zv_sampleTaskTableModel->revertAll();
-            zh_removeSampleTaskFromTable();
-            return;
-        }
-
-        // write calibration stacks
-        int stacksCount = measuringTaskInitList.at(i).calibrationStackIdList.count();
-        for(int s = 0; s < stacksCount; s++)
-        {
-            record.clear();
-
-            //  V V V
-
-
-        }
-
-
-    }
-
     int row = zv_sampleTaskTableModel->rowCount() - 1;
     QModelIndex insertedIndex = zv_sampleTaskTableModel->index(row, 0);
-    zv_sampleTaskTable->setCurrentIndex(insertedIndex);
-    zv_sampleTaskTable->scrollTo(insertedIndex);
+    zv_sampleTaskTableWidget->zp_tableView()->setCurrentIndex(insertedIndex);
+    zv_sampleTaskTableWidget->zp_tableView()->scrollTo(insertedIndex);
 }
 //======================================================
 bool ZAddSampleDialog::zh_removeSampleTaskFromTable(int row)
@@ -542,27 +432,27 @@ void ZAddSampleDialog::zh_onSampleNameChange(const QString& text)
 bool ZAddSampleDialog::zh_checkData()
 {
     QString msg;
-    if(zv_selectedSampleTaskId < 0)
-    {
-        if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
-        {
-            msg = tr("Sample task is not selected.");
-        }
-        else
-        {
-            msg = tr("The id of the selected sample task is invalid.");
-        }
+//    if(zv_selectedSampleTaskId < 0)
+//    {
+//        if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
+//        {
+//            msg = tr("Sample task is not selected.");
+//        }
+//        else
+//        {
+//            msg = tr("The id of the selected sample task is invalid.");
+//        }
 
-        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
-        return false;
-    }
+//        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
+//        return false;
+//    }
 
-    if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
-    {
-        msg = tr("Sample task name is invalid.");
-        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
-        return false;
-    }
+//    if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
+//    {
+//        msg = tr("Sample task name is invalid.");
+//        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
+//        return false;
+//    }
 
     if(zv_sampleNameLineEdit->text() == zv_noSelectedTaskString
             || zv_sampleNameLineEdit->text().isEmpty())
@@ -577,15 +467,16 @@ bool ZAddSampleDialog::zh_checkData()
 //======================================================
 void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 {
-    // previously set review button disabled
-    zv_editSampleTaskButton->setEnabled(false);
+    // previously set edit and review button disabled
+    zv_editSampleTaskAction->setEnabled(false);
+    zv_reviewSampleTaskAction->setEnabled(false);
 
-    QModelIndex currentIndex = zv_sampleTaskTable->currentIndex();
+    QModelIndex currentIndex = zv_sampleTaskTableWidget->zp_tableView()->currentIndex();
     if(!currentIndex.isValid() || currentIndex.row() < 0
             || currentIndex.row() >= zv_sampleTaskTableModel->rowCount())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
@@ -597,7 +488,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     if(!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
@@ -605,7 +496,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
@@ -616,7 +507,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     if(!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
@@ -624,18 +515,18 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     if(!vData.isValid() || !vData.canConvert<QString>())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
-    zv_taskNameLineEdit->setText(vData.toString());
+    //zv_taskNameLineEdit->setText(vData.toString());
 
     // sample name template
     currentIndex = zv_sampleTaskTableModel->index(row, 2);
     if(!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
@@ -643,13 +534,14 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     if(!vData.isValid() || !vData.canConvert<QString>())
     {
         zv_selectedSampleTaskId = -1;
-        zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
+        //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
         zv_sampleNameLineEdit->setText(zv_noSelectedTaskString);
         return;
     }
 
     zv_sampleNameLineEdit->setText(vData.toString());
-    zv_editSampleTaskButton->setEnabled(true);
+    zv_editSampleTaskAction->setEnabled(true);
+    zv_reviewSampleTaskAction->setEnabled(true);
 
 }
 //======================================================

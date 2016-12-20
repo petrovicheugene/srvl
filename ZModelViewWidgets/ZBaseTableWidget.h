@@ -20,7 +20,12 @@ public:
     explicit ZBaseTableWidget(QWidget *parent = 0);
 
     virtual void zp_setModel(QAbstractItemModel* model);
+    QTableView* zp_tableView() const;
     void zp_setCaption(const QString& caption);
+    void zp_setColumnHidden(int column, bool hidden);
+    void zp_setHorizontalHeaderHidden(bool hidden);
+    void zp_setVerticalHeaderHidden(bool hidden);
+    void zp_setStretchLastSection(bool stretch);
 
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
@@ -29,6 +34,8 @@ public:
 
 
 signals:
+
+    void zg_currentChanged(const QModelIndex& current, const QModelIndex& previous) const;
 
 public slots:
 

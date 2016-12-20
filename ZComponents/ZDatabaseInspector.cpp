@@ -13,6 +13,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QStandardPaths>
+#include <QTextStream>
 //=========================================================
 const int ZDatabaseInspector::zv_userVersion = 41086;
 //=========================================================

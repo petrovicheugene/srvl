@@ -6,12 +6,15 @@
 #include <QModelIndex>
 #include <QItemSelection>
 //======================================================
+class ZControlAction;
+class ZSampleTaskTableWidget;
+
 class QPushButton;
 class QLabel;
 class QLineEdit;
 class QSpinBox;
 class QSqlTableModel;
-class QTableView;
+// class QTableView;
 
 //======================================================
 class ZAddSampleDialog : public QDialog
@@ -38,8 +41,9 @@ public slots:
 private slots:
 
     void zh_onOkButtonClick();
-    void zh_onNewSampleTaskButtonClick();
+    void zh_onNewSampleTaskButtonClick() const;
     void zh_onEditSampleTaskButtonClick() const;
+    void zh_onReviewSampleTaskButtonClick() const;
     void zh_onSelectionChange(const QItemSelection &current, const QItemSelection &previous);
     void zh_onSampleNameChange(const QString& text);
     void zh_checkTaskName(int sampleTaskId, const QString& taskName, bool &res) const;
@@ -47,22 +51,29 @@ private slots:
 private:
 
     // VARS
+    ZControlAction* zv_newSampleTaskAction;
+    ZControlAction* zv_editSampleTaskAction;
+    ZControlAction* zv_reviewSampleTaskAction;
+
     QPushButton* zv_okButton;
     QPushButton* zv_cancelButton;
-    QPushButton* zv_newSampleTaskButton;
-    QPushButton* zv_editSampleTaskButton;
+//    QPushButton* zv_newSampleTaskButton;
+//    QPushButton* zv_editSampleTaskButton;
+//    QPushButton* zv_reviewSampleTaskButton;
 
-    QTableView* zv_sampleTaskTable;
+    // QTableView* zv_sampleTaskTable;
+    ZSampleTaskTableWidget* zv_sampleTaskTableWidget;
     QSqlTableModel* zv_sampleTaskTableModel;
 
     QLineEdit* zv_sampleNameLineEdit;
-    QLineEdit* zv_taskNameLineEdit;
+    //QLineEdit* zv_taskNameLineEdit;
     QSpinBox* zv_quantitySpinBox;
     QLabel* zv_messageLabel;
     const QString zv_noSelectedTaskString = tr("None");
     int zv_selectedSampleTaskId;
 
     // FUNCS
+    void zh_createActions();
     void zh_createComponents();
     void zh_createConnections();
     void zh_restoreSettings();

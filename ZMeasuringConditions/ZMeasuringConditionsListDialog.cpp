@@ -104,42 +104,42 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     QLabel* label;
     QHBoxLayout* levelLayout;
     // selected conditions
-    if(forSelection)
-    {
-        // group box
-        QGroupBox* selectedGroupBox = new QGroupBox(this);
-        selectedGroupBox->setTitle(tr("Selected"));
-        mainLayout->addWidget(selectedGroupBox);
-        QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
-        selectedGroupBox->setLayout(groupBoxLayout);
+//    if(forSelection)
+//    {
+//        // group box
+//        QGroupBox* selectedGroupBox = new QGroupBox(this);
+//        selectedGroupBox->setTitle(tr("Selected"));
+//        mainLayout->addWidget(selectedGroupBox);
+//        QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
+//        selectedGroupBox->setLayout(groupBoxLayout);
 
-        // selected gain factor
-                label = new QLabel(this);
-                label->setText(glCreateCaption(tr("Gain factor:")));
-                groupBoxLayout->addWidget(label);
-
-
-                levelLayout = new QHBoxLayout(this);
-                groupBoxLayout->addLayout(levelLayout);
-                zv_selectedGainFactorLineEdit = new QLineEdit(this);
-                zv_selectedGainFactorLineEdit->setReadOnly(true);
-                zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
-                levelLayout->addWidget(zv_selectedGainFactorLineEdit);
-                levelLayout->addStretch();
-
-                // selected exposition
-                label = new QLabel(this);
-                label->setText(glCreateCaption(tr("Exposition (s):")));
-                groupBoxLayout->addWidget(label);
+//        // selected gain factor
+//                label = new QLabel(this);
+//                label->setText(glCreateCaption(tr("Gain factor:")));
+//                groupBoxLayout->addWidget(label);
 
 
-                levelLayout = new QHBoxLayout(this);
-                groupBoxLayout->addLayout(levelLayout);
-                zv_selectedExpositionLineEdit = new QLineEdit(this);
-                zv_selectedExpositionLineEdit->setReadOnly(true);
-                zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
-                levelLayout->addWidget(zv_selectedExpositionLineEdit);
-                levelLayout->addStretch();
+//                levelLayout = new QHBoxLayout(this);
+//                groupBoxLayout->addLayout(levelLayout);
+//                zv_selectedGainFactorLineEdit = new QLineEdit(this);
+//                zv_selectedGainFactorLineEdit->setReadOnly(true);
+//                zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
+//                levelLayout->addWidget(zv_selectedGainFactorLineEdit);
+//                levelLayout->addStretch();
+
+//                // selected exposition
+//                label = new QLabel(this);
+//                label->setText(glCreateCaption(tr("Exposition (s):")));
+//                groupBoxLayout->addWidget(label);
+
+
+//                levelLayout = new QHBoxLayout(this);
+//                groupBoxLayout->addLayout(levelLayout);
+//                zv_selectedExpositionLineEdit = new QLineEdit(this);
+//                zv_selectedExpositionLineEdit->setReadOnly(true);
+//                zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
+//                levelLayout->addWidget(zv_selectedExpositionLineEdit);
+//                levelLayout->addStretch();
 
 
 //        label = new QLabel(this);
@@ -152,7 +152,7 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
 //        zv_selectedConditionsLineEdit->setText(zv_noSelectedConditionsString);
 //        levelLayout->addWidget(zv_selectedConditionsLineEdit);
 //        levelLayout->addStretch();
-    }
+//    }
 
     // list table
     label = new QLabel(this);
@@ -291,25 +291,25 @@ void ZMeasuringConditionsListDialog::zh_onSelectionChange(const QItemSelection& 
 //======================================================
 void ZMeasuringConditionsListDialog::zh_updateSelectedMeasuringConditionsString()
 {
-    int gainFactor = zp_gainFactor();
-    int exposition = zp_exposition();
-    if(gainFactor < 0)
-    {
-        zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
-    }
-    else
-    {
-        zv_selectedGainFactorLineEdit->setText(QString::number(gainFactor));
-    }
+//    int gainFactor = zp_gainFactor();
+//    int exposition = zp_exposition();
+//    if(gainFactor < 0)
+//    {
+//        zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
+//    }
+//    else
+//    {
+//        zv_selectedGainFactorLineEdit->setText(QString::number(gainFactor));
+//    }
 
-    if(exposition < 0)
-    {
-        zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
-    }
-    else
-    {
-        zv_selectedExpositionLineEdit->setText(QString::number(exposition));
-    }
+//    if(exposition < 0)
+//    {
+//        zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
+//    }
+//    else
+//    {
+//        zv_selectedExpositionLineEdit->setText(QString::number(exposition));
+//    }
 
 
     // zv_selectedConditionsLineEdit->setText(tr("G.F.:%1; Expo:%2").arg(QString::number(gainFactor), QString::number(exposition)));
@@ -363,14 +363,14 @@ void ZMeasuringConditionsListDialog::zh_newConditions()
     if(!zv_measuringConditionsModel->insertRecord(-1, record))
     {
         QString msg = zv_measuringConditionsModel->lastError().text();
-        QMessageBox::critical(this, tr("Model data error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+        QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
         return;
     }
 
     if(!zv_measuringConditionsModel->submitAll())
     {
         QString msg = zv_measuringConditionsModel->lastError().text();
-        QMessageBox::critical(this, tr("Database record error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
+        QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
         zv_measuringConditionsModel->revertAll();
     }
 

@@ -43,8 +43,6 @@ extern const QString glIconVerticalDecrease;
 extern const QString glIconHorizontalIncrease;
 extern const QString glIconHorizontalDecrease;
 extern const QString glIconFitInRect;
-
-
 }
 
 // Common non translatable strings
@@ -77,8 +75,6 @@ extern const QString glWarning; /*!< TODO: describe */
 extern const QString glCommon; /*!< TODO: describe */
 extern const QString glColor; /*!< TODO: describe */
 extern const QString glSelectColor; /*!< TODO: describe */
-
-
 }
 
 // Menu strings
@@ -107,6 +103,7 @@ extern const QString glOpenFile; /*!< TODO: describe */
 extern const QString glSelectColor; /*!< TODO: describe */
 
 }
+extern const int glMaxGainFactor;
 
 // FUNCS
 QString glCreateCaption(const QString& simpleText);

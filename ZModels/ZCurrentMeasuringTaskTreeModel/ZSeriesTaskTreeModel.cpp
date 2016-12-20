@@ -6,7 +6,7 @@
 #include "ZSampleTaskItem.h"
 
 #include "ZAddSampleDialog.h"
-#include "ZSampleTaskDialog.h"
+#include "ZSampleTaskDialog2.h"
 
 //qt
 #include <QMessageBox>
@@ -286,33 +286,33 @@ void ZSeriesTaskTreeModel::zh_onRemoveSampleAction()
 //===========================================================
 void ZSeriesTaskTreeModel::zh_onNewTaskAction()
 {
-    ZSampleTaskDialog dialog;
-    connect(&dialog, &ZSampleTaskDialog::zg_checkTaskName,
-            this, &ZSeriesTaskTreeModel::zh_checkTaskName);
+    ZSampleTaskDialog2 dialog;
+//    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
+//            this, &ZSeriesTaskTreeModel::zh_checkTaskName);
 
     if(!dialog.exec())
     {
         return;
     }
 
-    int sampleTaskQuantity = 0;//dialog.zp_sampleTaskQuantity();
-    QString defaultSampleName = dialog.zp_sampleNameTemplate();
-    int lastSampleSerialNumber = zh_findLastSampleSerialNumber(defaultSampleName);
-    QString sampleName;
+//    int sampleTaskQuantity = 0;//dialog.zp_sampleTaskQuantity();
+//    //QString defaultSampleName = dialog.zp_sampleNameTemplate();
+//    int lastSampleSerialNumber = zh_findLastSampleSerialNumber(defaultSampleName);
+//    QString sampleName;
 
-    for(int i = 0; i < sampleTaskQuantity; i++)
-    {
-        for(int c = 0; c < 999999999; c++)
-        {
-            sampleName = defaultSampleName + QString::number(++lastSampleSerialNumber);
-            if(zh_checkSampleName(sampleName))
-            {
-               break;
-            }
-        }
+//    for(int i = 0; i < sampleTaskQuantity; i++)
+//    {
+//        for(int c = 0; c < 999999999; c++)
+//        {
+//            sampleName = defaultSampleName + QString::number(++lastSampleSerialNumber);
+//            if(zh_checkSampleName(sampleName))
+//            {
+//               break;
+//            }
+//        }
 
-        zh_insertSampleTaskIntoList(sampleName, dialog.zp_sampleTaskName());
-    }
+//        zh_insertSampleTaskIntoList(sampleName, dialog.zp_sampleTaskName());
+//    }
 }
 //===========================================================
 int ZSeriesTaskTreeModel::zh_findLastSampleSerialNumber(const QString& sampleNameTemplate) const

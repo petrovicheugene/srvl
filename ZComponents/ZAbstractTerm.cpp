@@ -197,7 +197,7 @@ QString ZAbstractTerm::zp_termFactorString() const
 //============================================================
 bool ZAbstractTerm::zh_setTermFactor(qreal factor)
 {
-    if(zv_termFactor - factor == 0.0)
+    if(zv_termFactor == factor)
     {
         return false;
     }

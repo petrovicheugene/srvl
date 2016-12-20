@@ -4,29 +4,16 @@
 //==========================================
 #include "ZCalibration.h"
 //==========================================
-/*!
- \brief
-
-*/
 class ZNormaSettingsData
 {
 public:
-    /*!
-     \brief
-
-    */
     ZNormaSettingsData();
-    /*!
-     \brief
-
-     \param calibration
-    */
     explicit ZNormaSettingsData(const ZCalibration* calibration);
 
     // VARS
-    ZTermNormalizer::NormaType normaType; /*!< TODO: describe */
-    QString customNormaString; /*!< TODO: describe */
-    QList<QPair<qint64, QString> > termList; /*!< TODO: describe */
+    ZTermNormalizer::NormaType normaType;
+    QString customNormaString;
+    QList<QPair<qint64, QString> > termList;
 
 
 };

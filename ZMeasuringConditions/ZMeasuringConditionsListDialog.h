@@ -46,8 +46,8 @@ private:
     // VARS
     QSqlTableModel* zv_measuringConditionsModel;
     //QLineEdit* zv_selectedConditionsLineEdit;
-    QLineEdit* zv_selectedGainFactorLineEdit;
-    QLineEdit* zv_selectedExpositionLineEdit;
+//    QLineEdit* zv_selectedGainFactorLineEdit;
+//    QLineEdit* zv_selectedExpositionLineEdit;
 
 
     QTableView* zv_measuringConditionsTable;

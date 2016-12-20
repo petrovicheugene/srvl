@@ -5,31 +5,18 @@
 #include "ZCalibration.h"
 #include "ZNormaSettingsData.h"
 //========================================================
-/*!
- \brief
-
-*/
 class ZEquationSettingsData
 {
 public:
-    /*!
-     \brief
-
-    */
     ZEquationSettingsData();
-    /*!
-     \brief
-
-     \param calibration
-    */
     explicit ZEquationSettingsData(const ZCalibration* calibration);
 
     // VARS
 
-    ZCalibration::EquationType equationType; /*!< TODO: describe */
-    qint64 baseTermId; /*!< TODO: describe */
-    QList<QPair<qint64, QString> > termList; /*!< TODO: describe */
-    ZNormaSettingsData fractionalBaseNormaSettingsData; /*!< TODO: describe */
+    ZCalibration::EquationType equationType;
+    qint64 baseTermId;
+    QList<QPair<qint64, QString> > termList;
+    ZNormaSettingsData fractionalBaseNormaSettingsData;
 };
 Q_DECLARE_METATYPE(ZEquationSettingsData)
 //========================================================

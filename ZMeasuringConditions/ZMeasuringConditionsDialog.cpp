@@ -73,7 +73,7 @@ void ZMeasuringConditionsDialog::zh_createComponents()
     mainLayout->addWidget(label);
 
     zv_gainFactorSpinBox = new QSpinBox(this);
-    zv_gainFactorSpinBox->setRange(1, 255);
+    zv_gainFactorSpinBox->setRange(1, glMaxGainFactor);
     mainLayout->addWidget(zv_gainFactorSpinBox);
 
     // exposition

@@ -88,6 +88,9 @@ extern const QString glOpenFile = QObject::tr("Open file");
 extern const QString glSelectColor = QObject::tr("Select color");
 }
 
+extern const int glMaxGainFactor = 255;
+
+
 // FUNCS
 QString glCreateCaption(const QString& simpleText)
 {

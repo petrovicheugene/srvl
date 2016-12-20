@@ -10,7 +10,7 @@ PRAGMA foreign_keys = OFF;
 ATTACH "sdAnalyzer.sdb" AS "sdAnalyzer";
 BEGIN;
 CREATE TABLE "sample_tasks"(
-  "id" INTEGER PRIMARY KEY NOT NULL,
+  "id" INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
   "name" VARCHAR(45) NOT NULL,
   "sample_name_template" VARCHAR(45) NOT NULL,
   "description" TEXT,

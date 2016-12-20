@@ -5,25 +5,17 @@
 #include "ZAbstractTerm.h"
 #include <QString>
 //================================================
-/*!
- \brief
-
-*/
 class ZRawTerm
 {
 public:
-    /*!
-     \brief
-
-    */
     ZRawTerm();
     // VARS
-    QString name; /*!< TODO: describe */
-    ZAbstractTerm::TermType termType; /*!< TODO: describe */
-    ZAbstractTerm::TermState termState; /*!< TODO: describe */
-    QStringList windowList; /*!< TODO: describe */
-    QString customString; /*!< TODO: describe */
-    QString factor; /*!< TODO: describe */
+    QString name;
+    ZAbstractTerm::TermType termType;
+    ZAbstractTerm::TermState termState;
+    QStringList windowList;
+    QString customString;
+    QString factor;
 };
 //================================================
 #endif // ZRAWTERM_H

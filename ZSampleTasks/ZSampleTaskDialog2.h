@@ -1,9 +1,9 @@
 //===============================================================
-#ifndef ZSAMPLETASKDIALOG_H
-#define ZSAMPLETASKDIALOG_H
+#ifndef ZSAMPLETASKDIALOG2_H
+#define ZSAMPLETASKDIALOG2_H
 //===============================================================
-#include "ZMeasuringTaskInitStruct.h"
 #include <QDialog>
+#include "ZMeasuringTaskInitStruct.h"
 //===============================================================
 class QLabel;
 class QLineEdit;
@@ -12,46 +12,31 @@ class QSpinBox;
 class QSplitter;
 class QTextEdit;
 class QTableView;
-
-//class ZTaskMeasuringConditionTableWidget;
-//class ZChemicalTaskTableWidget;
-//class ZTaskCalibrationStackTableWidget;
 class ZSampleTaskTreeWidget;
 class ZSampleTaskTreeModel;
+class QSqlTableModel;
 //===============================================================
-class ZSampleTaskDialog : public QDialog
+class ZSampleTaskDialog2 : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZSampleTaskDialog(QWidget *parent = 0);
-
-    QString zp_sampleTaskName() const;
-    QString zp_sampleNameTemplate() const;
-    QString zp_description() const;
-    QList<ZMeasuringTaskInitStruct> zp_measuringTaskInitList() const;
-
-    bool zp_loadSampleTask(int sampleTaskId,
-                           const QString& sampleTaskName,
-                           const QString& sampleNameTemplate,
-                           const QString& description,
-                           const QList<ZMeasuringTaskInitStruct>& measuringTaskInitStructList);
-
+    explicit ZSampleTaskDialog2(QSqlTableModel* taskModel = 0, int sampleTaskId = -1, QWidget *parent = 0);
 
 signals:
 
-    void zg_checkTaskName(int id, const QString& taskName, bool& res);
-
 public slots:
 
-protected:
 
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 
     void zh_onOkButtonClick();
     void zh_onLineEditDataChange(const QString& text);
     void zh_onModelRowCountChange(const QModelIndex& parent, int first, int last);
+
+protected:
+
+    void closeEvent(QCloseEvent* event);
 
 private:
 
@@ -63,22 +48,23 @@ private:
     QLabel* zv_messageLabel;
     QPushButton* zv_okButton;
     QPushButton* zv_cancelButton;
-
+    QSqlTableModel *zv_sampleTaskTableModel;
     ZSampleTaskTreeWidget* zv_sampleTaskTreeWidget;
     ZSampleTaskTreeModel* zv_sampleTaskTreeModel;
 
-    //    ZTaskMeasuringConditionTableWidget* zv_measuringTableWidget;
-    //    ZChemicalTaskTableWidget* zv_chemicalTaskTableWidget;
-    //    ZTaskCalibrationStackTableWidget* zv_calibrationStackTableWidget;
-    //QSplitter* zv_tableSplitter;
 
     // FUNCS
     void zh_createComponents();
     void zh_createConnections();
     void zh_restoreSettings();
     void zh_saveSettings() const;
-    bool zh_checkDataEmptiness();
+
+    bool zh_checkData() const;
+    bool zh_writeSampleTaskToDatabase();
+    bool zh_removeSampleTaskFromTable(int row = -1);
+
+    bool zh_loadSampleTask();
 
 };
 //===============================================================
-#endif // ZSAMPLETASKDIALOG_H
+#endif // ZSAMPLETASKDIALOG2_H

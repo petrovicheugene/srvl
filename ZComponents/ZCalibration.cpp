@@ -166,10 +166,18 @@ ZCalibration::ZCalibration(const QString& name, QObject *parent) : QObject(paren
         zv_lastColorIndex = 0;
     }
 
+    zv_exposition = 0;
+    zv_energyCalibrationFactorK0 = 0;
+    zv_energyCalibrationFactorK1 = 0;
+    zv_energyCalibrationFactorK2 = 0;
+    zv_gainFactor = 0;
+    zv_energyUnit = "not defined";
+
     zv_calibrationId = zv_lastCalibrationId++;
     zv_chemElement = glDefaultChemElementString;
     zv_termNormalizer  = new ZTermNormalizer(this);
     zv_baseTermNormalizer = new ZTermNormalizer(this);
+
 
     zv_equationType = ET_POLYNOMIAL;
     zp_setEquationIntercept(0.0);
@@ -192,6 +200,13 @@ ZCalibration::ZCalibration(const ZCalibration *calibration, const QString& name,
     {
         zv_lastColorIndex = 0;
     }
+
+    zv_exposition = calibration->zv_exposition;
+    zv_energyCalibrationFactorK0 =  calibration->zv_energyCalibrationFactorK0;
+    zv_energyCalibrationFactorK1 = calibration->zv_energyCalibrationFactorK1;
+    zv_energyCalibrationFactorK2 = calibration->zv_energyCalibrationFactorK2;
+    zv_gainFactor = calibration->zv_gainFactor;
+    zv_energyUnit = calibration->zv_energyUnit;
 
     zv_calibrationId = zv_lastCalibrationId++;
     zv_chemElement = calibration->zv_chemElement;
@@ -302,6 +317,75 @@ bool ZCalibration::zp_setChemElement(const QString& chemElement)
     emit zg_dirtyChanged(zv_dirty);
 
     return true;
+}
+//=========================================================
+void ZCalibration::zp_setEnergyCalibration(qreal K0, qreal K1, qreal K2, const QString& energyUnit)
+{
+    zv_energyCalibrationFactorK0 = K0;
+    zv_energyCalibrationFactorK1 = K1;
+    zv_energyCalibrationFactorK2 = K2;
+    zv_energyUnit = energyUnit;
+
+}
+//=========================================================
+void ZCalibration::zp_setEnergyCalibrationK0(qreal K0)
+{
+    zv_energyCalibrationFactorK0 = K0;
+}
+//=========================================================
+void ZCalibration::zp_setEnergyCalibrationK1(qreal K1)
+{
+    zv_energyCalibrationFactorK1 = K1;
+}
+//=========================================================
+void ZCalibration::zp_setEnergyCalibrationK2(qreal K2)
+{
+    zv_energyCalibrationFactorK2 = K2;
+}
+//=========================================================
+void ZCalibration::zp_setEnergyUnit(const QString& energyUnit)
+{
+    zv_energyUnit = energyUnit;
+}
+//=========================================================
+void ZCalibration::zp_setGainFactor(int gainFactor)
+{
+    zv_gainFactor = gainFactor;
+}
+//=========================================================
+void ZCalibration::zp_setExposition(int exposition)
+{
+    zv_exposition = exposition;
+}
+//=========================================================
+qreal ZCalibration::zp_energyCalibrationK0() const
+{
+    return zv_energyCalibrationFactorK0;
+}
+//=========================================================
+qreal ZCalibration::zp_energyCalibrationK1() const
+{
+    return zv_energyCalibrationFactorK1;
+}
+//=========================================================
+qreal ZCalibration::zp_energyCalibrationK2() const
+{
+    return zv_energyCalibrationFactorK2;
+}
+//=========================================================
+QString ZCalibration::zp_energyUnit() const
+{
+    return zv_energyUnit;
+}
+//=========================================================
+int ZCalibration::zp_gainFactor() const
+{
+    return zv_gainFactor;
+}
+//=========================================================
+int ZCalibration::zp_exposition() const
+{
+    return zv_exposition;
 }
 //=========================================================
 bool ZCalibration::zp_isVisible() const
@@ -980,9 +1064,9 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
         term = new ZSimpleTerm(window, this);
         term->zp_setTermState(termState);
         term->zh_setTermFactor(termFactor);
-//        emit zg_termOperation(TOT_BEGIN_INSERT_TERM, termIndex, termIndex);
-//        zv_termList.insert(termIndex, simpleTerm);
-//        emit zg_termOperation(TOT_END_INSERT_TERM, termIndex, termIndex);
+        //        emit zg_termOperation(TOT_BEGIN_INSERT_TERM, termIndex, termIndex);
+        //        zv_termList.insert(termIndex, simpleTerm);
+        //        emit zg_termOperation(TOT_END_INSERT_TERM, termIndex, termIndex);
 
     }
     else if(termType == ZAbstractTerm::TT_QUADRATIC)
@@ -1089,9 +1173,9 @@ int ZCalibration::zp_createTerm(const ZRawTerm& rawTerm)
     }
 
     return zp_createTerm(windowIndexList,
-                                    rawTerm.termType,
-                                    rawTerm.termState,
-                                    rawTerm.factor);
+                         rawTerm.termType,
+                         rawTerm.termState,
+                         rawTerm.factor);
 }
 //=========================================================
 ZTermNormalizer::NormaType ZCalibration::zp_normaType() const

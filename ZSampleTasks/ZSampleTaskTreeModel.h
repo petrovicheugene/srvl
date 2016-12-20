@@ -28,6 +28,8 @@ public:
     QList<ZControlAction*> zp_buttonTreeActions() const;
     QList<ZControlAction*> zp_contextTreeActions() const;
 
+    ZSampleTaskTreeBaseItem* zp_itemForIndex(const QModelIndex& index) const;
+
 signals:
 
 public slots:
@@ -40,11 +42,11 @@ private slots:
     void zh_onRemoveCurrentTaskElementAction();
 
     void zh_indexForItem(ZSampleTaskTreeBaseItem* item,
-                                QModelIndex& index);
+                         QModelIndex& index);
     void zh_onItemOperation(ZSampleTaskTreeBaseItem::ItemOperationType type,
-                       QModelIndex parent,
-                       int first,
-                       int last);
+                            QModelIndex parent,
+                            int first,
+                            int last);
 private:
 
     // VARS
@@ -61,7 +63,6 @@ private:
     void zh_createActions();
     void zh_createConnections();
 
-    ZSampleTaskTreeBaseItem* zh_itemForIndex(const QModelIndex& index) const;
 
 };
 //===================================================

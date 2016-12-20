@@ -74,6 +74,7 @@ private slots:
 
     */
     void zh_onHelpAction() const;
+    void zh_onRunSQLCommandAction() const;
     void zh_onSettingsAction();
 
     void zh_applyAppSettingsToComponents(const ZAppSettings &appSettings);
@@ -89,6 +90,7 @@ private:
 
     // actions
     QAction* zv_settingsAction;       /*!< TODO: describe */
+    QAction* zv_runSQLCommandAction;       /*!< TODO: describe */
     QAction* zv_exitAction;       /*!< TODO: describe */
     QAction* zv_aboutAction;    /*!< TODO: describe */
     QAction* zv_helpAction;      /*!< TODO: describe */

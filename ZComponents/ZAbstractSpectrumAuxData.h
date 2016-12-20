@@ -4,37 +4,19 @@
 //================================================
 
 //================================================
-/*!
- \brief
-
-*/
 class ZAbstractSpectrumAuxData
 {
 public:
-    /*!
-     \brief
-
-    */
     enum DataType {DT_SPE};
-    /*!
-     \brief
-
-     \param type
-    */
     explicit ZAbstractSpectrumAuxData(DataType type);
 
-    /*!
-     \brief
-
-     \return DataType
-    */
     DataType zp_type() const;
 
 private:
 
     // VARS
 
-    DataType zv_type; /*!< TODO: describe */
+    DataType zv_type;
 
 };
 //================================================

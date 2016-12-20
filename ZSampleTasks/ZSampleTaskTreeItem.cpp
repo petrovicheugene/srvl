@@ -24,7 +24,7 @@ ZSampleTaskTreeBaseItem::ZSampleTaskTreeBaseItem(ZSampleTaskTreeItemOptions::Ite
     zv_itemName = QString();
     zv_parent = parent;
     zv_itemType = type;
-    zv_recordId = -1;
+    zv_id = -1;
 }
 //=================================================
 ZSampleTaskTreeBaseItem::~ZSampleTaskTreeBaseItem()
@@ -68,9 +68,9 @@ ZSampleTaskTreeItemOptions::ItemType ZSampleTaskTreeBaseItem::zp_itemType() cons
     return zv_itemType;
 }
 //=================================================
-int ZSampleTaskTreeBaseItem::zp_recordId() const
+int ZSampleTaskTreeBaseItem::zp_id() const
 {
-    return zv_recordId;
+    return zv_id;
 }
 //=================================================
 bool ZSampleTaskTreeBaseItem::zp_hasChildren() const
@@ -149,7 +149,7 @@ bool ZSampleTaskTreeRootItem::zp_createChild(ZSampleTaskTreeItemOptions* options
 //=================================================
 ZSampleTaskTreeMeasuringConditionsItem::ZSampleTaskTreeMeasuringConditionsItem(ZSampleTaskTreeMeasuringConditionsItemOptions* options,
                                                                                ZSampleTaskTreeBaseItem* parent)
-    : ZSampleTaskTreeBaseItem(ZSampleTaskTreeItemOptions::IT_ROOT, parent)
+    : ZSampleTaskTreeBaseItem(ZSampleTaskTreeItemOptions::IT_MEASURING_CONDITIONS, parent)
 {
     zv_gainFactor = options->zp_gainFactor();
     zv_exposition = options->zp_exposition();
