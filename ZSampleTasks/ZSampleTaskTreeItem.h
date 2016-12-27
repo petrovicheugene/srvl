@@ -64,6 +64,80 @@ protected:
     int zv_exposition;
     
 };
+//=================================================
+class ZSampleTaskTreeChemicalTaskItemOptions : public ZSampleTaskTreeItemOptions
+{
+public:
+
+    ZSampleTaskTreeChemicalTaskItemOptions(int chemicalTaskId,
+                                           QString chemicalTaskName,
+                                           QString chemical)
+        : ZSampleTaskTreeItemOptions(IT_CHEMICAL_TASK)
+    {
+        zv_chemicalTaskId = chemicalTaskId;
+        zv_chemicalTaskName = chemicalTaskName;
+        zv_chemical = chemical;
+    }
+
+    virtual ~ZSampleTaskTreeChemicalTaskItemOptions(){}
+    int zp_chemicalTaskId() const
+    {
+        return zv_chemicalTaskId;
+    }
+    QString zp_chemicalTaskName() const
+    {
+        return zv_chemicalTaskName;
+    }
+    QString zp_chemical() const
+    {
+        return zv_chemical;
+    }
+
+protected:
+
+    // VARS
+    int zv_chemicalTaskId;
+    QString zv_chemicalTaskName;
+    QString zv_chemical;
+};
+//=================================================
+class ZSampleTaskTreeCalibrationItemOptions : public ZSampleTaskTreeItemOptions
+{
+public:
+
+    ZSampleTaskTreeCalibrationItemOptions(QString calibrationName,
+                                          double minConcentration,
+                                          double maxConcentration)
+        : ZSampleTaskTreeItemOptions(IT_CALIBRATION)
+    {
+         zv_calibrationName = calibrationName;
+         zv_minConcentration = minConcentration;
+         zv_maxConcentration = maxConcentration;
+    }
+
+    virtual ~ZSampleTaskTreeCalibrationItemOptions(){}
+
+    QString zp_calibrationName() const
+    {
+        return zv_calibrationName;
+    }
+    double zp_minConcentration() const
+    {
+        return zv_minConcentration;
+    }
+    double zp_maxConcentration() const
+    {
+        return zv_maxConcentration;
+    }
+
+protected:
+
+    // VARS
+    QString zv_calibrationName;
+    double zv_minConcentration;
+    double zv_maxConcentration;
+
+};
 // END OPTIONS
 //=================================================
 class ZSampleTaskTreeBaseItem : public QObject
@@ -95,14 +169,13 @@ public:
                         ZSampleTaskTreeBaseItem*& parentItem,
                         int& row);
     
-    virtual bool zp_createChild(ZSampleTaskTreeItemOptions* options) = 0;
+    virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options) = 0;
     
 signals:
     
     void zg_requestIndexForItem(ZSampleTaskTreeBaseItem* item, QModelIndex& index);
-    
     void zg_itemOperation(ItemOperationType type, QModelIndex parent, int first, int last);
-    
+
 protected:
     
     // VARS
@@ -113,7 +186,6 @@ protected:
 
     QList<ZSampleTaskTreeBaseItem*> zv_childList;
     ZSampleTaskTreeBaseItem* zv_parent;
-    
     
     // STATIC
     // VARS
@@ -130,8 +202,8 @@ class ZSampleTaskTreeRootItem : public ZSampleTaskTreeBaseItem
 public:
     explicit ZSampleTaskTreeRootItem();
     
-    virtual bool zp_createChild(ZSampleTaskTreeItemOptions* options);
-    
+    virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options);
+    void zp_clear();
 };
 //=================================================
 class ZSampleTaskTreeMeasuringConditionsItem : public ZSampleTaskTreeBaseItem
@@ -140,19 +212,66 @@ class ZSampleTaskTreeMeasuringConditionsItem : public ZSampleTaskTreeBaseItem
 public:
     explicit ZSampleTaskTreeMeasuringConditionsItem(ZSampleTaskTreeMeasuringConditionsItemOptions* options,
                                                     ZSampleTaskTreeBaseItem* parent);
-    virtual bool zp_createChild(ZSampleTaskTreeItemOptions* options);
+    virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options);
     
     int zp_gainFactor() const;
     int zp_exposition() const;
     
 protected:
     
-    // VARS 
+    // VARS
     int zv_gainFactor;
     int zv_exposition;
 
     // FUNCS
     void zh_createItemName();
+
+};
+//=================================================
+class ZSampleTaskTreeChemicalTaskItem : public ZSampleTaskTreeBaseItem
+{
+    Q_OBJECT
+public:
+    explicit ZSampleTaskTreeChemicalTaskItem(ZSampleTaskTreeChemicalTaskItemOptions* options,
+                                             ZSampleTaskTreeBaseItem* parent);
+    virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options);
+
+    int zp_chemicalTaskId() const;
+    QString zp_name() const;
+    QString zp_chemical() const;
+
+protected:
+
+    // VARS
+    int zv_chemicalTaskId;
+    QString zv_name;
+    QString zv_chemical;
+
+    // FUNCS
+    void zh_createItemName();
+
+};
+//=================================================
+class ZSampleTaskTreeCalibrationItem : public ZSampleTaskTreeBaseItem
+{
+    Q_OBJECT
+public:
+    explicit ZSampleTaskTreeCalibrationItem(ZSampleTaskTreeCalibrationItemOptions* options,
+                                            ZSampleTaskTreeBaseItem* parent);
+    virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options);
+
+    QString zp_calibrationName() const;
+    double zp_minConcentration() const;
+    double zp_maxConcentration() const;
+
+protected:
+
+    // VARS
+    QString zv_calibrationName;
+    double zv_minConcentration;
+    double zv_maxConcentration;
+
+    // FUNCS
 
 };
 //=================================================

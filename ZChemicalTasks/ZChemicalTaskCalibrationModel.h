@@ -6,14 +6,14 @@
 //==========================================================
 class QSqlTableModel;
 //==========================================================
-struct ZCalibratiionItem
+struct ZCalibrationItem
 {
     int calibrationId;
     int calibrationRow;
     double minConcentration;
     double maxConcentration;
 
-    ZCalibratiionItem()
+    ZCalibrationItem()
     {
         calibrationId = -1;
         calibrationRow = -1;
@@ -21,7 +21,7 @@ struct ZCalibratiionItem
         maxConcentration = 0.0;
     }
 
-    ZCalibratiionItem(int id)
+    ZCalibrationItem(int id)
     {
         calibrationId = id;
         calibrationRow = -1;
@@ -50,6 +50,7 @@ public:
 
     virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
+    void zp_setChemicalTaskId(int chemicalTaskId);
     void zp_addCalibrationIdToFilter(const QList<int> idList);
 
     bool zp_moveRowUp(int row);
@@ -92,11 +93,13 @@ private:
     QSqlTableModel* zv_calibrationSQLTableModel;
     // QMap<int, QPair<double, double> > zv_idAndLimitsMap;
     // QMap<int, int> zv_rowForIdMap;
-    QList<ZCalibratiionItem> zv_calibrationItemList;
+    QList<ZCalibrationItem> zv_calibrationItemList;
+    int zv_chemicalId;
 
     // FUNCS
     QModelIndex zh_mapIndexFromSource(const QModelIndex& sourceIndex) const;
     bool zh_calibrationRowForItem(int calibrationItemIndex) const;
+    int zh_calibrationRowForId(int id) const;
     QVariant zh_sourceModelData(int row, int column, int role = Qt::DisplayRole) const;
     int zh_calibrationIdForSourceRow(int row) const;
 

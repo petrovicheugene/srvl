@@ -18,6 +18,7 @@
 #include <QSettings>
 #include <QSplitter>
 #include <QTableView>
+#include <QTreeView>
 #include <QTextEdit>
 #include <QSqlTableModel>
 #include <QSqlRecord>
@@ -142,8 +143,9 @@ void ZSampleTaskDialog2::zh_createConnections()
 {
     zv_sampleTaskTreeWidget->zp_setModel(zv_sampleTaskTreeModel);
     zv_sampleTaskTreeWidget->zp_setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    zv_sampleTaskTreeWidget->zp_setStretchLastSection(true);
-    zv_sampleTaskTreeWidget->zp_setHeaderVisible(false);
+    zv_sampleTaskTreeWidget->zp_setStretchLastSection(false);
+    zv_sampleTaskTreeWidget->zp_setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_sampleTaskTreeWidget->zp_setSelectionMode(QAbstractItemView::SingleSelection);
 
     zv_sampleTaskTreeWidget->zp_appendButtonActions(zv_sampleTaskTreeModel->zp_buttonTreeActions());
     zv_sampleTaskTreeWidget->zp_appendContextActions(zv_sampleTaskTreeModel->zp_contextTreeActions());

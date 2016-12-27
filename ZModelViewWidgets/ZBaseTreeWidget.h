@@ -9,7 +9,7 @@
 class ZControlAction;
 
 class QTreeView;
-class QAbstractItemModel;
+class ZSampleTaskTreeModel;
 class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -21,13 +21,17 @@ public:
     explicit ZBaseTreeWidget(QWidget *parent = 0);
 
     // FUNCS
-    virtual void zp_setModel(QAbstractItemModel* model);
+    virtual void zp_setModel(ZSampleTaskTreeModel *model);
     void zp_setCaption(const QString& caption);
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
     void zp_setSectionResizeMode(int section, QHeaderView::ResizeMode);
     void zp_setStretchLastSection(bool stretch);
     void zp_setHeaderVisible(bool visible);
+    void zp_setSelectionBehavior(QAbstractItemView::SelectionBehavior behavior);
+    void zp_setSelectionMode(QAbstractItemView::SelectionMode mode);
+
+    QTreeView* zp_treeView() const;
 
 signals:
 

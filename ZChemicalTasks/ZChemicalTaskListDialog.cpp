@@ -20,6 +20,7 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QSqlField>
+#include <QSqlQuery>
 #include <QVBoxLayout>
 //===============================================================
 ZChemicalTaskListDialog::ZChemicalTaskListDialog(QWidget *parent) : QDialog(parent)
@@ -143,18 +144,16 @@ void ZChemicalTaskListDialog::zh_createConnections()
     actionList.append(zv_editChemicalAction);
     zv_chemicalTableWidget->zp_appendButtonActions(actionList);
 
-
     actionList.clear();
     actionList.append(zv_newChemicalTaskAction);
     actionList.append(zv_editChemicalTaskAction);
-    actionList.append(zv_reviewChemicalTaskAction);
+    //actionList.append(zv_reviewChemicalTaskAction);
     zv_chemicalTaskTableWidget->zp_appendButtonActions(actionList);
 
     connect(zv_chemicalTableWidget, &ZChemicalTableWidget::zg_currentChanged,
             this, &ZChemicalTaskListDialog::zh_onChemicalChange);
     connect(zv_chemicalTaskTableWidget, &ZChemicalTaskTableWidget::zg_currentChanged,
             this, &ZChemicalTaskListDialog::zh_onChemicalTaskChange);
-
 
     connect(zv_okButton, &QPushButton::clicked,
             this, &ZChemicalTaskListDialog::zh_onOkButtonClick);
@@ -172,7 +171,6 @@ void ZChemicalTaskListDialog::zh_createConnections()
             this, &ZChemicalTaskListDialog::zh_onEditChemicalTaskAction);
     connect(zv_reviewChemicalTaskAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onReviewChemicalTaskAction);
-
 
 }
 //===============================================================
@@ -213,6 +211,31 @@ void ZChemicalTaskListDialog::zh_saveSettings() const
     settings.endGroup();
 }
 //===============================================================
+int ZChemicalTaskListDialog::zp_currentChemicalTaskId() const
+{
+    // current index
+    QModelIndex index = zv_chemicalTaskTableWidget->zp_tableView()->currentIndex();
+    if(!index.isValid())
+    {
+        return -1;
+    }
+
+    // index chemical task id
+    index = zv_calibrationStackTableModel->index(index.row(), 0);
+    if(!index.isValid())
+    {
+        return -1;
+    }
+
+    QVariant vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return -1;
+    }
+
+    return vData.toInt();
+}
+//===============================================================
 void ZChemicalTaskListDialog::zh_onChemicalChange(const QModelIndex& current, const QModelIndex& previous)
 {
     // reset edit review task actions
@@ -250,9 +273,27 @@ void ZChemicalTaskListDialog::zh_onChemicalTaskChange(const QModelIndex& current
 
 }
 //===============================================================
+bool ZChemicalTaskListDialog::zh_checkData()
+{
+    QModelIndex index = zv_chemicalTaskTableWidget->zp_tableView()->selectionModel()->currentIndex();
+    if(!index.isValid() || index.row() < 0 || index.row() >= zv_calibrationStackTableModel->rowCount())
+    {
+        QString msg = tr("No chemical task selected.");
+        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+        return false;
+    }
+
+    return true;
+}
+//===============================================================
 void ZChemicalTaskListDialog::zh_onOkButtonClick()
 {
+    if(!zh_checkData())
+    {
+        return;
+    }
 
+    accept();
 }
 //===============================================================
 void ZChemicalTaskListDialog::zh_onNewChemicalAction()
@@ -482,9 +523,223 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
     }
 
     // Write chemical task to database
-    // Calibration_stacks table
+    zh_saveNewChemicalTaskToDatabase(dialog);
+
+    //    // Calibration_stacks table
+    //    // new id
+    //    int id = zh_findNewChemicalTaskId();
+
+    //    // get calibration stack data
+    //    QList<int> calibrationIdList;
+    //    dialog.zp_calibrationIdList(calibrationIdList);
+    //    if(calibrationIdList.isEmpty())
+    //    {
+    //        QString msg = tr("No calibrations to append to chemical task.");
+    //        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+    //        return;
+    //    }
+
+    //    // get calibration limits
+    //    QList<QPair<double, double> > concentrationLimitsList;
+    //    dialog.zp_concentrationLimitsList(concentrationLimitsList);
+
+    //    if(concentrationLimitsList.count() != calibrationIdList.count())
+    //    {
+    //        QString msg = tr("Cannot get concentration limits for calibrations.");
+    //        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+    //        return;
+    //    }
+
+    //    // write to database
+    //    QSqlRecord record;
+    //    record.append(QSqlField("id", QVariant::Int));
+    //    record.append(QSqlField("name", QVariant::String));
+    //    record.append(QSqlField("description", QVariant::String));
+    //    record.append(QSqlField("chemicals_id", QVariant::Int));
+    //    record.append(QSqlField("measuring_conditions_gain_factor", QVariant::Int));
+    //    record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
+
+    //    record.setValue(0, QVariant(id));
+    //    record.setValue(1, QVariant(dialog.zp_chemicalTaskName()));
+    //    record.setValue(2, QVariant(dialog.zp_description()));
+    //    record.setValue(3, QVariant(chemicalId));
+    //    record.setValue(4, QVariant(dialog.zp_gainFactor()));
+    //    record.setValue(5, QVariant(dialog.zp_exposition()));
+
+    //    if(!zv_calibrationStackTableModel->insertRecord(-1, record))
+    //    {
+    //        QString msg = zv_calibrationStackTableModel->lastError().text();
+    //        QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+    //        zv_calibrationStackTableModel->revertAll();
+    //        zv_chemicalTaskTableWidget->zp_tableView()->reset();
+    //        return;
+    //    }
+
+    //    if(!zv_calibrationStackTableModel->submitAll())
+    //    {
+    //        QString msg = zv_calibrationStackTableModel->lastError().text();
+    //        QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
+    //        zv_calibrationStackTableModel->revertAll();
+    //        zv_chemicalTaskTableWidget->zp_tableView()->reset();
+    //        return;
+    //    }
+
+    //    // calibrations_has_calibration_stacks table
+    //    // create SQL model
+    //    QSqlTableModel stackedCalibrationModel;
+    //    stackedCalibrationModel.setTable("calibrations_has_calibration_stacks");
+    //    stackedCalibrationModel.select();
+    //    stackedCalibrationModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    //    // write to database
+    //    record.clear();
+    //    record.append(QSqlField("calibrations_id", QVariant::Int));
+    //    record.append(QSqlField("calibrations_chemicals_id", QVariant::Int));
+    //    record.append(QSqlField("calibrations_measuring_conditions_gain_factor", QVariant::Int));
+    //    record.append(QSqlField("calibrations_measuring_conditions_exposition", QVariant::Int));
+    //    record.append(QSqlField("calibration_stacks_id", QVariant::Int));
+    //    record.append(QSqlField("calibration_stacks_chemicals_id", QVariant::Int));
+    //    record.append(QSqlField("calibration_stacks_measuring_conditions_gain_factor", QVariant::Int));
+    //    record.append(QSqlField("calibration_stacks_measuring_conditions_exposition", QVariant::Int));
+    //    record.append(QSqlField("calibration_min_limit", QVariant::Double));
+    //    record.append(QSqlField("calibration_max_limit", QVariant::Double));
+
+    //    for(int row = 0; row < calibrationIdList.count(); row++)
+    //    {
+    //        // get limits
+    //#ifdef DBG
+    //        qDebug() << "CALIBR ID" << calibrationIdList.at(row);
+    //#endif
+
+    //        record.clearValues();
+    //        record.setValue(0, QVariant(calibrationIdList.at(row)));  // calibration id
+    //        record.setValue(1, QVariant(chemicalId)); // calibration chemical id
+    //        record.setValue(2, QVariant(dialog.zp_gainFactor()));
+    //        record.setValue(3, QVariant(dialog.zp_exposition()));
+
+    //        record.setValue(4, QVariant(id)); // stack id
+    //        record.setValue(5, QVariant(chemicalId));
+    //        record.setValue(6, QVariant(dialog.zp_gainFactor()));
+    //        record.setValue(7, QVariant(dialog.zp_exposition()));
+    //        record.setValue(8, QVariant(concentrationLimitsList.at(row).first)); // min
+    //        record.setValue(9, QVariant(concentrationLimitsList.at(row).second)); // max
+
+    //        if(!stackedCalibrationModel.insertRecord(-1, record))
+    //        {
+    //            QString msg = stackedCalibrationModel.lastError().text();
+    //            QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+    //            stackedCalibrationModel.revertAll();
+    //            zv_calibrationStackTableModel->removeRows(zv_calibrationStackTableModel->rowCount() - 1, 1);
+    //            zv_calibrationStackTableModel->submitAll();
+    //            return;
+    //        }
+
+    //        if(!stackedCalibrationModel.submitAll())
+    //        {
+    //            QString msg = stackedCalibrationModel.lastError().text();
+    //            QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
+    //            stackedCalibrationModel.revertAll();
+    //            zv_calibrationStackTableModel->removeRows(zv_calibrationStackTableModel->rowCount() - 1, 1);
+    //            zv_calibrationStackTableModel->submitAll();
+    //            return;
+    //        }
+    //    }
+}
+
+//===============================================================
+void ZChemicalTaskListDialog::zh_onEditChemicalTaskAction()
+{
+    // dialog
+    ZChemicalTaskDialog dialog(zv_chemicalTableModel);
+    connect(&dialog, &ZChemicalTaskDialog::zg_checkChemicalTaskName,
+            this, &ZChemicalTaskListDialog::zh_checkChemicalTaskName);
+
+    // load chemical task to dialog
+    if(!zh_loadChemicalTaskDialog(dialog, false))
+    {
+        return;
+    }
+    //    if(!dialog.zp_setChemicalId(chemicalId))
+    //    {
+    //        QString msg = tr("Cannot transfer chemical id to dialog.");
+    //        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
+    //        return;
+    //    }
+
+    if(!dialog.exec())
+    {
+        return;
+    }
+
+    zh_saveNewChemicalTaskToDatabase(dialog);
+}
+//===============================================================
+void ZChemicalTaskListDialog::zh_onReviewChemicalTaskAction() const
+{
+    // dialog
+    ZChemicalTaskDialog dialog(zv_chemicalTableModel);
+    connect(&dialog, &ZChemicalTaskDialog::zg_checkChemicalTaskName,
+            this, &ZChemicalTaskListDialog::zh_checkChemicalTaskName);
+
+    // load chemical task to dialog
+    if(!zh_loadChemicalTaskDialog(dialog, true))
+    {
+        return;
+    }
+
+    //    if(!dialog.zp_setChemicalId(chemicalId))
+    //    {
+    //        QString msg = tr("Cannot transfer chemical id to dialog.");
+    //        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
+    //        return;
+    //    }
+
+    // set dialog read only
+
+    if(!dialog.exec())
+    {
+        return;
+    }
+
+}
+//===============================================================
+bool ZChemicalTaskListDialog::zh_loadChemicalTaskDialog(ZChemicalTaskDialog& dialog, bool viewOnly) const
+{
+    // get current chemical task id
+    QModelIndex index = zv_chemicalTaskTableWidget->zp_tableView()->currentIndex();
+    if(!index.isValid())
+    {
+        return false;
+    }
+
+    int row = index.row();
+    index = zv_calibrationStackTableModel->index(row, 0);
+    if(!index.isValid())
+    {
+        return false;
+    }
+
+    QVariant vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+
+    int chemicalTaskId = vData.toInt();
+
+    return dialog.zp_setChemicalTask(zv_calibrationStackTableModel, chemicalTaskId, viewOnly);
+}
+//===============================================================
+void ZChemicalTaskListDialog::zh_saveNewChemicalTaskToDatabase(ZChemicalTaskDialog& dialog)
+{
     // new id
     int id = zh_findNewChemicalTaskId();
+    if(id < 0)
+    {
+        QString msg = tr("Cannot define id of new chemical task.");
+        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+        return;
+    }
 
     // get calibration stack data
     QList<int> calibrationIdList;
@@ -519,7 +774,7 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
     record.setValue(0, QVariant(id));
     record.setValue(1, QVariant(dialog.zp_chemicalTaskName()));
     record.setValue(2, QVariant(dialog.zp_description()));
-    record.setValue(3, QVariant(chemicalId));
+    record.setValue(3, QVariant(dialog.zp_chemicalId()));
     record.setValue(4, QVariant(dialog.zp_gainFactor()));
     record.setValue(5, QVariant(dialog.zp_exposition()));
 
@@ -570,12 +825,12 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
 
         record.clearValues();
         record.setValue(0, QVariant(calibrationIdList.at(row)));  // calibration id
-        record.setValue(1, QVariant(chemicalId)); // calibration chemical id
+        record.setValue(1, QVariant(dialog.zp_chemicalId())); // calibration chemical id
         record.setValue(2, QVariant(dialog.zp_gainFactor()));
         record.setValue(3, QVariant(dialog.zp_exposition()));
 
         record.setValue(4, QVariant(id)); // stack id
-        record.setValue(5, QVariant(chemicalId));
+        record.setValue(5, QVariant(dialog.zp_chemicalId()));
         record.setValue(6, QVariant(dialog.zp_gainFactor()));
         record.setValue(7, QVariant(dialog.zp_exposition()));
         record.setValue(8, QVariant(concentrationLimitsList.at(row).first)); // min
@@ -603,78 +858,69 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
     }
 }
 //===============================================================
-void ZChemicalTaskListDialog::zh_onEditChemicalTaskAction() const
-{
-    // dialog
-    ZChemicalTaskDialog dialog(zv_chemicalTableModel);
-    connect(&dialog, &ZChemicalTaskDialog::zg_checkChemicalTaskName,
-            this, &ZChemicalTaskListDialog::zh_checkChemicalTaskName);
-//    if(!dialog.zp_setChemicalId(chemicalId))
-//    {
-//        QString msg = tr("Cannot transfer chemical id to dialog.");
-//        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
-//        return;
-//    }
-
-    if(!dialog.exec())
-    {
-        return;
-    }
-
-}
-//===============================================================
-void ZChemicalTaskListDialog::zh_onReviewChemicalTaskAction() const
-{
-    // dialog
-    ZChemicalTaskDialog dialog(zv_chemicalTableModel);
-    connect(&dialog, &ZChemicalTaskDialog::zg_checkChemicalTaskName,
-            this, &ZChemicalTaskListDialog::zh_checkChemicalTaskName);
-//    if(!dialog.zp_setChemicalId(chemicalId))
-//    {
-//        QString msg = tr("Cannot transfer chemical id to dialog.");
-//        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
-//        return;
-//    }
-
-    if(!dialog.exec())
-    {
-        return;
-    }
-
-}
-//===============================================================
 int ZChemicalTaskListDialog::zh_findNewChemicalTaskId() const
 {
-    QModelIndex index;
-    QVariant vData;
-    int currentId = 0;
-    int newId = 0;
-    bool ok;
-    for(int row = 0; row < zv_calibrationStackTableModel->rowCount(); row++)
+    QString queryString = QString("SELECT id FROM calibration_stacks");
+    QSqlQuery query;
+    if(!query.prepare(queryString))
     {
-        index = zv_calibrationStackTableModel->index(row, 0);
-        if(!index.isValid())
-        {
-            continue;
-        }
-        vData = index.data(Qt::DisplayRole);
+        return -1;
+    }
+
+    if(!query.exec())
+    {
+        return -1;
+    }
+
+    int id = 0;
+    int currentId;
+    QVariant vData;
+    while(query.next())
+    {
+        vData = query.value(0);
         if(!vData.isValid() || !vData.canConvert<int>())
         {
             continue;
         }
-
-        currentId = vData.toInt(&ok);
-        if(!ok)
+        currentId = vData.toInt();
+        if(id < currentId)
         {
-            continue;
-        }
-        if(newId < currentId)
-        {
-            newId = currentId;
+            id = currentId;
         }
     }
 
-    return ++newId;
+    return ++id;
+
+    //    QModelIndex index;
+    //    QVariant vData;
+    //    int currentId = 0;
+    //    int newId = 0;
+    //    bool ok;
+    //    for(int row = 0; row < zv_calibrationStackTableModel->rowCount(); row++)
+    //    {
+    //        index = zv_calibrationStackTableModel->index(row, 0);
+    //        if(!index.isValid())
+    //        {
+    //            continue;
+    //        }
+    //        vData = index.data(Qt::DisplayRole);
+    //        if(!vData.isValid() || !vData.canConvert<int>())
+    //        {
+    //            continue;
+    //        }
+
+    //        currentId = vData.toInt(&ok);
+    //        if(!ok)
+    //        {
+    //            continue;
+    //        }
+    //        if(newId < currentId)
+    //        {
+    //            newId = currentId;
+    //        }
+    //    }
+
+    //    return ++newId;
 }
 //===============================================================
 void ZChemicalTaskListDialog::zh_checkChemical(int id, const QString& chemical, bool& res) const

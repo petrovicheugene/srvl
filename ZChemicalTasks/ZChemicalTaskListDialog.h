@@ -3,6 +3,7 @@
 #define ZCHEMICALTASKLISTDIALOG_H
 //===============================================================
 #include <QDialog>
+#include "ZChemicalTaskDialog.h"
 //===============================================================
 class QLabel;
 class QPushButton;
@@ -19,6 +20,8 @@ class ZChemicalTaskListDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZChemicalTaskListDialog(QWidget *parent = 0);
+
+    int zp_currentChemicalTaskId() const;
 
 signals:
 
@@ -37,7 +40,7 @@ private slots:
     void zh_onNewChemicalAction();
     void zh_onEditChemicalAction();
     void zh_onNewChemicalTaskAction();
-    void zh_onEditChemicalTaskAction() const;
+    void zh_onEditChemicalTaskAction();
     void zh_onReviewChemicalTaskAction() const;
 
     void zh_checkChemical(int id, const QString& chemical, bool& res) const;
@@ -73,7 +76,9 @@ private:
     void zh_saveSettings() const;
 
     int zh_findNewChemicalTaskId() const;
-
+    bool zh_loadChemicalTaskDialog(ZChemicalTaskDialog& dialog, bool viewOnly) const;
+    void zh_saveNewChemicalTaskToDatabase(ZChemicalTaskDialog &dialog);
+    bool zh_checkData();
 
 };
 //===============================================================

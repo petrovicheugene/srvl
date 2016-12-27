@@ -32,6 +32,8 @@ public:
 
 signals:
 
+    void zg_setCurrentIndex(const QModelIndex& index) const;
+
 public slots:
 
 
@@ -51,7 +53,7 @@ private:
 
     // VARS
     ZSampleTaskTreeRootItem* zv_rootItem;
-    const int zv_columnCount = 2;
+    const int zv_columnCount = 3;
 
     // actions
     ZControlAction* zv_appendMeasuringConditionsAction;

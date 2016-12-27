@@ -26,8 +26,6 @@ signals:
 
 public slots:
 
-
-
 private slots:
 
     void zh_onOkButtonClick();
@@ -51,7 +49,6 @@ private:
     QSqlTableModel *zv_sampleTaskTableModel;
     ZSampleTaskTreeWidget* zv_sampleTaskTreeWidget;
     ZSampleTaskTreeModel* zv_sampleTaskTreeModel;
-
 
     // FUNCS
     void zh_createComponents();

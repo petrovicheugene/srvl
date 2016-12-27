@@ -3,11 +3,13 @@
 #include "ZGLConstantsAndDefines.h"
 
 #include <QSqlTableModel>
+#include <QSqlQuery>
 //==========================================================
 ZChemicalTaskCalibrationModel::ZChemicalTaskCalibrationModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     zv_calibrationSQLTableModel = 0;
+    zv_chemicalId = -1;
 }
 //==========================================================
 void ZChemicalTaskCalibrationModel::zp_connectToCalibrationSQLTableModel(QSqlTableModel *model)
@@ -59,7 +61,7 @@ QVariant ZChemicalTaskCalibrationModel::data(const QModelIndex &index, int role)
     if(role == Qt::DisplayRole)
     {
         // get calibration row
-        const ZCalibratiionItem* calibrationItem = &zv_calibrationItemList.at(index.row());
+        const ZCalibrationItem* calibrationItem = &zv_calibrationItemList.at(index.row());
 
         if(zh_calibrationIdForSourceRow(calibrationItem->calibrationRow)
                 != calibrationItem->calibrationId)
@@ -124,7 +126,7 @@ bool ZChemicalTaskCalibrationModel::zh_calibrationRowForItem(int calibrationItem
     QVariant vData;
     bool ok;
     int id;
-    ZCalibratiionItem* pItem = const_cast<ZCalibratiionItem*>(&zv_calibrationItemList[calibrationItemIndex]);
+    ZCalibrationItem* pItem = const_cast<ZCalibrationItem*>(&zv_calibrationItemList[calibrationItemIndex]);
 
     for(int row = 0; row < zv_calibrationSQLTableModel->rowCount(); row++)
     {
@@ -152,6 +154,38 @@ bool ZChemicalTaskCalibrationModel::zh_calibrationRowForItem(int calibrationItem
     return false;
 }
 //==========================================================
+int ZChemicalTaskCalibrationModel::zh_calibrationRowForId(int id) const
+{
+    if(zv_calibrationSQLTableModel == 0)
+    {
+        return -1;
+    }
+
+    QModelIndex index;
+    QVariant vData;
+    for(int row = 0; row < zv_calibrationSQLTableModel->rowCount(); row++)
+    {
+        index = zv_calibrationSQLTableModel->index(row, 0);
+        if(!index.isValid())
+        {
+            continue;
+        }
+
+        vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        if(vData.toInt() == id)
+        {
+            return row;
+        }
+    }
+
+    return -1;
+}
+//==========================================================
 bool ZChemicalTaskCalibrationModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if(zv_calibrationSQLTableModel == 0 || !index.isValid() || index.row() < 0
@@ -163,7 +197,7 @@ bool ZChemicalTaskCalibrationModel::setData(const QModelIndex &index, const QVar
 
     if(role == Qt::EditRole)
     {
-        ZCalibratiionItem* calibrationItem = const_cast<ZCalibratiionItem*>(&zv_calibrationItemList.at(index.row()));
+        ZCalibrationItem* calibrationItem = const_cast<ZCalibrationItem*>(&zv_calibrationItemList.at(index.row()));
         // description
         if(index.column() == 1)
         {
@@ -426,8 +460,16 @@ int ZChemicalTaskCalibrationModel::zh_calibrationIdForSourceRow(int sourceRow) c
     return id;
 }
 //==========================================================
+void ZChemicalTaskCalibrationModel::zp_setChemicalTaskId(int chemicalTaskId)
+{
+    zv_chemicalId = chemicalTaskId;
+}
+//==========================================================
 void ZChemicalTaskCalibrationModel::zp_addCalibrationIdToFilter(const QList<int> idList)
 {
+    QSqlQuery query;
+    QString queryString;
+    QVariant vData;
     for(int i = 0; i < idList.count(); i++)
     {
         bool idExists = false;
@@ -444,7 +486,36 @@ void ZChemicalTaskCalibrationModel::zp_addCalibrationIdToFilter(const QList<int>
         {
             int newRow = zv_calibrationItemList.count();
             beginInsertRows(QModelIndex(), newRow, newRow);
-            zv_calibrationItemList.append(ZCalibratiionItem(idList.at(i)));
+            ZCalibrationItem calibrationItem(idList.at(i));
+            calibrationItem.calibrationRow = zh_calibrationRowForId(idList.at(i));
+
+            query.clear();
+            queryString = QString("SELECT calibration_min_limit, calibration_max_limit "
+                                  "FROM calibrations_has_calibration_stacks "
+                                  "WHERE calibrations_id=%1 AND calibration_stacks_id=%2").arg(QString::number(idList.at(i)), QString::number(zv_chemicalId));
+
+            if(query.prepare(queryString))
+            {
+                if(query.exec())
+                {
+                    if(query.next())
+                    {
+                        vData = query.value(0);
+                        if(vData.isValid() && vData.canConvert<double>())
+                        {
+                            calibrationItem.minConcentration = vData.toDouble();
+                        }
+
+                        vData = query.value(1);
+                        if(vData.isValid() && vData.canConvert<double>())
+                        {
+                            calibrationItem.maxConcentration = vData.toDouble();
+                        }
+                    }
+                }
+            }
+
+            zv_calibrationItemList.append(calibrationItem);
             endInsertRows();
         }
     }

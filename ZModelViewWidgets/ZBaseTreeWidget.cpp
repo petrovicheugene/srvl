@@ -1,6 +1,7 @@
 //============================================================
 #include "ZBaseTreeWidget.h"
 #include "ZControlAction.h"
+#include "ZSampleTaskTreeModel.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -15,9 +16,11 @@ ZBaseTreeWidget::ZBaseTreeWidget(QWidget *parent) : QWidget(parent)
     zh_createConnections();
 }
 //============================================================
-void ZBaseTreeWidget::zp_setModel(QAbstractItemModel* model)
+void ZBaseTreeWidget::zp_setModel(ZSampleTaskTreeModel* model)
 {
     zv_table->setModel(model);
+    connect(model, &ZSampleTaskTreeModel::zg_setCurrentIndex,
+            zv_table, &QTreeView::setCurrentIndex);
 }
 //============================================================
 void ZBaseTreeWidget::zp_setCaption(const QString& caption)
@@ -95,6 +98,21 @@ void ZBaseTreeWidget::zp_setHeaderVisible(bool visible)
     zv_table->header()->setVisible(visible);
 }
 //============================================================
+void ZBaseTreeWidget::zp_setSelectionBehavior(QAbstractItemView::SelectionBehavior behavior)
+{
+    zv_table->setSelectionBehavior(behavior);
+}
+//============================================================
+void ZBaseTreeWidget::zp_setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+     zv_table->setSelectionMode(mode);
+}
+//============================================================
+QTreeView* ZBaseTreeWidget::zp_treeView() const
+{
+    return zv_table;
+}
+//============================================================
 void ZBaseTreeWidget::zh_createComponents()
 {
     zv_mainLayout = new QVBoxLayout(this);
@@ -113,7 +131,7 @@ void ZBaseTreeWidget::zh_createComponents()
 //============================================================
 void ZBaseTreeWidget::zh_createConnections()
 {
-//    connect(zv_table, &QTableView::customContextMenuRequested,
-//            this, &ZJointSpectrumTableWidget::zh_onContextMenuRequest);
+    //    connect(zv_table, &QTableView::customContextMenuRequested,
+    //            this, &ZJointSpectrumTableWidget::zh_onContextMenuRequest);
 }
 //============================================================

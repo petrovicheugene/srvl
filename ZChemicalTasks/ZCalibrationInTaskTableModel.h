@@ -5,7 +5,6 @@
 #include <QAbstractTableModel>
 #include <QList>
 //=======================================================
-//=======================================================
 class ZCalibrationInTaskTableModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -23,11 +22,9 @@ public:
     bool	setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
     QVariant	headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-
 signals:
 
 public slots:
-
 
 private:
 

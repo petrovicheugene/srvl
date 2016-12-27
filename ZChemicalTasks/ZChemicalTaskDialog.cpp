@@ -23,6 +23,8 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QSqlTableModel>
+#include <QSqlQuery>
+#include <QSqlError>
 //=========================================================================
 ZChemicalTaskDialog::ZChemicalTaskDialog(QSqlTableModel *chemicalTableModel, QWidget *parent)
     : QDialog(parent)
@@ -42,6 +44,7 @@ ZChemicalTaskDialog::ZChemicalTaskDialog(QSqlTableModel *chemicalTableModel, QWi
     zv_chemicalId = -1;
     zv_gainFactor = -1;
     zv_exposition = -1;
+    zv_chemicalTaskId = -1;
 
     zh_createActions();
     zh_createComponents();
@@ -473,6 +476,189 @@ void ZChemicalTaskDialog::zh_onCalibrationInserted(const QModelIndex& parent, in
     horizontalHeader->resizeSections(QHeaderView::ResizeToContents);
 }
 //=========================================================================
+bool ZChemicalTaskDialog::zp_setChemicalTask(QSqlTableModel *calibrationStackTableModel,
+                                             int chemicalTaskId, bool viewOnly)
+{
+    if(calibrationStackTableModel == 0 || zv_chemicalSQLTableModel == 0)
+    {
+        return false;
+    }
+
+    zv_chemicalTaskCalibrationModel->zp_setChemicalTaskId(chemicalTaskId);
+
+    // find chemicaltask row
+    int chemicalTaskRow = -1;
+    QModelIndex index;
+    QVariant vData;
+    for(int row = 0; row < calibrationStackTableModel->rowCount(); row++ )
+    {
+        // find id
+        index = calibrationStackTableModel->index(row, 0);
+        if(!index.isValid())
+        {
+            continue;
+        }
+        vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        if(vData.toInt() == chemicalTaskId)
+        {
+            chemicalTaskRow = row;
+            break;
+        }
+    }
+
+    if(chemicalTaskRow < 0)
+    {
+        return false;
+    }
+
+    // load chemical task properties
+    zv_chemicalTaskId = chemicalTaskId;
+    // chemical task name
+    index = calibrationStackTableModel->index(chemicalTaskRow, 1);
+    if(!index.isValid())
+    {
+        return false;
+    }
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<QString>())
+    {
+        return false;
+    }
+    zv_chemicalTaskNameLineEdit->setText(vData.toString());
+
+    // description
+    index = calibrationStackTableModel->index(chemicalTaskRow, 2);
+    if(!index.isValid())
+    {
+        return false;
+    }
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<QString>())
+    {
+        return false;
+    }
+    zv_descriptionTextEdit->setText(vData.toString());
+
+    // Chemical
+    // get chemical id
+    index = calibrationStackTableModel->index(chemicalTaskRow, 3);
+    if(!index.isValid())
+    {
+        return false;
+    }
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+    zv_chemicalId = vData.toInt();
+
+    // get chemical name
+    bool res = false;
+    for(int row = 0; row < zv_chemicalSQLTableModel->rowCount(); row++)
+    {
+        index = zv_chemicalSQLTableModel->index(row, 0);
+        if(!index.isValid())
+        {
+            continue;
+        }
+        vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        if(vData.toInt() == zv_chemicalId)
+        {
+            // name itself
+            index = zv_chemicalSQLTableModel->index(row, 1);
+            if(!index.isValid())
+            {
+                return false;
+            }
+            vData = index.data(Qt::DisplayRole);
+            if(!vData.isValid() || !vData.canConvert<QString>())
+            {
+                return false;;
+            }
+
+            zv_chemicalLineEdfit->setText(vData.toString());
+            res = true;
+            break;
+        }
+    }
+
+    if(!res)
+    {
+        return false;
+    }
+
+    // measuring conditions
+    // gain factor
+    index = calibrationStackTableModel->index(chemicalTaskRow, 4);
+    if(!index.isValid())
+    {
+        return false;
+    }
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+    int gainFactor = vData.toInt();
+
+    // exposition
+    index = calibrationStackTableModel->index(chemicalTaskRow, 5);
+    if(!index.isValid())
+    {
+        return false;
+    }
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+    int exposition = vData.toInt();
+
+    zh_setMeasuringConditions(gainFactor, exposition);
+
+    // Load calibrations
+    // request for calibration in the chemical task id list
+    QString queryString = QString("SELECT calibrations_id  FROM calibrations_has_calibration_stacks "
+                                  "WHERE calibration_stacks_id=%1").arg(QString::number(chemicalTaskId));
+    QSqlQuery query;
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    QList<int> idList;
+    while(query.next())
+    {
+        vData = query.value(0);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            return false;
+        }
+
+        idList.append(vData.toInt());
+    }
+
+    zv_chemicalTaskCalibrationModel->zp_addCalibrationIdToFilter(idList);
+
+    return true;
+}
+//=========================================================================
 bool ZChemicalTaskDialog::zp_setChemicalId(int id)
 {
     if(zv_chemicalSQLTableModel == 0)
@@ -530,6 +716,11 @@ bool ZChemicalTaskDialog::zp_setChemicalId(int id)
     }
 
     return false;
+}
+//=========================================================================
+int ZChemicalTaskDialog::zp_chemicalId() const
+{
+    return zv_chemicalId;
 }
 //=========================================================================
 QString ZChemicalTaskDialog::zp_chemicalTaskName() const
