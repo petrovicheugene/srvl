@@ -61,6 +61,8 @@ private:
     bool zh_removeSampleTaskFromTable(int row = -1);
 
     bool zh_loadSampleTask();
+    bool zh_findNewMeasuringConditionsId(int &newId);
+
 
 };
 //===============================================================

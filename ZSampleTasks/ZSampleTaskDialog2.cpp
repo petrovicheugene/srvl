@@ -372,13 +372,12 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
         return false;
     }
 
-    // Aux Models
+    // Aux Model
     // conditions has task (table conditions_has_sample_tasks)
     // create conditions_has_sample_tasks sql model
     QSqlTableModel conditionsInTasksModel;
     conditionsInTasksModel.setTable("conditions_has_sample_tasks");
     conditionsInTasksModel.select();
-
     // calibration stacks has measuring conditions table (table calibration_stacks_has_conditions_has_sample_tasks)
     // create calibration_stacks_has_conditions_has_sample_tasks sql model
     QSqlTableModel calibrationStacksInTasksModel;
@@ -388,6 +387,7 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
     int conditionsCount = zv_sampleTaskTreeModel->zp_childCount(QModelIndex());
     ZSampleTaskTreeBaseItem* item;
     ZSampleTaskTreeMeasuringConditionsItem* mcItem;
+    int conditionsId;
     // Write measuring conditions
     for(int mc = 0; mc < conditionsCount; mc++)
     {
@@ -404,6 +404,14 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
             continue;
         }
 
+        // find new conditions id
+        if(!zh_findNewMeasuringConditionsId(conditionsId))
+        {
+            QString msg = tr("Cannot define new measuring conditions id.");
+            QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+            return false;
+        }
+
         // write measuring conditions
         record.clear();
 
@@ -412,7 +420,7 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
         record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
         record.append(QSqlField("sample_tasks_id", QVariant::Int));
 
-        record.setValue(0, QVariant(mc+1));
+        record.setValue(0, QVariant(conditionsId));
         record.setValue(1, QVariant(mcItem->zp_gainFactor()));
         record.setValue(2, QVariant(mcItem->zp_exposition()));
         record.setValue(3, QVariant(sampleTaskId));
@@ -434,15 +442,112 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
             return false;
         }
 
-        // write calibration stacks
-        //        int stacksCount = measuringTaskInitList.at(mc).calibrationStackIdList.count();
-        //        for(int s = 0; s < stacksCount; s++)
-        //        {
-        //            record.clear();
+        // Write calibration stacks
+        // get chemical tasks id
+        QModelIndex mcIndex = zv_sampleTaskTreeModel->index(mc, 0, QModelIndex());
+        if(!mcIndex.isValid())
+        {
+            continue;
+        }
+        int chemicalTaskCount = zv_sampleTaskTreeModel->zp_childCount(mcIndex);
 
-        //            //  V V V
+        QModelIndex ctIndex;
+        ZSampleTaskTreeBaseItem* item;
+        ZSampleTaskTreeChemicalTaskItem* ctItem;
+        int chemicalTaskId;
+        int chemicalId;
 
-        //        }
+        for(int ct = 0; ct < chemicalTaskCount; ct++)
+        {
+            ctIndex = zv_sampleTaskTreeModel->index(ct, 0, mcIndex);
+            if(!ctIndex.isValid())
+            {
+                continue;
+            }
+            item = zv_sampleTaskTreeModel->zp_itemForIndex(ctIndex);
+            if(!item)
+            {
+                continue;
+            }
+
+            if(item->zp_itemType() != ZSampleTaskTreeItemOptions::IT_CHEMICAL_TASK)
+            {
+                continue;
+            }
+
+            ctItem = qobject_cast<ZSampleTaskTreeChemicalTaskItem*>(item);
+
+            chemicalTaskId = ctItem->zp_chemicalTaskId();
+            // get for chemical task:
+
+            QSqlQuery query;
+            QString queryString = QString("SELECT chemicals_id, "
+                                          "measuring_conditions_gain_factor, "
+                                          "measuring_conditions_exposition "
+                                          "FROM calibration_stacks "
+                                          "WHERE id=%1").arg(QString::number(chemicalTaskId));
+            if(!query.prepare(queryString))
+            {
+                continue;
+            }
+
+            if(!query.exec())
+            {
+                continue;
+            }
+
+            if(!query.next())
+            {
+                continue;
+            }
+
+            // chemical id
+            vData = query.value(0);
+            if(!vData.isValid() || !vData.canConvert<int>() )
+            {
+                continue;
+            }
+
+            chemicalId = vData.toInt();
+
+            record.clear();
+            record.append(QSqlField("calibration_stacks_id", QVariant::Int));
+            record.append(QSqlField("calibration_stacks_chemicals_id", QVariant::Int));
+            record.append(QSqlField("calibration_stacks_measuring_conditions_gain_factor", QVariant::Int));
+            record.append(QSqlField("calibration_stacks_measuring_conditions_exposition", QVariant::Int));
+
+            record.append(QSqlField("conditions_has_sample_tasks_id", QVariant::Int));
+            record.append(QSqlField("conditions_has_sample_tasks_measuring_conditions_gain_factor", QVariant::Int));
+            record.append(QSqlField("conditions_has_sample_tasks_measuring_conditions_exposition", QVariant::Int));
+            record.append(QSqlField("conditions_has_sample_tasks_sample_tasks_id", QVariant::Int));
+
+            record.setValue(0, QVariant(chemicalTaskId));
+            record.setValue(1, QVariant(chemicalId));
+            record.setValue(2, QVariant(mcItem->zp_gainFactor()));
+            record.setValue(3, QVariant(mcItem->zp_exposition()));
+
+            record.setValue(4, QVariant(conditionsId));
+            record.setValue(5, QVariant(mcItem->zp_gainFactor()));
+            record.setValue(6, QVariant(mcItem->zp_exposition()));
+            record.setValue(7, QVariant(sampleTaskId));
+
+            if(!calibrationStacksInTasksModel.insertRecord(-1, record))
+            {
+                //                QString msg = conditionsInTasksModel.lastError().text();
+                //                QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+                //                zh_removeSampleTaskFromTable();
+                continue;;
+            }
+
+            if(!calibrationStacksInTasksModel.submitAll())
+            {
+                //                QString msg = zv_sampleTaskTableModel->lastError().text();
+                //                QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
+                //                zv_sampleTaskTableModel->revertAll();
+                //                zh_removeSampleTaskFromTable();
+                continue;;
+            }
+        }
     }
 
     return true;
@@ -473,5 +578,35 @@ bool ZSampleTaskDialog2::zh_removeSampleTaskFromTable(int row)
 bool ZSampleTaskDialog2::zh_loadSampleTask()
 {
 
+}
+//===============================================================
+bool ZSampleTaskDialog2::zh_findNewMeasuringConditionsId(int& newId)
+{
+    QSqlQuery query;
+    QString queryString = "SELECT MAX(id) FROM conditions_has_sample_tasks";
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    if(!query.next())
+    {
+        newId = 1;
+        return true;
+    }
+
+    QVariant vData = query.value(0);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+
+    newId = vData.toInt() + 1;
+
+    return true;
 }
 //===============================================================
