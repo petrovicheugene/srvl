@@ -1,9 +1,11 @@
 //===========================================================
-#ifndef ZGLCONSTANTSANDDEFINES_H
-#define ZGLCONSTANTSANDDEFINES_H
+#ifndef ZGENERAL_H
+#define ZGENERAL_H
 //===========================================================
 #include <QString>
 #include <QIcon>
+#include <QMessageBox>
+#include <QSqlDatabase>
 #define DBG
 #ifdef DBG
 #include <QDebug>
@@ -108,4 +110,4 @@ extern const int glMaxGainFactor;
 // FUNCS
 QString glCreateCaption(const QString& simpleText);
 //===========================================================
-#endif // ZGLCONSTANTSANDDEFINES_H
+#endif // ZGENERAL_H

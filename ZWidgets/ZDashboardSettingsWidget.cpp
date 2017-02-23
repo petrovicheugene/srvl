@@ -1,6 +1,6 @@
 //============================================================
 #include "ZDashboardSettingsWidget.h"
-#include <ZGLConstantsAndDefines.h>
+#include <ZGeneral.h>
 #include "ZDashboardSettings.h"
 #include "ZColorLabel.h"
 #include "ZLabeledSliderWidget.h"

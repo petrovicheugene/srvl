@@ -30,6 +30,9 @@ public:
 
     ZSampleTaskTreeBaseItem* zp_itemForIndex(const QModelIndex& index) const;
 
+    void zp_appendChemicalTask(int chemicalTaskId);
+    void zp_appendMeasuringConditions(int gainFactor, int exposition, int quantity);
+
 signals:
 
     void zg_setCurrentIndex(const QModelIndex& index) const;
@@ -64,7 +67,6 @@ private:
 
     void zh_createActions();
     void zh_createConnections();
-
 
 };
 //===================================================

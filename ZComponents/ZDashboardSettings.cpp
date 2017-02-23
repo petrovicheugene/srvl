@@ -1,6 +1,6 @@
 //===================================================
 #include "ZDashboardSettings.h"
-#include <ZGLConstantsAndDefines.h>
+#include <ZGeneral.h>
 #include <QObject>
 #include <QComboBox>
 //===================================================

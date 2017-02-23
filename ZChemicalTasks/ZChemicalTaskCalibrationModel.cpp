@@ -1,6 +1,6 @@
 //==========================================================
 #include "ZChemicalTaskCalibrationModel.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QSqlTableModel>
 #include <QSqlQuery>

@@ -1,6 +1,6 @@
 //======================================================
 #include "ZAddSampleDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZSampleTaskDialog2.h"
 #include "ZControlAction.h"
 #include "ZReadOnlyStyledItemDelegate.h"
@@ -68,57 +68,9 @@ void ZAddSampleDialog::zh_createComponents()
     QLabel* label;
     QHBoxLayout* levelLayout;
 
-    // group box
-//    QGroupBox* selectedGroupBox = new QGroupBox(this);
-//    selectedGroupBox->setTitle(tr("Selected"));
-//    mainLayout->addWidget(selectedGroupBox);
-//    QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
-//    selectedGroupBox->setLayout(groupBoxLayout);
-
-    // task name
-//    label = new QLabel(this);
-//    label->setText(glCreateCaption(tr("Task name:")));
-//    groupBoxLayout->addWidget(label);
-
-//    levelLayout = new QHBoxLayout(this);
-//    groupBoxLayout->addLayout(levelLayout);
-
-//    zv_taskNameLineEdit = new QLineEdit(this);
-//    zv_taskNameLineEdit->setReadOnly(true);
-//    zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
-//    levelLayout->addWidget(zv_taskNameLineEdit);
-//    levelLayout->addStretch();
-
-
-    // task list
-//    label = new QLabel(this);
-//    label->setText(glCreateCaption(tr("Sample tasks:")));
-//    mainLayout->addWidget(label);
-
     zv_sampleTaskTableWidget = new ZSampleTaskTableWidget(this);
     zv_sampleTaskTableWidget->zp_setCaption(glCreateCaption(tr("Sample tasks:")));
     mainLayout->addWidget(zv_sampleTaskTableWidget);
-
-//    zv_sampleTaskTable = new QTableView(this);
-//    zv_sampleTaskTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    zv_sampleTaskTable->setSelectionMode(QAbstractItemView::SingleSelection);
-//    mainLayout->addWidget(zv_sampleTaskTable);
-
-//    // new, edit and review sample task button
-//    levelLayout = new QHBoxLayout(this);
-//    mainLayout->addLayout(levelLayout);
-//    zv_newSampleTaskButton = new QPushButton(this);
-//    zv_newSampleTaskButton->setText(tr("New"));
-//    levelLayout->addStretch();
-//    levelLayout->addWidget(zv_newSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
-//    zv_editSampleTaskButton = new QPushButton(this);
-//    zv_editSampleTaskButton->setEnabled(false);
-//    zv_editSampleTaskButton->setText(tr("Edit"));
-//    levelLayout->addWidget(zv_editSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
-//    zv_reviewSampleTaskButton = new QPushButton(this);
-//    zv_reviewSampleTaskButton->setEnabled(false);
-//    zv_reviewSampleTaskButton->setText(tr("Review"));
-//    levelLayout->addWidget(zv_reviewSampleTaskButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     // Sample name
     label = new QLabel(this);
@@ -190,7 +142,7 @@ void ZAddSampleDialog::zh_createConnections()
     QList<ZControlAction*> actionList;
     actionList.append(zv_newSampleTaskAction);
     actionList.append(zv_editSampleTaskAction);
-    actionList.append(zv_reviewSampleTaskAction);
+    // actionList.append(zv_reviewSampleTaskAction);
     zv_sampleTaskTableWidget->zp_appendButtonActions(actionList);
 
     connect(sampleTaskTable->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -332,7 +284,7 @@ void ZAddSampleDialog::zh_onOkButtonClick()
     accept();
 }
 //======================================================
-void ZAddSampleDialog::zh_onEditSampleTaskButtonClick() const
+void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
 {
     zv_messageLabel->clear();
 
@@ -365,11 +317,23 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick() const
         return;
     }
 
-    ZSampleTaskDialog2 dialog;
-    if(dialog.exec())
+    ZSampleTaskDialog2 dialog(zv_sampleTaskTableModel);
+    if(!dialog.zp_loadSampleTask(currentSampleTaskId))
     {
-
+        return;
     }
+
+    if(!dialog.exec())
+    {
+        return;
+    }
+
+    zh_saveNewSampleTaskToDatabase(dialog);
+}
+//======================================================
+void ZAddSampleDialog::zh_saveNewSampleTaskToDatabase(ZSampleTaskDialog2& dialog)
+{
+
 }
 //======================================================
 void ZAddSampleDialog::zh_onReviewSampleTaskButtonClick() const

@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZSettingsDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZDashboardSettingsWidget.h"
 
 #include <QDialogButtonBox>

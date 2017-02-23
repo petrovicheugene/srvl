@@ -9,6 +9,7 @@ class QLayout;
 class QAbstractItemModel;
 class ZControlAction;
 class ZDashboard;
+class ZMeasuringManager;
 class ZWidgetWithSidebar;
 class ZMeasuringResultTableWidget;
 class ZMeasuringSeriesTaskTreeWidget;
@@ -28,7 +29,7 @@ public:
     void zp_appendSampleContextMenuActions(const QList<ZControlAction *> &actionList);
 
     void zp_setMeasuringResultTableModel(QAbstractItemModel* model);
-    void zp_setMeasuringSeriesTaskTreeModel(QAbstractItemModel* model);
+    void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
 
 signals:
 
@@ -42,6 +43,7 @@ private:
     // VARS
     //ZWidgetWithSidebar* zv_sideBarTableWidget;
     ZMeasuringResultTableWidget* zv_measuringResultTableWidget;
+    ZMeasuringManager* zv_measuringManager;
     //ZMeasuringSeriesTaskTreeWidget* zv_measuringSeriesTaskWidget;
     ZDashboard* zv_dashboard;
     // FUNCS

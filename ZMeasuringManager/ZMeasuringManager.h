@@ -26,12 +26,18 @@ public:
     QString zp_sampleName(int sampleIndex) const;
     bool zp_setSampleName(int sampleIndex, const QString& name);
 
-    QString zp_taskName(int sampleIndex) const;
+    QString zp_sampleTaskName(int sampleIndex) const;
+    QStringList zp_chemicalListForSample(int sampleIndex) const;
+    QStringList zp_measuringConditionsListForSample(int sampleIndex) const;
+
+    QString zp_seriesTaskName() const;
 
 signals:
 
     void zg_sampleOperation(SampleOperationType, int first = -1, int last = -1) const;
     void zg_requestSelectedSampleList(QList<int>&);
+    void zg_seriesTaskNameChanged(const QString& taskName) const;
+    void zg_seriesTaskNameDirtyChanged(bool dirty) const;
 
 public slots:
 
@@ -40,19 +46,29 @@ public slots:
 private slots:
 
     // action slots:
+    void zh_onSaveSeriesAction();
+    void zh_onLoadSeriesAction();
+
     void zh_onAddSamplesToSeriesAction();
     void zh_onRemoveSamplesFromSeriesAction();
     void zh_deleteSampleTask();
 
+    void zh_sampleTaskIdList(QList<int>& idList) const;
+
 private:
 
     // VARS
+    ZControlAction* zv_saveSeriesAction;
+    ZControlAction* zv_loadSeriesAction;
+
     ZControlAction* zv_addSamplesToSeriesAction;
-    ZControlAction* zv_removeSamplesFronSeriesAction;
+    ZControlAction* zv_removeSamplesFromSeriesAction;
 
     QList<ZSample*> zv_sampleList;
     QList<ZSampleTask*> zv_sampleTaskList;
     int zv_currentSampleIndex;
+    bool zv_currentSeriesTaskDirty;
+    QString zv_currentSeriesTaskName;
 
     // FUNCS
     void zh_createActions();
@@ -65,6 +81,13 @@ private:
     int zh_findLastSampleSerialNumber(const QString& sampleName) const;
     bool zh_checkSampleName(const QString& sampleName) const;
 
+    void zh_manageControlEnable();
+    bool zh_addSamplesToSeries(int sampleTaskId,
+                               int sampleQuantity,
+                               QString defaultSampleName = QString());
+
+    void zh_clearSeriesTask();
+    bool zh_loadSeriesTask(int seriesTaskId);
 
 };
 //======================================================

@@ -1,6 +1,6 @@
 //=======================================================
 #include "ZCalibrationInTaskTableModel.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include "ZControlAction.h"
 //=======================================================

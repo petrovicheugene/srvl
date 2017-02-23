@@ -2,7 +2,7 @@
 #include "ZHorizontalDashBoard.h"
 #include "ZPlotGraphicsView.h"
 #include "ZPlotGraphicsScene.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QToolButton>
 #include <QHBoxLayout>

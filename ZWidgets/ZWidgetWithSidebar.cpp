@@ -1,7 +1,7 @@
 //=======================================================
 #include "ZWidgetWithSidebar.h"
 #include "ZClickableLabel.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>

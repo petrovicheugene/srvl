@@ -19,7 +19,10 @@ public:
     bool zp_setSampleName(const QString& name);
 
     QString zp_sampleTaskName() const;
+    QStringList zp_chemicalList() const;
+    QStringList zp_measuringConditionsList() const;
 
+    int zp_sampleTaskId() const;
 
 signals:
 

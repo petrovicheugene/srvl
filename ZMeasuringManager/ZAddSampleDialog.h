@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QModelIndex>
 #include <QItemSelection>
+#include "ZSampleTaskDialog2.h"
 //======================================================
 class ZControlAction;
 class ZSampleTaskTableWidget;
@@ -42,7 +43,7 @@ private slots:
 
     void zh_onOkButtonClick();
     void zh_onNewSampleTaskButtonClick() const;
-    void zh_onEditSampleTaskButtonClick() const;
+    void zh_onEditSampleTaskButtonClick();
     void zh_onReviewSampleTaskButtonClick() const;
     void zh_onSelectionChange(const QItemSelection &current, const QItemSelection &previous);
     void zh_onSampleNameChange(const QString& text);
@@ -57,11 +58,7 @@ private:
 
     QPushButton* zv_okButton;
     QPushButton* zv_cancelButton;
-//    QPushButton* zv_newSampleTaskButton;
-//    QPushButton* zv_editSampleTaskButton;
-//    QPushButton* zv_reviewSampleTaskButton;
 
-    // QTableView* zv_sampleTaskTable;
     ZSampleTaskTableWidget* zv_sampleTaskTableWidget;
     QSqlTableModel* zv_sampleTaskTableModel;
 
@@ -81,6 +78,7 @@ private:
     bool zh_checkData();
     void zh_updateSeletedTaskPropertiesStrings();
     bool zh_removeSampleTaskFromTable(int row = -1);
+    void zh_saveNewSampleTaskToDatabase(ZSampleTaskDialog2 &dialog);
 
 };
 //======================================================

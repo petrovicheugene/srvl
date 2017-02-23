@@ -22,6 +22,8 @@ class ZSampleTaskDialog2 : public QDialog
 public:
     explicit ZSampleTaskDialog2(QSqlTableModel* taskModel = 0, int sampleTaskId = -1, QWidget *parent = 0);
 
+    bool zp_loadSampleTask(int sampleTaskId);
+
 signals:
 
 public slots:
@@ -60,7 +62,6 @@ private:
     bool zh_writeSampleTaskToDatabase();
     bool zh_removeSampleTaskFromTable(int row = -1);
 
-    bool zh_loadSampleTask();
     bool zh_findNewMeasuringConditionsId(int &newId);
 
 

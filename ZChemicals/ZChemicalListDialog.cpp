@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZChemicalListDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZChemicalTableWidget.h"
 #include "ZReadOnlyStyledItemDelegate.h"
 #include "ZControlAction.h"

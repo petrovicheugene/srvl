@@ -68,7 +68,8 @@ INCLUDEPATH += ZDialogs \
     ZMeasuringTaskInitStruct \
     ZCalibrations \
     ZChemicals \
-    ZModelViewWidgets/ZNumericDelegate
+    ZModelViewWidgets/ZNumericDelegate \
+    ZSeriesTasks
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -93,12 +94,10 @@ SOURCES += main.cpp\
     ZComponents/ZQrealToStringConverter.cpp \
     ZWidgets/ZProcessTimeRoundIndicator.cpp \
     ZWidgets/QRoundProgressBar.cpp \
-    ZGLConstantsAndDefines.cpp \
     ZDialogs/ZSettingsDialog.cpp \
     ZWidgets/ZDashboardSettingsWidget.cpp \
     ZWidgets/ZDashboard.cpp \
     ZWidgets/ZColorLabel.cpp \
-    ZWidgets/ZStartStopButton.cpp \
     ZComponents/ZAbstractTerm.cpp \
     ZComponents/ZDashboardSettings.cpp \
     ZComponents/ZAppSettings.cpp \
@@ -158,7 +157,13 @@ SOURCES += main.cpp\
     ZCalibrations/ZCalibrationFilterProxyModel.cpp \
     ZChemicalTasks/ZChemicalTaskCalibrationModel.cpp \
     ZModelViewWidgets/ZNumericDelegate/ZNumericDelegate.cpp \
-    ZModelViewWidgets/ZNumericDelegate/ZNumericEditor.cpp
+    ZModelViewWidgets/ZNumericDelegate/ZNumericEditor.cpp \
+    ZGeneral.cpp \
+    ZSeriesTasks/ZSeriesTaskListDialog.cpp \
+    ZSeriesTasks/ZSeriesTaskListManager.cpp \
+    ZSeriesTasks/ZSeriesTaskTableWidget.cpp \
+    ZWidgets/ZStartStopButtonWidget.cpp \
+    ZWidgets/ZSeriesLabelWidget.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -184,12 +189,10 @@ HEADERS  += MainWindow.h \
     ZComponents/ZQrealToStringConverter.h \
     ZWidgets/ZProcessTimeRoundIndicator.h \
     ZWidgets/QRoundProgressBar.h \
-    ZGLConstantsAndDefines.h \
     ZDialogs/ZSettingsDialog.h \
     ZWidgets/ZDashboardSettingsWidget.h \
     ZWidgets/ZDashboard.h \
     ZWidgets/ZColorLabel.h \
-    ZWidgets/ZStartStopButton.h \
     ZComponents/ZDashboardSettings.h \
     ZComponents/ZAppSettings.h \
     ZWidgets/ZAbstractProcessTimeIndicator.h \
@@ -249,7 +252,13 @@ HEADERS  += MainWindow.h \
     ZCalibrations/ZCalibrationFilterProxyModel.h \
     ZChemicalTasks/ZChemicalTaskCalibrationModel.h \
     ZModelViewWidgets/ZNumericDelegate/ZNumericDelegate.h \
-    ZModelViewWidgets/ZNumericDelegate/ZNumericEditor.h
+    ZModelViewWidgets/ZNumericDelegate/ZNumericEditor.h \
+    ZGeneral.h \
+    ZSeriesTasks/ZSeriesTaskListDialog.h \
+    ZSeriesTasks/ZSeriesTaskListManager.h \
+    ZSeriesTasks/ZSeriesTaskTableWidget.h \
+    ZWidgets/ZStartStopButtonWidget.h \
+    ZWidgets/ZSeriesLabelWidget.h
 
 RESOURCES += \
     resources.qrc

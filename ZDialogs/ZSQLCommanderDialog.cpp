@@ -1,6 +1,6 @@
 //=====================================================
 #include "ZSQLCommanderDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QApplication>
 #include <QVBoxLayout>

@@ -1,6 +1,6 @@
 //=========================================================================
 #include "ZBaseTableWidget.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZControlAction.h"
 
 #include <QAbstractItemModel>

@@ -1,6 +1,6 @@
 //============================================================
 #include "MainWindow.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 // components
 #include "ZControlAction.h"
@@ -162,7 +162,6 @@ void MainWindow::zh_createComponents()
     zv_plotterDock->setWidget(frame);
 
     // DATA MODELS
-
     zv_measuringManager = new ZMeasuringManager();
 
     // measuring models
@@ -223,11 +222,9 @@ void MainWindow::zh_createConnections()
             this, &MainWindow::zh_onRunSQLCommandAction);
 
     // all about sample table
-    zv_measuringCommonWidget->zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
+    zv_measuringCommonWidget->zp_connectToMeasuringManager(zv_measuringManager);
     zv_measuringResultTableModel->zp_connectToMeasuringManager(zv_measuringManager);
     zv_measuringCommonWidget->zp_setMeasuringResultTableModel(zv_measuringResultTableModel);
-    connect(zv_measuringManager, &ZMeasuringManager::zg_requestSelectedSampleList,
-            zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_selectedSampleList);
 
 }
 //============================================================

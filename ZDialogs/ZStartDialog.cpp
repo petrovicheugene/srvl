@@ -1,5 +1,5 @@
 //=========================================================
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZStartDialog.h"
 #include "ZDatabasePropertiesDialog.h"
 #include "ZDatabaseInspector.h"

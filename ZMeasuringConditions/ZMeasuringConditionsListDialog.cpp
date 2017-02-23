@@ -1,6 +1,6 @@
 //===========================================================
 #include "ZMeasuringConditionsListDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZMeasuringConditionsDialog.h"
 #include "ZReadOnlyStyledItemDelegate.h"
 

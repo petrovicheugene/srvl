@@ -1,6 +1,6 @@
 //===========================================================
 #include "ZSeriesTaskTreeModel.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include "ZControlAction.h"
 #include "ZSampleTaskItem.h"

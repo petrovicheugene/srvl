@@ -1,6 +1,6 @@
 //============================================================
 #include "ZAbstractTerm.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZCalibrationWindow.h"
 #include "ZCalibration.h"
 #include <QPointer>

@@ -1,6 +1,6 @@
 //=============================================================
 #include "ZProcessTimeRoundIndicator.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "QRoundProgressBar.h"
 
 #include <QVBoxLayout>

@@ -1,6 +1,6 @@
 //===================================================
 #include "ZSampleTaskTreeModel.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include "ZChemicalTaskListDialog.h"
 #include "ZMeasuringConditionsListDialog.h"
@@ -314,6 +314,11 @@ void ZSampleTaskTreeModel::zh_onAppendMeasuringConditionsAction()
     int exposition = dialog.zp_exposition();
     int quantity = dialog.zp_quantity();
 
+    zp_appendMeasuringConditions(gainFactor, exposition, quantity);
+}
+//===================================================
+void ZSampleTaskTreeModel::zp_appendMeasuringConditions(int gainFactor, int exposition, int quantity)
+{
     // init options
     ZSampleTaskTreeMeasuringConditionsItemOptions options(gainFactor, exposition);
     for(int i = 0; i < quantity; i++)
@@ -332,6 +337,11 @@ void ZSampleTaskTreeModel::zh_onAppendChemicalTaskAction()
 
     int chemicalTaskId = dialog.zp_currentChemicalTaskId();
 
+    zp_appendChemicalTask(chemicalTaskId);
+}
+//===================================================
+void ZSampleTaskTreeModel::zp_appendChemicalTask(int chemicalTaskId)
+{
     // measuring conditions from chemical task
     QString queryString = QString("SELECT * FROM calibration_stacks WHERE id=%1").arg(QString::number(chemicalTaskId));
     QSqlQuery query;
@@ -504,7 +514,6 @@ void ZSampleTaskTreeModel::zh_onAppendChemicalTaskAction()
     QModelIndex index;
     zh_indexForItem(baseItem, index);
     emit zg_setCurrentIndex(index);
-
 }
 //===================================================
 void ZSampleTaskTreeModel::zh_onRemoveCurrentTaskElementAction()

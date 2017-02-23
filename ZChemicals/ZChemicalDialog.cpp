@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZChemicalDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QLabel>

@@ -1,5 +1,5 @@
 //===========================================================
-#include <ZGLConstantsAndDefines.h>
+#include <ZGeneral.h>
 
 //===========================================================
 extern const QString glDefaultDBSuffixString = "sqlite";

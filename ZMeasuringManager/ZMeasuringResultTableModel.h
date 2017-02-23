@@ -39,6 +39,11 @@ private:
 
     // VARS
     ZMeasuringManager* zv_measuringManager;
+    QStringList zv_chemicalList;
+    QStringList zv_measuringConditionsList;
+
+    // FUNCS
+    void zh_recalcColumnCount();
 
 };
 //=========================================================

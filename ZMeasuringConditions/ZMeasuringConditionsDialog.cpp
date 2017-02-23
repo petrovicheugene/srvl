@@ -1,6 +1,6 @@
 //=======================================================
 #include "ZMeasuringConditionsDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

@@ -7,7 +7,7 @@
 #include "ZCustomTerm.h"
 #include "ZEquationSettingsData.h"
 #include "ZTermNormalizer.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZQrealToStringConverter.h"
 
 #include <QFileInfo>

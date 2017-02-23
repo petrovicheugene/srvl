@@ -46,3 +46,33 @@ QString ZSample::zp_sampleTaskName() const
     return zv_sampleTask->zp_name();
 }
 //=====================================================
+QStringList ZSample::zp_chemicalList() const
+{
+    if(zv_sampleTask == 0)
+    {
+        return QStringList();
+    }
+
+    return zv_sampleTask->zp_chemicalList();
+}
+//=====================================================
+QStringList ZSample::zp_measuringConditionsList() const
+{
+    if(zv_sampleTask == 0)
+    {
+        return QStringList();
+    }
+
+    return zv_sampleTask->zp_measuringConditionsList();
+}
+//=====================================================
+int ZSample::zp_sampleTaskId() const
+{
+    if(zv_sampleTask == 0)
+    {
+        return -1;
+    }
+
+    return zv_sampleTask->zp_id();
+}
+//=====================================================

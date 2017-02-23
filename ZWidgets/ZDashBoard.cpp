@@ -2,7 +2,8 @@
 #include "ZDashboard.h"
 #include "ZProcessTimeClassicIndicator.h"
 #include "ZProcessTimeRoundIndicator.h"
-#include "ZStartStopButton.h"
+#include "ZStartStopButtonWidget.h"
+#include "ZSeriesLabelWidget.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -11,7 +12,8 @@ ZDashboard::ZDashboard(QWidget *parent) : QWidget(parent)
 {
     zv_totalTimeIndicator = 0;
     zv_sampleTimeIndicator = 0;
-    zv_startStopButton = 0;
+    zv_startStopButtonWidget = 0;
+    zv_seriesLabelWidget = 0;
 
     zv_fontPixelSizeMinimum = 10;
     zv_fontPixelSizeMaximum = 30;
@@ -81,16 +83,33 @@ void ZDashboard::zp_setProgressBarSizeMinimumMaximum(int min, int max)
 
 }
 //============================================================
+void ZDashboard::zp_setSeriesTaskName(const QString& name)
+{
+    zv_seriesLabelWidget->zp_setSeriesName(name);
+}
+//============================================================
+void ZDashboard::zp_setSeriesTaskDirty(bool dirty)
+{
+    zv_seriesLabelWidget->zp_setSeriesDirty(dirty);
+}
+//============================================================
 void ZDashboard::zh_createControls()
 {
     // old layout
     QLayout* oldMainLayout = layout();
 
     // the start-stop button have to be created once
-    if(zv_startStopButton == 0)
+    if(zv_startStopButtonWidget == 0)
     {
-        zv_startStopButton = new ZStartStopButton();
+        zv_startStopButtonWidget = new ZStartStopButtonWidget();
     }
+
+    if(zv_seriesLabelWidget == 0)
+    {
+        zv_seriesLabelWidget = new ZSeriesLabelWidget();
+    }
+
+    zv_seriesLabelWidget->zp_applyDashBoardSettings(zv_settings);
 
     // Sample time indicator
     // delete previous if it exists
@@ -111,6 +130,8 @@ void ZDashboard::zh_createControls()
     if(zv_settings.zv_dashboardLocation == ZDashboardSettings::DBL_BOTTOM ||
             zv_settings.zv_dashboardLocation == ZDashboardSettings::DBL_TOP)
     {
+        zv_startStopButtonWidget->zp_setOrientation(Qt::Vertical);
+
         if(zv_settings.zv_dashboardStyle == ZDashboardSettings::DBS_CLASSIC ||
                 zv_settings.zv_dashboardStyle == ZDashboardSettings::DBS_CLASSIC_SLIM)
         {
@@ -120,9 +141,11 @@ void ZDashboard::zh_createControls()
         {
             mainLayout = zh_createHorizontalRound();
         }
-    }
+     }
     else
     {
+        zv_startStopButtonWidget->zp_setOrientation(Qt::Horizontal);
+
         if(zv_settings.zv_dashboardStyle == ZDashboardSettings::DBS_CLASSIC ||
                 zv_settings.zv_dashboardStyle == ZDashboardSettings::DBS_CLASSIC_SLIM)
         {
@@ -168,14 +191,15 @@ QLayout* ZDashboard::zh_createVerticalClassic()
     zv_totalTimeIndicator->zp_applyProgressBarOptions(options);
     zv_totalTimeIndicator->zp_setPercentTextOnProgressBar(false);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout();
     //    QVBoxLayout* indicatorLayout = new QVBoxLayout();
     //    mainLayout->addLayout(indicatorLayout);
 
     // placing
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(zv_seriesLabelWidget);
     mainLayout->addWidget(zv_totalTimeIndicator);
     mainLayout->addWidget(zv_sampleTimeIndicator);
-    mainLayout->addWidget(zv_startStopButton);
+    mainLayout->addWidget(zv_startStopButtonWidget);
     mainLayout->addStretch();
 
     return mainLayout;
@@ -209,18 +233,22 @@ QLayout* ZDashboard::zh_createHorizontalClassic()
     zv_totalTimeIndicator->zp_applyProgressBarOptions(options);
 
     // placing
+    QVBoxLayout* vMainLayout = new QVBoxLayout();
     QHBoxLayout* mainLayout = new QHBoxLayout();
     QVBoxLayout* indicatorLayout = new QVBoxLayout();
+
+    vMainLayout->addWidget(zv_seriesLabelWidget);
+    vMainLayout->addLayout(mainLayout);
     mainLayout->addLayout(indicatorLayout);
 
     indicatorLayout->addWidget(zv_totalTimeIndicator);
     indicatorLayout->addWidget(zv_sampleTimeIndicator);
-    mainLayout->addWidget(zv_startStopButton);
+    mainLayout->addWidget(zv_startStopButtonWidget);
 
     // add stretch
     mainLayout->addStretch();
 
-    return mainLayout;
+    return vMainLayout;
 }
 //============================================================
 QLayout* ZDashboard::zh_createVerticalRound()
@@ -239,12 +267,13 @@ QLayout* ZDashboard::zh_createVerticalRound()
     zv_totalTimeIndicator->zp_applyProgressBarOptions(options);
     zv_totalTimeIndicator->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout();
 
     // placing
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(zv_seriesLabelWidget);
     mainLayout->addWidget(zv_totalTimeIndicator);
     mainLayout->addWidget(zv_sampleTimeIndicator);
-    mainLayout->addWidget(zv_startStopButton);
+    mainLayout->addWidget(zv_startStopButtonWidget);
     mainLayout->addStretch();
 
     return mainLayout;
@@ -266,16 +295,20 @@ QLayout* ZDashboard::zh_createHorizontalRound()
     zv_totalTimeIndicator->zp_applyProgressBarOptions(options);
     zv_totalTimeIndicator->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout();
 
     // placing
+    QVBoxLayout* vMainLayout = new QVBoxLayout();
+    QHBoxLayout* mainLayout = new QHBoxLayout();
+    vMainLayout->addWidget(zv_seriesLabelWidget);
+    vMainLayout->addLayout(mainLayout);
+
     mainLayout->addWidget(zv_totalTimeIndicator);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(zv_sampleTimeIndicator);
-    mainLayout->addWidget(zv_startStopButton);
+    mainLayout->addWidget(zv_startStopButtonWidget);
     mainLayout->addStretch();
 
-    return mainLayout;
+    return vMainLayout;
 }
 //============================================================
 void ZDashboard::zh_createConnections()

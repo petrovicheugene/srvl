@@ -1,7 +1,7 @@
 //=========================================================
 #include "ZDatabaseInspector.h"
-#include "ZGLConstantsAndDefines.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
+#include "ZGeneral.h"
 
 #include <QMessageBox>
 #include <QFile>

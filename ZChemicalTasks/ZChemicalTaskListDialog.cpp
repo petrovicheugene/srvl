@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZChemicalTaskListDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZChemicalTableWidget.h"
 #include "ZChemicalTaskTableWidget.h"
 #include "ZChemicalTaskDialog.h"
@@ -890,37 +890,6 @@ int ZChemicalTaskListDialog::zh_findNewChemicalTaskId() const
     }
 
     return ++id;
-
-    //    QModelIndex index;
-    //    QVariant vData;
-    //    int currentId = 0;
-    //    int newId = 0;
-    //    bool ok;
-    //    for(int row = 0; row < zv_calibrationStackTableModel->rowCount(); row++)
-    //    {
-    //        index = zv_calibrationStackTableModel->index(row, 0);
-    //        if(!index.isValid())
-    //        {
-    //            continue;
-    //        }
-    //        vData = index.data(Qt::DisplayRole);
-    //        if(!vData.isValid() || !vData.canConvert<int>())
-    //        {
-    //            continue;
-    //        }
-
-    //        currentId = vData.toInt(&ok);
-    //        if(!ok)
-    //        {
-    //            continue;
-    //        }
-    //        if(newId < currentId)
-    //        {
-    //            newId = currentId;
-    //        }
-    //    }
-
-    //    return ++newId;
 }
 //===============================================================
 void ZChemicalTaskListDialog::zh_checkChemical(int id, const QString& chemical, bool& res) const
@@ -995,7 +964,7 @@ void ZChemicalTaskListDialog::zh_checkChemicalTaskName(const QString& chemicalTa
         if(vData.toString() == chemicalTaskName)
         {
             res = false;
-            msg = tr("Chemical task name is not unique.");
+            msg = tr("The chemical task name is not unique.");
             return;
         }
     }

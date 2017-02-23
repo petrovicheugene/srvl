@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QStack>
 #include "ZCalibration.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 //==========================================================
 class QXmlStreamReader;
 //==========================================================
@@ -23,9 +23,12 @@ public:
     static QString zp_checkDirPath(const QString& calibrationFolderPath);
 
     bool zp_getCalibrationXMLByteArrayFromFile(QFile&file, QByteArray& calibrationXMLByteArray);
-    bool zp_getCalibrationFromByteArray(QByteArray& byteArray, ZCalibration*);
-    bool zp_getCalibrationFromFile(QFile&, ZCalibration*);
+    bool zp_getCalibrationFromByteArray(QByteArray& byteArray, ZCalibration*calibration);
+
+    bool zp_getCalibrationFromString(QString&, ZCalibration*);
+    bool zp_getCalibrationFromFile(QFile&, ZCalibration *);
     bool zp_writeCalibrationToFile(QFile&file, const ZCalibration*calibration);
+
 
     QString zp_message() const;
 
@@ -97,6 +100,7 @@ private:
                             QXmlStreamReader&);
     bool zh_checkfilePath(const QString& path) const;
 
+    // bool zh_getCalibration(QXmlStreamReader& reader, ZCalibration* calibration);
 
 };
 //==========================================================

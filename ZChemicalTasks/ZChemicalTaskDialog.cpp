@@ -1,6 +1,6 @@
 //=========================================================================
 #include "ZChemicalTaskDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZMeasuringConditionsListDialog.h"
 #include "ZChemicalListDialog.h"
 #include "ZCalibrationListDialog.h"
@@ -134,7 +134,7 @@ void ZChemicalTaskDialog::zh_createComponents()
 
     // description
     label = new QLabel(this);
-    label->setText(glCreateCaption(tr("Description::")));
+    label->setText(glCreateCaption(tr("Description:")));
     mainLayout->addWidget(label);
 
     zv_descriptionTextEdit = new QTextEdit(this);

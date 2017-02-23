@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZCalibrationListDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZBaseTableWidget.h"
 #include "ZCalibration.h"
 #include "ZReadOnlyStyledItemDelegate.h"
@@ -648,6 +648,7 @@ bool ZCalibrationListDialog::zh_checkCalibrationConformity(const ZCalibration& c
     {
         return true;
     }
+
     else if(loadingPermission == LP_ASK)
     {
         if(zv_chemicalTableSQLModel->rowCount() < 1)
@@ -776,6 +777,8 @@ bool ZCalibrationListDialog::zh_checkCalibrationConformity(const ZCalibration& c
             return true;
         }
     }
+
+    return false;
 }
 //===============================================================
 bool ZCalibrationListDialog::zp_currentChemical(int& id, QString& chemical) const

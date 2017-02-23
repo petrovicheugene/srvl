@@ -1,7 +1,7 @@
 //===============================================================
 #include "MainWindow.h"
 #include "ZStartDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QApplication>
 #include <QTextCodec>

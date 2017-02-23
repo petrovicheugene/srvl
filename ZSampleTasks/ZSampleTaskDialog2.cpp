@@ -1,6 +1,6 @@
 //===============================================================
 #include "ZSampleTaskDialog2.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZSampleTaskTreeWidget.h"
 #include "ZSampleTaskTreeModel.h"
 
@@ -47,11 +47,6 @@ ZSampleTaskDialog2::ZSampleTaskDialog2(QSqlTableModel *sampleTaskModel, int samp
     zh_createComponents();
     zh_createConnections();
     zh_restoreSettings();
-
-    if(zv_sampleTaskId >= 0)
-    {
-        zh_loadSampleTask();
-    }
 }
 //===============================================================
 void ZSampleTaskDialog2::closeEvent(QCloseEvent* event)
@@ -164,6 +159,127 @@ void ZSampleTaskDialog2::zh_createConnections()
     connect(zv_sampleTaskTreeModel, &QAbstractItemModel::rowsRemoved,
             this, &ZSampleTaskDialog2::zh_onModelRowCountChange);
 
+}
+//===============================================================
+bool ZSampleTaskDialog2::zp_loadSampleTask(int sampleTaskId)
+{
+    // get data from table sample_tasks (model zv_sampleTaskTableModel)
+    QSqlQuery query;
+    QString queryString = QString("SELECT * FROM sample_tasks WHERE id=%1").arg(QString::number(sampleTaskId));
+
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    if(!query.next())
+    {
+        return false;
+    }
+
+    // sample task name
+    QVariant vData = query.value(1);
+    if(!vData.isValid() || !vData.canConvert<QString>() )
+    {
+        return false;
+    }
+
+    zv_sampleTaskNameLineEdit->setText(vData.toString());
+
+    // sample name template
+    vData = query.value(2);
+    if(!vData.isValid() || !vData.canConvert<QString>() )
+    {
+        return false;
+    }
+
+    zv_sampleNameTemplateLineEdit->setText(vData.toString());
+
+    // description
+    vData = query.value(3);
+    if(!vData.isValid() || !vData.canConvert<QString>() )
+    {
+        return false;
+    }
+
+    zv_descriptionTextEdit->setText(vData.toString());
+
+    // Task stages tree
+    // measuring conditions
+    query.clear();
+    queryString = QString("SELECT * FROM conditions_has_sample_tasks "
+                          "WHERE sample_tasks_id=%1").arg(QString::number(sampleTaskId));
+
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    int gainFactor;
+    int exposition;
+    while(query.next())
+    {
+        //gain factor
+        vData = query.value(1);
+        if(!vData.isValid() || !vData.canConvert<int>() )
+        {
+            return false;
+        }
+
+        gainFactor = vData.toInt();
+
+        vData = query.value(2);
+        if(!vData.isValid() || !vData.canConvert<int>() )
+        {
+            return false;
+        }
+
+        exposition = vData.toInt();
+
+        zv_sampleTaskTreeModel->zp_appendMeasuringConditions(gainFactor, exposition, 1);
+    }
+
+    // chemical tasks
+    query.clear();
+    queryString = QString("SELECT * FROM calibration_stacks_has_conditions_has_sample_tasks "
+                          "WHERE conditions_has_sample_tasks_id "
+                          "IN (SELECT id FROM conditions_has_sample_tasks "
+                          "WHERE sample_tasks_id=%1)").arg(QString::number(sampleTaskId));
+
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    while(query.next())
+    {
+        vData = query.value(0);
+        if(!vData.isValid() || !vData.canConvert<int>() )
+        {
+            return false;
+        }
+
+        zv_sampleTaskTreeModel->zp_appendChemicalTask(vData.toInt());
+    }
+
+    zv_sampleTaskTreeWidget->zp_treeView()->expandAll();
+
+    return true;
 }
 //===============================================================
 void ZSampleTaskDialog2::zh_restoreSettings()
@@ -299,7 +415,7 @@ bool ZSampleTaskDialog2::zh_checkData() const
                 continue;
             }
 
-            QString msg = tr("Sample task name is not unique.");
+            QString msg = tr("The sample task name is not unique.");
             zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
             return false;
         }
@@ -573,11 +689,6 @@ bool ZSampleTaskDialog2::zh_removeSampleTaskFromTable(int row)
 
     zv_sampleTaskTableModel->submitAll();
     return true;
-}
-//===============================================================
-bool ZSampleTaskDialog2::zh_loadSampleTask()
-{
-
 }
 //===============================================================
 bool ZSampleTaskDialog2::zh_findNewMeasuringConditionsId(int& newId)

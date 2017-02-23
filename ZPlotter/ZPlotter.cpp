@@ -8,7 +8,7 @@
 #include "ZWindowGraphicsItem.h"
 #include "ZChartPointGraphicsItem.h"
 
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZPlotterDefaulVariables.h"
 
 #include <QApplication>

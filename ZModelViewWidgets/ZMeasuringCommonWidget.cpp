@@ -1,7 +1,8 @@
 //==========================================================
 #include "ZMeasuringCommonWidget.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZDashboard.h"
+#include "ZMeasuringManager.h"
 #include "ZMeasuringResultTableWidget.h"
 #include "ZMeasuringSeriesTaskTreeWidget.h"
 #include "ZWidgetWithSidebar.h"
@@ -12,6 +13,10 @@
 //==========================================================
 ZMeasuringCommonWidget::ZMeasuringCommonWidget(QWidget *parent) : QWidget(parent)
 {
+    zv_dashboard = 0;
+    zv_measuringResultTableWidget = 0;
+    zv_measuringManager = 0;
+
     zh_createComponents();
     zh_createConnections();
     zh_rebuildLayout();
@@ -30,7 +35,7 @@ void ZMeasuringCommonWidget::zp_appendTaskButtonActions(const QList<ZControlActi
 //==========================================================
 void ZMeasuringCommonWidget::zp_appendTaskContextMenuActions(const QList<ZControlAction*>& actionList)
 {
-   // zv_measuringSeriesTaskWidget->zp_appendContextActions(actionList);
+    // zv_measuringSeriesTaskWidget->zp_appendContextActions(actionList);
 }
 //==========================================================
 void ZMeasuringCommonWidget::zp_appendSampleButtonActions(const QList<ZControlAction *> &actionList)
@@ -48,9 +53,20 @@ void ZMeasuringCommonWidget::zp_setMeasuringResultTableModel(QAbstractItemModel*
     zv_measuringResultTableWidget->zp_setModel(model);
 }
 //==========================================================
-void ZMeasuringCommonWidget::zp_setMeasuringSeriesTaskTreeModel(QAbstractItemModel* model)
+void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* measuringManager)
 {
-    //zv_measuringSeriesTaskWidget->zp_setModel(model);
+    zv_measuringManager = measuringManager;
+
+    // zv_dashboard
+    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameChanged,
+            zv_dashboard, &ZDashboard::zp_setSeriesTaskName);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameDirtyChanged,
+            zv_dashboard, &ZDashboard::zp_setSeriesTaskDirty);
+
+    zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
+    connect(zv_measuringManager, &ZMeasuringManager::zg_requestSelectedSampleList,
+            this, &ZMeasuringCommonWidget::zp_selectedSampleList);
+
 }
 //==========================================================
 void ZMeasuringCommonWidget::zp_saveSettings() const
@@ -64,16 +80,16 @@ void ZMeasuringCommonWidget::zh_createComponents()
     // tables
     zv_measuringResultTableWidget = new ZMeasuringResultTableWidget(this);
     zv_measuringResultTableWidget->zp_setCaption(glCreateCaption(tr("Samples:")));
-//    zv_measuringSeriesTaskWidget = new ZMeasuringSeriesTaskTreeWidget(this);
-//    zv_measuringSeriesTaskWidget->zp_setCaption(glCreateCaption(tr("Series task:")));
+    //    zv_measuringSeriesTaskWidget = new ZMeasuringSeriesTaskTreeWidget(this);
+    //    zv_measuringSeriesTaskWidget->zp_setCaption(glCreateCaption(tr("Series task:")));
 
     // side bar widget
-//    zv_sideBarTableWidget = new ZWidgetWithSidebar("MEASUREMENT_WIDGET", true, this);
-//    zv_sideBarTableWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
-//    zv_sideBarTableWidget->setLineWidth(1);
-//    zv_sideBarTableWidget->zp_setSidebarWidget(zv_measuringSeriesTaskWidget);
-//    zv_sideBarTableWidget->zp_setMainWidget(zv_measuringResultTableWidget);
-//    zv_sideBarTableWidget->zp_insertSpacingUpperHideLabel(5);
+    //    zv_sideBarTableWidget = new ZWidgetWithSidebar("MEASUREMENT_WIDGET", true, this);
+    //    zv_sideBarTableWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
+    //    zv_sideBarTableWidget->setLineWidth(1);
+    //    zv_sideBarTableWidget->zp_setSidebarWidget(zv_measuringSeriesTaskWidget);
+    //    zv_sideBarTableWidget->zp_setMainWidget(zv_measuringResultTableWidget);
+    //    zv_sideBarTableWidget->zp_insertSpacingUpperHideLabel(5);
 
     // dashboard
     zv_dashboard = new ZDashboard;
@@ -101,8 +117,8 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
         zv_dashboard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         newMainLayout = new QHBoxLayout;
         newMainLayout->addWidget(zv_dashboard);
-//        newMainLayout->addWidget(zv_sideBarTableWidget);
-         newMainLayout->addWidget(zv_measuringResultTableWidget);
+        //        newMainLayout->addWidget(zv_sideBarTableWidget);
+        newMainLayout->addWidget(zv_measuringResultTableWidget);
     }
     else if(dashboardLocation == ZDashboardSettings::DBL_RIGHT)
     {

@@ -1,6 +1,6 @@
 //=========================================================
 #include "ZAddCalibrationDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZXMLCalibrationIOHandler.h"
 #include "ZCalibration.h"
 

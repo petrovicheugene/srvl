@@ -3,7 +3,7 @@
 #include "ZPlotGraphicsView.h"
 #include "ZRulerWidget.h"
 #include "ZPlotter.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 
 #include <QPoint>
 #include <QPointF>

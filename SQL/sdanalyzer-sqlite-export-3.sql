@@ -127,9 +127,10 @@ CREATE TABLE "calibration_stacks"(
 CREATE INDEX "calibration_stacks.fk_calibration_stacks_chemicals1_idx" ON "calibration_stacks" ("chemicals_id");
 CREATE INDEX "calibration_stacks.fk_calibration_stacks_measuring_conditions1_idx" ON "calibration_stacks" ("measuring_conditions_gain_factor","measuring_conditions_exposition");
 CREATE TABLE "sample_tasks_has_series_tasks"(
+  "id" INTEGER NOT NULL,
   "sample_tasks_id" INTEGER NOT NULL,
   "series_tasks_id" INTEGER NOT NULL,
-  PRIMARY KEY("sample_tasks_id","series_tasks_id"),
+  PRIMARY KEY("id","sample_tasks_id","series_tasks_id"),
   CONSTRAINT "fk_sample_tasks_has_series_tasks_sample_tasks1"
     FOREIGN KEY("sample_tasks_id")
     REFERENCES "sample_tasks"("id")

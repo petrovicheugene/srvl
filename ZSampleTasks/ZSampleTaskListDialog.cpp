@@ -1,6 +1,6 @@
 //=======================================================
 #include "ZSampleTaskListDialog.h"
-#include "ZGLConstantsAndDefines.h"
+#include "ZGeneral.h"
 #include "ZSampleTaskDialog2.h"
 #include "ZMeasuringTaskInitStruct.h"
 

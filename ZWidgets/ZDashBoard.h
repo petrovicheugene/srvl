@@ -7,8 +7,10 @@
 #include <ZProgressBarOptions.h>
 //============================================================
 class ZAbstractProcessTimeIndicator;
-class ZStartStopButton;
+class ZStartStopButtonWidget;
 class QLayout;
+class QLabel;
+class ZSeriesLabelWidget;
 //============================================================
 /*!
  \brief
@@ -36,13 +38,17 @@ signals:
 
 public slots:
 
+    void zp_setSeriesTaskName(const QString& name);
+    void zp_setSeriesTaskDirty(bool dirty);
 
 private:
 
     // VARS
+    ZSeriesLabelWidget* zv_seriesLabelWidget;
     ZAbstractProcessTimeIndicator* zv_totalTimeIndicator; /*!< TODO: describe */
     ZAbstractProcessTimeIndicator* zv_sampleTimeIndicator; /*!< TODO: describe */
-    ZStartStopButton* zv_startStopButton;
+    ZStartStopButtonWidget* zv_startStopButtonWidget;
+
     ZDashboardSettings zv_settings;
 
     int zv_fontPixelSizeMinimum;
