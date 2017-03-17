@@ -166,7 +166,7 @@ void ZSampleTask::zp_removeClient(QObject* client )
     }
 }
 //=================================================
-QStringList ZSampleTask::zp_chemicalList() const
+QStringList ZSampleTask::zp_chemicalStringList() const
 {
     QStringList chemicalList;
     for(int i = 0; i < zv_measuringTaskList.count(); i++)
@@ -177,15 +177,37 @@ QStringList ZSampleTask::zp_chemicalList() const
     return chemicalList;
 }
 //=================================================
-QStringList ZSampleTask::zp_measuringConditionsList() const
+QStringList ZSampleTask::zp_measuringConditionsStringlist() const
 {
     QStringList measuringConditionsList;
+    for(int i = 0; i < zv_measuringTaskList.count(); i++)
+    {
+        measuringConditionsList.append(zv_measuringTaskList.at(i)->zp_measuringConditionsString());
+    }
+
+    return measuringConditionsList;
+}
+//=================================================
+QList<QPair<int,int> > ZSampleTask::zp_measuringConditionsList() const
+{
+    QList<QPair<int,int> > measuringConditionsList;
     for(int i = 0; i < zv_measuringTaskList.count(); i++)
     {
         measuringConditionsList.append(zv_measuringTaskList.at(i)->zp_measuringConditions());
     }
 
     return measuringConditionsList;
+}
+//=================================================
+int ZSampleTask::zp_totalMeasuringDuration() const
+{
+    int measuringDuration = 0;
+    for(int i = 0; i < zv_measuringTaskList.count(); i++)
+    {
+        measuringDuration += (zv_measuringTaskList.at(i)->zp_exposition());
+    }
+
+    return measuringDuration;
 }
 //=================================================
 // MEASURING TASK
@@ -253,11 +275,24 @@ QStringList ZMeasuringTask::zp_chemicalList() const
     return chemicalList;
 }
 //=================================================
-QString ZMeasuringTask::zp_measuringConditions() const
+QString ZMeasuringTask::zp_measuringConditionsString() const
 {
     return tr("G.F. - %1, Exp. - %2").arg(QString::number(zv_gainFactor),
                                                  QString::number(zv_exposition));
 
+}
+//=================================================
+QPair<int,int> ZMeasuringTask::zp_measuringConditions() const
+{
+    QPair<int,int> measuringConditions;
+    measuringConditions.first = zv_gainFactor;
+    measuringConditions.second = zv_exposition;
+    return measuringConditions;
+}
+//=================================================
+int ZMeasuringTask::zp_exposition() const
+{
+    return zv_exposition;
 }
 //=================================================
 // CALCULATION TASK

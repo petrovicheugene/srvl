@@ -27,9 +27,21 @@ public:
 
 signals:
 
+    void zg_currentSampleIndexChanged(int currentSampleIndex) const;
+
 public slots:
 
+private slots:
+
+    void zh_onCurrentIndexChanged(const QModelIndex& current,
+                                  const QModelIndex& previous);
+
 private:
+
+    // VARS
+
+
+    // FUNCS
 
 };
 //============================================================

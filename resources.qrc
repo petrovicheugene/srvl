@@ -11,6 +11,7 @@
         <file>ZWidgets/sidebarRightClose-1.png</file>
         <file>ZWidgets/sidebarRightOpen.png</file>
         <file>ZWidgets/sidebarRightOpen-1.png</file>
+        <file>ZImages/eyeSignBlack-1.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>

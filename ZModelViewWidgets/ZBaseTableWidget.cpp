@@ -19,11 +19,12 @@ ZBaseTableWidget::ZBaseTableWidget(QWidget *parent) : QWidget(parent)
     zh_createConnections();
 }
 //=========================================================================
-void ZBaseTableWidget::zp_setModel(QAbstractItemModel* model)
+void ZBaseTableWidget::zp_setModel(QAbstractItemModel* model, bool alternatingRowColorFlag)
 {
     zv_table->setModel(model);
     connect(zv_table->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &ZBaseTableWidget::zg_currentChanged);
+    zv_table->setAlternatingRowColors(alternatingRowColorFlag);
 }
 //=========================================================================
 QTableView* ZBaseTableWidget::zp_tableView() const

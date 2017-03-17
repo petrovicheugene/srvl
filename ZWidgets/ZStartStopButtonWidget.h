@@ -5,8 +5,10 @@
 #include <QWidget>
 
 //===========================================================
+class QButtonGroup;
 class QPushButton;
 class QLayout;
+class QAbstractButton;
 //===========================================================
 class ZStartStopButtonWidget : public QWidget
 {
@@ -25,19 +27,28 @@ protected:
 
 signals:
 
+    void zg_start() const;
+    void zg_stop() const;
+
 public slots:
 
     void zp_setOrientation(Qt::Orientation orientation);
 
+private slots:
+
+    void zh_onButtonToggle(QAbstractButton* button, bool checked);
+
 private:
 
     // VARS
+    QButtonGroup* zv_buttonGroup;
+
     QPushButton* zv_startButton;
     QPushButton* zv_stopButton;
 
     // FUNS
     void zh_createComponents();
-
+    void zh_createConnections();
 
 //    enum ButtonState {BS_STOP,
 //                      BS_STOP_DOWN,

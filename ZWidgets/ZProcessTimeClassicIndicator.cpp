@@ -11,13 +11,19 @@ ZProcessTimeClassicIndicator::ZProcessTimeClassicIndicator(QWidget *parent)
     : ZAbstractProcessTimeIndicator(parent)
 {
     zh_createComponents();
-    testFilling();
+    zp_reset();
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_setPercentTextOnProgressBar(bool visible)
 {
     zv_progressBar->setTextVisible(visible);
     //zv_percentElapsedLabel->setVisible(!visible);
+}
+//=============================================================
+void ZProcessTimeClassicIndicator::zp_reset()
+{
+    zv_progressBar->setRange(1.0,0.0);
+    zv_progressBar->setValue(0);
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)
@@ -68,7 +74,7 @@ void ZProcessTimeClassicIndicator::zh_createComponents()
     topLayout->setMargin(0);
     mainLayout->addLayout(topLayout);
 
-    zv_processNameLabel = new QLabel(this);
+    //zv_processNameLabel = new QLabel(this);
     topLayout->addWidget(zv_processNameLabel);
     topLayout->addStretch();
     topLayout->addSpacing(10);
@@ -85,28 +91,12 @@ void ZProcessTimeClassicIndicator::zh_createComponents()
     bottomLayout->setMargin(0);
     mainLayout->addLayout(bottomLayout);
 
-    zv_processDurationLabel = new QLabel(this);
     bottomLayout->addWidget(zv_processDurationLabel);
     bottomLayout->addStretch();
     bottomLayout->addSpacing(10);
-    zv_timeLeftLabel = new QLabel(this);
     bottomLayout->addWidget(zv_timeLeftLabel);
 
     // save standard progressBar height
     zv_progressBarStandardHeight = zv_progressBar->sizeHint().height();
-}
-//=============================================================
-void ZProcessTimeClassicIndicator::testFilling()
-{
-    zv_processNameLabel->setText("Sample 1");
-    zv_percentElapsedLabel->setText("15 %");
-    zv_processDurationLabel->setText("5:00");
-    zv_timeLeftLabel->setText("3:43");
-
-    zv_progressBar->setMinimum(0);
-    zv_progressBar->setMaximum(300);
-
-    zv_progressBar->setValue(3*60 + 43);
-
 }
 //=============================================================

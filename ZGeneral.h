@@ -12,7 +12,6 @@
 #endif
 
 //==========================================================
-
 extern const QString glAppExeBaseName; /*!< Exe file name without version */
 extern const QString glAppProduct; /*!< Application representation name that appears in window title*/
 extern const QString glAppVersion; /*!< Application version like 1.2.3.b or 1.2.3 if release version*/
@@ -106,6 +105,15 @@ extern const QString glSelectColor; /*!< TODO: describe */
 
 }
 extern const int glMaxGainFactor;
+extern const int glSpectrumDataType;
+
+namespace NS_DataRole
+{
+extern const int PathRole;
+extern const int CommentRole;
+extern const int DataTypeRole;
+extern const int VisibleRole;
+}
 
 // FUNCS
 QString glCreateCaption(const QString& simpleText);

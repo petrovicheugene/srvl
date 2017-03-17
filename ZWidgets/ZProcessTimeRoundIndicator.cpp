@@ -11,12 +11,18 @@ ZProcessTimeRoundIndicator::ZProcessTimeRoundIndicator(QWidget *parent)
     : ZAbstractProcessTimeIndicator(parent)
 {
     zh_createComponents();
-    testFilling();
+    zp_reset();
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_setPercentTextOnProgressBar(bool visible)
 {
 
+}
+//=============================================================
+void ZProcessTimeRoundIndicator::zp_reset()
+{
+    zv_progressBar->setRange(1.0,0.0);
+    zv_progressBar->setValue(0);
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)
@@ -74,36 +80,23 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
     mainLayout->addLayout(rightLayout);
 
     // process name
-    zv_processNameLabel = new QLabel(this);
+    //zv_processNameLabel = new QLabel(this);
     rightLayout->addWidget(zv_processNameLabel);
 
     // time label part
     QHBoxLayout* timeLabelLayout = new QHBoxLayout(this);
     rightLayout->addLayout(timeLabelLayout);
 
-    zv_processDurationLabel = new QLabel(this);
+    //zv_processDurationLabel = new QLabel(this);
     timeLabelLayout->addWidget(zv_processDurationLabel);
 
     zv_separatorDashLabel = new QLabel(this);
     zv_separatorDashLabel->setText(" - ");
     timeLabelLayout->addWidget(zv_separatorDashLabel);
 
-    zv_timeLeftLabel = new QLabel(this);
+    //zv_timeLeftLabel = new QLabel(this);
     timeLabelLayout->addWidget(zv_timeLeftLabel);
     timeLabelLayout->addStretch();
-
-}
-//=============================================================
-void ZProcessTimeRoundIndicator::testFilling()
-{
-    zv_processNameLabel->setText("Sample 1");
-    zv_processDurationLabel->setText("5:00");
-    zv_timeLeftLabel->setText("3:43");
-
-    zv_progressBar->setMinimum(0);
-    zv_progressBar->setMaximum(300);
-
-    zv_progressBar->setValue(3*60 + 43);
 
 }
 //=============================================================

@@ -53,8 +53,12 @@ public:
     void zp_appendClient(QObject *client);
     void zp_removeClient(QObject *client);
 
-    QStringList zp_chemicalList() const;
-    QStringList zp_measuringConditionsList() const;
+    QStringList zp_chemicalStringList() const;
+    QStringList zp_measuringConditionsStringlist() const;
+
+    QList<QPair<int,int> > zp_measuringConditionsList() const;
+
+    int zp_totalMeasuringDuration() const;
 
 signals:
 
@@ -77,7 +81,6 @@ private:
     // FUNCS
     void zh_initMeasuringTasks();
 
-
 };
 //=================================================
 class ZMeasuringTask : public QObject
@@ -87,7 +90,9 @@ public:
     explicit ZMeasuringTask(int id, int gainFactor, int exposition, QObject* parent);
 
     QStringList zp_chemicalList() const;
-    QString zp_measuringConditions() const;
+    QString zp_measuringConditionsString() const;
+    QPair<int,int> zp_measuringConditions() const;
+    int zp_exposition() const;
 
 private:
 

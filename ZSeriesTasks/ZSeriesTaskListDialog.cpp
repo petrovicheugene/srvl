@@ -159,6 +159,16 @@ void ZSeriesTaskListDialog::zp_connectToManager(ZSeriesTaskListManager* manager)
     }
 }
 //=====================================================
+QString ZSeriesTaskListDialog::zp_newSeriesTaskName() const
+{
+    if(!zv_seriesNameLineEdit)
+    {
+        return QString();
+    }
+
+    return zv_seriesNameLineEdit->text();
+}
+//=====================================================
 void ZSeriesTaskListDialog::zh_setCurrentTaskProperties(const QString& name,
                                                         const QString& description)
 {

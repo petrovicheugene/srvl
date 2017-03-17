@@ -3,8 +3,9 @@
 #define ZDASHBOARD_H
 //============================================================
 #include <QWidget>
-#include <ZDashboardSettings.h>
-#include <ZProgressBarOptions.h>
+#include "ZDashboardSettings.h"
+#include "ZProgressBarOptions.h"
+#include "ZMeasuringManager.h"
 //============================================================
 class ZAbstractProcessTimeIndicator;
 class ZStartStopButtonWidget;
@@ -36,16 +37,19 @@ public:
 
 signals:
 
+    void zg_startSeries() const;
+    void zg_stopSeries() const;
+
 public slots:
 
-    void zp_setSeriesTaskName(const QString& name);
+    void zp_setMeasuringState(ZMeasuringState measuringState);
     void zp_setSeriesTaskDirty(bool dirty);
 
 private:
 
     // VARS
     ZSeriesLabelWidget* zv_seriesLabelWidget;
-    ZAbstractProcessTimeIndicator* zv_totalTimeIndicator; /*!< TODO: describe */
+    ZAbstractProcessTimeIndicator* zv_seriesTimeIndicator; /*!< TODO: describe */
     ZAbstractProcessTimeIndicator* zv_sampleTimeIndicator; /*!< TODO: describe */
     ZStartStopButtonWidget* zv_startStopButtonWidget;
 

@@ -89,7 +89,18 @@ extern const QString glSelectColor = QObject::tr("Select color");
 }
 
 extern const int glMaxGainFactor = 255;
+extern const int glSpectrumDataType = 1;
 
+namespace NS_DataRole
+{
+
+extern const int PathRole = Qt::UserRole + 1;
+extern const int CommentRole = Qt::UserRole + 2;
+extern const int DataTypeRole = Qt::UserRole + 3;
+extern const int VisibleRole = Qt::UserRole + 4;
+
+
+}
 
 // FUNCS
 QString glCreateCaption(const QString& simpleText)

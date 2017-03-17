@@ -3,13 +3,16 @@
 #include "ZGeneral.h"
 #include "ZDashboard.h"
 #include "ZMeasuringManager.h"
+#include "ZMeasuringResultTableModel.h"
 #include "ZMeasuringResultTableWidget.h"
 #include "ZMeasuringSeriesTaskTreeWidget.h"
 #include "ZWidgetWithSidebar.h"
 
+#include "ZSpectrumTableDelegate.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
+#include <QTableView>
 //==========================================================
 ZMeasuringCommonWidget::ZMeasuringCommonWidget(QWidget *parent) : QWidget(parent)
 {
@@ -51,6 +54,9 @@ void ZMeasuringCommonWidget::zp_appendSampleContextMenuActions(const QList<ZCont
 void ZMeasuringCommonWidget::zp_setMeasuringResultTableModel(QAbstractItemModel* model)
 {
     zv_measuringResultTableWidget->zp_setModel(model);
+    ZSpectrumTableDelegate* spectrumTableDelegate = new ZSpectrumTableDelegate(zv_measuringResultTableWidget->zp_tableView());
+    zv_measuringResultTableWidget->zp_tableView()->viewport()->installEventFilter(spectrumTableDelegate);
+    zv_measuringResultTableWidget->zp_tableView()->setItemDelegate(spectrumTableDelegate);
 }
 //==========================================================
 void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* measuringManager)
@@ -58,14 +64,26 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     zv_measuringManager = measuringManager;
 
     // zv_dashboard
-    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameChanged,
-            zv_dashboard, &ZDashboard::zp_setSeriesTaskName);
-    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameDirtyChanged,
-            zv_dashboard, &ZDashboard::zp_setSeriesTaskDirty);
+    //    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameChanged,
+    //            zv_dashboard, &ZDashboard::zp_setSeriesTaskName);
+    //    connect(zv_measuringManager, &ZMeasuringManager::zg_seriesTaskNameDirtyChanged,
+    //            zv_dashboard, &ZDashboard::zp_setSeriesTaskDirty);
 
     zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
     connect(zv_measuringManager, &ZMeasuringManager::zg_requestSelectedSampleList,
             this, &ZMeasuringCommonWidget::zp_selectedSampleList);
+
+    connect(zv_dashboard, &ZDashboard::zg_startSeries,
+            zv_measuringManager, &ZMeasuringManager::zp_startSeries);
+    connect(zv_dashboard, &ZDashboard::zg_stopSeries,
+            zv_measuringManager, &ZMeasuringManager::zp_stopSeries);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_measuringStateChanged,
+            this, &ZMeasuringCommonWidget::zp_setMeasuringState);
+
+    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentSampleIndexChanged,
+            zv_measuringManager, &ZMeasuringManager::zp_setCurrentSampleIndex);
+
+    measuringManager->zp_notifyOfCurrentStatus();
 
 }
 //==========================================================
@@ -105,7 +123,6 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
     // old layout
     QLayout* oldMainLayout = layout();
     // release widgets
-
     //    oldMainLayout->removeWidget(zv_dashboard);
     //    oldMainLayout->removeWidget(zv_tableWidget);
 
@@ -157,5 +174,10 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
 void ZMeasuringCommonWidget::zp_selectedSampleList(QList<int>& selectedSampleList) const
 {
     selectedSampleList = zv_measuringResultTableWidget->zp_selectedRowList();
+}
+//==========================================================
+void ZMeasuringCommonWidget::zp_setMeasuringState(ZMeasuringState measuringState)
+{
+    zv_dashboard->zp_setMeasuringState(measuringState);
 }
 //==========================================================

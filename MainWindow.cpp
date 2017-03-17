@@ -162,7 +162,7 @@ void MainWindow::zh_createComponents()
     zv_plotterDock->setWidget(frame);
 
     // DATA MODELS
-    zv_measuringManager = new ZMeasuringManager();
+    zv_measuringManager = new ZMeasuringManager(this);
 
     // measuring models
     zv_measuringResultTableModel = new ZMeasuringResultTableModel(this);
@@ -220,6 +220,8 @@ void MainWindow::zh_createConnections()
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_saveSettings);
     connect(zv_runSQLCommandAction, &QAction::triggered,
             this, &MainWindow::zh_onRunSQLCommandAction);
+
+
 
     // all about sample table
     zv_measuringCommonWidget->zp_connectToMeasuringManager(zv_measuringManager);

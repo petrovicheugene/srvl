@@ -6,7 +6,7 @@
 #include <QColor>
 #include <ZProgressBarOptions.h>
 //=======================================================
-
+class QLabel;
 //=======================================================
 class ZAbstractProcessTimeIndicator : public QWidget
 {
@@ -14,22 +14,29 @@ class ZAbstractProcessTimeIndicator : public QWidget
 public:
     explicit ZAbstractProcessTimeIndicator(QWidget *parent = 0);
 
-    virtual void zp_setMainLayoutMargin(int margin);
-    virtual void zp_setMainLayoutSpacing(int spacing);
-    /*!
-     \brief
-
-     \param bool
-    */
+    void zp_setMainLayoutMargin(int margin);
+    void zp_setMainLayoutSpacing(int spacing);
     virtual void zp_setPercentTextOnProgressBar(bool) = 0;
     virtual void zp_applyProgressBarOptions(const ZProgressBarOptions& options) = 0;
 
+    virtual void zp_reset() = 0;
 
 signals:
 
 public slots:
 
+    void zp_setProcessNameString(const QString& name);
+
 protected:
+
+    // VARS
+    QLabel* zv_processNameLabel; /*!< TODO: describe */
+    QLabel* zv_timeLeftLabel; /*!< TODO: describe */
+    QLabel* zv_processDurationLabel; /*!< TODO: describe */
+
+
+    // FUNCS
+    void zh_createComponents();
 
 
 };

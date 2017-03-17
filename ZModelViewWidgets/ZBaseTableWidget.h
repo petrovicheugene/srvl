@@ -19,7 +19,7 @@ class ZBaseTableWidget : public QWidget
 public:
     explicit ZBaseTableWidget(QWidget *parent = 0);
 
-    virtual void zp_setModel(QAbstractItemModel* model);
+    virtual void zp_setModel(QAbstractItemModel* model, bool alternatingRowColorFlag = true);
     QTableView* zp_tableView() const;
     void zp_setCaption(const QString& caption);
     void zp_setColumnHidden(int column, bool hidden);

@@ -11,7 +11,7 @@ class ZSetGainFactorToCalibrationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZSetGainFactorToCalibrationDialog(const QString& calibrationName, QWidget *parent = 0);
+    explicit ZSetGainFactorToCalibrationDialog(QString calibrationName = QString(), QWidget *parent = 0);
 
     int zp_gainFactor() const;
 

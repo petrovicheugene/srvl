@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
+#include <QButtonGroup>
 #include <QPushButton>
 #include <QHBoxLayout>
 //===========================================================
@@ -10,6 +11,7 @@ ZStartStopButtonWidget::ZStartStopButtonWidget(Qt::Orientation orientation, QWid
     : QWidget(parent)
 {
    zh_createComponents();
+   zh_createConnections();
    zp_setOrientation(orientation);
 }
 //===========================================================
@@ -48,16 +50,50 @@ void ZStartStopButtonWidget::zh_createComponents()
     QLayout* mainLayout = new QHBoxLayout(this);
     setLayout(mainLayout);
 
+    zv_buttonGroup = new QButtonGroup(this);
+
     zv_startButton = new QPushButton(this);
     zv_startButton->setMinimumHeight(30);
     zv_startButton->setText(tr("Start"));
+    zv_startButton->setCheckable(true);
     mainLayout->addWidget(zv_startButton);
+    zv_buttonGroup->addButton(zv_startButton);
 
     zv_stopButton = new QPushButton(this);
     zv_stopButton->setMinimumHeight(30);
     zv_stopButton->setText(tr("Stop"));
+    zv_stopButton->setCheckable(true);
     mainLayout->addWidget(zv_stopButton);
+    zv_buttonGroup->addButton(zv_stopButton);
 
+}
+//===========================================================
+void ZStartStopButtonWidget::zh_createConnections()
+{
+//        connect(zv_startButton, &QPushButton::toggled,
+//                zv_buttonGroup, &QButtonGroup::);
+//        connect(zv_stopButton, &QPushButton::toggled,
+//                zv_buttonGroup, &QButtonGroup::);
+
+
+    connect(zv_buttonGroup, SIGNAL(buttonToggled(QAbstractButton*, bool)),
+            this, SLOT(zh_onButtonToggle(QAbstractButton*, bool)));
+
+}
+//===========================================================
+void ZStartStopButtonWidget::zh_onButtonToggle(QAbstractButton* button, bool checked)
+{
+    if(checked)
+    {
+        if(button == zv_startButton)
+        {
+            emit zg_start();
+        }
+        else
+        {
+            emit zg_stop();
+        }
+    }
 }
 //===========================================================
 void ZStartStopButtonWidget::zp_setOrientation(Qt::Orientation orientation)

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qmt>
+ <project>
+  <uid>{e701697a-7229-4084-9b2b-f97e0832cd7c}</uid>
+  <root-package>
+   <instance>
+    <MPackage>
+     <base-MObject>
+      <MObject>
+       <base-MElement>
+        <MElement>
+         <uid>{87496b87-19ba-4d60-8c64-3800c79b69e4}</uid>
+        </MElement>
+       </base-MElement>
+       <name>MeasuringManagerToWidgetInteraction</name>
+       <children>
+        <handles>
+         <handles>
+          <qlist>
+           <item>
+            <handle>
+             <uid>{1e309c23-fbd4-4c50-a1d7-faecf8c0f3f0}</uid>
+             <target>
+              <instance type="MCanvasDiagram">
+               <MCanvasDiagram>
+                <base-MDiagram>
+                 <MDiagram>
+                  <base-MObject>
+                   <MObject>
+                    <base-MElement>
+                     <MElement>
+                      <uid>{1e309c23-fbd4-4c50-a1d7-faecf8c0f3f0}</uid>
+                     </MElement>
+                    </base-MElement>
+                    <name>MeasuringManagerToWidgetInteraction</name>
+                   </MObject>
+                  </base-MObject>
+                 </MDiagram>
+                </base-MDiagram>
+               </MCanvasDiagram>
+              </instance>
+             </target>
+            </handle>
+           </item>
+          </qlist>
+         </handles>
+        </handles>
+       </children>
+      </MObject>
+     </base-MObject>
+    </MPackage>
+   </instance>
+  </root-package>
+ </project>
+</qmt>

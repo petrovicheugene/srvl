@@ -1,5 +1,7 @@
 //=========================================================
 #include "ZMeasuringResultTableModel.h"
+#include "ZGeneral.h"
+#include "ZSpectrumPaintData.h"
 //=========================================================
 ZMeasuringResultTableModel::ZMeasuringResultTableModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -37,7 +39,12 @@ int ZMeasuringResultTableModel::columnCount(const QModelIndex & parent) const
         return 0;
     }
 
-    return 2 + zv_chemicalList.count() + zv_measuringConditionsList.count();
+    return 2 + zv_chemicalStringList.count() + zv_measuringConditionsStringList.count();
+}
+//=========================================================
+int ZMeasuringResultTableModel::zp_spectrumColumnCount() const
+{
+    return zv_measuringConditionsStringList.count();
 }
 //=========================================================
 int	 ZMeasuringResultTableModel::rowCount(const QModelIndex & parent) const
@@ -67,6 +74,45 @@ QVariant	ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
         if(index.column() == 1)
         {
             return QVariant(zv_measuringManager->zp_sampleTaskName(index.row()) );
+        }
+
+        // spectrum column
+        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        {
+            ZSpectrumPaintData paintData;
+            int gainFactor;
+            int exposition;
+
+            paintData.spectrumData = zv_measuringManager->zp_spectrumData(index.row(), gainFactor, exposition);
+            paintData.maxChannel = zv_measuringManager->zp_arrayChannelCount(gainFactor, exposition);
+            paintData.maxIntensity = zv_measuringManager->zp_arrayMaxIntensity(gainFactor, exposition);
+
+            QVariant::fromValue(paintData);
+        }
+    }
+
+    if(role == Qt::DecorationRole)
+    {
+        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        {
+             return QVariant(QColor(Qt::red)); // QVariant(zv_dataManager->zp_spectrumColor(index.row()));
+        }
+    }
+
+    if(role == NS_DataRole::VisibleRole)
+    {
+        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        {
+             return QVariant(true);
+            // return QVariant(zv_dataManager->zp_isSpectrumVisible(index.row()));
+        }
+    }
+
+    if(role == NS_DataRole::DataTypeRole)
+    {
+        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        {
+            return QVariant(glSpectrumDataType);
         }
     }
 
@@ -116,14 +162,14 @@ QVariant ZMeasuringResultTableModel::headerData(int section, Qt::Orientation ori
                 return QVariant(tr("Task"));
             }
 
-            if(section > 1 && section < zv_measuringConditionsList.count() + 2)
+            if(section > 1 && section < zv_measuringConditionsStringList.count() + 2)
             {
-                return QVariant(zv_measuringConditionsList.at(section - 2));
+                return QVariant(zv_measuringConditionsStringList.at(section - 2));
             }
 
-            if(section > zv_measuringConditionsList.count() + 1 && section < columnCount())
+            if(section > zv_measuringConditionsStringList.count() + 1 && section < columnCount())
             {
-                return QVariant(zv_chemicalList.at(section - 2 - zv_measuringConditionsList.count()));
+                return QVariant(zv_chemicalStringList.at(section - 2 - zv_measuringConditionsStringList.count()));
             }
         }
     }
@@ -162,6 +208,24 @@ void ZMeasuringResultTableModel::zh_onSampleOperation(ZMeasuringManager::SampleO
         zh_recalcColumnCount();
         endResetModel();
     }
+    else if(type == ZMeasuringManager::SOT_CONDITIONS_ABOUT_TO_BE_INSERTED)
+    {
+        // beginInsertRows(QModelIndex(), first, last);
+    }
+    else if(type == ZMeasuringManager::SOT_CONDITIONS_INSERTED)
+    {
+        beginResetModel();
+        zh_recalcColumnCount();
+        endResetModel();
+    }
+    else if(type == ZMeasuringManager::SOT_SPECTRUM_CHANGED)
+    {
+        // beginInsertRows(QModelIndex(), first, last);
+    }
+    else if(type == ZMeasuringManager::SOT_CONCENTRATIONS_CHANGED)
+    {
+        // beginInsertRows(QModelIndex(), first, last);
+    }
 
     // emit zg_checkCurrentArray();
 }
@@ -172,7 +236,8 @@ void ZMeasuringResultTableModel::zh_recalcColumnCount()
     QStringList currentSampleChemicalStringList;
 
     QStringList measuringConditionsStringList;
-    QStringList currentSamplemeasuringConditionsStringList;
+    QStringList currentSampleMeasuringConditionsStringList;
+    zv_measuringConditionsList.clear();
 
     for(int row = 0; row < zv_measuringManager->zp_sampleCount(); row++)
     {
@@ -205,20 +270,31 @@ void ZMeasuringResultTableModel::zh_recalcColumnCount()
         }
 
         // measuring conditions
-        currentSamplemeasuringConditionsStringList = zv_measuringManager->zp_measuringConditionsListForSample(row);
-        QString measuringConditions;
-        for(int c = 0; c < currentSamplemeasuringConditionsStringList.count(); c++)
+        QList<QPair<int, int> > measuringConditionsListForSample;
+        measuringConditionsListForSample = zv_measuringManager->zp_measuringConditionsListForSample(row);
+
+        for(int c = 0; c < measuringConditionsListForSample.count(); c++)
         {
-            measuringConditions = currentSamplemeasuringConditionsStringList.at(c);
+            if(!zv_measuringConditionsList.contains(measuringConditionsListForSample.at(c)))
+            {
+                zv_measuringConditionsList.append(measuringConditionsListForSample.at(c));
+            }
+        }
+
+
+        currentSampleMeasuringConditionsStringList = zv_measuringManager->zp_measuringConditionsStringListForSample(row);
+        QString measuringConditions;
+        for(int c = 0; c < currentSampleMeasuringConditionsStringList.count(); c++)
+        {
+            measuringConditions = currentSampleMeasuringConditionsStringList.at(c);
             if(!measuringConditionsStringList.contains(measuringConditions))
             {
                 measuringConditionsStringList.append(measuringConditions);
-                continue;
             }
         }
     }
 
-    zv_chemicalList = chemicalStringList;
-    zv_measuringConditionsList = measuringConditionsStringList;
+    zv_chemicalStringList = chemicalStringList;
+    zv_measuringConditionsStringList = measuringConditionsStringList;
 }
 //=========================================================

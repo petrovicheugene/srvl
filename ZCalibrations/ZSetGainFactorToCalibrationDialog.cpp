@@ -10,7 +10,7 @@
 #include <QVBoxLayout>
 
 //=========================================================
-ZSetGainFactorToCalibrationDialog::ZSetGainFactorToCalibrationDialog(const QString& calibrationName, QWidget *parent)
+ZSetGainFactorToCalibrationDialog::ZSetGainFactorToCalibrationDialog(QString calibrationName, QWidget *parent)
     : QDialog(parent)
 {
     zh_createComponents(calibrationName);
@@ -23,7 +23,14 @@ void ZSetGainFactorToCalibrationDialog::zh_createComponents(const QString& calib
     setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
-    QString msg = tr("Input gain factor value for the calibration \"%1\".").arg(calibrationName);
+    QString msg = tr("Input gain factor value");
+
+    if(!calibrationName.isEmpty())
+    {
+        msg += tr(" for the calibration \"%1\"").arg(calibrationName);
+    }
+
+    msg += ".";
 
     label->setText(msg);
     mainLayout->addWidget(label);

@@ -4,6 +4,7 @@
 //==========================================================
 #include <QWidget>
 #include "ZAppSettings.h"
+#include "ZMeasuringManager.h"
 //==========================================================
 class QLayout;
 class QAbstractItemModel;
@@ -13,6 +14,7 @@ class ZMeasuringManager;
 class ZWidgetWithSidebar;
 class ZMeasuringResultTableWidget;
 class ZMeasuringSeriesTaskTreeWidget;
+class ZSpectrumTableDelegate;
 //==========================================================
 class ZMeasuringCommonWidget : public QWidget
 {
@@ -33,10 +35,15 @@ public:
 
 signals:
 
+
 public slots:
 
     void zp_saveSettings() const;
     void zp_selectedSampleList(QList<int>& selectedSampleList) const;
+
+private slots:
+
+    void zp_setMeasuringState(ZMeasuringState measuringState);
 
 private:
 

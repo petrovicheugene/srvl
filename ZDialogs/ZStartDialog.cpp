@@ -142,12 +142,12 @@ void ZStartDialog::zh_interfaceEnablingControl(int currentRow)
         QListWidgetItem* item = zv_dbListWidget->item(currentRow);
         if(item)
         {
-            QVariant vData =  item->data(Qt::UserRole + 1);
+            QVariant vData =  item->data(NS_DataRole::PathRole);
             if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
             {
                 path = vData.toString();
             }
-            vData =  item->data(Qt::UserRole + 2);
+            vData =  item->data(NS_DataRole::CommentRole);
             if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
             {
                 comment = vData.toString();
@@ -277,7 +277,7 @@ void ZStartDialog::zh_saveDatabaseList() const
         name = zv_dbListWidget->item(row)->text();
 
         // get path
-        vData = zv_dbListWidget->item(row)->data(Qt::UserRole + 1);
+        vData = zv_dbListWidget->item(row)->data(NS_DataRole::PathRole);
         if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
         {
             path = vData.toString();
@@ -320,8 +320,8 @@ int ZStartDialog::zh_recordRow(const QString& name, const QString& path,
     item->setText(name);
 
     // path and comment
-    item->setData(Qt::UserRole + 1, QVariant(path));
-    item->setData(Qt::UserRole + 2, QVariant(comment));
+    item->setData(NS_DataRole::PathRole, QVariant(path));
+    item->setData(NS_DataRole::CommentRole, QVariant(comment));
 
     return row;
 }
@@ -405,7 +405,7 @@ bool ZStartDialog::zh_existanceOfRecordCheck(const QString &name,
         }
 
         // path check
-        vData = zv_dbListWidget->item(row)->data(Qt::UserRole + 1);
+        vData = zv_dbListWidget->item(row)->data(NS_DataRole::PathRole);
         if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
         {
             currentPath = vData.toString();
@@ -472,7 +472,7 @@ void ZStartDialog::zh_onEditDatabase()
     // get edited data
     QString name = zv_dbListWidget->item(zv_editedRow)->text();
     QString path;
-    QVariant vData = zv_dbListWidget->item(zv_editedRow)->data(Qt::UserRole + 1);
+    QVariant vData = zv_dbListWidget->item(zv_editedRow)->data(NS_DataRole::PathRole);
     if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
     {
         path = vData.toString();
@@ -528,7 +528,7 @@ void ZStartDialog::zh_onRemoveDatabase()
         //         continue;
         //      }
 
-        vData = item->data(Qt::UserRole + 1);
+        vData = item->data(NS_DataRole::PathRole);
         if(!vData.isValid() || vData.isNull() || !vData.canConvert<QString>())
         {
             continue;
@@ -577,7 +577,7 @@ void ZStartDialog::zh_onRemoveDatabase()
             QListWidgetItem* item = zv_dbListWidget->item(selectedRowList.value(i));
             if(item)
             {
-                vData = item->data(Qt::UserRole + 1);
+                vData = item->data(NS_DataRole::PathRole);
                 if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
                 {
                     filePath = vData.toString();
@@ -606,7 +606,7 @@ void ZStartDialog::zh_onConnectToDatabase()
     if(item)
     {
         name = item->text();
-        QVariant vData = item->data(Qt::UserRole + 1);
+        QVariant vData = item->data(NS_DataRole::PathRole);
         if(vData.isValid() && !vData.isNull() && vData.canConvert<QString>())
         {
             path = vData.toString();
@@ -640,7 +640,7 @@ void ZStartDialog::zh_findDublicateRows(const QString& dbPath, QList<int>&rowLis
             continue;
         }
 
-        vData = item->data(Qt::UserRole + 1);
+        vData = item->data(NS_DataRole::PathRole);
         if(!vData.isValid() || vData.isNull() || !vData.canConvert<QString>())
         {
             continue;

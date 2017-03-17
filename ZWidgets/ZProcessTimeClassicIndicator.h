@@ -30,6 +30,7 @@ public:
     */
     void zp_setPercentTextOnProgressBar(bool);
     void zp_applyProgressBarOptions(const ZProgressBarOptions& options);
+    void zp_reset() override;
 
 
 signals:
@@ -40,10 +41,8 @@ private:
 
     // VARS
     QProgressBar* zv_progressBar; /*!< TODO: describe */
-    QLabel* zv_processNameLabel; /*!< TODO: describe */
+
     QLabel* zv_percentElapsedLabel; /*!< TODO: describe */
-    QLabel* zv_processDurationLabel; /*!< TODO: describe */
-    QLabel* zv_timeLeftLabel; /*!< TODO: describe */
 
     int zv_progressBarStandardHeight;
 
@@ -59,7 +58,6 @@ private:
      \brief
 
     */
-    void testFilling();
 
 };
 //=============================================================

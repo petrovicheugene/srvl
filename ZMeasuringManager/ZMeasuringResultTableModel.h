@@ -25,6 +25,7 @@ public:
     virtual bool	setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
     virtual QVariant	headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+    int zp_spectrumColumnCount() const;
 
 signals:
 
@@ -39,8 +40,9 @@ private:
 
     // VARS
     ZMeasuringManager* zv_measuringManager;
-    QStringList zv_chemicalList;
-    QStringList zv_measuringConditionsList;
+    QStringList zv_chemicalStringList;
+    QStringList zv_measuringConditionsStringList;
+    QList<QPair<int, int> > zv_measuringConditionsList;
 
     // FUNCS
     void zh_recalcColumnCount();

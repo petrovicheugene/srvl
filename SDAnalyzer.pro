@@ -69,7 +69,8 @@ INCLUDEPATH += ZDialogs \
     ZCalibrations \
     ZChemicals \
     ZModelViewWidgets/ZNumericDelegate \
-    ZSeriesTasks
+    ZSeriesTasks \
+    ZMeasuringManager/ZSpectrumTableDelegate
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -163,7 +164,14 @@ SOURCES += main.cpp\
     ZSeriesTasks/ZSeriesTaskListManager.cpp \
     ZSeriesTasks/ZSeriesTaskTableWidget.cpp \
     ZWidgets/ZStartStopButtonWidget.cpp \
-    ZWidgets/ZSeriesLabelWidget.cpp
+    ZWidgets/ZSeriesLabelWidget.cpp \
+    ZComponents/ZSpeIOHandler.cpp \
+    ZComponents/ZSpeSpectrum.cpp \
+    ZComponents/ZSpeAuxData.cpp \
+    ZComponents/ZAbstractSpectrumIOHandler.cpp \
+    ZMeasuringManager/ZSpectrumTableDelegate/ZPrimitivePlot.cpp \
+    ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumTableDelegate.cpp \
+    ZComponents/ZXMLSpectrumArrayIOHandler.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -258,7 +266,15 @@ HEADERS  += MainWindow.h \
     ZSeriesTasks/ZSeriesTaskListManager.h \
     ZSeriesTasks/ZSeriesTaskTableWidget.h \
     ZWidgets/ZStartStopButtonWidget.h \
-    ZWidgets/ZSeriesLabelWidget.h
+    ZWidgets/ZSeriesLabelWidget.h \
+    ZComponents/ZSpeIOHandler.h \
+    ZComponents/ZSpeSpectrum.h \
+    ZComponents/ZSpeAuxData.h \
+    ZComponents/ZAbstractSpectrumIOHandler.h \
+    ZMeasuringManager/ZSpectrumTableDelegate/ZPrimitivePlot.h \
+    ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumTableDelegate.h \
+    ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumPaintData.h \
+    ZComponents/ZXMLSpectrumArrayIOHandler.h
 
 RESOURCES += \
     resources.qrc
