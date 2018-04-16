@@ -9,7 +9,7 @@
 //=================================================
 ZMeasuringController::ZMeasuringController(QObject *parent) : QObject(parent)
 {
-    zv_connector = 0;
+    zv_connector = nullptr;
     zv_deviceButtonInquiryTimer = 0;
     zv_measuringTimer = 0;
     zv_startUnixTime = 0;
@@ -92,6 +92,20 @@ void ZMeasuringController::zh_createDataBuffer()
 bool ZMeasuringController::zp_measureSample(QList<QPair<quint8, int> > measuringConditions,
                                             ZSampleTask* currentSampleTask)
 {
+    if(zv_connector == nullptr)
+    {
+        killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
+        zv_controllerState = CS_DISCONNECTED;
+
+        // end of measuring
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+
+        return false;
+    }
+
     QString msg;
     if(!zv_connector)
     {
@@ -161,6 +175,20 @@ bool ZMeasuringController::zp_measureSample(QList<QPair<quint8, int> > measuring
 //=================================================
 bool ZMeasuringController::zp_stopMeasuring()
 {
+    if(zv_connector == nullptr)
+    {
+        killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
+        zv_controllerState = CS_DISCONNECTED;
+
+        // end of measuring
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+
+        return false;
+    }
+
     if(zv_measuringTimer != 0)
     {
         killTimer(zv_measuringTimer);
@@ -189,9 +217,24 @@ bool ZMeasuringController::zp_stopMeasuring()
 //=================================================
 bool ZMeasuringController::zh_startSingleMeasuring()
 {
+    if(zv_connector == nullptr)
+    {
+        killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
+        zv_controllerState = CS_DISCONNECTED;
+
+        // end of measuring
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+
+        return false;
+    }
+
     // current measuring index sould be set
     // check measuring index
-    if(zv_currentMeasuringIndex < 0 || zv_currentMeasuringIndex >= zv_currentMeasuringConditions.count())
+    if(zv_currentMeasuringIndex < 0
+            || zv_currentMeasuringIndex >= zv_currentMeasuringConditions.count())
     {
         // end of measuring
         if(zv_measuringTimer)
@@ -343,6 +386,20 @@ bool ZMeasuringController::zh_startSingleMeasuring()
 //=================================================
 void ZMeasuringController::zh_processMeasurementResults()
 {
+    if(zv_connector == nullptr)
+    {
+        killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
+        zv_controllerState = CS_DISCONNECTED;
+
+        // end of measuring
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+
+        return;
+    }
+
     // check buffer
     if(zv_buffer == 0)
     {
@@ -497,7 +554,22 @@ void ZMeasuringController::zh_processMeasurementResults()
 //=================================================
 void ZMeasuringController::zh_inquiryDeviceButton()
 {
-    if(!zv_connector)
+    if(zv_connector == nullptr)
+    {
+        killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
+        zv_controllerState = CS_DISCONNECTED;
+
+        // end of measuring
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+
+        return;
+    }
+
+
+    if(zv_connector == nullptr)
     {
         killTimer(zv_deviceButtonInquiryTimer);
         zv_deviceButtonInquiryTimer = 0;

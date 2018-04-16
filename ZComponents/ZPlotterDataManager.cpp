@@ -93,19 +93,19 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
             spectrum = zv_measuringManager->zp_spectrum(row, gainFactor, exposition);
 
             // get spectrum graphic item if it exists
-            spectrumItem = 0;
+            spectrumItem = nullptr;
             QList<QGraphicsItem*> spectrumList = zv_plotter->zp_itemListForType(SpectrumItemType);
             for(int sp = 0; sp < spectrumList.count(); sp++)
             {
                 spectrumItem = qgraphicsitem_cast<ZSpectrumGraphicsItem*>(spectrumList.at(sp));
-                if(spectrumItem != 0 && spectrumItem->zp_spectrumId() == spectrum->zp_spectrumId())
+                if(spectrumItem != nullptr && spectrumItem->zp_spectrumId() == spectrum->zp_spectrumId())
                 {
                     // spectrumItem found
                     break;
                 }
 
                 // reset spectrum item pointer and go on
-                spectrumItem = 0;
+                spectrumItem = nullptr;
                 continue;
             }
 
@@ -113,20 +113,24 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
             if(type == ZMeasuringManager::SOT_SPECTRUM_CHANGED)
             {
                 // check spectrum item existance
-                if(spectrumItem != 0)
+                if(spectrumItem != nullptr)
                 {
                     // set spectrum data
                     spectrumItem->zp_setSpectrumData(spectrum->zp_spectrumData());
                 }
             }
+
             if(type == ZMeasuringManager::SOT_SPECTRUM_VISIBILITY_CHANGED)
             {
-                spectrumItem->setVisible(spectrum->zp_isSpectrumVisible());
+                if(spectrumItem != nullptr)
+                {
+                    spectrumItem->setVisible(spectrum->zp_isSpectrumVisible());
+                }
             }
             else if(type == ZMeasuringManager::SOT_SAMPLE_INSERTED)
             {
                 // check spectrum item existance
-                if(spectrumItem == 0)
+                if(spectrumItem == nullptr)
                 {
                     spectrumItem = new ZSpectrumGraphicsItem(spectrum,
                                                              zv_boundingRectTopFactor,
@@ -135,16 +139,22 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
                     zv_plotter->zp_addItem(spectrumItem);
                 }
 
-                qDebug() << "SAMPLE INSERTED" << first << last << spectrumItem->zp_spectrumId();
+                if(spectrumItem != nullptr)
+                {
+                    qDebug() << "SAMPLE INSERTED" << first << last << spectrumItem->zp_spectrumId();
+                }
             }
             else if(type == ZMeasuringManager::SOT_SAMPLE_REMOVED)
             {
-                qDebug() << "SAMPLE REMOVED" << first << last << spectrumItem->zp_spectrumId();
+                if(spectrumItem != nullptr)
+                {
+                    qDebug() << "SAMPLE REMOVED" << first << last << spectrumItem->zp_spectrumId();
+                }
             }
             else if(type == ZMeasuringManager::SOT_SAMPLE_ABOUT_TO_BE_REMOVED)
             {
                 // check spectrum item existance
-                if(spectrumItem != 0)
+                if(spectrumItem != nullptr)
                 {
                     zv_plotter->zp_removeItem(spectrumItem);
                 }
