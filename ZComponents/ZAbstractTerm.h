@@ -59,10 +59,10 @@ public:
 
 signals:
 
- //   void zg_requestNormalizerValue(qreal&);
+ //   void zg_inquiryNormalizerValue(qreal&);
     void zg_termWindowMarginChanged();
     void zg_termNameChanged() const;
-    void zg_requestForDelete(ZAbstractTerm*);
+    void zg_inquiryForDelete(ZAbstractTerm*);
     void zg_termStateChanged(ZAbstractTerm::TermState) const;
    // void zg_termValuesChanged() const;
 

@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     a.processEvents();
 
     qApp->setStyleSheet(
-                "QSplitter::handle:vertical   {height: 6px; image: url(:/images/ZImages/vSplitterHandle.png);}"
+                "QSplitter::handle:vertical {height: 6px; image: url(:/images/ZImages/vSplitterHandle.png);}"
                 "QSplitter::handle:horizontal {width:  6px; image: url(:/images/ZImages/hSplitterHandle.png);}"
                 );
 

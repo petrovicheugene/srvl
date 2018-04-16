@@ -27,7 +27,7 @@ public:
 signals:
 
     void zg_currentTaskProperties(const QString& name, const QString& description);
-    void zg_requestSampleTaskIdList(QList<int>& idList);
+    void zg_inquirySampleTaskIdList(QList<int>& idList);
 
 public slots:
 

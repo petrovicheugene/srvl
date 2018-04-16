@@ -24,6 +24,7 @@
 ZChemicalListDialog::ZChemicalListDialog(QSqlTableModel* chemicalModel, QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Chemicals"));
+    setWindowFlags(Qt::Tool);
 
     if(chemicalModel != 0)
     {

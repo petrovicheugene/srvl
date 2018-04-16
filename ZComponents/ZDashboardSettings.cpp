@@ -68,31 +68,31 @@ ZDashboardSettings::ZDashboardSettings()
     zv_textColor = QColor(Qt::darkGray);
 }
 //===================================================
-QDataStream& operator << (QDataStream& out, const ZDashboardSettings& appSettings)
+QDataStream& operator << (QDataStream& out, const ZDashboardSettings& settings)
 {
     // out << valeur.qsName << valeur.qsDefinition;
-    out << static_cast<int>(appSettings.zv_dashboardStyle);
-    out << appSettings.zv_progressBarSize;
-    out << static_cast<int>(appSettings.zv_dashboardLocation);
-    out << appSettings.zv_progressBarColor;
-    out << appSettings.zv_textColor;
+    out << static_cast<int>(settings.zv_dashboardStyle);
+    out << settings.zv_progressBarSize;
+    out << static_cast<int>(settings.zv_dashboardLocation);
+    out << settings.zv_progressBarColor;
+    out << settings.zv_textColor;
 
     return out;
 }
 //===================================================
-QDataStream& operator >> (QDataStream& in, ZDashboardSettings& appSettings)
+QDataStream& operator >> (QDataStream& in, ZDashboardSettings& settings)
 {
     // in >> valeur.qsName >> valeur.qsDefinition;
     int dashBoardStyle;
     int dashBoardLocation;
     in >> dashBoardStyle;
-    in >> appSettings.zv_progressBarSize;
+    in >> settings.zv_progressBarSize;
     in >> dashBoardLocation;
-    in >> appSettings.zv_progressBarColor;
-    in >> appSettings.zv_textColor;
+    in >> settings.zv_progressBarColor;
+    in >> settings.zv_textColor;
 
-    appSettings.zv_dashboardStyle = static_cast<ZDashboardSettings::DashboardStyle>(dashBoardStyle);
-    appSettings.zv_dashboardLocation = static_cast<ZDashboardSettings::DashboardLocation>(dashBoardLocation);
+    settings.zv_dashboardStyle = static_cast<ZDashboardSettings::DashboardStyle>(dashBoardStyle);
+    settings.zv_dashboardLocation = static_cast<ZDashboardSettings::DashboardLocation>(dashBoardLocation);
 
     return in;
 }

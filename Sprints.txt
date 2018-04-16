@@ -1,4 +1,0 @@
-08.07.16
-DB working: New - ok, Edit - ok, Remove - ok
-Next: creating tables in database, loading and saving database list, writting comments in table,
-transferring database properties to the mainWindow

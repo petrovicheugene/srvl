@@ -29,6 +29,7 @@
 ZSampleTaskDialog2::ZSampleTaskDialog2(QSqlTableModel *sampleTaskModel, int sampleTaskId,  QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Sample task"));
+    setWindowFlags(Qt::Tool);
 
     if(sampleTaskModel != 0)
     {

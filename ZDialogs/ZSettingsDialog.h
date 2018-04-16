@@ -10,6 +10,8 @@ class QComboBox;
 class QLabel;
 
 class ZDashboardSettingsWidget;
+class ZDeviceSettingsWidget;
+class ZCommonSettingsWidget;
 //===============================================================
 /*!
  \brief
@@ -25,7 +27,7 @@ public:
      \param parent
     */
     explicit ZSettingsDialog(QWidget *parent = 0);
-
+    ~ZSettingsDialog();
     void zh_appSettings(ZAppSettings& appSettings) const;
     void zh_setAppSettings(const ZAppSettings &appSettings);
 
@@ -61,6 +63,8 @@ private:
     QPushButton* zv_cancelButton; /*!< TODO: describe */
 
     ZDashboardSettingsWidget* zv_dashboardSettingsWidget;
+    ZDeviceSettingsWidget* zv_deviceSettingsWidget;
+    ZCommonSettingsWidget* zv_commonSettingsWidget;
     // FUNCS
 
     /*!
@@ -74,7 +78,8 @@ private:
 
     */
     void zh_createConnections();
-
+    void zh_saveSettings();
+    void zh_restoreSettings();
 
 };
 //===============================================================

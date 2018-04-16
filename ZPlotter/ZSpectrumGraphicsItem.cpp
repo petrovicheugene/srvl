@@ -91,7 +91,7 @@ void ZSpectrumGraphicsItem::zp_setCurrentSpectrumId(qint64 id)
     zv_currentSpectrumId = id;
 }
 //======================================================
-void ZSpectrumGraphicsItem::zp_setSpectrumData(const QList<int>& data)
+void ZSpectrumGraphicsItem::zp_setSpectrumData(const QList<quint32>& data)
 {
     zv_spectrumData = data;
     // painter path calculation
@@ -140,6 +140,7 @@ void ZSpectrumGraphicsItem::zh_calculatePainterPath()
     // last point
     point = QPointF((qreal)(zv_spectrumData.count() - 1),  0);
     newShape.lineTo(point);
+    zv_spectrumPainterPath = QPainterPath();
     zv_spectrumPainterPath = newShape;
     zv_boundingRect = zv_spectrumPainterPath.boundingRect();
     // rect top and bottom extension

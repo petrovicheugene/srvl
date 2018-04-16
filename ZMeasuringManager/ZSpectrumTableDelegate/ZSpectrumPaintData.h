@@ -9,7 +9,7 @@
 //==========================================================
 struct ZSpectrumPaintData
 {
-    QList<int> spectrumData;
+    QList<quint32> spectrumData;
     int maxChannel;
     int maxIntensity;
     QColor color;

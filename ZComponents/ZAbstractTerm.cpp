@@ -239,21 +239,21 @@ void ZAbstractTerm::zh_connectToNormalizer(ZTermNormalizer* normalizer)
 {
     connect(normalizer, &ZTermNormalizer::zg_normalizerChanged,
             this, &ZAbstractTerm::zh_normalizerChanged);
-    //    connect(this, &ZAbstractTerm::zg_requestIsNormalizerValid,
+    //    connect(this, &ZAbstractTerm::zg_inquiryIsNormalizerValid,
     //            normalizer, &ZTermNormalizer::zp_isValid);
-    //    connect(this, &ZAbstractTerm::zg_requestNormalizerValue,
+    //    connect(this, &ZAbstractTerm::zg_inquiryNormalizerValue,
     //            normalizer, &ZTermNormalizer::zp_value);
 
 }
 //============================================================
 void ZAbstractTerm::zh_connectToCalibration(ZCalibration* calibration)
 {
-    connect(this, &ZAbstractTerm::zg_requestForDelete,
+    connect(this, &ZAbstractTerm::zg_inquiryForDelete,
             calibration, &ZCalibration::zh_removeTerm);
 
     connect(calibration, &ZCalibration::zg_normalizerChanged,
             this, &ZAbstractTerm::zh_normalizerChanged);
-    //    connect(this, &ZAbstractTerm::zg_requestNormalizerValue,
+    //    connect(this, &ZAbstractTerm::zg_inquiryNormalizerValue,
     //            calibration, &ZCalibration::zh_normalizerValue);
     connect(this, &ZAbstractTerm::zg_termNameChanged,
             calibration, &ZCalibration::zh_onTermNameChange);
@@ -272,6 +272,6 @@ void ZAbstractTerm::zh_normalizerChanged()
 //============================================================
 void ZAbstractTerm::zh_onWindowDestroying()
 {
-    emit zg_requestForDelete(this);
+    emit zg_inquiryForDelete(this);
 }
 //============================================================

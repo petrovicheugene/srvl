@@ -54,7 +54,7 @@ signals:
      \param path
      \param res
     */
-    void zg_requestRecordDatabase(const QString& name,
+    void zg_inquiryRecordDatabase(const QString& name,
                                  QString& path,
                                  bool& res);
 

@@ -24,7 +24,11 @@ class ZAbstractSpectrum : public QObject
 {
     Q_OBJECT
 public:
-    explicit ZAbstractSpectrum(const QList<int> &intensityList, const QString& path, QColor color, QObject* parent);
+    explicit ZAbstractSpectrum(const QList<quint32> &intensityList,
+                               const QString& path,
+                               QColor color,
+                               bool completed,
+                               QObject* parent);
     virtual ~ZAbstractSpectrum();
 
     // VARS
@@ -45,7 +49,9 @@ public:
     QString zp_concentrationString(qint64 chemElementId) const;
     qreal zp_concentrationValue(qint64 chemElementId) const;
     bool zp_setConcentration(qint64 chemElementId, const QString& concentration);
-    QList<int> zp_spectrumData() const;
+    QList<quint32> zp_spectrumData() const;
+    void zp_setSpectrumData(QList<quint32> data);
+
     virtual const ZAbstractSpectrumAuxData* zp_auxData() const = 0;
     bool zp_intensityInWindow(int startChannel, int lastChannel, qreal& intensity) const;
     bool zp_intensityInWindow(const ZCalibrationWindow*, qreal& intensity) const;
@@ -57,13 +63,16 @@ public:
     qint64 zp_spectrumId() const;
     QPainterPath zp_spectrumPainterPath() const;
 
+    void zp_setCompleted(bool completed);
+    bool zp_isCompleted() const;
+
 protected:
 
     // VARS
     SpectrumType zv_type;
     QString zv_name;
     QString zv_path;
-    QList<int> zv_spectrumData;
+    QList<quint32> zv_spectrumData;
 
     QPainterPath zv_spectrumPaintPath;
 
@@ -74,7 +83,8 @@ protected:
     qint64 zv_spectrumId;
 
     int zv_channelCount;
-    int zv_maxIntensity;
+    quint64 zv_maxIntensity;
+    bool zv_completed;
 
     // FUNCS
     void zh_recalcSpectrumPainterPath();

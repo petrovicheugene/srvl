@@ -21,7 +21,6 @@ public:
     void zp_setAppSettings(const ZDashboardSettings&);
     void zp_appSettings(ZDashboardSettings&);
 
-
 signals:
 
     void zg_settingsChanged();

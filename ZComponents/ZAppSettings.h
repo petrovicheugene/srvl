@@ -3,6 +3,7 @@
 #define ZAPPSETTINGS_H
 //=========================================================
 #include "ZDashboardSettings.h"
+#include "ZDeviceSettings.h"
 #include <QDataStream>
 //=========================================================
 class ZAppSettings
@@ -11,9 +12,13 @@ class ZAppSettings
     friend QDataStream& operator >> (QDataStream& in, ZAppSettings& appSettings);
 
 public:
-    ZAppSettings();
 
+    ZAppSettings();
     ZDashboardSettings zv_dashboardSettings;
+    ZDeviceSettings zv_deviceSettings;
+
+    // Common appsettings
+    bool zv_showMeasuringParameters;
 
 };
 //=========================================================

@@ -35,6 +35,7 @@ ZCalibrationListDialog::ZCalibrationListDialog(QSqlTableModel *chemicalTableMode
                                                QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Calibrations"));
+    setWindowFlags(Qt::Tool);
 
     //    zv_chemicalFilter = QString();
     //    zv_gainFactorFilter = -1;

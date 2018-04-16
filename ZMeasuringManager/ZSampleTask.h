@@ -6,7 +6,10 @@
 #include <QList>
 #include <QSqlQuery>
 #include "ZCalibration.h"
+#include "ZSpeSpectrum.h"
+#include "ZSample.h"
 //=================================================
+class ZMeasuringController;
 class ZMeasuringTask;
 class ZChemicalTask;
 //=================================================
@@ -14,24 +17,63 @@ class ZZonedCalibration : public ZCalibration
 {
     Q_OBJECT
 public:
-    explicit ZZonedCalibration(const QString& name, QObject *parent = 0)
+    explicit ZZonedCalibration(const QString& name,
+                               int databaseCalibrationId,
+                               QObject *parent = 0)
         : ZCalibration(name, parent)
     {
         zv_minConcentration = 0.0;
         zv_maxConcentration = 0.0;
+        zv_databaseCalibrationId = databaseCalibrationId;
     }
 
     explicit ZZonedCalibration(const ZCalibration* calibration,
-                               const QString &name, QObject *parent = 0)
+                               const QString &name,
+                               int databaseCalibrationId,
+                               QObject *parent = 0)
         : ZCalibration(calibration, name, parent)
     {
         zv_minConcentration = 0.0;
         zv_maxConcentration = 0.0;
+        zv_databaseCalibrationId = databaseCalibrationId;
     }
+
+    double zp_minConcentration() const
+    {
+        return zv_minConcentration;
+    }
+    double zp_maxConcentration() const
+    {
+        return zv_maxConcentration;
+    }
+
+    void zp_setMinMaConcentrations(double min, double max)
+    {
+        if(min > max)
+        {
+            qSwap(min, max);
+        }
+        zv_minConcentration = min;
+        zv_maxConcentration = max;
+    }
+
+    bool zp_isConcentrationInBounds(qreal concentration) const
+    {
+        return concentration >= zv_minConcentration
+                && concentration <= zv_maxConcentration;
+    }
+
+    int zp_databaseCalibrationId() const
+    {
+        return zv_databaseCalibrationId;
+    }
+
+private:
 
     // VARS
     double zv_minConcentration;
     double zv_maxConcentration;
+    int zv_databaseCalibrationId;
 
 };
 //=================================================
@@ -48,6 +90,7 @@ public:
     static bool zp_instanceSampleTaskObject(int sampleTaskId,
                                             ZSampleTask*& task,
                                             QString& msg,
+                                            ZMeasuringController* measuringController,
                                             QObject *parent);
 
     void zp_appendClient(QObject *client);
@@ -56,13 +99,28 @@ public:
     QStringList zp_chemicalStringList() const;
     QStringList zp_measuringConditionsStringlist() const;
 
-    QList<QPair<int,int> > zp_measuringConditionsList() const;
+    QList<QPair<quint8,int> > zp_measuringConditionsList() const;
 
     int zp_totalMeasuringDuration() const;
 
+    bool zp_startMeasuring(ZSample* sample);
+    bool zp_stopMeasuring(ZSample* sample);
+
+    void zp_measuringFinished();
+    void zp_handleSpectrumData(QList<quint32> speDataList,
+                               quint8 gainFactor,
+                               int exposition,
+                               bool finished);
+
+    void zp_calcConcentrations(quint8 gainFactor,
+                               int exposition,
+                               const ZSpeSpectrum* spectrum,
+                               QList<ZChemicalConcentration> &concentrationList) const;
+
+
 signals:
 
-    void zg_requestToDelete();
+    void zg_inquiryToDelete();
 
 public slots:
 
@@ -70,13 +128,18 @@ public slots:
 
 private:
 
-    explicit ZSampleTask(int id, const QString& name, QObject *parent);
+    explicit ZSampleTask(int id,
+                         const QString& name,
+                         ZMeasuringController* measuringController,
+                         QObject *parent);
 
     // VARS
+    ZMeasuringController* zv_measuringController;
     int zv_id;
     QString zv_name;
     QList<QObject*> zv_clientList;
     QList<ZMeasuringTask*> zv_measuringTaskList;
+    ZSample* zv_currentSample;
 
     // FUNCS
     void zh_initMeasuringTasks();
@@ -91,14 +154,17 @@ public:
 
     QStringList zp_chemicalList() const;
     QString zp_measuringConditionsString() const;
-    QPair<int,int> zp_measuringConditions() const;
+    QPair<quint8,int> zp_measuringConditions() const;
     int zp_exposition() const;
+
+    void zp_calcConcentrations(const ZSpeSpectrum *spectrum,
+                               QList<ZChemicalConcentration> &chemicalConcentrationList);
 
 private:
 
     // VARS
     int zv_id;
-    int zv_gainFactor;
+    quint8 zv_gainFactor;
     int zv_exposition;
 
     QList<ZChemicalTask*> zv_chemicalTaskList;
@@ -122,6 +188,7 @@ public:
                                               QString& msg,
                                               QObject *parent);
 
+    bool zp_calculateConcentration(const ZSpeSpectrum* spectrum, ZChemicalConcentration &chemicalConcentration);
 private:
 
     // Constructor

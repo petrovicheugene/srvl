@@ -11,6 +11,8 @@
 //===============================================================
 ZChemicalDialog::ZChemicalDialog(QWidget* parent) : QDialog(parent)
 {
+    setWindowFlags(Qt::Tool);
+
     zv_id = -1;
     zv_createComponents();
     zv_createConnections();

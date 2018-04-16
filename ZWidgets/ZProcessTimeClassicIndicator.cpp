@@ -22,8 +22,42 @@ void ZProcessTimeClassicIndicator::zp_setPercentTextOnProgressBar(bool visible)
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_reset()
 {
-    zv_progressBar->setRange(1.0,0.0);
+    zv_progressBar->setRange(0.0,1.0);
     zv_progressBar->setValue(0);
+
+    zv_timeLeftLabel->setText("*");
+    zv_processDurationLabel->setText("*");
+}
+//=============================================================
+void ZProcessTimeClassicIndicator::zp_setRange(double min, double max)
+{
+    if(min >= max )
+    {
+        return;
+    }
+
+    zv_progressBar->setRange(min,max);
+    zv_progressBar->setValue(0);
+
+    zv_timeLeftLabel->setText(QString::number(max));
+    zv_processDurationLabel->setText(QString::number(max));
+}
+//=============================================================
+void ZProcessTimeClassicIndicator::zp_setValue(double value)
+{
+//    if(value < zv_progressBar->minimum())
+//    {
+//        value = zv_progressBar->minimum();
+//    }
+
+//    if(value > value > zv_progressBar->maximum())
+//    {
+//        value = zv_progressBar->maximum();
+//    }
+
+     zv_progressBar->setValue(value);
+     double left = zv_progressBar->maximum() - value;
+     zv_timeLeftLabel->setText(QString::number(left));
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)

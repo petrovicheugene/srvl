@@ -72,7 +72,7 @@ bool ZSeriesTaskListManager::zp_saveSeriesTask(const QString& taskName, const QS
 
     // get sample task id list
     QList<int> sampleTaskIdList;
-    emit zg_requestSampleTaskIdList(sampleTaskIdList);
+    emit zg_inquirySampleTaskIdList(sampleTaskIdList);
 
     if(sampleTaskIdList.isEmpty())
     {

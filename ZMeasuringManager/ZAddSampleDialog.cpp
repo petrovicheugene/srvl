@@ -32,6 +32,8 @@
 ZAddSampleDialog::ZAddSampleDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Samples"));
+    setWindowFlags(Qt::Tool);
+
     zv_selectedSampleTaskId = -1;
     zh_createActions();
     zh_createComponents();

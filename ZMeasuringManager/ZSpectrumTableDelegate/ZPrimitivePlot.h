@@ -39,6 +39,7 @@ private:
     const int zv_verticalShift = 1;
     bool zv_antialiasingFlag;
     // recalced paint data
+    double zv_channelPerPixel;
     QVector<QPoint> zv_chartData;
 
     // FUNCS

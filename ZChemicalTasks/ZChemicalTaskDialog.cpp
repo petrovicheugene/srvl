@@ -30,6 +30,8 @@ ZChemicalTaskDialog::ZChemicalTaskDialog(QSqlTableModel *chemicalTableModel, QWi
     : QDialog(parent)
 {
     setWindowTitle(tr("Chemical task"));
+    setWindowFlags(Qt::Tool);
+
     if(chemicalTableModel == 0)
     {
         zv_chemicalSQLTableModel = new QSqlTableModel(this);

@@ -173,7 +173,7 @@ public:
     
 signals:
     
-    void zg_requestIndexForItem(ZSampleTaskTreeBaseItem* item, QModelIndex& index);
+    void zg_inquiryIndexForItem(ZSampleTaskTreeBaseItem* item, QModelIndex& index);
     void zg_itemOperation(ItemOperationType type, QModelIndex parent, int first, int last);
 
 protected:

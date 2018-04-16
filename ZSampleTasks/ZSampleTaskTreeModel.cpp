@@ -244,7 +244,7 @@ void ZSampleTaskTreeModel::zh_createActions()
 //===================================================
 void ZSampleTaskTreeModel::zh_createConnections()
 {
-    connect(zv_rootItem, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem,
+    connect(zv_rootItem, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem,
             this, &ZSampleTaskTreeModel::zh_indexForItem);
     connect(zv_rootItem, &ZSampleTaskTreeBaseItem::zg_itemOperation,
             this, &ZSampleTaskTreeModel::zh_onItemOperation);

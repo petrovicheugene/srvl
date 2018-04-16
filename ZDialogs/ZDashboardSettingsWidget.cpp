@@ -5,10 +5,10 @@
 #include "ZColorLabel.h"
 #include "ZLabeledSliderWidget.h"
 
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include <QVariant>
 #include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
@@ -140,7 +140,6 @@ void ZDashboardSettingsWidget::zh_createComponents()
     mainLayout->addWidget(zv_locationComboBox);
     label->setBuddy(zv_locationComboBox);
     mainLayout->addStretch();
-
 }
 //============================================================
 void ZDashboardSettingsWidget::zh_createConnections()

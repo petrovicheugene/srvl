@@ -25,6 +25,7 @@ ZSampleTaskListDialog::ZSampleTaskListDialog(QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle(tr("Sample task"));
+    setWindowFlags(Qt::Tool);
 
     zh_createComponents();
     zh_createConnections();

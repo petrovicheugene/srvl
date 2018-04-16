@@ -43,7 +43,6 @@ signals:
 public slots:
 
     void zp_setMeasuringState(ZMeasuringState measuringState);
-    void zp_setSeriesTaskDirty(bool dirty);
 
 private:
 
@@ -73,11 +72,10 @@ private:
     QLayout* zh_createHorizontalRound();
 
     void zh_createConnections();
-    void zh_saveControlState();
-    void zh_applyControlState();
     void zh_initProgressBarOptons(const ZDashboardSettings& settings,
                                   ZProgressBarOptions& options);
     void zh_calculateFontSizeScaleFactors(qreal min, qreal max, qreal& K, qreal& A);
+
 };
 //============================================================
 #endif // ZDASHBOARD_H

@@ -32,6 +32,8 @@ public:
 
     QList<int> zp_selectedRowList();
 
+    void zp_setCurrentRow(int row);
+    void zp_currentIndex(QModelIndex& index);
 
 signals:
 

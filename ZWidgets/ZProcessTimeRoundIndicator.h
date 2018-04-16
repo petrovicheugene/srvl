@@ -26,7 +26,8 @@ public:
     void zp_setPercentTextOnProgressBar(bool visible);
     void zp_applyProgressBarOptions(const ZProgressBarOptions& options);
     void zp_reset() override;
-
+    void zp_setRange(double min, double max) override;
+    void zp_setValue(double value) override;
 
 signals:
 

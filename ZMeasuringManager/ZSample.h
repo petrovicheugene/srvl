@@ -7,6 +7,24 @@
 class ZSampleTask;
 class ZSpeSpectrum;
 class ZAbstractSpectrum;
+class QTimerEvent;
+//=====================================================
+class ZChemicalConcentration
+{
+public:
+    ZChemicalConcentration()
+    {
+        zv_chemical = QString();
+        zv_calibrationId = -1;
+        zv_concentration = 0.0;
+    }
+
+    // VARS
+    QString zv_chemical;
+    int zv_calibrationId;
+    double zv_concentration;
+
+};
 //=====================================================
 class ZSample : public QObject
 {
@@ -27,36 +45,52 @@ public:
     QString zp_sampleTaskName() const;
     bool zp_addMeasuringConditions(int gainFactor, int exposition);
     bool zp_setSpectrum(ZSpeSpectrum*spectrum, int gainFactor, int exposition);
-
-    ZSpeSpectrum* zp_spectrumForMeasuringConditions(int gainFactor, int exposition) const;
+    bool zp_setSpectrumData(QList<quint32> speDataList,
+                            quint8 gainFactor,
+                            int exposition,
+                            bool finished);
+    ZSpeSpectrum* zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const;
 
 
     QStringList zp_sampleChemicalList() const;
     QStringList zp_sampleMeasuringConditionsStringList() const;
-    QList<QPair<int, int> > zp_sampleMeasuringConditionsList() const;
+    QList<QPair<quint8, int> > zp_sampleMeasuringConditionsList() const;
     QStringList zp_sampleTaskChemicalList() const;
     QStringList zp_sampleTaskMeasuringConditionsList() const;
 
     int zp_sampleTaskId() const;
     int zp_totalMeasuringDuration() const;
 
+    bool zp_startMeasuring();
+    bool zp_stopMeasuring();
+    void zp_measuringFinished();
+
+    bool zp_concentration(const QString& chemical, double& concentration);
+    void zp_resetMeasuringResults();
+
 signals:
 
-    void  zg_requestSpeListClear(SampleTaskSetFlag& flag);
+    void zg_inquirySpeListClear(SampleTaskSetFlag& flag) const;
+    void zg_inquirySpectrumColor(QColor& color) const;
+    void zg_measuringFinished() const;
+    void zg_spectrumDataChanged(quint8 gainfactor, int exposition);
+    void zg_concentrationChanged();
 
 public slots:
+
+protected:
 
 private:
 
     // VARS
     QString zv_sampleName;
     ZSampleTask* zv_sampleTask;
+    int timerId;
 
-    QList<QPair<QPair<int, int>, ZSpeSpectrum*> > zv_spectrumList;
-    QList<QPair<QString, double> > zv_chemicalConcentrationList;
+    QList<QPair<QPair<quint8, int>, ZSpeSpectrum*> > zv_spectrumList;
+    QList<ZChemicalConcentration> zv_chemicalConcentrationList;
 
     // FUNCS
-
 
 
 };

@@ -149,3 +149,27 @@ QList<int> ZBaseTableWidget::zp_selectedRowList()
     return selectedRowList;
 }
 //=========================================================================
+void ZBaseTableWidget::zp_setCurrentRow(int row)
+{
+    QModelIndex currentIndex;
+    QAbstractItemModel* model = zv_table->model();
+    if(model)
+    {
+        currentIndex = model->index(row, 0);
+    }
+
+    zv_table->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::Clear);
+    zv_table->selectionModel()->select(currentIndex, QItemSelectionModel::Clear);
+}
+//=========================================================================
+void ZBaseTableWidget::zp_currentIndex(QModelIndex& index)
+{
+    index = QModelIndex();
+    if(!zv_table)
+    {
+        return;
+    }
+
+    index = zv_table->currentIndex();
+}
+//=========================================================================

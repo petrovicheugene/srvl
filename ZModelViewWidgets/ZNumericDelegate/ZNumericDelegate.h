@@ -47,7 +47,7 @@ signals:
     
     //void dataStored(QModelIndex) const;
     void zg_editNext(QModelIndex);
-    void zg_requestEditorMinMax(ZNumericDelegate*, QModelIndex) const;
+    void zg_inquiryEditorMinMax(ZNumericDelegate*, QModelIndex) const;
 
 public slots:
     

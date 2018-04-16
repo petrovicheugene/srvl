@@ -29,6 +29,8 @@ ZMeasuringConditionsListDialog::ZMeasuringConditionsListDialog(bool forSelection
     QDialog(parent)
 {
     setWindowTitle(tr("Measurement conditions"));
+    setWindowFlags(Qt::Tool);
+
     zv_quantitySpinBox = 0;
     zh_createComponents(forSelection);
     zh_createConnections();

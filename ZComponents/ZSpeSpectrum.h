@@ -12,8 +12,9 @@ class ZSpeSpectrum : public ZAbstractSpectrum
 public:
 
     // explicit ZSpeSpectrum(QObject* parent);
-    explicit ZSpeSpectrum(const QList<int> &intensityList, const ZSpeAuxData& speAuxdata,
-                          const QString& path, QColor color, QObject* parent);
+    explicit ZSpeSpectrum(const QList<quint32> &intensityList, const ZSpeAuxData& speAuxdata,
+                          const QString& path, QColor color, bool completed, QObject* parent);
+
     virtual ~ZSpeSpectrum();
 
     const ZAbstractSpectrumAuxData *zp_auxData() const;

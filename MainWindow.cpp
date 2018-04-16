@@ -9,6 +9,9 @@
 #include "ZSettingsDialog.h"
 #include "ZWidgetWithSidebar.h"
 #include "ZSQLCommanderDialog.h"
+#include "ZPlotterDataManager.h"
+#include "ZMeasurementParametersHandler.h"
+
 // views
 #include "ZPlotter.h"
 #include "ZMeasuringResultTableWidget.h"
@@ -28,11 +31,14 @@
 #include <QAction>
 #include <QDockWidget>
 #include <QFrame>
+#include <QLabel>
 #include <QMessageBox>
 #include <QMenuBar>
+#include <QPixmap>
 #include <QSettings>
 #include <QStatusBar>
 #include <QSqlRelationalTableModel>
+#include <QStyle>
 #include <QVBoxLayout>
 
 // Qt controls
@@ -54,6 +60,8 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     // register ZAppSettings class for reading and writting to settings
     qRegisterMetaType<ZDashboardSettings>("ZDashboardSettings");
     qRegisterMetaTypeStreamOperators<ZDashboardSettings>("ZDashboardSettings");
+    qRegisterMetaType<ZDeviceSettings>("ZDeviceSettings");
+    qRegisterMetaTypeStreamOperators<ZDeviceSettings>("ZDeviceSettings");
     qRegisterMetaType<ZAppSettings>("ZAppSettings");
     qRegisterMetaTypeStreamOperators<ZAppSettings>("ZAppSettings");
 
@@ -158,6 +166,8 @@ void MainWindow::zh_createComponents()
     zv_plotter = new ZPlotter(this);
     QFrame* frame = zh_setWidgetToFrame(zv_plotter);
 
+    zv_plotterDataManager = new ZPlotterDataManager(this);
+
     // setting to plotter dock
     zv_plotterDock->setWidget(frame);
 
@@ -167,7 +177,14 @@ void MainWindow::zh_createComponents()
     // measuring models
     zv_measuringResultTableModel = new ZMeasuringResultTableModel(this);
 
-    statusBar();
+    statusBar()->setSizeGripEnabled(true);
+
+    // Connection status label
+    zv_connectionStatusLabel = new QLabel(this);
+    statusBar()->addWidget(zv_connectionStatusLabel);
+
+    zv_spectrumMeasurementParametersLabel = new QLabel(this);
+    statusBar()->addWidget(zv_spectrumMeasurementParametersLabel);
 }
 //============================================================
 void MainWindow::zh_createMenu()
@@ -220,8 +237,25 @@ void MainWindow::zh_createConnections()
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_saveSettings);
     connect(zv_runSQLCommandAction, &QAction::triggered,
             this, &MainWindow::zh_onRunSQLCommandAction);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_connectionState,
+            this, &MainWindow::zh_setConnectionStatusToStatusbar);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_message,
+            this, &MainWindow::zh_processMessage);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_measurementParameters,
+            this, &MainWindow::zh_setMeasurementParametersToStatusbar);
 
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentIndex,
+            zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_currentIndex);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryMeasuringConditionsAndSpectrumForIndex,
+            zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex);
+    connect(zv_measuringCommonWidget, &ZMeasuringCommonWidget::zg_currentIndexChanged,
+            zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_onCurrentIndexChanged);
 
+    zv_plotterDataManager->zp_connectToMeasuringManager(zv_measuringManager);
+    zv_plotterDataManager->zp_connectToPlotter(zv_plotter);
+
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect,
+            zv_plotter, &ZPlotter::zp_currentVisibleSceneRect);
 
     // all about sample table
     zv_measuringCommonWidget->zp_connectToMeasuringManager(zv_measuringManager);
@@ -320,7 +354,21 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
 
     if(menu->objectName() == NS_ObjectNames::glObjectNameMenuActions)
     {
+        QMenu* connectMenu = new QMenu(tr("Connect to..."),this);
+        QList<ZControlAction*> connectActionList = zv_measuringManager->zp_connectionActions();
+        foreach(ZControlAction* action, connectActionList)
+        {
+            connectMenu->addAction(action);
+        }
+
+        menu->addMenu(connectMenu);
+
         menu->addSeparator();
+        QList<ZControlAction*> toolActionList = zv_measuringManager->zp_toolActions();
+        foreach(ZControlAction* action, toolActionList)
+        {
+            menu->addAction(action);
+        }
         menu->addAction(zv_runSQLCommandAction);
         menu->addAction(zv_settingsAction);
         return;
@@ -397,11 +445,81 @@ void MainWindow::zh_onSettingsAction()
         zh_getAppSettingsFromSettings(appSettings);
         zh_applyAppSettingsToComponents(appSettings);
     }
-
 }
 //============================================================
 void MainWindow::zh_applyAppSettingsToComponents(const ZAppSettings& appSettings)
 {
+    zh_applyAppSettings(appSettings);
     zv_measuringCommonWidget->zp_applyAppSettings(appSettings);
+    zv_measuringManager->zp_applyAppSettings(appSettings);
+}
+//============================================================
+void MainWindow::zh_applyAppSettings(const ZAppSettings &appSettings)
+{
+    zv_showMeasuringParameters = appSettings.zv_showMeasuringParameters;
+}
+//============================================================
+void MainWindow::zh_setConnectionStatusToStatusbar(QString connectionState,
+                                                   QMessageBox::Icon icon)
+{
+    QString connectionStateString;
+
+    if(icon == QMessageBox::Information)
+    {
+        connectionStateString = tr("<font color=green><b>%1</b></font>").arg(connectionState);
+    }
+    else if(icon == QMessageBox::Critical)
+    {
+        connectionStateString = tr("<font color=red><b>%1</b></font>").arg(connectionState);
+    }
+    else if(icon == QMessageBox::Warning)
+    {
+        connectionStateString = tr("<font color=yellow><b>%1</b></font>").arg(connectionState);
+    }
+    else if(icon == QMessageBox::Question)
+    {
+        connectionStateString = tr("<font color=blue><b>%1</b></font>").arg(connectionState);
+    }
+
+    zv_connectionStatusLabel->setText(connectionStateString);
+}
+//============================================================
+void MainWindow::zh_setMeasurementParametersToStatusbar(quint32 expoPassedMs,
+                                                        quint32 deadTimeMs,
+                                                        quint32 spectrumIntensityIntegral)
+{
+    if(!zv_showMeasuringParameters)
+    {
+        return;
+    }
+
+    QString paramHTMLString;
+    ZMeasuringParametersHandler::zp_calcParametersAndConvertToHtml(expoPassedMs,
+                                                                   deadTimeMs,
+                                                                   spectrumIntensityIntegral,
+                                                                   paramHTMLString);
+
+    zv_spectrumMeasurementParametersLabel->setText(paramHTMLString);
+}
+//============================================================
+void MainWindow::zh_processMessage(QString msg, QMessageBox::Icon icon)
+{
+    if(icon == QMessageBox::Information)
+    {
+        QMessageBox::information(this, glAppProduct, msg, QMessageBox::Ok);
+    }
+    else if(icon == QMessageBox::Critical)
+    {
+        QMessageBox::critical(this, glAppProduct, msg, QMessageBox::Ok);
+    }
+    else if(icon == QMessageBox::Warning)
+    {
+        QMessageBox::warning(this, glAppProduct, msg, QMessageBox::Ok);
+    }
+    else if(icon == QMessageBox::Question)
+    {
+        // connectionStateString = tr("<font color=blue><b>%1</b></font>").arg(connectionState);
+    }
+
 }
 //============================================================

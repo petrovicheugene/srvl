@@ -767,7 +767,7 @@ void ZPlotter::zh_createConnections()
     zv_dashBoard->zp_setPlotGraphicsScene(zv_plotScene);
     connect(zv_dashBoard, &ZHorizontalDashBoard::zg_distortionFactorChanged,
             this, &ZPlotter::zh_verticalDistortionChanged);
-    connect(zv_plotView, &ZPlotGraphicsView::zg_requestForScrollBarVisible,
+    connect(zv_plotView, &ZPlotGraphicsView::zg_inquiryForScrollBarVisible,
             this, &ZPlotter::zh_scrollBarVisible);
     connect(zv_plotView, &ZPlotGraphicsView::zg_cursorAreaImage,
             this, &ZPlotter::zg_cursorAreaImage);

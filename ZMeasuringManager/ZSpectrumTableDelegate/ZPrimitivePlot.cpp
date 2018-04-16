@@ -5,10 +5,12 @@
 //=======================================================
 ZPrimitivePlot::ZPrimitivePlot(QWidget *parent) : QFrame(parent)
 {
-    setFrameStyle(QFrame::Box | QFrame::Plain);
-    setLineWidth(1);
     zv_paintStyle = PS_STAIRS_POLYGON;
     zv_antialiasingFlag = false;
+    zv_channelPerPixel = 1;
+
+    setFrameStyle(QFrame::Box | QFrame::Plain);
+    setLineWidth(1);
 }
 //=======================================================
 void ZPrimitivePlot::zp_paintData(const ZSpectrumPaintData &paintData)
@@ -94,19 +96,25 @@ void ZPrimitivePlot::zh_paintStairsPolygon(QStylePainter* painter)
     painter->setPen(QPen(QBrush(zv_penColor), 1));
     painter->setBrush(QBrush(zv_brushColor));
 
-    //painter->setRenderHint(QPainter::Antialiasing);
-
     QPolygon polygon;
-    // start point
-    polygon << QPoint(0,zv_verticalShift * -1);
-    for(int i = 0; i < zv_chartData.count() - 1; i++)
+    if(!zv_chartData.isEmpty())
     {
-        polygon << zv_chartData.value(i);
-        polygon << QPoint(zv_chartData.value(i+1).x(), zv_chartData.value(i).y());
+        //painter->setRenderHint(QPainter::Antialiasing);
+
+        // start point
+        polygon << QPoint(zv_chartData.value(0).x(), zv_verticalShift * -1);
+        for(int i = 0; i < zv_chartData.count()-1; i++)
+        {
+            polygon << zv_chartData.value(i);
+            polygon << QPoint(zv_chartData.value(i+1).x(), zv_chartData.value(i).y());
+        }
+
+        // finish points
+        polygon << zv_chartData.last();
+        int lastXshift = zv_chartData.last().x() - zv_chartData.at(zv_chartData.count() - 2).x();
+        polygon << QPoint(zv_chartData.last().x() + lastXshift, zv_chartData.last().y());
+        polygon << QPoint(zv_chartData.last().x() + lastXshift, zv_verticalShift * -1);
     }
-    polygon << zv_chartData.last();
-    // finish points
-    polygon << QPoint(zv_chartData.last().x(), 0);
 
     painter->drawPolygon(polygon);
     painter->restore();
@@ -125,10 +133,10 @@ void ZPrimitivePlot::zh_paintStraight(QStylePainter* painter)
 void ZPrimitivePlot::zh_recalcPaintData(const ZSpectrumPaintData &paintData)
 {
     // log Coordinates
-    double channelPerPixel = (double)paintData.maxChannel / (double)(this->width() - 2);
-    if(channelPerPixel <= 0)
+    zv_channelPerPixel = (double)paintData.maxChannel / (double)(this->width() - 2);
+    if(zv_channelPerPixel <= 0)
     {
-        channelPerPixel = 1;
+        zv_channelPerPixel = 1;
     }
 
     double intensityPerPixel = (double)paintData.maxIntensity / (double)(this->height() - 2 - zv_verticalShift);
@@ -140,7 +148,7 @@ void ZPrimitivePlot::zh_recalcPaintData(const ZSpectrumPaintData &paintData)
 
     for(int i = 0; i < paintData.spectrumData.count(); i++)
     {
-        int x = qRound((double)i / channelPerPixel);
+        int x = qRound((double)i / zv_channelPerPixel);
         int y = -1 * qRound(((double)(paintData.spectrumData.value(i)) / intensityPerPixel) + zv_verticalShift);
         zv_chartData.append(QPoint(x,y));
     }

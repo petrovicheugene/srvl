@@ -245,10 +245,13 @@ bool ZSpectrumTableDelegate::eventFilter(QObject *object, QEvent *event)
             return QStyledItemDelegate::eventFilter(object, event);
         }
 
-        if(itemView->itemDelegateForColumn(itemIndex.column()) != this)
+        if((itemView->itemDelegateForColumn(itemIndex.column()) != 0
+            && itemView->itemDelegateForColumn(itemIndex.column()) != this)
+                || (itemView->itemDelegate()) != this)
         {
             return QStyledItemDelegate::eventFilter(object, event);
         }
+
 
         QRect itemRect = itemView->visualRect(itemIndex);
         QStyleOptionViewItem newOption;

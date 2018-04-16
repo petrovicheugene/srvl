@@ -23,7 +23,7 @@ public:
     static void zp_setCurrentSpectrumColor(QColor);
     static void zp_setCurrentSpectrumId(qint64);
     //
-    void zp_setSpectrumData(const QList<int>&);
+    void zp_setSpectrumData(const QList<quint32> &);
     qint64 zp_spectrumId();
     void zp_updateSpectrumData(const ZAbstractSpectrum *);
 
@@ -43,7 +43,7 @@ protected:
 private:
 
     // VARS
-    QList<int> zv_spectrumData;
+    QList<quint32> zv_spectrumData;
     QPainterPath zv_spectrumPainterPath;
     QRectF zv_boundingRect;
     QColor zv_color;

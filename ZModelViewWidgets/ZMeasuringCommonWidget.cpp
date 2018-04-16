@@ -70,7 +70,7 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     //            zv_dashboard, &ZDashboard::zp_setSeriesTaskDirty);
 
     zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
-    connect(zv_measuringManager, &ZMeasuringManager::zg_requestSelectedSampleList,
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSampleList,
             this, &ZMeasuringCommonWidget::zp_selectedSampleList);
 
     connect(zv_dashboard, &ZDashboard::zg_startSeries,
@@ -78,10 +78,10 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     connect(zv_dashboard, &ZDashboard::zg_stopSeries,
             zv_measuringManager, &ZMeasuringManager::zp_stopSeries);
     connect(zv_measuringManager, &ZMeasuringManager::zg_measuringStateChanged,
-            this, &ZMeasuringCommonWidget::zp_setMeasuringState);
+            this, &ZMeasuringCommonWidget::zp_setMeasuringState, Qt::QueuedConnection);
 
-    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentSampleIndexChanged,
-            zv_measuringManager, &ZMeasuringManager::zp_setCurrentSampleIndex);
+//    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentSampleIndexChanged,
+//            zv_measuringManager, &ZMeasuringManager::zp_setCurrentSampleIndex);
 
     measuringManager->zp_notifyOfCurrentStatus();
 
@@ -115,7 +115,8 @@ void ZMeasuringCommonWidget::zh_createComponents()
 //==========================================================
 void ZMeasuringCommonWidget::zh_createConnections()
 {
-
+    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentIndexChanged,
+            this, &ZMeasuringCommonWidget::zg_currentIndexChanged);
 }
 //==========================================================
 void ZMeasuringCommonWidget::zh_rebuildLayout()
@@ -176,8 +177,28 @@ void ZMeasuringCommonWidget::zp_selectedSampleList(QList<int>& selectedSampleLis
     selectedSampleList = zv_measuringResultTableWidget->zp_selectedRowList();
 }
 //==========================================================
+void ZMeasuringCommonWidget::zp_currentIndex(QModelIndex& index) const
+{
+    // reset index
+    index = QModelIndex();
+
+    if(!zv_measuringResultTableWidget)
+    {
+        return;
+    }
+
+    zv_measuringResultTableWidget->zp_currentIndex(index);
+}
+//==========================================================
 void ZMeasuringCommonWidget::zp_setMeasuringState(ZMeasuringState measuringState)
 {
+    // define current sample index
+//    int currentSampleIndex = -1;
+//    if(measuringState.zp_measuringAction() != ZMeasuringState::MA_STOPPED)
+//    {
+//        currentSampleIndex = zv_measuringManager->zp_indexForSampleName(measuringState.zp_currentSampleName());
+//    }
+
     zv_dashboard->zp_setMeasuringState(measuringState);
 }
 //==========================================================

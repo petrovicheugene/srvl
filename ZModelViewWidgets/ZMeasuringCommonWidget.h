@@ -35,11 +35,13 @@ public:
 
 signals:
 
+    void zg_currentIndexChanged(const QModelIndex& current, const QModelIndex& previous) const;
 
 public slots:
 
     void zp_saveSettings() const;
     void zp_selectedSampleList(QList<int>& selectedSampleList) const;
+    void zp_currentIndex(QModelIndex& index) const;
 
 private slots:
 

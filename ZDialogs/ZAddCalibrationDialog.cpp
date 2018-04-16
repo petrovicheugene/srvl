@@ -21,6 +21,8 @@
 ZAddCalibrationDialog::ZAddCalibrationDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Add calibration"));
+    setWindowFlags(Qt::Tool);
+
     zv_calibration = 0;
     zh_createComponents();
     zh_createConnections();

@@ -283,6 +283,11 @@ bool ZDatabaseInspector::zp_checkDatabaseSuitability(const QString& name, const 
 //=========================================================
 bool ZDatabaseInspector::zp_connectToDatabase(const QString& name, const QString& path, QSqlDatabase& db,QString& msg)
 {
+    if(!ZDatabaseInspector::zp_checkDatabasePath(path, msg))
+    {
+        return false;
+    }
+
     if(name.isEmpty())
     {
         db = QSqlDatabase::addDatabase("QSQLITE");

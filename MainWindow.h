@@ -3,6 +3,7 @@
 #define MAINWINDOW_H
 //============================================================
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QSqlDatabase>
 
 #include "ZAppSettings.h"
@@ -11,6 +12,7 @@
 class QAction;
 class QDockWidget;
 class QFrame;
+class QLabel;
 class QMenu;
 class QSqlRelationalTableModel;
 
@@ -28,7 +30,7 @@ class ZMeasuringCommonWidget;
 class ZDashboard;
 class ZPlotter;
 class ZWidgetWithSidebar;
-
+class ZPlotterDataManager;
 //============================================================
 /*!
  \brief the MainWindow is an application main class.
@@ -78,6 +80,14 @@ private slots:
     void zh_onSettingsAction();
 
     void zh_applyAppSettingsToComponents(const ZAppSettings &appSettings);
+    void zh_applyAppSettings(const ZAppSettings &appSettings);
+
+    void zh_setConnectionStatusToStatusbar(QString connectionState, QMessageBox::Icon icon);
+    void zh_setMeasurementParametersToStatusbar(quint32 expoPassedMs,
+                                                quint32 deadTimeMs,
+                                                quint32 spectrumIntensityIntegral);
+
+    void zh_processMessage(QString msg, QMessageBox::Icon);
 
 private:
 
@@ -97,7 +107,11 @@ private:
 
     // widgets
     ZPlotter* zv_plotter;
+    ZPlotterDataManager* zv_plotterDataManager;
 
+    QLabel* zv_connectionStatusLabel;
+    QLabel* zv_spectrumMeasurementParametersLabel;
+    bool zv_showMeasuringParameters;
     // views
     ZMeasuringCommonWidget* zv_measuringCommonWidget;
 
@@ -105,7 +119,7 @@ private:
     ZMeasuringManager* zv_measuringManager;
 
     ZMeasuringResultTableModel* zv_measuringResultTableModel;
-//    ZSeriesTaskTreeModel* zv_currentMeasuringTaskTreeModel;
+    //    ZSeriesTaskTreeModel* zv_currentMeasuringTaskTreeModel;
 
     // FUNCS
 

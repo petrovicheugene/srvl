@@ -22,7 +22,7 @@ bool ZQuadraticTerm::zp_calcValue(const ZAbstractSpectrum * spectrum, qreal& val
     }
 
     bool ok;
-    emit zg_requestWindowIntensity((const QObject*)spectrum, value, true, &ok);
+    emit zg_inquiryWindowIntensity((const QObject*)spectrum, value, true, &ok);
     if(!ok)
     {
         return false;
@@ -36,7 +36,7 @@ bool ZQuadraticTerm::zp_calcTermVariablePart(const ZAbstractSpectrum* spectrum, 
 {
     value = 0.0;
     bool ok;
-    emit zg_requestWindowIntensity((const QObject*)spectrum, value, false, &ok);
+    emit zg_inquiryWindowIntensity((const QObject*)spectrum, value, false, &ok);
     value = value * value;
     return ok;
 }
@@ -85,7 +85,7 @@ void ZQuadraticTerm::zh_onWindowTypeChange(ZCalibrationWindow::WindowType previo
 
     if(currentType != ZCalibrationWindow::WT_PEAK)
     {
-        emit zg_requestForDelete(this);
+        emit zg_inquiryForDelete(this);
     }
 }
 //===================================================================
@@ -97,7 +97,7 @@ void ZQuadraticTerm::zh_connectToWindow()
                 this, &ZQuadraticTerm::zh_onWindowDestroying);
         connect(zv_window, &ZCalibrationWindow::zg_windowNameChanged,
                 this, &ZQuadraticTerm::zh_updateTermNameForWindowName);
-        connect(this, &ZQuadraticTerm::zg_requestWindowIntensity,
+        connect(this, &ZQuadraticTerm::zg_inquiryWindowIntensity,
                 zv_window, &ZCalibrationWindow::zp_calcWindowIntensity);
         connect(zv_window, &ZCalibrationWindow::zg_windowMarginsChanged,
                 this, &ZQuadraticTerm::zg_termWindowMarginChanged);

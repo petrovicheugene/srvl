@@ -12,8 +12,13 @@
         <file>ZWidgets/sidebarRightOpen.png</file>
         <file>ZWidgets/sidebarRightOpen-1.png</file>
         <file>ZImages/eyeSignBlack-1.png</file>
+        <file>ZImages/hSplitterHandle.png</file>
+        <file>ZImages/vSplitterHandle.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>
+    </qresource>
+    <qresource prefix="/library">
+        <file>ComDV.dll</file>
     </qresource>
 </RCC>

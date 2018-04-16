@@ -7,6 +7,7 @@ ZAbstractProcessTimeIndicator::ZAbstractProcessTimeIndicator(QWidget *parent)
     : QWidget(parent)
 {
     zh_createComponents();
+
 }
 //=======================================================
 void ZAbstractProcessTimeIndicator::zh_createComponents()

@@ -23,7 +23,7 @@ public:
 
 signals:
 
-    void zg_requestWindowIntensity(const QObject* spectrum, qreal& intensityValue, bool useBuffer,  bool* ok = 0);
+    void zg_inquiryWindowIntensity(const QObject* spectrum, qreal& intensityValue, bool useBuffer,  bool* ok = 0);
 
 protected slots:
 

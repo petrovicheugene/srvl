@@ -2,6 +2,7 @@
 #include "ZMeasuringResultTableModel.h"
 #include "ZGeneral.h"
 #include "ZSpectrumPaintData.h"
+#include "ZSpeSpectrum.h"
 //=========================================================
 ZMeasuringResultTableModel::ZMeasuringResultTableModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -14,6 +15,9 @@ void ZMeasuringResultTableModel::zp_connectToMeasuringManager(ZMeasuringManager*
     zv_measuringManager = measuringManager;
     connect(zv_measuringManager, &ZMeasuringManager::zg_sampleOperation,
             this, &ZMeasuringResultTableModel::zh_onSampleOperation);
+    connect(this, &ZMeasuringResultTableModel::zg_currentMeasuringConditions,
+            zv_measuringManager, &ZMeasuringManager::zg_currentMeasuringConditions);
+
 }
 //=========================================================
 Qt::ItemFlags ZMeasuringResultTableModel::flags(const QModelIndex & index) const
@@ -47,6 +51,16 @@ int ZMeasuringResultTableModel::zp_spectrumColumnCount() const
     return zv_measuringConditionsStringList.count();
 }
 //=========================================================
+ZSpeSpectrum* ZMeasuringResultTableModel::zp_spectrum(int row, quint8 gainFactor, int exposition) const
+{
+    if(row < 0 || row >= rowCount() || !zv_measuringManager)
+    {
+        return 0;
+    }
+
+    return zv_measuringManager->zp_spectrum(row, gainFactor, exposition);
+}
+//=========================================================
 int	 ZMeasuringResultTableModel::rowCount(const QModelIndex & parent) const
 {
     if(zv_measuringManager == 0)
@@ -57,9 +71,11 @@ int	 ZMeasuringResultTableModel::rowCount(const QModelIndex & parent) const
     return zv_measuringManager->zp_sampleCount();
 }
 //=========================================================
-QVariant	ZMeasuringResultTableModel::data(const QModelIndex & index, int role) const
+QVariant ZMeasuringResultTableModel::data(const QModelIndex & index, int role) const
 {
-    if(!index.isValid() || zv_measuringManager == 0)
+    if(!index.isValid() || zv_measuringManager == 0
+            || index.row() < 0 || index.row() >= rowCount()
+            || index.column() < 0 || index.column() >= columnCount())
     {
         return QVariant();
     }
@@ -77,17 +93,37 @@ QVariant	ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
         }
 
         // spectrum column
-        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        if(index.column() > 1 && index.column() < zv_measuringConditionsList.count() + 2)
         {
             ZSpectrumPaintData paintData;
-            int gainFactor;
-            int exposition;
+            quint8 gainFactor = zv_measuringConditionsList.at(index.column() - 2).first;
+            int exposition = zv_measuringConditionsList.at(index.column() - 2).second;
 
             paintData.spectrumData = zv_measuringManager->zp_spectrumData(index.row(), gainFactor, exposition);
             paintData.maxChannel = zv_measuringManager->zp_arrayChannelCount(gainFactor, exposition);
             paintData.maxIntensity = zv_measuringManager->zp_arrayMaxIntensity(gainFactor, exposition);
 
-            QVariant::fromValue(paintData);
+            return QVariant::fromValue(paintData);
+        }
+
+        if(index.column() > zv_measuringConditionsList.count() + 1)
+        {
+            // get chemical for column
+            QString chemical =
+                    zv_chemicalStringList.at(index.column() - 2 - zv_measuringConditionsStringList.count());
+
+            if(chemical.isEmpty())
+            {
+                return QVariant();
+            }
+
+            double concentration;
+            if(!zv_measuringManager->zp_concentration(index.row(), chemical, concentration))
+            {
+                return QVariant();
+            }
+
+            return QVariant(concentration);
         }
     }
 
@@ -95,16 +131,36 @@ QVariant	ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
     {
         if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
         {
-             return QVariant(QColor(Qt::red)); // QVariant(zv_dataManager->zp_spectrumColor(index.row()));
+            //            QList<QPair<int, int> > measuringConditionsListForSample = zv_measuringManager->zp_measuringConditionsListForSample(index.row());
+            //            if(!measuringConditionsListForSample.contains(zv_measuringConditionsList.value(index.column() - 2, QPair<int, int>(-1, -1))))
+            //            {
+            //                return QVariant();
+            //            }
+
+            int gainFactor = zv_measuringConditionsList.value(index.column() - 2, QPair<int, int>(-1, -1)).first;
+            int exposition = zv_measuringConditionsList.value(index.column() - 2, QPair<int, int>(-1, -1)).second;
+
+            QColor spectrumColor = zv_measuringManager->zp_spectrumColor(index.row(), gainFactor, exposition);
+            if(!spectrumColor.isValid())
+            {
+                return QVariant();
+            }
+
+            return QVariant(spectrumColor); // QVariant(zv_dataManager->zp_spectrumColor(index.row()));
         }
     }
 
     if(role == NS_DataRole::VisibleRole)
     {
-        if(index.column() > 1 && index.column() < zv_measuringConditionsStringList.count() + 2)
+        if(index.column() > 1 && index.column() < zv_measuringConditionsList.count() + 2)
         {
-             return QVariant(true);
-            // return QVariant(zv_dataManager->zp_isSpectrumVisible(index.row()));
+            QPair<int, int> measuringConditions = zv_measuringConditionsList.value(index.column() - 2);
+            bool visibility;
+            if(!zv_measuringManager->zp_spectrumVisibility(index.row(), measuringConditions.first, measuringConditions.second, visibility))
+            {
+                return QVariant();
+            }
+            return QVariant(visibility);
         }
     }
 
@@ -117,6 +173,73 @@ QVariant	ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
     }
 
     return QVariant();
+}
+//=========================================================
+bool ZMeasuringResultTableModel::zp_measuringConditionsForColumn(int column,
+                                                                 QPair<quint8, int>& measuringConditions) const
+{
+    if(column <  2 || column >= zv_measuringConditionsList.count() + 2)
+    {
+        return false;
+    }
+
+    measuringConditions = zv_measuringConditionsList.value(column - 2, QPair<int, int>(-1, -1));
+    return true;
+}
+//=========================================================
+void ZMeasuringResultTableModel::zp_onCurrentIndexChanged(const QModelIndex& current, const QModelIndex& previous)
+{
+    quint8 gainFactor;
+    int exposition;
+    const ZSpeSpectrum* spectrum;
+    zp_measuringConditionsAndSpectrumForIndex(current, gainFactor, exposition, spectrum);
+
+    emit zg_currentMeasuringConditions(gainFactor, exposition, spectrum);
+    return;
+}
+//=========================================================
+void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const QModelIndex& index,
+                                                                           quint8& gainFactor,
+                                                                           int& exposition,
+                                                                           const ZSpeSpectrum*& spectrum)
+{
+    gainFactor = 0;
+    exposition = -1;
+
+    // check current index
+    if(!index.isValid())
+    {
+        return;
+    }
+
+    // check type of current index data
+    QVariant vData = data(index, NS_DataRole::DataTypeRole);
+    if(!vData.isValid() || vData.isNull() || !vData.canConvert<int>())
+    {
+        return;
+    }
+
+    if(vData.toInt() != glSpectrumDataType)
+    {
+        return;
+    }
+
+    // current index data is spectrum
+    // get list index of measuring conditions of the current spectrum
+    int currentMeasuringConditionsIndex = index.column() - 2;
+    // check currentMeasuringConditionsIndex
+    if(currentMeasuringConditionsIndex < 0
+            || currentMeasuringConditionsIndex >= zv_measuringConditionsList.count())
+    {
+        return;
+    }
+
+    gainFactor = zv_measuringConditionsList.at(currentMeasuringConditionsIndex).first;
+    exposition = zv_measuringConditionsList.at(currentMeasuringConditionsIndex).second;
+
+    // current spectrum
+    spectrum = zv_measuringManager->zp_spectrum(index.row(), gainFactor, exposition);
+
 }
 //=========================================================
 bool ZMeasuringResultTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
@@ -135,10 +258,34 @@ bool ZMeasuringResultTableModel::setData(const QModelIndex & index, const QVaria
                 return false;
             }
             QString sampleName = value.toString();
-            return zv_measuringManager->zp_setSampleName(index.row(), sampleName);
-            // emit dataChanged(index);
+            bool res = zv_measuringManager->zp_setSampleName(index.row(), sampleName);
+            if(res)
+            {
+                emit dataChanged(index, index);
+            }
+            return res;
         }
     }
+
+    if(role == NS_DataRole::VisibleRole)
+    {
+        if(index.column() < 2 || index.column() >= zv_measuringConditionsList.count() + 2
+                || !value.canConvert<bool>())
+        {
+            return false;
+        }
+
+        QPair<int, int> measuringConditions = zv_measuringConditionsList.value(index.column() - 2);
+
+        bool visibility = value.toBool();
+        bool res = zv_measuringManager->zp_setSpectrumVisibility(index.row(), measuringConditions.first, measuringConditions.second, visibility);
+        if(res)
+        {
+            emit dataChanged(index, index);
+        }
+        return res;
+    }
+
     return false;
 }
 //=========================================================
@@ -183,25 +330,24 @@ void ZMeasuringResultTableModel::zh_onSampleOperation(ZMeasuringManager::SampleO
 {
     if(type == ZMeasuringManager::SOT_SAMPLE_ABOUT_TO_BE_INSERTED)
     {
-        // beginInsertRows(QModelIndex(), first, last);
+        beginInsertRows(QModelIndex(), first, last);
     }
     else if(type == ZMeasuringManager::SOT_SAMPLE_INSERTED)
     {
-        beginInsertRows(QModelIndex(), first, last);
+        //beginInsertRows(QModelIndex(), first, last);
         endInsertRows();
 
         beginResetModel();
         zh_recalcColumnCount();
         endResetModel();
-
     }
     else if(type == ZMeasuringManager::SOT_SAMPLE_ABOUT_TO_BE_REMOVED)
     {
-        // beginInsertRows(QModelIndex(), first, last);
+        beginRemoveRows(QModelIndex(), first, last);
     }
     else if(type == ZMeasuringManager::SOT_SAMPLE_REMOVED)
     {
-        beginRemoveRows(QModelIndex(), first, last);
+        //beginRemoveRows(QModelIndex(), first, last);
         endRemoveRows();
 
         beginResetModel();
@@ -220,14 +366,32 @@ void ZMeasuringResultTableModel::zh_onSampleOperation(ZMeasuringManager::SampleO
     }
     else if(type == ZMeasuringManager::SOT_SPECTRUM_CHANGED)
     {
-        // beginInsertRows(QModelIndex(), first, last);
+        zh_repaintAllSpectra();
+
+        //        beginResetModel();
+        //        zh_recalcColumnCount();
+        //        endResetModel();
     }
     else if(type == ZMeasuringManager::SOT_CONCENTRATIONS_CHANGED)
     {
-        // beginInsertRows(QModelIndex(), first, last);
+        QModelIndex topLeft = index(first, 2 + zv_measuringConditionsList.count(), QModelIndex());
+        QModelIndex bottomRight = index(last, columnCount() - 1, QModelIndex());
+        emit dataChanged(topLeft, bottomRight);
     }
 
     // emit zg_checkCurrentArray();
+}
+//=========================================================
+void ZMeasuringResultTableModel::zh_repaintAllSpectra()
+{
+    if(!zv_measuringConditionsList.isEmpty())
+    {
+        // repaint all spectra
+        QModelIndex topLeft = index(0, 2, QModelIndex());
+        QModelIndex bottomRight = index(rowCount(), zv_measuringConditionsList.count() + 1, QModelIndex());
+        zh_recalcColumnCount();
+        emit dataChanged(topLeft, bottomRight);
+    }
 }
 //=========================================================
 void ZMeasuringResultTableModel::zh_recalcColumnCount()
@@ -270,7 +434,7 @@ void ZMeasuringResultTableModel::zh_recalcColumnCount()
         }
 
         // measuring conditions
-        QList<QPair<int, int> > measuringConditionsListForSample;
+        QList<QPair<quint8, int> > measuringConditionsListForSample;
         measuringConditionsListForSample = zv_measuringManager->zp_measuringConditionsListForSample(row);
 
         for(int c = 0; c < measuringConditionsListForSample.count(); c++)
@@ -296,5 +460,6 @@ void ZMeasuringResultTableModel::zh_recalcColumnCount()
 
     zv_chemicalStringList = chemicalStringList;
     zv_measuringConditionsStringList = measuringConditionsStringList;
+
 }
 //=========================================================

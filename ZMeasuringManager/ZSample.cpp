@@ -1,13 +1,17 @@
 //=====================================================
+#include <QDebug>
 #include "ZSample.h"
 #include "ZSampleTask.h"
 #include "ZSpeSpectrum.h"
+#include <QDateTime>
+
 //=====================================================
 ZSample::ZSample(const QString &sampleName,
                  ZSampleTask* sampleTask,
                  QObject *parent)
     : QObject(parent)
 {
+    timerId = -1;
     zv_sampleTask = 0;
     zv_sampleName = sampleName;
     zp_setSampleTask(sampleTask, STSF_CLEAR_SPE_LIST);
@@ -58,19 +62,22 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
 
     // replace without cheking
     zv_chemicalConcentrationList.clear();
-    QPair<QString, double> chemicalPair;
     foreach(QString chemical, chemicalStringList)
     {
-        chemicalPair.first = chemical;
-        chemicalPair.second = 0.0;
-        zv_chemicalConcentrationList.append(chemicalPair);
+        ZChemicalConcentration chemicalConcentration;
+        chemicalConcentration.zv_chemical = chemical;
+        zv_chemicalConcentrationList.append(chemicalConcentration);
     }
 
     // spectrum list
-    QList<QPair<int,int> >  measuringConditionsList = zv_sampleTask->zp_measuringConditionsList();
-    QPair<int, int> currentMeasuringConditions;
+    QList<QPair<quint8,int> >  measuringConditionsList = zv_sampleTask->zp_measuringConditionsList();
+    QPair<quint8, int> currentMeasuringConditions;
     int existingMeasuringConditionsQuantity;
     int insertedMeasuringConditionsQuantity;
+    ZSpeSpectrum* spectrum;
+    ZSpeAuxData speAuxdata;
+    QColor color;
+    QList<quint32> intensityList;
 
     if(zv_spectrumList.isEmpty())
     {
@@ -81,7 +88,13 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
             for(int i = 0; i < measuringConditionsList.count(); i++)
             {
                 speElement.first = measuringConditionsList.at(i);
-                speElement.second = 0;
+
+                //                const QList<int> &intensityList, const ZSpeAuxData& speAuxdata,
+                //                                          const QString& path, QColor color, QObject* parent
+                emit zg_inquirySpectrumColor(color);
+                spectrum = new ZSpeSpectrum(intensityList, speAuxdata,
+                                            QString(), color, false, this);
+                speElement.second = spectrum;
                 zv_spectrumList.append(speElement);
             }
         }
@@ -91,7 +104,7 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
     {
         if(flag == STSF_ASK)
         {
-            emit zg_requestSpeListClear(flag);
+            emit zg_inquirySpeListClear(flag);
         }
 
         if(flag == STSF_CLEAR_SPE_LIST)
@@ -141,7 +154,7 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
             {
                 if(flag == STSF_ASK)
                 {
-                    emit zg_requestSpeListClear(flag);
+                    emit zg_inquirySpeListClear(flag);
                 }
 
                 if(flag == STSF_NOT_CLEAR_SPE_LIST)
@@ -203,7 +216,7 @@ bool ZSample::zp_addMeasuringConditions(int gainFactor, int exposition)
     {
         if(zv_spectrumList.at(s).first.first == gainFactor && zv_spectrumList.at(s).first.second == exposition)
         {
-             return false;
+            return false;
         }
     }
 
@@ -244,7 +257,62 @@ bool ZSample::zp_setSpectrum(ZSpeSpectrum *spectrum, int gainFactor, int exposit
     return true;
 }
 //=====================================================
-ZSpeSpectrum* ZSample::zp_spectrumForMeasuringConditions(int gainFactor, int exposition) const
+bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
+                                 quint8 gainFactor,
+                                 int exposition,
+                                 bool finished)
+{
+    for(int s = 0; s < zv_spectrumList.count(); s++)
+    {
+        if(zv_spectrumList.at(s).first.first == gainFactor && zv_spectrumList.at(s).first.second == exposition)
+        {
+            // delete the previous spectrum
+            if(zv_spectrumList[s].second == 0)
+            {
+                // create new SpeSpectrum
+                // spectrum->setParent(this);
+            }
+
+            // assign the new spectrum
+            ZSpeSpectrum* spectrum = zv_spectrumList[s].second;
+            spectrum->zp_setSpectrumData(speDataList);
+            spectrum->zp_setCompleted(finished);
+
+            emit zg_spectrumDataChanged(gainFactor, exposition);
+            if(finished)
+            {
+                QList<ZChemicalConcentration> chemicalConcentrationList;
+                zv_sampleTask->zp_calcConcentrations(gainFactor,
+                                                     exposition,
+                                                     spectrum,
+                                                     chemicalConcentrationList);
+                // update concentration list
+                QString currentChemical;
+                for(int i = 0; i < zv_chemicalConcentrationList.count(); i++ )
+                {
+                    currentChemical = zv_chemicalConcentrationList.at(i).zv_chemical;
+                    foreach(ZChemicalConcentration chemicalConcentration, chemicalConcentrationList)
+                    {
+                        if(chemicalConcentration.zv_chemical == currentChemical)
+                        {
+                            zv_chemicalConcentrationList[i].zv_concentration = chemicalConcentration.zv_concentration;
+                            zv_chemicalConcentrationList[i].zv_calibrationId = chemicalConcentration.zv_calibrationId;
+                            break;
+                        }
+                    }
+                }
+
+                // notify measuring manager
+                emit zg_concentrationChanged();
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+//=====================================================
+ZSpeSpectrum* ZSample::zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const
 {
     for(int s = 0; s < zv_spectrumList.count(); s++)
     {
@@ -262,7 +330,7 @@ QStringList ZSample::zp_sampleChemicalList() const
     QStringList chemicalList;
     for(int i = 0; i < zv_chemicalConcentrationList.count(); i++)
     {
-        chemicalList.append(zv_chemicalConcentrationList.at(i).first);
+        chemicalList.append(zv_chemicalConcentrationList.at(i).zv_chemical);
     }
 
     return chemicalList;
@@ -284,9 +352,9 @@ QStringList ZSample::zp_sampleMeasuringConditionsStringList() const
     return measuringConditionsList;
 }
 //=====================================================
-QList<QPair<int, int> > ZSample::zp_sampleMeasuringConditionsList() const
+QList<QPair<quint8, int> > ZSample::zp_sampleMeasuringConditionsList() const
 {
-    QList<QPair<int, int> > measuringConditionsList;
+    QList<QPair<quint8, int> > measuringConditionsList;
     for(int i = 0; i < zv_spectrumList.count(); i++)
     {
         measuringConditionsList.append(zv_spectrumList.at(i).first);
@@ -333,5 +401,60 @@ int ZSample::zp_totalMeasuringDuration() const
     }
 
     return zv_sampleTask->zp_totalMeasuringDuration();
+}
+//=====================================================
+bool ZSample::zp_startMeasuring()
+{
+    if(!zv_sampleTask)
+    {
+        return false;
+    }
+
+    return zv_sampleTask->zp_startMeasuring(this);
+}
+//=====================================================
+bool ZSample::zp_stopMeasuring()
+{
+    if(!zv_sampleTask)
+    {
+        return false;
+    }
+
+    return zv_sampleTask->zp_stopMeasuring(this);
+}
+//=====================================================
+void ZSample::zp_measuringFinished()
+{
+
+    emit zg_measuringFinished();
+}
+//=====================================================
+bool ZSample::zp_concentration(const QString& chemical, double& concentration)
+{
+    foreach(ZChemicalConcentration chemicalConcentration, zv_chemicalConcentrationList)
+    {
+        if(chemicalConcentration.zv_chemical == chemical)
+        {
+            concentration = chemicalConcentration.zv_concentration;
+            return true;
+        }
+    }
+    return false;
+}
+//=====================================================
+void ZSample::zp_resetMeasuringResults()
+{
+    // clear spectra
+    QList<quint32> zeroSpectrumData;
+    for(int s = 0; s < zv_spectrumList.count(); s++)
+    {
+        zv_spectrumList.at(s).second->zp_setSpectrumData(zeroSpectrumData);
+    }
+
+    // clear calc results
+    for(int c = 0; c < zv_chemicalConcentrationList.count(); c++)
+    {
+        zv_chemicalConcentrationList[c].zv_concentration = 0.0;
+    }
 }
 //=====================================================

@@ -66,7 +66,7 @@ bool ZSpeIOHandler::zp_getSpectrumFromFile(QFile& file, QColor color, ZAbstractS
 
     QTextStream ts(&file);
     int lineNumber = 0;
-    QList<int> intensityList;
+    QList<quint32> intensityList;
     ZSpeAuxData speAuxData;
     bool ok;
     while (!ts.atEnd())
@@ -135,7 +135,12 @@ bool ZSpeIOHandler::zp_getSpectrumFromFile(QFile& file, QColor color, ZAbstractS
         lineNumber++;
     }
 
-    spectrum = new ZSpeSpectrum(intensityList, speAuxData, file.fileName(), color, zv_spectrumParent);
+    spectrum = new ZSpeSpectrum(intensityList,
+                                speAuxData,
+                                file.fileName(),
+                                color,
+                                true,
+                                zv_spectrumParent);
     return true;
 }
 //===========================================================

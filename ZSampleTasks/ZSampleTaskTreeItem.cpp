@@ -135,8 +135,8 @@ ZSampleTaskTreeBaseItem* ZSampleTaskTreeRootItem::zp_createChild(ZSampleTaskTree
                 static_cast<ZSampleTaskTreeMeasuringConditionsItemOptions*>(options);
 
         item = new ZSampleTaskTreeMeasuringConditionsItem(mcOptions, this);
-        connect(item, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem,
-                this, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem);
+        connect(item, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem,
+                this, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem);
         connect(item, &ZSampleTaskTreeBaseItem::zg_itemOperation,
                 this, &ZSampleTaskTreeBaseItem::zg_itemOperation);
 
@@ -176,15 +176,15 @@ ZSampleTaskTreeBaseItem* ZSampleTaskTreeMeasuringConditionsItem::zp_createChild(
                 static_cast<ZSampleTaskTreeChemicalTaskItemOptions*>(options);
 
         QModelIndex parentIndex;
-        emit zg_requestIndexForItem(this, parentIndex);
+        emit zg_inquiryIndexForItem(this, parentIndex);
         if(!parentIndex.isValid())
         {
             return 0;
         }
 
         item = new ZSampleTaskTreeChemicalTaskItem(chtOptions, this);
-        connect(item, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem,
-                this, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem);
+        connect(item, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem,
+                this, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem);
         connect(item, &ZSampleTaskTreeBaseItem::zg_itemOperation,
                 this, &ZSampleTaskTreeBaseItem::zg_itemOperation);
 
@@ -236,15 +236,15 @@ ZSampleTaskTreeBaseItem* ZSampleTaskTreeChemicalTaskItem::zp_createChild(ZSample
                 static_cast<ZSampleTaskTreeCalibrationItemOptions*>(options);
 
         QModelIndex parentIndex;
-        emit zg_requestIndexForItem(this, parentIndex);
+        emit zg_inquiryIndexForItem(this, parentIndex);
         if(!parentIndex.isValid())
         {
             return 0;
         }
 
         item = new ZSampleTaskTreeCalibrationItem(chtOptions, this);
-        connect(item, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem,
-                this, &ZSampleTaskTreeBaseItem::zg_requestIndexForItem);
+        connect(item, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem,
+                this, &ZSampleTaskTreeBaseItem::zg_inquiryIndexForItem);
         connect(item, &ZSampleTaskTreeBaseItem::zg_itemOperation,
                 this, &ZSampleTaskTreeBaseItem::zg_itemOperation);
 

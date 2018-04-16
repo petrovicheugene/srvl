@@ -23,7 +23,7 @@ EXE_BASE_NAME=SDAnalyzer
 QMAKE_TARGET_PRODUCT="SD Analyzer"
 QMAKE_TARGET_DESCRIPTION="Chemical analysis of X-ray spectra"
 QMAKE_TARGET_COMPANY="TechnoAnalyt"
-QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} Ltd. 2016.  All rights reserved."
+QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} Ltd. 2017, 2018.  All rights reserved."
 COMPANY_URL=tehnoanalit.com
 
 CONFIG += $$VER_RELEASE
@@ -70,7 +70,8 @@ INCLUDEPATH += ZDialogs \
     ZChemicals \
     ZModelViewWidgets/ZNumericDelegate \
     ZSeriesTasks \
-    ZMeasuringManager/ZSpectrumTableDelegate
+    ZMeasuringManager/ZSpectrumTableDelegate \
+    ZEnergyCalibrator
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -96,7 +97,6 @@ SOURCES += main.cpp\
     ZWidgets/ZProcessTimeRoundIndicator.cpp \
     ZWidgets/QRoundProgressBar.cpp \
     ZDialogs/ZSettingsDialog.cpp \
-    ZWidgets/ZDashboardSettingsWidget.cpp \
     ZWidgets/ZDashboard.cpp \
     ZWidgets/ZColorLabel.cpp \
     ZComponents/ZAbstractTerm.cpp \
@@ -171,7 +171,19 @@ SOURCES += main.cpp\
     ZComponents/ZAbstractSpectrumIOHandler.cpp \
     ZMeasuringManager/ZSpectrumTableDelegate/ZPrimitivePlot.cpp \
     ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumTableDelegate.cpp \
-    ZComponents/ZXMLSpectrumArrayIOHandler.cpp
+    ZComponents/ZXMLSpectrumArrayIOHandler.cpp \
+    ZDialogs/ZDashboardSettingsWidget.cpp \
+    ZDialogs/ZDeviceSettingsWidget.cpp \
+    ZComponents/ZDeviceSettings.cpp \
+    ZComponents/ZUralAdcDeviceConnector.cpp \
+    ZComponents/ZMeasuringController.cpp \
+    ZComponents/ZPlotterDataManager.cpp \
+    ZDialogs/ZCommonSettingsWidget.cpp \
+    ZComponents/ZMeasurementParametersHandler.cpp \
+    ZEnergyCalibrator/ZEnergyCalibrationDialog.cpp \
+    ZEnergyCalibrator/ZEnergyCalibrator.cpp \
+    ZEnergyCalibrator/ZPeakWindowTableModel.cpp \
+    ZEnergyCalibrator/ZPeakWindow.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -198,7 +210,6 @@ HEADERS  += MainWindow.h \
     ZWidgets/ZProcessTimeRoundIndicator.h \
     ZWidgets/QRoundProgressBar.h \
     ZDialogs/ZSettingsDialog.h \
-    ZWidgets/ZDashboardSettingsWidget.h \
     ZWidgets/ZDashboard.h \
     ZWidgets/ZColorLabel.h \
     ZComponents/ZDashboardSettings.h \
@@ -274,7 +285,19 @@ HEADERS  += MainWindow.h \
     ZMeasuringManager/ZSpectrumTableDelegate/ZPrimitivePlot.h \
     ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumTableDelegate.h \
     ZMeasuringManager/ZSpectrumTableDelegate/ZSpectrumPaintData.h \
-    ZComponents/ZXMLSpectrumArrayIOHandler.h
+    ZComponents/ZXMLSpectrumArrayIOHandler.h \
+    ZDialogs/ZDashboardSettingsWidget.h \
+    ZDialogs/ZDeviceSettingsWidget.h \
+    ZComponents/ZDeviceSettings.h \
+    ZComponents/ZUralAdcDeviceConnector.h \
+    ZComponents/ZMeasuringController.h \
+    ZComponents/ZPlotterDataManager.h \
+    ZDialogs/ZCommonSettingsWidget.h \
+    ZComponents/ZMeasurementParametersHandler.h \
+    ZEnergyCalibrator/ZEnergyCalibrationDialog.h \
+    ZEnergyCalibrator/ZEnergyCalibrator.h \
+    ZEnergyCalibrator/ZPeakWindowTableModel.h \
+    ZEnergyCalibrator/ZPeakWindow.h
 
 RESOURCES += \
     resources.qrc

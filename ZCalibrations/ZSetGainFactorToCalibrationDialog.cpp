@@ -13,6 +13,8 @@
 ZSetGainFactorToCalibrationDialog::ZSetGainFactorToCalibrationDialog(QString calibrationName, QWidget *parent)
     : QDialog(parent)
 {
+    setWindowFlags(Qt::Tool);
+
     zh_createComponents(calibrationName);
     zh_createConnections();
 }

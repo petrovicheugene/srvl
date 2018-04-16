@@ -3,14 +3,17 @@
 #include "ZGeneral.h"
 #include "ZCalibration.h"
 #include "ZXMLCalibrationIOHandler.h"
+#include "ZMeasuringController.h"
+#include "ZSample.h"
+#include "ZSpeSpectrum.h"
 
 #include <QSqlError>
 #include <QSqlQuery>
-
 //=================================================
 bool ZSampleTask::zp_instanceSampleTaskObject(int sampleTaskId,
                                               ZSampleTask*& task,
                                               QString& msg,
+                                              ZMeasuringController* measuringController,
                                               QObject* parent)
 {
     msg.clear();
@@ -53,16 +56,21 @@ bool ZSampleTask::zp_instanceSampleTaskObject(int sampleTaskId,
     }
 
     QString name = vData.toString();
-    task = new ZSampleTask(sampleTaskId, name, parent);
+    task = new ZSampleTask(sampleTaskId, name, measuringController, parent);
 
     return true;
 }
 //=================================================
-ZSampleTask::ZSampleTask(int id, const QString &name, QObject *parent)
+ZSampleTask::ZSampleTask(int id,
+                         const QString &name,
+                         ZMeasuringController* measuringController,
+                         QObject *parent)
     : QObject(parent)
 {
     zv_id = id;
     zv_name = name;
+    zv_measuringController = measuringController;
+    zv_currentSample = 0;
     zh_initMeasuringTasks();
 }
 //=================================================
@@ -162,7 +170,7 @@ void ZSampleTask::zp_removeClient(QObject* client )
 
     if(zv_clientList.count() < 1)
     {
-        emit zg_requestToDelete();
+        emit zg_inquiryToDelete();
     }
 }
 //=================================================
@@ -188,9 +196,9 @@ QStringList ZSampleTask::zp_measuringConditionsStringlist() const
     return measuringConditionsList;
 }
 //=================================================
-QList<QPair<int,int> > ZSampleTask::zp_measuringConditionsList() const
+QList<QPair<quint8, int> > ZSampleTask::zp_measuringConditionsList() const
 {
-    QList<QPair<int,int> > measuringConditionsList;
+    QList<QPair<quint8,int> > measuringConditionsList;
     for(int i = 0; i < zv_measuringTaskList.count(); i++)
     {
         measuringConditionsList.append(zv_measuringTaskList.at(i)->zp_measuringConditions());
@@ -208,6 +216,68 @@ int ZSampleTask::zp_totalMeasuringDuration() const
     }
 
     return measuringDuration;
+}
+//=================================================
+bool ZSampleTask::zp_startMeasuring(ZSample* sample)
+{
+    if(!zv_measuringController)
+    {
+        return false;
+    }
+
+    if(!zv_measuringController->zp_measureSample(zp_measuringConditionsList(), this))
+    {
+        return false;
+    }
+
+    zv_currentSample = sample;
+    return true;
+}
+//=================================================
+bool ZSampleTask::zp_stopMeasuring(ZSample* sample)
+{
+    if(!zv_measuringController)
+    {
+        return false;
+    }
+
+    return false;
+}
+//=================================================
+void ZSampleTask::zp_measuringFinished()
+{
+    if(zv_currentSample)
+    {
+        zv_currentSample->zp_measuringFinished();
+    }
+}
+//=================================================
+void ZSampleTask::zp_handleSpectrumData(QList<quint32> speDataList,
+                                        quint8 gainFactor,
+                                        int exposition,
+                                        bool finished)
+{
+    if(zv_currentSample)
+    {
+        zv_currentSample->zp_setSpectrumData(speDataList, gainFactor, exposition, finished);
+    }
+}
+//=================================================
+void ZSampleTask::zp_calcConcentrations(quint8 gainFactor, int exposition,
+                                        const ZSpeSpectrum* spectrum,
+                                        QList<ZChemicalConcentration>&  concentrationList) const
+{
+    for(int mt = 0; mt < zv_measuringTaskList.count(); mt++)
+    {
+        QPair<quint8, int> measuringConditions = zv_measuringTaskList.at(mt)->zp_measuringConditions();
+        if(measuringConditions.first != gainFactor && measuringConditions.second != exposition)
+        {
+            continue;
+        }
+
+        zv_measuringTaskList.at(mt)->zp_calcConcentrations(spectrum, concentrationList);
+
+    }
 }
 //=================================================
 // MEASURING TASK
@@ -278,13 +348,13 @@ QStringList ZMeasuringTask::zp_chemicalList() const
 QString ZMeasuringTask::zp_measuringConditionsString() const
 {
     return tr("G.F. - %1, Exp. - %2").arg(QString::number(zv_gainFactor),
-                                                 QString::number(zv_exposition));
+                                          QString::number(zv_exposition));
 
 }
 //=================================================
-QPair<int,int> ZMeasuringTask::zp_measuringConditions() const
+QPair<quint8, int> ZMeasuringTask::zp_measuringConditions() const
 {
-    QPair<int,int> measuringConditions;
+    QPair<quint8,int> measuringConditions;
     measuringConditions.first = zv_gainFactor;
     measuringConditions.second = zv_exposition;
     return measuringConditions;
@@ -293,6 +363,19 @@ QPair<int,int> ZMeasuringTask::zp_measuringConditions() const
 int ZMeasuringTask::zp_exposition() const
 {
     return zv_exposition;
+}
+//=================================================
+void ZMeasuringTask::zp_calcConcentrations(const ZSpeSpectrum* spectrum,
+                                           QList<ZChemicalConcentration>& chemicalConcentrationList)
+{
+    for(int ct = 0; ct < zv_chemicalTaskList.count(); ct++)
+    {
+        ZChemicalConcentration chemicalConcentration;
+        if(zv_chemicalTaskList.at(ct)->zp_calculateConcentration(spectrum, chemicalConcentration))
+        {
+            chemicalConcentrationList.append(chemicalConcentration);
+        }
+    }
 }
 //=================================================
 // CALCULATION TASK
@@ -339,6 +422,31 @@ bool ZChemicalTask::zp_instanceChemicalTaskObject(int chemicalTaskId,
     }
 
     task = new ZChemicalTask(msg, chemicalTaskId, query, parent);
+    return true;
+}
+//=================================================
+bool ZChemicalTask::zp_calculateConcentration(const ZSpeSpectrum* spectrum,
+                                              ZChemicalConcentration& chemicalConcentration)
+{
+    if(zv_calibrationList.isEmpty())
+    {
+        return false;
+    }
+    qreal concentration = -1;
+    for(int c = 0; c < zv_calibrationList.count(); c++ )
+    {
+        zv_calibrationList.at(c)->zp_calcConcentration(spectrum, concentration);
+
+        chemicalConcentration.zv_concentration = concentration;
+        chemicalConcentration.zv_chemical = zv_chemical;
+        chemicalConcentration.zv_calibrationId = zv_calibrationList.at(c)->zp_databaseCalibrationId();
+
+        if(zv_calibrationList.at(c)->zp_isConcentrationInBounds(concentration))
+        {
+             break;
+        }
+    }
+
     return true;
 }
 //=================================================
@@ -439,7 +547,7 @@ ZChemicalTask::ZChemicalTask(QString& msg, int chemicalTaskId, QSqlQuery& query,
         }
 
         calibrationString = vData.toString();
-        calibration = new ZZonedCalibration(calibrationName, this);
+        calibration = new ZZonedCalibration(calibrationName, calibrationId, this);
 
         if(!ioHandler.zp_getCalibrationFromString(calibrationString, calibration))
         {
@@ -449,6 +557,8 @@ ZChemicalTask::ZChemicalTask(QString& msg, int chemicalTaskId, QSqlQuery& query,
         {
             // limits
             QSqlQuery limitQuery;
+            double minimumConcentration = 0.0;
+            double maximumConcentration = 0.0;
             QString limitQueryString = QString("SELECT calibration_min_limit, calibration_max_limit "
                                                "FROM calibrations_has_calibration_stacks "
                                                "WHERE calibration_stacks_id=%1 "
@@ -487,7 +597,7 @@ ZChemicalTask::ZChemicalTask(QString& msg, int chemicalTaskId, QSqlQuery& query,
                 return;
             }
 
-            calibration->zv_minConcentration = vData.toDouble();
+            minimumConcentration = vData.toDouble();
 
             // max
             vData = limitQuery.value(1);
@@ -500,7 +610,9 @@ ZChemicalTask::ZChemicalTask(QString& msg, int chemicalTaskId, QSqlQuery& query,
 
             }
 
-            calibration->zv_maxConcentration = vData.toDouble();
+            maximumConcentration = vData.toDouble();
+            calibration->zp_setMinMaConcentrations(minimumConcentration, maximumConcentration);
+
             zv_calibrationList.append(calibration);
         }
     }

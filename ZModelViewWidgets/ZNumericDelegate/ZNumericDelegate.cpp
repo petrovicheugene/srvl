@@ -28,7 +28,7 @@ QWidget* ZNumericDelegate::createEditor ( QWidget * parent, const QStyleOptionVi
     connect(editor, SIGNAL(enterClicked()), this, SLOT(zh_onEditorEnterClick()));
 
     ZNumericDelegate* pThis = const_cast<ZNumericDelegate*>(this);
-    emit zg_requestEditorMinMax(pThis, index);
+    emit zg_inquiryEditorMinMax(pThis, index);
     editor->setMinMax(zv_editorMin, zv_editorMax);
 
     QModelIndex* pIndex = const_cast<QModelIndex*>(&zv_editedIndex);

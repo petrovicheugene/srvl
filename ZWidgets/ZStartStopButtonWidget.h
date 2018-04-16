@@ -18,6 +18,7 @@ public:
                                     QWidget *parent = 0);
 
     //void zp_setSizeHint(QSize);
+    void zp_setButtonState(int state); // 0-stopped 1-started 2-suspended
 
 protected:
 //    void paintEvent(QPaintEvent* event);
@@ -36,7 +37,8 @@ public slots:
 
 private slots:
 
-    void zh_onButtonToggle(QAbstractButton* button, bool checked);
+    void zh_onButtonGroupToggle(QAbstractButton* button, bool checked);
+    void zh_onButtonToggle(bool checked);
 
 private:
 

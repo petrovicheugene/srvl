@@ -50,7 +50,7 @@ Q_DECLARE_METATYPE(ZDashboardSettings)
 Q_DECLARE_METATYPE(ZDashboardSettings::DashboardStyle)
 Q_DECLARE_METATYPE(ZDashboardSettings::DashboardLocation)
 
-QDataStream& operator << (QDataStream& out, const ZDashboardSettings& appSettings);
-QDataStream& operator >> (QDataStream& in, ZDashboardSettings& appSettings);
+QDataStream& operator << (QDataStream& out, const ZDashboardSettings& settings);
+QDataStream& operator >> (QDataStream& in, ZDashboardSettings& settings);
 //===================================================
 #endif // ZDASHBOARDSETTINGS_H

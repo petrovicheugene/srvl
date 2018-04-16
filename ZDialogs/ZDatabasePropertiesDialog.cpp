@@ -23,6 +23,7 @@ ZDatabasePropertiesDialog::ZDatabasePropertiesDialog(const QString& name,
                                                      QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(glAppProduct);
+    setWindowFlags(Qt::Tool);
 
     zh_createComponents();
     zh_createConnections();
@@ -188,7 +189,7 @@ void ZDatabasePropertiesDialog::zh_onOkButtonClick()
     QString name = zv_nameLineEdit->text();
     QString path = zv_pathLineEdit->text();
 
-    emit zg_requestRecordDatabase(name, path, res);
+    emit zg_inquiryRecordDatabase(name, path, res);
     if(res)
     {
         accept();

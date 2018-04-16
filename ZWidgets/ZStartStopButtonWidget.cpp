@@ -10,9 +10,10 @@
 ZStartStopButtonWidget::ZStartStopButtonWidget(Qt::Orientation orientation, QWidget *parent)
     : QWidget(parent)
 {
-   zh_createComponents();
-   zh_createConnections();
-   zp_setOrientation(orientation);
+    zh_createComponents();
+    zh_createConnections();
+    zp_setOrientation(orientation);
+    zp_setButtonState(0);
 }
 //===========================================================
 //void ZStartStopButton::zp_setSizeHint(QSize size)
@@ -45,52 +46,110 @@ ZStartStopButtonWidget::ZStartStopButtonWidget(Qt::Orientation orientation, QWid
 
 //}
 //===========================================================
+void ZStartStopButtonWidget::zp_setButtonState(int state)
+{
+    //zv_buttonGroup->blockSignals(true);
+    zv_startButton->blockSignals(true);
+    zv_stopButton->blockSignals(true);
+    switch(state)
+    {
+    case 0: // stopped
+        zv_startButton->setChecked(false);
+        zv_stopButton->setChecked(true);
+        break;
+
+    case 1: // started
+        zv_startButton->setChecked(true);
+        zv_stopButton->setChecked(false);
+        break;
+
+    case 2: // suspended
+        zv_startButton->setChecked(false);
+        zv_stopButton->setChecked(false);
+        break;
+    default: // stopped
+        zv_startButton->setChecked(false);
+        zv_stopButton->setChecked(true);
+    }
+    zv_startButton->blockSignals(false);
+    zv_stopButton->blockSignals(false);
+
+    //zv_buttonGroup->blockSignals(false);
+}
+//===========================================================
 void ZStartStopButtonWidget::zh_createComponents()
 {
     QLayout* mainLayout = new QHBoxLayout(this);
     setLayout(mainLayout);
 
-    zv_buttonGroup = new QButtonGroup(this);
+    //zv_buttonGroup = new QButtonGroup(this);
 
     zv_startButton = new QPushButton(this);
     zv_startButton->setMinimumHeight(30);
     zv_startButton->setText(tr("Start"));
     zv_startButton->setCheckable(true);
     mainLayout->addWidget(zv_startButton);
-    zv_buttonGroup->addButton(zv_startButton);
+    //zv_buttonGroup->addButton(zv_startButton);
 
     zv_stopButton = new QPushButton(this);
     zv_stopButton->setMinimumHeight(30);
     zv_stopButton->setText(tr("Stop"));
     zv_stopButton->setCheckable(true);
     mainLayout->addWidget(zv_stopButton);
-    zv_buttonGroup->addButton(zv_stopButton);
+    //zv_buttonGroup->addButton(zv_stopButton);
 
 }
 //===========================================================
 void ZStartStopButtonWidget::zh_createConnections()
 {
-//        connect(zv_startButton, &QPushButton::toggled,
-//                zv_buttonGroup, &QButtonGroup::);
-//        connect(zv_stopButton, &QPushButton::toggled,
-//                zv_buttonGroup, &QButtonGroup::);
+    connect(zv_startButton, &QPushButton::toggled,
+            this, &ZStartStopButtonWidget::zh_onButtonToggle);
+    connect(zv_stopButton, &QPushButton::toggled,
+            this, &ZStartStopButtonWidget::zh_onButtonToggle);
 
 
-    connect(zv_buttonGroup, SIGNAL(buttonToggled(QAbstractButton*, bool)),
-            this, SLOT(zh_onButtonToggle(QAbstractButton*, bool)));
+//        connect(zv_buttonGroup, SIGNAL(buttonToggled(QAbstractButton*, bool)),
+//                this, SLOT(zh_onButtonGroupToggle(QAbstractButton*, bool)));
 
 }
 //===========================================================
-void ZStartStopButtonWidget::zh_onButtonToggle(QAbstractButton* button, bool checked)
+void ZStartStopButtonWidget::zh_onButtonToggle(bool checked)
 {
+    QAbstractButton* button = qobject_cast<QAbstractButton*>(sender());
+    if(!button || !checked)
+    {
+        return;
+    }
+
+    if(button == zv_startButton)
+    {
+        zv_stopButton->setChecked(false);
+        emit zg_start();
+    }
+    else if(button == zv_stopButton)
+    {
+        zv_startButton->setChecked(false);
+        emit zg_stop();
+    }
+}
+//===========================================================
+void ZStartStopButtonWidget::zh_onButtonGroupToggle(QAbstractButton* button, bool checked)
+{
+    if(!button)
+    {
+        return;
+    }
+
     if(checked)
     {
         if(button == zv_startButton)
         {
+            zv_stopButton->setChecked(false);
             emit zg_start();
         }
         else
         {
+            zv_startButton->setChecked(false);
             emit zg_stop();
         }
     }

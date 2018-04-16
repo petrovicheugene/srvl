@@ -26,6 +26,7 @@
 ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(glAppProduct);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Tool);
 
     zv_editedRow = -1;
     zh_createComponents();
@@ -66,6 +67,7 @@ void ZStartDialog::zh_createComponents()
     topLayout->insertWidget(0, zv_dbListWidget);
 
     zv_currentPathLabel = new QLabel(this);
+    zv_currentPathLabel->setWordWrap(true);
     mainLayout->insertWidget(1, zv_currentPathLabel);
 
     zv_newButton = new QPushButton(this);
@@ -330,7 +332,7 @@ void ZStartDialog::zh_editAndRecordDatabase(QString name, QString path)
 {
     // run dialog
     ZDatabasePropertiesDialog dialog(name, path, this);
-    connect(&dialog, &ZDatabasePropertiesDialog::zg_requestRecordDatabase,
+    connect(&dialog, &ZDatabasePropertiesDialog::zg_inquiryRecordDatabase,
             this, &ZStartDialog::zh_checkAndStoreDatabase);
     // dialog closes itself after database is checked / created and stored to the list
     dialog.exec();

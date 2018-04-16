@@ -113,6 +113,7 @@ extern const int PathRole;
 extern const int CommentRole;
 extern const int DataTypeRole;
 extern const int VisibleRole;
+extern const int AbstractSpectrumRole;
 }
 
 // FUNCS

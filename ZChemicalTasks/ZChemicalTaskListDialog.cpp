@@ -26,6 +26,7 @@
 ZChemicalTaskListDialog::ZChemicalTaskListDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(tr("Chemical tasks"));
+    setWindowFlags(Qt::Tool);
 
     zh_createActions();
     zh_createComponents();

@@ -20,6 +20,8 @@
 ZSeriesTaskListDialog::ZSeriesTaskListDialog(bool forLoad, QWidget *parent)
     : QDialog(parent)
 {
+    setWindowFlags(Qt::Tool);
+
     zv_manager = 0;
     zv_forLoad = forLoad;
     zv_seriesNameLineEdit = 0;

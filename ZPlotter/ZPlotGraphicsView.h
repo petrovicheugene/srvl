@@ -40,7 +40,7 @@ public:
 
 signals:
 
-   void zg_requestForScrollBarVisible(Qt::Orientation, bool&);
+   void zg_inquiryForScrollBarVisible(Qt::Orientation, bool&);
    void zg_cursorAreaImage(QImage);
 
 protected:

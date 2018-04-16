@@ -98,7 +98,7 @@ extern const int PathRole = Qt::UserRole + 1;
 extern const int CommentRole = Qt::UserRole + 2;
 extern const int DataTypeRole = Qt::UserRole + 3;
 extern const int VisibleRole = Qt::UserRole + 4;
-
+extern const int AbstractSpectrumRole = Qt::UserRole + 5;
 
 }
 

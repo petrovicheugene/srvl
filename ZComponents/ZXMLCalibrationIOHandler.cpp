@@ -284,7 +284,7 @@ bool ZXMLCalibrationIOHandler::zp_getCalibrationXMLByteArrayFromFile(QFile& file
 bool ZXMLCalibrationIOHandler::zp_getCalibrationFromByteArray(QByteArray& byteArray,
                                                               ZCalibration* calibration)
 {
-
+    return false;
 }
 //==========================================================
 bool ZXMLCalibrationIOHandler::zp_getCalibrationFromString(QString& calibrationString,

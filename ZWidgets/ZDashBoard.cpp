@@ -5,8 +5,11 @@
 #include "ZStartStopButtonWidget.h"
 #include "ZSeriesLabelWidget.h"
 
+#include <QDebug>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+
+#include <QPushButton>
 //============================================================
 ZDashboard::ZDashboard(QWidget *parent) : QWidget(parent)
 {
@@ -23,15 +26,16 @@ ZDashboard::ZDashboard(QWidget *parent) : QWidget(parent)
     zh_createControls();
     zh_createConnections();
 
+    // button state 0-stopped 1-started 2-suspended
+    zv_startStopButtonWidget->zp_setButtonState(0);
+
 }
 //============================================================
 void ZDashboard::zp_applyDashboardSettings(const ZDashboardSettings& settings)
 {
     zv_settings = settings;
-    zh_saveControlState();
     zh_createControls();
     //zh_createConnections();
-    zh_applyControlState();
 }
 //============================================================
 ZDashboardSettings::DashboardLocation ZDashboard::zp_location() const
@@ -87,20 +91,35 @@ void ZDashboard::zp_setProgressBarSizeMinimumMaximum(int min, int max)
 void ZDashboard::zp_setMeasuringState(ZMeasuringState measuringState)
 {
     QString seriesNameString;
-    if(measuringState.seriesDirty)
+    if(measuringState.zp_seriesTaskDirty())
     {
         seriesNameString = "*";
     }
 
-    seriesNameString += measuringState.currentSeriesName;
+    seriesNameString += measuringState.zp_currentSeriesName();
     zv_seriesTimeIndicator->zp_setProcessNameString(seriesNameString);
-    zv_sampleTimeIndicator->zp_setProcessNameString(measuringState.currentSampleName);
+    if(seriesNameString.isEmpty())
+    {
+        zv_seriesTimeIndicator->zp_reset();
+    }
+    else
+    {
+        zv_seriesTimeIndicator->zp_setRange(0, measuringState.zp_seriesDuration());
+        zv_seriesTimeIndicator->zp_setValue(measuringState.zp_seriesTimePassed());
+    }
 
-}
-//============================================================
-void ZDashboard::zp_setSeriesTaskDirty(bool dirty)
-{
-    // zv_seriesLabelWidget->zp_setSeriesDirty(dirty);
+    zv_sampleTimeIndicator->zp_setProcessNameString(measuringState.zp_currentSampleName());
+    if(measuringState.zp_currentSampleName().isEmpty())
+    {
+        zv_sampleTimeIndicator->zp_reset();
+    }
+    else
+    {
+        zv_sampleTimeIndicator->zp_setRange(0, measuringState.zp_sampleDuration());
+        zv_sampleTimeIndicator->zp_setValue( measuringState.zp_sampleTimePassed());
+    }
+
+    zv_startStopButtonWidget->zp_setButtonState(measuringState.zp_measuringAction());
 
 }
 //============================================================
@@ -281,6 +300,7 @@ QLayout* ZDashboard::zh_createVerticalRound()
 
     // placing
     QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->setObjectName("VERTICAL ROUND LAYOUT");
     //mainLayout->addWidget(zv_seriesLabelWidget);
     mainLayout->addWidget(zv_seriesTimeIndicator);
     mainLayout->addWidget(zv_sampleTimeIndicator);
@@ -328,16 +348,6 @@ void ZDashboard::zh_createConnections()
             this, &ZDashboard::zg_startSeries);
     connect(zv_startStopButtonWidget, &ZStartStopButtonWidget::zg_stop,
             this, &ZDashboard::zg_stopSeries);
-
-}
-//============================================================
-void ZDashboard::zh_saveControlState()
-{
-
-}
-//============================================================
-void ZDashboard::zh_applyControlState()
-{
 
 }
 //============================================================

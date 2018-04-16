@@ -46,8 +46,8 @@ public:
 signals:
 
     void zg_normalizerChanged() const;
-    void zg_requestCoherentIntensity(qint64&) const;
-    void zg_requestIncoherentIntensity(qint64&) const;
+    void zg_inquiryCoherentIntensity(qint64&) const;
+    void zg_inquiryIncoherentIntensity(qint64&) const;
 
 public slots:
 
