@@ -51,12 +51,16 @@ void ZMeasuringCommonWidget::zp_appendSampleContextMenuActions(const QList<ZCont
     zv_measuringResultTableWidget->zp_appendContextActions(actionList);
 }
 //==========================================================
-void ZMeasuringCommonWidget::zp_setMeasuringResultTableModel(QAbstractItemModel* model)
+void ZMeasuringCommonWidget::zp_setMeasuringResultTableModel(ZMeasuringResultTableModel* model)
 {
     zv_measuringResultTableWidget->zp_setModel(model);
     ZSpectrumTableDelegate* spectrumTableDelegate = new ZSpectrumTableDelegate(zv_measuringResultTableWidget->zp_tableView());
     zv_measuringResultTableWidget->zp_tableView()->viewport()->installEventFilter(spectrumTableDelegate);
     zv_measuringResultTableWidget->zp_tableView()->setItemDelegate(spectrumTableDelegate);
+
+    connect(model, &ZMeasuringResultTableModel::zg_selectedModelIndexList,
+            this, &ZMeasuringCommonWidget::zp_selectedModelIndexList);
+
 }
 //==========================================================
 void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* measuringManager)
@@ -72,6 +76,9 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSampleList,
             this, &ZMeasuringCommonWidget::zp_selectedSampleList);
+//    connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSpectrumMap,
+//            this, &ZMeasuringCommonWidget::zp_selectedModelIndexList);
+
 
     connect(zv_dashboard, &ZDashboard::zg_startSeries,
             zv_measuringManager, &ZMeasuringManager::zp_startSeries);
@@ -175,6 +182,11 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
 void ZMeasuringCommonWidget::zp_selectedSampleList(QList<int>& selectedSampleList) const
 {
     selectedSampleList = zv_measuringResultTableWidget->zp_selectedRowList();
+}
+//==========================================================
+void ZMeasuringCommonWidget::zp_selectedModelIndexList(QModelIndexList& selectedModelIndexList) const
+{
+    selectedModelIndexList = zv_measuringResultTableWidget->zp_selectedModelIndexList();
 }
 //==========================================================
 void ZMeasuringCommonWidget::zp_currentIndex(QModelIndex& index) const

@@ -3,6 +3,7 @@
 #define ZBASETABLEWIDGET_H
 //=========================================================================
 #include <QWidget>
+#include <QModelIndexList>
 //=========================================================================
 class QAbstractItemModel;
 class QTableView;
@@ -31,6 +32,7 @@ public:
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
 
     QList<int> zp_selectedRowList();
+    QModelIndexList zp_selectedModelIndexList() const;
 
     void zp_setCurrentRow(int row);
     void zp_currentIndex(QModelIndex& index);

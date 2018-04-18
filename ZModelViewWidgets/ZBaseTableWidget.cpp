@@ -149,6 +149,12 @@ QList<int> ZBaseTableWidget::zp_selectedRowList()
     return selectedRowList;
 }
 //=========================================================================
+QModelIndexList ZBaseTableWidget::zp_selectedModelIndexList() const
+{
+    QModelIndexList indexList = zv_table->selectionModel()->selectedIndexes();
+    return indexList;
+}
+//=========================================================================
 void ZBaseTableWidget::zp_setCurrentRow(int row)
 {
     QModelIndex currentIndex;

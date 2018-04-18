@@ -167,6 +167,11 @@ QString ZAbstractSpectrum::zp_name() const
     return zv_name;
 }
 //==========================================================
+void ZAbstractSpectrum::zp_setSpectrumName(const QString& name)
+{
+    zv_name = name;
+}
+//==========================================================
 QString ZAbstractSpectrum::zp_path() const
 {
     return zv_path;

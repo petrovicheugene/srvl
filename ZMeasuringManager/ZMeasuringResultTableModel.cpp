@@ -242,6 +242,92 @@ void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const
 
 }
 //=========================================================
+void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap)
+{
+    QModelIndexList selectedIndexList;
+    emit zg_selectedModelIndexList(selectedIndexList);
+
+    zh_sortIndexesForRow(selectedIndexList, 0, selectedIndexList.count() - 1);
+
+    int firstSpeColumn = 2;
+    int lastSpeColumn = zv_measuringConditionsList.count() + firstSpeColumn;
+    ZSpeSpectrum* currentSpectrum = nullptr;
+    QPair<quint8, int> conditions;
+
+    for(auto& index : selectedIndexList)
+    {
+        if(index.column() < firstSpeColumn || index.column() >= lastSpeColumn)
+        {
+            continue;
+        }
+
+        // conditions for column
+        if(index.column() - 2 >=  zv_measuringConditionsList.count()
+                || index.column() - 2 < 0)
+        {
+            continue;
+        }
+        conditions = zv_measuringConditionsList.at(index.column() - 2);
+
+        // spectrum for column
+        currentSpectrum = zv_measuringManager->zp_spectrum(index.row(), conditions.first, conditions.second);
+        if(currentSpectrum == nullptr)
+        {
+            continue;
+        }
+        currentSpectrum->zp_setSpectrumName( zv_measuringManager->zp_sampleName(index.row()) );
+        spectrumMap[conditions].append(currentSpectrum);
+    }
+}
+//=========================================================
+void ZMeasuringResultTableModel::zh_sortIndexesForRow(QModelIndexList& indexList, int leftMargin, int rightMargin) const
+{
+//    void qsort (int b, int e)
+//    {
+    int left = leftMargin;
+    int right = rightMargin;
+    int pivotRow = indexList.at( (left + right) / 2 ).row();
+
+    while(left < right)
+    {
+        // move left index
+        while(indexList.at(left).row() < pivotRow)
+        {
+            if(++left >= right)
+            {
+                break;
+            }
+        }
+
+        // move left index
+        while(indexList.at(right).row() > pivotRow)
+        {
+            if(--right <= left)
+            {
+                break;
+            }
+        }
+
+        // swap
+        if(left < right)
+        {
+            qSwap(indexList[left], indexList[right]);
+            left++;
+            right--;
+        }
+    }
+
+    if((right - leftMargin) > 1)
+    {
+        zh_sortIndexesForRow(indexList, leftMargin, right);
+    }
+
+    if((rightMargin - left ) > 1)
+    {
+        zh_sortIndexesForRow(indexList, left, rightMargin);
+    }
+}
+//=========================================================
 bool ZMeasuringResultTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
     if(!index.isValid() || !value.isValid())

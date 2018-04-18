@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <QColor>
 #include <QMessageBox>
+#include <QModelIndexList>
 #include <QObject>
 #include <QList>
 #include <QDebug>
@@ -201,6 +202,8 @@ signals:
     void zg_message(const QString& msg, QMessageBox::Icon) const;
     void zg_sampleOperation(SampleOperationType, int first = -1, int last = -1) const;
     void zg_inquirySelectedSampleList(QList<int>&);
+    void zg_inquirySelectedSpectrumMap(QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
+
     void zg_inquiryMeasuringConditionsAndSpectrumForIndex(const QModelIndex& currentIndex,
                                                           quint8& gainFactor,
                                                           int& exposition,
@@ -231,7 +234,8 @@ private slots:
     void zh_onLoadSeriesAction();
     void zh_onAddSamplesToSeriesAction();
     void zh_onRemoveSamplesFromSeriesAction();
-    void zh_onLoadSpectraFromFileAction();
+    void zh_onLoadSpectraFromFilesAction();
+    void zh_onSaveSpectraToFilesAction() const;
     void zh_onEnergyCalibrationAction();
 
     void zh_deleteSampleTask();
@@ -260,7 +264,8 @@ private:
 
     ZControlAction* zv_saveSeriesAction;
     ZControlAction* zv_loadSeriesAction;
-    ZControlAction* zv_loadSpectrumFromFileAction;
+    ZControlAction* zv_loadSpectraFromFilesAction;
+    ZControlAction* zv_saveSpectraToFilesAction;
 
     ZControlAction* zv_addSamplesToSeriesAction;
     ZControlAction* zv_removeSamplesFromSeriesAction;
@@ -323,6 +328,9 @@ private:
     bool zh_connectToDevice(const QString& deviceName );
     void zh_setConnectionActionsEnable(bool enabling);
     void zh_recalcSeriesMeasuringTotalDuration();
+
+    void zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
+                                  QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
 };
 //======================================================
 #endif // ZMEASURINGMANAGER_H

@@ -36,10 +36,12 @@ public:
 
     // FUNCS
     QString zp_name() const;
+    void zp_setSpectrumName(const QString& name);
     QString zp_path() const ;
     SpectrumType zp_type() const;
     bool zp_isSpectrumVisible() const;
     void zp_setSpectrumVisible(bool);
+
 
     bool zp_isSpectrumChecked() const;
     bool zp_setSpectrumChecked(bool);

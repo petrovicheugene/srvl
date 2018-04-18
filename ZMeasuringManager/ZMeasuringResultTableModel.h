@@ -31,6 +31,7 @@ public:
 signals:
 
     void zg_currentMeasuringConditions(quint8 gainFactor, int exposition, const ZSpeSpectrum* spectrum);
+    void zg_selectedModelIndexList(QModelIndexList& ) const;
 
 public slots:
 
@@ -40,7 +41,7 @@ public slots:
                                         quint8& gainFactor,
                                         int& exposition,
                                         const ZSpeSpectrum*& spectrum);
-
+    void zp_selectedSpectrumMap(QMap<QPair<quint8, int>, QList<ZSpeSpectrum *> > &spectrumMap);
 
 protected slots:
 
@@ -61,6 +62,7 @@ private:
     // FUNCS
     void zh_recalcColumnCount();
     void zh_repaintAllSpectra();
+    void zh_sortIndexesForRow(QModelIndexList& indexList, int leftMargin, int rightMargin) const;
 
 };
 //=========================================================

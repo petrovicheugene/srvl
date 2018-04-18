@@ -3,6 +3,7 @@
 #define ZMEASURINGCOMMONWIDGET_H
 //==========================================================
 #include <QWidget>
+#include <QModelIndex>
 #include "ZAppSettings.h"
 #include "ZMeasuringManager.h"
 //==========================================================
@@ -12,6 +13,7 @@ class ZControlAction;
 class ZDashboard;
 class ZMeasuringManager;
 class ZWidgetWithSidebar;
+class ZMeasuringResultTableModel;
 class ZMeasuringResultTableWidget;
 class ZMeasuringSeriesTaskTreeWidget;
 class ZSpectrumTableDelegate;
@@ -30,7 +32,7 @@ public:
     void zp_appendSampleButtonActions(const QList<ZControlAction *> &actionList);
     void zp_appendSampleContextMenuActions(const QList<ZControlAction *> &actionList);
 
-    void zp_setMeasuringResultTableModel(QAbstractItemModel* model);
+    void zp_setMeasuringResultTableModel(ZMeasuringResultTableModel* model);
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
 
 signals:
@@ -41,6 +43,7 @@ public slots:
 
     void zp_saveSettings() const;
     void zp_selectedSampleList(QList<int>& selectedSampleList) const;
+    void zp_selectedModelIndexList(QModelIndexList& selectedModelIndexList) const;
     void zp_currentIndex(QModelIndex& index) const;
 
 private slots:

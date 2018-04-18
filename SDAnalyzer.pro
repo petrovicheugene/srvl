@@ -183,7 +183,8 @@ SOURCES += main.cpp\
     ZEnergyCalibrator/ZEnergyCalibrationDialog.cpp \
     ZEnergyCalibrator/ZEnergyCalibrator.cpp \
     ZEnergyCalibrator/ZPeakWindowTableModel.cpp \
-    ZEnergyCalibrator/ZPeakWindow.cpp
+    ZEnergyCalibrator/ZPeakWindow.cpp \
+    ZDialogs/ZSaveSpectraToFilesDialog.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -297,7 +298,8 @@ HEADERS  += MainWindow.h \
     ZEnergyCalibrator/ZEnergyCalibrationDialog.h \
     ZEnergyCalibrator/ZEnergyCalibrator.h \
     ZEnergyCalibrator/ZPeakWindowTableModel.h \
-    ZEnergyCalibrator/ZPeakWindow.h
+    ZEnergyCalibrator/ZPeakWindow.h \
+    ZDialogs/ZSaveSpectraToFilesDialog.h
 
 RESOURCES += \
     resources.qrc

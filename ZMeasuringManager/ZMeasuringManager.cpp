@@ -8,6 +8,7 @@
 #include "ZDeviceSettings.h"
 #include "ZEnergyCalibrationDialog.h"
 #include "ZMeasuringController.h"
+#include "ZSaveSpectraToFilesDialog.h"
 #include "ZSetGainFactorToCalibrationDialog.h"
 #include "ZSample.h"
 #include "ZSampleTask.h"
@@ -124,8 +125,11 @@ void ZMeasuringManager::zh_createActions()
     zv_removeSamplesFromSeriesAction = new ZControlAction(this);
     zv_removeSamplesFromSeriesAction->setText(tr("Remove samples"));
 
-    zv_loadSpectrumFromFileAction = new ZControlAction(this);
-    zv_loadSpectrumFromFileAction->setText(tr("Load spectra from files"));
+    zv_loadSpectraFromFilesAction = new ZControlAction(this);
+    zv_loadSpectraFromFilesAction->setText(tr("Load spectra from files"));
+
+    zv_saveSpectraToFilesAction = new ZControlAction(this);
+    zv_saveSpectraToFilesAction->setText(tr("Save spectra to files"));
 
     // connection actions
     QStringList deviceNameList = ZUralAdcDeviceConnector::zp_deviceNameList();
@@ -166,8 +170,11 @@ void ZMeasuringManager::zh_createConnections()
     connect(zv_removeSamplesFromSeriesAction, &ZControlAction::triggered,
             this, &ZMeasuringManager::zh_onRemoveSamplesFromSeriesAction);
 
-    connect(zv_loadSpectrumFromFileAction, &ZControlAction::triggered,
-            this, &ZMeasuringManager::zh_onLoadSpectraFromFileAction);
+    connect(zv_loadSpectraFromFilesAction, &ZControlAction::triggered,
+            this, &ZMeasuringManager::zh_onLoadSpectraFromFilesAction);
+    connect(zv_saveSpectraToFilesAction, &ZControlAction::triggered,
+            this, &ZMeasuringManager::zh_onSaveSpectraToFilesAction);
+
     connect(zv_energyCalibrationAction, &ZControlAction::triggered,
             this, &ZMeasuringManager::zh_onEnergyCalibrationAction);
 
@@ -480,7 +487,8 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleActions() const
 
     actionList.append(zv_addSamplesToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
-    actionList.append(zv_loadSpectrumFromFileAction);
+    actionList.append(zv_loadSpectraFromFilesAction);
+    actionList.append(zv_saveSpectraToFilesAction);
 
     return actionList;
 }
@@ -493,7 +501,8 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleContextActions() const
 
     actionList.append(zv_addSamplesToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
-    actionList.append(zv_loadSpectrumFromFileAction);
+    actionList.append(zv_loadSpectraFromFilesAction);
+    actionList.append(zv_saveSpectraToFilesAction);
 
     return actionList;
 }
@@ -1353,7 +1362,7 @@ void ZMeasuringManager::zh_onRemoveSamplesFromSeriesAction()
     zh_notifyMeasuringStateChanged();
 }
 //======================================================
-void ZMeasuringManager::zh_onLoadSpectraFromFileAction()
+void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
 {
     // get spe file list
     QStringList fileNameList = QFileDialog::getOpenFileNames(0, tr("Select spectrum file"),
@@ -1527,6 +1536,66 @@ void ZMeasuringManager::zh_onLoadSpectraFromFileAction()
     zv_currentMeasuringState.zp_setSeriesTaskDirty(false);
     zh_manageControlEnable();
     zh_notifyMeasuringStateChanged();
+}
+//======================================================
+void ZMeasuringManager::zh_onSaveSpectraToFilesAction() const
+{
+    qDebug() << "SAVE SPECTRA";
+
+    QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > spectrumMap;
+    emit zg_inquirySelectedSpectrumMap(spectrumMap);
+
+    if(spectrumMap.isEmpty())
+    {
+        return;
+    }
+
+    ZSaveSpectraToFilesDialog dialog;
+    dialog.exec();
+
+//    // get selected spectra
+//    QModelIndexList selectedIndexes;
+//    emit zg_inquirySelectedModelIndexList(selectedIndexes);
+//    qDebug() << "SELECTED INDEX COUNT" << selectedIndexes.count();
+
+//    QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > spectrumMap;
+//    zh_getSpectraFromIndexes(selectedIndexes, spectrumMap);
+
+//    // QMap< QPair<folderPath, measuringConditions>,  QList<Spectrum*> >
+//    if(spectrumMap.isEmpty())
+//    {
+//        return;
+//    }
+
+//    QString path;
+//    QString fileNameTemplate;
+//    for(auto &measuringConditions : spectrumMap.keys())
+//    {
+//        ZSaveSpectraToFilesDialog dialog(path, fileNameTemplate, measuringConditions);
+
+//        if(!dialog.exec())
+//        {
+
+//        }
+//    }
+}
+//======================================================
+void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
+                                                 QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const
+{
+    foreach(QModelIndex index, selectedIndexes)
+    {
+        if(!index.isValid() || index.column() )
+        {
+            continue;
+        }
+
+
+
+    }
+
+
+
 }
 //======================================================
 void ZMeasuringManager::zh_onEnergyCalibrationAction()
