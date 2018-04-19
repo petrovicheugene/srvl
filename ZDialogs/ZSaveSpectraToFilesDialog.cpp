@@ -4,7 +4,10 @@
 #include "ZSpeSpectrum.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -12,11 +15,110 @@
 #include <QStandardPaths>
 #include <QVBoxLayout>
 
+
+
 //======================================================
-explicit ZSaveSpectraToFilesDialog(const QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap,
-                                   QWidget *parent )
+// ZSpectrumArraySettingsWidget
+//======================================================
+ZSpectrumArraySettingsWidget::ZSpectrumArraySettingsWidget(QPair<quint8, int>* conditions,
+                                                           QWidget *parent) : QWidget(parent)
+{
+    QStringList standardPathList = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    if(!standardPathList.isEmpty())
+    {
+        zv_folderPath = standardPathList.value(0);
+    }
+    else
+    {
+        zv_folderPath = QDir::currentPath();
+    }
+
+    zv_conditions = conditions;
+    zh_createComponents();
+    zh_createConnections();
+    zh_restoreSettings();
+
+}
+//======================================================
+ZSpectrumArraySettingsWidget::~ZSpectrumArraySettingsWidget()
+{
+    zh_saveSettings();
+}
+//======================================================
+void ZSpectrumArraySettingsWidget::zh_createComponents()
+{
+    QGridLayout* mainLayout = new QGridLayout;
+    mainLayout->setMargin(0);
+    setLayout(mainLayout);
+
+    QString text = tr("<b><u>G.F. - %1 Exposition: %2</u></b>").arg(QString::number(zv_conditions->first),
+                                                                    QString::number(zv_conditions->second));
+    QLabel* label = new QLabel(this);
+    label->setText(text);
+    mainLayout->addWidget(label, 0, 0, 1, 1);
+
+    text = tr("Spectrum file name template:");
+    label = new QLabel(this);
+    label->setText(text);
+    mainLayout->addWidget(label, 1, 0, 1, 1);
+
+    zv_spectrumFileNameTemplateLineEdit = new QLineEdit(this);
+    mainLayout->addWidget(zv_spectrumFileNameTemplateLineEdit, 1, 1, 1, 1);
+
+    text = tr("Folder:");
+    label = new QLabel(this);
+    label->setText(text);
+    mainLayout->addWidget(label, 1, 2, 1, 1);
+
+    zv_pathLineEdit = new QLineEdit(this);
+    mainLayout->addWidget(zv_pathLineEdit, 1, 3, 1, 1);
+
+    zv_browseButton = new QPushButton(this);
+    zv_browseButton->setText(tr("Browse..."));
+    mainLayout->addWidget(zv_browseButton, 1, 4, 1, 1);
+
+}
+//======================================================
+void ZSpectrumArraySettingsWidget::zh_createConnections()
+{
+    connect(zv_browseButton, &QPushButton::clicked,
+           this, &ZSpectrumArraySettingsWidget::zh_onBrowseButtonClick);
+
+}
+//======================================================
+void ZSpectrumArraySettingsWidget::zh_restoreSettings()
+{
+
+}
+//======================================================
+void ZSpectrumArraySettingsWidget::zh_saveSettings()
+{
+
+}
+//======================================================
+void ZSpectrumArraySettingsWidget::zh_onBrowseButtonClick()
+{
+    QString directory = QFileDialog::getExistingDirectory(this, tr("Select folder"),
+                                                          zv_folderPath
+                                                          /*QFileDialog::ShowDirsOnly
+                                                          | QFileDialog::DontResolveSymlinks*/);
+
+    if(!directory.isEmpty())
+    {
+        zv_pathLineEdit->setText(directory);
+    }
+}
+//======================================================
+// END OF ZSpectrumArraySettingsWidget
+//======================================================
+ZSaveSpectraToFilesDialog::ZSaveSpectraToFilesDialog(const QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap,
+                                                     QWidget *parent ) : QDialog(parent)
 
 {
+    setWindowTitle(tr("Spectrum saving settings"));
+    setWindowFlags(Qt::Tool);
+
+    zv_spectrumMap = spectrumMap;
     zh_createComponents();
     zh_createConnections();
 }
@@ -31,73 +133,80 @@ void ZSaveSpectraToFilesDialog::zh_createComponents()
     QLabel* label = new QLabel(this);
     label->setText(tr("Calibration file:"));
     mainLayout->addWidget(label);
+    ZSpectrumArraySettingsWidget* spectrumArraySettingsWidget;
+    foreach(auto conditions, zv_spectrumMap.keys())
+    {
+        spectrumArraySettingsWidget = new ZSpectrumArraySettingsWidget(&conditions);
+        mainLayout->addWidget(spectrumArraySettingsWidget);
+    }
 
-//    QHBoxLayout* pathLayout = new QHBoxLayout(this);
-//    mainLayout->addLayout(pathLayout);
-//    zv_filePathLineEdit = new QLineEdit(this);
-//    zv_filePathLineEdit->setReadOnly(true);
-//    pathLayout->addWidget(zv_filePathLineEdit);
-//    zv_browseButton = new QPushButton(NS_Buttons::glButtonBrowse, this);
-//    pathLayout->addWidget(zv_browseButton);
 
-//    // central layout
-//    QHBoxLayout* centralLayout = new QHBoxLayout(this);
-//    mainLayout->addLayout(centralLayout);
-//    // left layout
-//    QVBoxLayout* leftLayout = new QVBoxLayout(this);
-//    centralLayout->addLayout(leftLayout);
-//    centralLayout->addSpacing(20);
-//    // right layout
-//    QVBoxLayout* rightLayout = new QVBoxLayout(this);
-//    centralLayout->addLayout(rightLayout);
+    //    QHBoxLayout* pathLayout = new QHBoxLayout(this);
+    //    mainLayout->addLayout(pathLayout);
+    //    zv_filePathLineEdit = new QLineEdit(this);
+    //    zv_filePathLineEdit->setReadOnly(true);
+    //    pathLayout->addWidget(zv_filePathLineEdit);
+    //    zv_browseButton = new QPushButton(NS_Buttons::glButtonBrowse, this);
+    //    pathLayout->addWidget(zv_browseButton);
 
-//    // name
-//    label = new QLabel(this);
-//    label->setText(tr("Calibration name:"));
-//    leftLayout->addWidget(label);
+    //    // central layout
+    //    QHBoxLayout* centralLayout = new QHBoxLayout(this);
+    //    mainLayout->addLayout(centralLayout);
+    //    // left layout
+    //    QVBoxLayout* leftLayout = new QVBoxLayout(this);
+    //    centralLayout->addLayout(leftLayout);
+    //    centralLayout->addSpacing(20);
+    //    // right layout
+    //    QVBoxLayout* rightLayout = new QVBoxLayout(this);
+    //    centralLayout->addLayout(rightLayout);
 
-//    zv_calibrationNameLineEdit = new QLineEdit(this);
-//    leftLayout->addWidget(zv_calibrationNameLineEdit);
+    //    // name
+    //    label = new QLabel(this);
+    //    label->setText(tr("Calibration name:"));
+    //    leftLayout->addWidget(label);
 
-//    // chem elment
-//    label = new QLabel(this);
-//    label->setText(tr("Chemical element:"));
-//    leftLayout->addWidget(label);
+    //    zv_calibrationNameLineEdit = new QLineEdit(this);
+    //    leftLayout->addWidget(zv_calibrationNameLineEdit);
 
-//    zv_chemElementLineEdit = new QLineEdit(this);
-//    leftLayout->addWidget(zv_chemElementLineEdit);
+    //    // chem elment
+    //    label = new QLabel(this);
+    //    label->setText(tr("Chemical element:"));
+    //    leftLayout->addWidget(label);
 
-//    // range
-//    label = new QLabel(this);
-//    label->setText(tr("Concentration range:"));
-//    rightLayout->addWidget(label);
+    //    zv_chemElementLineEdit = new QLineEdit(this);
+    //    leftLayout->addWidget(zv_chemElementLineEdit);
 
-//    // max
-//    QHBoxLayout* rangeMaxLayout = new QHBoxLayout(this);
-//    rightLayout->addLayout(rangeMaxLayout);
+    //    // range
+    //    label = new QLabel(this);
+    //    label->setText(tr("Concentration range:"));
+    //    rightLayout->addWidget(label);
 
-//    label = new QLabel(this);
-//    label->setText(tr("max:"));
-//    rangeMaxLayout->addWidget(label);
-//    zv_rangeMaxMarginSpinBox = new QDoubleSpinBox(this);
-//    zv_rangeMaxMarginSpinBox->setRange(0.0, 1.0e+99);
-//    label->setBuddy(zv_rangeMaxMarginSpinBox);
-//    rangeMaxLayout->addWidget(zv_rangeMaxMarginSpinBox, 999999);
+    //    // max
+    //    QHBoxLayout* rangeMaxLayout = new QHBoxLayout(this);
+    //    rightLayout->addLayout(rangeMaxLayout);
 
-//    // spacing between min and max
-//    rightLayout->addSpacing(label->sizeHint().width());
+    //    label = new QLabel(this);
+    //    label->setText(tr("max:"));
+    //    rangeMaxLayout->addWidget(label);
+    //    zv_rangeMaxMarginSpinBox = new QDoubleSpinBox(this);
+    //    zv_rangeMaxMarginSpinBox->setRange(0.0, 1.0e+99);
+    //    label->setBuddy(zv_rangeMaxMarginSpinBox);
+    //    rangeMaxLayout->addWidget(zv_rangeMaxMarginSpinBox, 999999);
 
-//    // min
-//    QHBoxLayout* rangeMinLayout = new QHBoxLayout(this);
-//    rightLayout->addLayout(rangeMinLayout);
+    //    // spacing between min and max
+    //    rightLayout->addSpacing(label->sizeHint().width());
 
-//    label = new QLabel(this);
-//    label->setText(tr("min:"));
-//    rangeMinLayout->addWidget(label);
-//    zv_rangeMinMarginSpinBox = new QDoubleSpinBox(this);
-//    label->setBuddy(zv_rangeMinMarginSpinBox);
-//    zv_rangeMinMarginSpinBox->setRange(0.0, 1.0e+99);
-//    rangeMinLayout->addWidget(zv_rangeMinMarginSpinBox, 999999);
+    //    // min
+    //    QHBoxLayout* rangeMinLayout = new QHBoxLayout(this);
+    //    rightLayout->addLayout(rangeMinLayout);
+
+    //    label = new QLabel(this);
+    //    label->setText(tr("min:"));
+    //    rangeMinLayout->addWidget(label);
+    //    zv_rangeMinMarginSpinBox = new QDoubleSpinBox(this);
+    //    label->setBuddy(zv_rangeMinMarginSpinBox);
+    //    zv_rangeMinMarginSpinBox->setRange(0.0, 1.0e+99);
+    //    rangeMinLayout->addWidget(zv_rangeMinMarginSpinBox, 999999);
 
     // Basement
     mainLayout->addStretch();
@@ -121,6 +230,19 @@ void ZSaveSpectraToFilesDialog::zh_createComponents()
 //======================================================
 void ZSaveSpectraToFilesDialog::zh_createConnections()
 {
-
+    connect(zv_okButton, &QPushButton::clicked,
+            this, &ZSaveSpectraToFilesDialog::zh_onOkButtonClick);
+    connect(zv_cancelButton, &QPushButton::clicked,
+            this, &ZSaveSpectraToFilesDialog::zh_onCancelButtonClick);
+}
+//======================================================
+void ZSaveSpectraToFilesDialog::zh_onOkButtonClick()
+{
+    accept();
+}
+//======================================================
+void ZSaveSpectraToFilesDialog::zh_onCancelButtonClick()
+{
+    reject();
 }
 //======================================================

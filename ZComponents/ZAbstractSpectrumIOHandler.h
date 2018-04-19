@@ -18,6 +18,7 @@ public:
 
     virtual bool zp_getSpectrumFromFile(const QString& path, QColor, ZAbstractSpectrum*&) const = 0;
     virtual bool zp_getSpectrumFromFile(QFile& file, QColor, ZAbstractSpectrum*&) const = 0;
+
     // virtual bool zp_getSpectrumFromFile(QFile& file, ZSpectrumArray&) const = 0;
 
 signals:

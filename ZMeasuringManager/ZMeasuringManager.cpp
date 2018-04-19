@@ -1540,8 +1540,6 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
 //======================================================
 void ZMeasuringManager::zh_onSaveSpectraToFilesAction() const
 {
-    qDebug() << "SAVE SPECTRA";
-
     QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > spectrumMap;
     emit zg_inquirySelectedSpectrumMap(spectrumMap);
 
@@ -1550,7 +1548,7 @@ void ZMeasuringManager::zh_onSaveSpectraToFilesAction() const
         return;
     }
 
-    ZSaveSpectraToFilesDialog dialog;
+    ZSaveSpectraToFilesDialog dialog(spectrumMap);
     dialog.exec();
 
 //    // get selected spectra

@@ -3,7 +3,8 @@
 #define ZSPEIOHANDLER_H
 //===========================================================
 #include "ZAbstractSpectrumIOHandler.h"
-#include "ZAbstractSpectrum.h"
+#include "ZSpeSpectrum.h"
+
 //===========================================================
 
 //===========================================================
@@ -18,6 +19,12 @@ public:
     bool zp_getSpectrumFromFile(QFile& file, QColor, ZAbstractSpectrum *&) const;
     //virtual bool zp_getSpectrumFromFile(QFile& file, ZSpectrumArray&) const override;
 
+    bool zp_saveSpectrumToFile(const QString& path,
+                               const QString& fileName,
+                               ZSpeSpectrum *&spectrum);
+
+    bool zp_saveSpectrumToFile(QFile& file, ZSpeSpectrum*& spectrum);
+
 signals:
 
     void zg_message(QString) const;
@@ -26,7 +33,7 @@ private:
 
     // VARS
     const int zv_intensityStartLine = 20;
-
+    int zv_whatToDoAnswer;
     // FUNCS
 
 };

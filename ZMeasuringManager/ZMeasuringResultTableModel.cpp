@@ -282,8 +282,12 @@ void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>
 //=========================================================
 void ZMeasuringResultTableModel::zh_sortIndexesForRow(QModelIndexList& indexList, int leftMargin, int rightMargin) const
 {
-//    void qsort (int b, int e)
-//    {
+    if(indexList.count() < 2 || rightMargin - leftMargin < 1)
+    {
+        return;
+    }
+    //    void qsort (int b, int e)
+    //    {
     int left = leftMargin;
     int right = rightMargin;
     int pivotRow = indexList.at( (left + right) / 2 ).row();
