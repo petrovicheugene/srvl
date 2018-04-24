@@ -79,7 +79,7 @@ void ZStartStopButtonWidget::zp_setButtonState(int state)
 //===========================================================
 void ZStartStopButtonWidget::zh_createComponents()
 {
-    QLayout* mainLayout = new QHBoxLayout(this);
+    QLayout* mainLayout = new QHBoxLayout;
     setLayout(mainLayout);
 
     //zv_buttonGroup = new QButtonGroup(this);

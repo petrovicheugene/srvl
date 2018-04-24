@@ -729,12 +729,12 @@ void ZPlotter::zh_createComponents()
     zv_dashBoard->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
     // Layout
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
     setLayout(mainLayout);
 
-    QHBoxLayout* mainScrollLayout = new QHBoxLayout(this);
+    QHBoxLayout* mainScrollLayout = new QHBoxLayout;
     mainScrollLayout->setMargin(0);
     mainScrollLayout->setSpacing(0);
     mainLayout->addLayout(mainScrollLayout);
@@ -743,7 +743,7 @@ void ZPlotter::zh_createComponents()
     mainScrollLayout->addWidget(zv_rulerWidget);
     mainScrollLayout->addWidget(zv_verticalScrollBar);
 
-    QHBoxLayout* bottomScrollLayout = new QHBoxLayout(this);
+    QHBoxLayout* bottomScrollLayout = new QHBoxLayout;
     bottomScrollLayout->setMargin(0);
     bottomScrollLayout->setSpacing(0);
     mainLayout->addLayout(bottomScrollLayout);

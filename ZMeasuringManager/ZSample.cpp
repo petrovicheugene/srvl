@@ -1,10 +1,11 @@
 //=====================================================
-#include <QDebug>
 #include "ZSample.h"
+
+#include <QDateTime>
+#include <QDebug>
+
 #include "ZSampleTask.h"
 #include "ZSpeSpectrum.h"
-#include <QDateTime>
-
 //=====================================================
 ZSample::ZSample(const QString &sampleName,
                  ZSampleTask* sampleTask,
@@ -260,6 +261,8 @@ bool ZSample::zp_setSpectrum(ZSpeSpectrum *spectrum, int gainFactor, int exposit
 bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
                                  quint8 gainFactor,
                                  int exposition,
+                                 quint32 time,
+                                 quint32 deadTime,
                                  bool finished)
 {
     for(int s = 0; s < zv_spectrumList.count(); s++)
@@ -281,6 +284,13 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
             emit zg_spectrumDataChanged(gainFactor, exposition);
             if(finished)
             {
+                // set date, time, exposition, aliveTime, gainfactor
+                spectrum->zp_setSpectrumDateTime(QDateTime::currentDateTime());
+                spectrum->zp_setExposition(exposition);
+                spectrum->zp_setGainFactor(gainFactor);
+                spectrum->zp_setAliveTime(static_cast<quint32>(exposition) - (deadTime / 1000));
+                //spectrum->zp_setEnergyUnit("kEv");
+
                 QList<ZChemicalConcentration> chemicalConcentrationList;
                 zv_sampleTask->zp_calcConcentrations(gainFactor,
                                                      exposition,
@@ -425,7 +435,6 @@ bool ZSample::zp_stopMeasuring()
 //=====================================================
 void ZSample::zp_measuringFinished()
 {
-
     emit zg_measuringFinished();
 }
 //=====================================================

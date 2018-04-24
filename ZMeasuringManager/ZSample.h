@@ -47,7 +47,7 @@ public:
     bool zp_setSpectrum(ZSpeSpectrum*spectrum, int gainFactor, int exposition);
     bool zp_setSpectrumData(QList<quint32> speDataList,
                             quint8 gainFactor,
-                            int exposition,
+                            int exposition, quint32 time, quint32 deadTime,
                             bool finished);
     ZSpeSpectrum* zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const;
 

@@ -101,7 +101,7 @@ void ZProcessTimeRoundIndicator::zp_applyProgressBarOptions(const ZProgressBarOp
 //=============================================================
 void ZProcessTimeRoundIndicator::zh_createComponents()
 {
-    QHBoxLayout* mainLayout = new QHBoxLayout(this);
+    QHBoxLayout* mainLayout = new QHBoxLayout;
     setLayout(mainLayout);
 
     // progress bar part
@@ -110,7 +110,7 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
     mainLayout->addWidget(zv_progressBar);
 
     // label part
-    QVBoxLayout* rightLayout = new QVBoxLayout(this);
+    QVBoxLayout* rightLayout = new QVBoxLayout;
     mainLayout->addLayout(rightLayout);
 
     // process name
@@ -118,7 +118,7 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
     rightLayout->addWidget(zv_processNameLabel);
 
     // time label part
-    QHBoxLayout* timeLabelLayout = new QHBoxLayout(this);
+    QHBoxLayout* timeLabelLayout = new QHBoxLayout;
     rightLayout->addLayout(timeLabelLayout);
 
     //zv_processDurationLabel = new QLabel(this);

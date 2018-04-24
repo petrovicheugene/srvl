@@ -419,7 +419,6 @@ void ZMeasuringController::zh_processMeasurementResults()
                                       &zv_Time,
                                       res);
 
-
     if(res == ZUralAdcDeviceConnector::SR_FUNCTION_UNRESOLVED)
     {
         killTimer(zv_measuringTimer);
@@ -477,6 +476,8 @@ void ZMeasuringController::zh_processMeasurementResults()
         zv_currentSampleTask->zp_handleSpectrumData(speDataList,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second,
+                                                    zv_Time,
+                                                    deadTime,
                                                     false);
 
         // continue measurement
@@ -529,6 +530,8 @@ void ZMeasuringController::zh_processMeasurementResults()
         zv_currentSampleTask->zp_handleSpectrumData(speDataList,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second,
+                                                    zv_Time,
+                                                    deadTime,
                                                     true);
         break;
     }

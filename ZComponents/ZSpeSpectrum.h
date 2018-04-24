@@ -24,6 +24,12 @@ public:
                                         qreal K0, qreal K1, qreal K2, int exposition);
 
 
+    void zp_setSpectrumDateTime(QDateTime datetime);
+    void zp_setExposition(int exposition);
+    void zp_setGainFactor(quint8 gainFactor);
+    void zp_setAliveTime(quint32 aliveTime);
+    void zp_setEnergyUnit(const QString& energyUnit);
+
 private:
 
     // VARS

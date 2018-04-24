@@ -109,7 +109,7 @@ public:
     void zp_measuringFinished();
     void zp_handleSpectrumData(QList<quint32> speDataList,
                                quint8 gainFactor,
-                               int exposition,
+                               int exposition, quint32 time, quint32 deadTime,
                                bool finished);
 
     void zp_calcConcentrations(quint8 gainFactor,

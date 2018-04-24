@@ -2,6 +2,7 @@
 #include "ZSaveSpectraToFilesDialog.h"
 #include "ZGeneral.h"
 #include "ZSpeSpectrum.h"
+#include "ZSpeIOHandler.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -82,7 +83,7 @@ void ZSpectrumArraySettingsWidget::zh_createComponents()
 void ZSpectrumArraySettingsWidget::zh_createConnections()
 {
     connect(zv_browseButton, &QPushButton::clicked,
-           this, &ZSpectrumArraySettingsWidget::zh_onBrowseButtonClick);
+            this, &ZSpectrumArraySettingsWidget::zh_onBrowseButtonClick);
 
 }
 //======================================================
@@ -96,12 +97,22 @@ void ZSpectrumArraySettingsWidget::zh_saveSettings()
 
 }
 //======================================================
+QString ZSpectrumArraySettingsWidget::zp_folderPath() const
+{
+    return zv_pathLineEdit->text();
+}
+//======================================================
+QString ZSpectrumArraySettingsWidget::zp_fileNameTemplate() const
+{
+    return zv_spectrumFileNameTemplateLineEdit->text();
+}
+//======================================================
 void ZSpectrumArraySettingsWidget::zh_onBrowseButtonClick()
 {
     QString directory = QFileDialog::getExistingDirectory(this, tr("Select folder"),
                                                           zv_folderPath
                                                           /*QFileDialog::ShowDirsOnly
-                                                          | QFileDialog::DontResolveSymlinks*/);
+                                                                                                                | QFileDialog::DontResolveSymlinks*/);
 
     if(!directory.isEmpty())
     {
@@ -137,6 +148,7 @@ void ZSaveSpectraToFilesDialog::zh_createComponents()
     foreach(auto conditions, zv_spectrumMap.keys())
     {
         spectrumArraySettingsWidget = new ZSpectrumArraySettingsWidget(&conditions);
+        zv_spectrumArraySettingsWidgetList.insert(conditions, spectrumArraySettingsWidget);
         mainLayout->addWidget(spectrumArraySettingsWidget);
     }
 
@@ -238,6 +250,32 @@ void ZSaveSpectraToFilesDialog::zh_createConnections()
 //======================================================
 void ZSaveSpectraToFilesDialog::zh_onOkButtonClick()
 {
+    ZSpeIOHandler speIOHandler(nullptr);
+    QString folderPath;
+    QString nameTemplate;
+    QString fileName;
+    int spCount = 0;
+    for(auto &conditions : zv_spectrumMap.keys())
+    {
+        // get folder and file name
+        folderPath = zv_spectrumArraySettingsWidgetList[conditions]->zp_folderPath();
+        nameTemplate = zv_spectrumArraySettingsWidgetList[conditions]->zp_fileNameTemplate();
+        spCount = 0;
+        foreach(ZSpeSpectrum* spectrum,  zv_spectrumMap[conditions])
+        {
+            if(nameTemplate.isEmpty())
+            {
+                fileName = spectrum->zp_name();
+            }
+            else
+            {
+                fileName = nameTemplate + "-" + QString::number(++spCount);
+            }
+
+            speIOHandler.zp_saveSpectrumToFile(folderPath, fileName, spectrum);
+        }
+    }
+
     accept();
 }
 //======================================================

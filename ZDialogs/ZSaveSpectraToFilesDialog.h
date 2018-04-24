@@ -22,6 +22,9 @@ public:
 
     ~ZSpectrumArraySettingsWidget();
 
+    QString zp_folderPath() const;
+    QString zp_fileNameTemplate() const;
+
 signals:
 
 public slots:
@@ -67,6 +70,8 @@ private:
 
     // VARS
     QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > zv_spectrumMap;
+
+    QMap< QPair<quint8, int>, ZSpectrumArraySettingsWidget*> zv_spectrumArraySettingsWidgetList;
     QLineEdit* zv_pathLineEdit;
     QLineEdit* zv_fileNameTemplate;
 

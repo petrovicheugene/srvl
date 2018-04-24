@@ -255,11 +255,14 @@ void ZSampleTask::zp_measuringFinished()
 void ZSampleTask::zp_handleSpectrumData(QList<quint32> speDataList,
                                         quint8 gainFactor,
                                         int exposition,
+                                        quint32 time,
+                                        quint32 deadTime,
                                         bool finished)
 {
     if(zv_currentSample)
     {
-        zv_currentSample->zp_setSpectrumData(speDataList, gainFactor, exposition, finished);
+        zv_currentSample->zp_setSpectrumData(speDataList, gainFactor, exposition, time,
+                                             deadTime, finished);
     }
 }
 //=================================================

@@ -101,6 +101,10 @@ bool ZSpeIOHandler::zp_getSpectrumFromFile(QFile& file, QColor color, ZAbstractS
             {
                 speAuxData.zp_setAliveTime(line);
             }
+            else if(lineNumber == 5)
+            {
+                speAuxData.zp_setGainFactor(line);
+            }
             else if(lineNumber == 10)
             {
                 speAuxData.zp_setEnergyUnit(line);
@@ -162,7 +166,13 @@ bool ZSpeIOHandler::zp_saveSpectrumToFile(const QString& path,
         }
     }
 
-    QFileInfo fileInfo(QDir(path),fileName);
+    QString fileNameWithSuffix = fileName;
+    if(QFileInfo(fileName).suffix() != "spe")
+    {
+        fileNameWithSuffix += ".spe";
+    }
+
+    QFileInfo fileInfo(QDir(path),fileNameWithSuffix);
     if(fileInfo.exists() && zv_whatToDoAnswer != QMessageBox::YesToAll )
     {
         if(zv_whatToDoAnswer == QMessageBox::NoToAll)
@@ -187,10 +197,8 @@ bool ZSpeIOHandler::zp_saveSpectrumToFile(const QString& path,
             break;
         case QMessageBox::No:
             return true;
-            break;
         case QMessageBox::NoToAll:
             return true;
-            break;
         }
     }
 
@@ -238,75 +246,74 @@ bool ZSpeIOHandler::zp_saveSpectrumToFile(QFile& file, ZSpeSpectrum*& spectrum)
         switch(i)
         {
         case 0:
-
+            ts << QString::number(0);
             break;
         case 1:
-
+            ts << endl << spectrum->zp_speAuxData()->zp_date().toString("dd.MM.yyyy");
             break;
         case 2:
-
+            ts << endl << spectrum->zp_speAuxData()->zp_time().toString("hh.mm.ss");
             break;
         case 3:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_exposition());
             break;
         case 4:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_aliveTime());
             break;
         case 5:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_gainFactor());
             break;
         case 6:
-
+            ts << endl << QString("comment");
             break;
         case 7:
-
+            ts << endl << QString("comment");
             break;
         case 8:
-
+            ts << endl << QString("comment");
             break;
         case 9:
-
+            ts << endl << QString("comment");
             break;
         case 10:
-
+            ts << endl << spectrum->zp_speAuxData()->zp_energyUnit();
             break;
         case 11:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_energyK0());
             break;
         case 12:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_energyK1());
             break;
         case 13:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_energyK2());
             break;
         case 14:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_peakWidth());
             break;
         case 15:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_peakWidthK0());
             break;
         case 16:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_peakWidthK1());
             break;
         case 17:
-
+            ts << endl << QString::number(spectrum->zp_speAuxData()->zp_peakWidthK2());
             break;
         case 18:
-
+            ts << endl << QString("info");
             break;
         case 19:
-
+            ts << endl << QString("info");
             break;
-        }
+         }
     }
 
     // spectrum data
-    QList<quint32> spectrumData;
-    spectrum->zp_setSpectrumData(spectrumData);
+    QList<quint32> spectrumData = spectrum->zp_spectrumData();
 
     foreach(quint32 intensity, spectrumData)
     {
-        ts << QString::number(intensity, 10);
+        ts << endl << QString::number(intensity, 10);
     }
 
     file.close();

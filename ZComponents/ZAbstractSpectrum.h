@@ -42,7 +42,6 @@ public:
     bool zp_isSpectrumVisible() const;
     void zp_setSpectrumVisible(bool);
 
-
     bool zp_isSpectrumChecked() const;
     bool zp_setSpectrumChecked(bool);
 

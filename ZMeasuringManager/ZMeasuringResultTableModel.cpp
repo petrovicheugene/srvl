@@ -277,6 +277,9 @@ void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>
         }
         currentSpectrum->zp_setSpectrumName( zv_measuringManager->zp_sampleName(index.row()) );
         spectrumMap[conditions].append(currentSpectrum);
+
+        int spdc = currentSpectrum->zp_spectrumData().count();
+        qDebug() << "CUR SPE DATA CNT" << spdc;
     }
 }
 //=========================================================
