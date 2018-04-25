@@ -54,7 +54,7 @@ ZChemicalTaskDialog::ZChemicalTaskDialog(QSqlTableModel *chemicalTableModel, QWi
     zh_restoreSettings();
 }
 //=========================================================================
-void ZChemicalTaskDialog::closeEvent(QCloseEvent* event)
+ZChemicalTaskDialog::~ZChemicalTaskDialog()
 {
     zh_saveSettings();
 }

@@ -46,7 +46,7 @@ ZCalibrationListDialog::ZCalibrationListDialog(QSqlTableModel *chemicalTableMode
     zh_restoreSettings();
 }
 //===============================================================
-void ZCalibrationListDialog::closeEvent(QCloseEvent* event)
+ZCalibrationListDialog::~ZCalibrationListDialog()
 {
     zh_saveSettings();
 }

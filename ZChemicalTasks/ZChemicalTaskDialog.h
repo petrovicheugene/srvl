@@ -22,6 +22,8 @@ class ZChemicalTaskDialog : public QDialog
 public:
     explicit ZChemicalTaskDialog(QSqlTableModel* chemicalTableModel = 0,
                                  QWidget *parent = 0);
+    ~ZChemicalTaskDialog();
+
 
     bool zp_setChemicalTask(QSqlTableModel* calibrationStackTableModel,
                             int chemicalTaskId, bool viewOnly);
@@ -42,10 +44,7 @@ signals:
 
 public slots:
 
-
 protected:
-
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 

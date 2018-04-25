@@ -18,7 +18,7 @@ class ZSeriesTaskListDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZSeriesTaskListDialog(bool forLoad, QWidget *parent = 0);
-
+    ~ZSeriesTaskListDialog();
     void zp_connectToManager(ZSeriesTaskListManager* manager);
     QString zp_newSeriesTaskName() const;
 
@@ -29,7 +29,6 @@ public slots:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
 
 private slots:

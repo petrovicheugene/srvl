@@ -13,6 +13,7 @@ class ZMeasuringConditionsDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZMeasuringConditionsDialog(QWidget *parent = 0);
+    ~ZMeasuringConditionsDialog();
 
     int zp_gainFactor() const;
     int zp_exposition() const;
@@ -23,7 +24,6 @@ signals:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 

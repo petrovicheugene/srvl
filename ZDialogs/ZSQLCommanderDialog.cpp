@@ -35,7 +35,7 @@ ZSQLCommanderDialog::ZSQLCommanderDialog(QWidget *parent) : QDialog(parent)
     zh_restoreSettings();
 }
 //=====================================================
-void ZSQLCommanderDialog::closeEvent(QCloseEvent* event)
+ZSQLCommanderDialog::~ZSQLCommanderDialog()
 {
     zh_saveSettings();
 }

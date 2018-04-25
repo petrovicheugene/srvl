@@ -33,6 +33,11 @@ ZSeriesTaskListDialog::ZSeriesTaskListDialog(bool forLoad, QWidget *parent)
 
 }
 //=====================================================
+ZSeriesTaskListDialog::~ZSeriesTaskListDialog()
+{
+    zh_saveSettings();
+}
+//=====================================================
 void ZSeriesTaskListDialog::zh_createComponents()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -128,11 +133,6 @@ void ZSeriesTaskListDialog::zh_saveSettings() const
 
     settings.endGroup();
     settings.endGroup();
-}
-//=====================================================
-void ZSeriesTaskListDialog::closeEvent(QCloseEvent* event)
-{
-    zh_saveSettings();
 }
 //=====================================================
 bool ZSeriesTaskListDialog::eventFilter(QObject* object, QEvent* event)

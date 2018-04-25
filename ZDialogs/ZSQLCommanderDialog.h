@@ -18,6 +18,7 @@ class ZSQLCommanderDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZSQLCommanderDialog(QWidget *parent = 0);
+    ~ZSQLCommanderDialog();
 
 signals:
 
@@ -26,7 +27,6 @@ public slots:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
     // bool eventFilter(QObject* object, QEvent* event);
 
 private slots:

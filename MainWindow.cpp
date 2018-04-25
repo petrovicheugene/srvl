@@ -98,6 +98,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
 //============================================================
 MainWindow::~MainWindow()
 {
+    zh_saveSettings();
     ZDatabaseInspector::zp_disconnectFromDatabase(zv_database);
 }
 //============================================================
@@ -116,7 +117,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
     //        return;
     //    }
 
-    zh_saveSettings();
+    // zh_saveSettings();
 }
 //============================================================
 void MainWindow::zh_createActions()

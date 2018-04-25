@@ -37,7 +37,7 @@ ZMeasuringConditionsListDialog::ZMeasuringConditionsListDialog(bool forSelection
     zh_restoreSettings();
 }
 //===========================================================
-void ZMeasuringConditionsListDialog::closeEvent(QCloseEvent* event)
+ZMeasuringConditionsListDialog::~ZMeasuringConditionsListDialog()
 {
     zh_saveSettings();
 }
@@ -106,55 +106,55 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     QLabel* label;
     QHBoxLayout* levelLayout;
     // selected conditions
-//    if(forSelection)
-//    {
-//        // group box
-//        QGroupBox* selectedGroupBox = new QGroupBox(this);
-//        selectedGroupBox->setTitle(tr("Selected"));
-//        mainLayout->addWidget(selectedGroupBox);
-//        QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
-//        selectedGroupBox->setLayout(groupBoxLayout);
+    //    if(forSelection)
+    //    {
+    //        // group box
+    //        QGroupBox* selectedGroupBox = new QGroupBox(this);
+    //        selectedGroupBox->setTitle(tr("Selected"));
+    //        mainLayout->addWidget(selectedGroupBox);
+    //        QVBoxLayout* groupBoxLayout = new QVBoxLayout(this);
+    //        selectedGroupBox->setLayout(groupBoxLayout);
 
-//        // selected gain factor
-//                label = new QLabel(this);
-//                label->setText(glCreateCaption(tr("Gain factor:")));
-//                groupBoxLayout->addWidget(label);
-
-
-//                levelLayout = new QHBoxLayout(this);
-//                groupBoxLayout->addLayout(levelLayout);
-//                zv_selectedGainFactorLineEdit = new QLineEdit(this);
-//                zv_selectedGainFactorLineEdit->setReadOnly(true);
-//                zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
-//                levelLayout->addWidget(zv_selectedGainFactorLineEdit);
-//                levelLayout->addStretch();
-
-//                // selected exposition
-//                label = new QLabel(this);
-//                label->setText(glCreateCaption(tr("Exposition (s):")));
-//                groupBoxLayout->addWidget(label);
+    //        // selected gain factor
+    //                label = new QLabel(this);
+    //                label->setText(glCreateCaption(tr("Gain factor:")));
+    //                groupBoxLayout->addWidget(label);
 
 
-//                levelLayout = new QHBoxLayout(this);
-//                groupBoxLayout->addLayout(levelLayout);
-//                zv_selectedExpositionLineEdit = new QLineEdit(this);
-//                zv_selectedExpositionLineEdit->setReadOnly(true);
-//                zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
-//                levelLayout->addWidget(zv_selectedExpositionLineEdit);
-//                levelLayout->addStretch();
+    //                levelLayout = new QHBoxLayout(this);
+    //                groupBoxLayout->addLayout(levelLayout);
+    //                zv_selectedGainFactorLineEdit = new QLineEdit(this);
+    //                zv_selectedGainFactorLineEdit->setReadOnly(true);
+    //                zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
+    //                levelLayout->addWidget(zv_selectedGainFactorLineEdit);
+    //                levelLayout->addStretch();
+
+    //                // selected exposition
+    //                label = new QLabel(this);
+    //                label->setText(glCreateCaption(tr("Exposition (s):")));
+    //                groupBoxLayout->addWidget(label);
 
 
-//        label = new QLabel(this);
-//        label->setText(glCreateCaption(tr("Measuring conditions:")));
-//        groupBoxLayout->addWidget(label);
-//        levelLayout = new QHBoxLayout(this);
-//        groupBoxLayout->addLayout(levelLayout);
-//        zv_selectedConditionsLineEdit = new QLineEdit(this);
-//        zv_selectedConditionsLineEdit->setReadOnly(true);
-//        zv_selectedConditionsLineEdit->setText(zv_noSelectedConditionsString);
-//        levelLayout->addWidget(zv_selectedConditionsLineEdit);
-//        levelLayout->addStretch();
-//    }
+    //                levelLayout = new QHBoxLayout(this);
+    //                groupBoxLayout->addLayout(levelLayout);
+    //                zv_selectedExpositionLineEdit = new QLineEdit(this);
+    //                zv_selectedExpositionLineEdit->setReadOnly(true);
+    //                zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
+    //                levelLayout->addWidget(zv_selectedExpositionLineEdit);
+    //                levelLayout->addStretch();
+
+
+    //        label = new QLabel(this);
+    //        label->setText(glCreateCaption(tr("Measuring conditions:")));
+    //        groupBoxLayout->addWidget(label);
+    //        levelLayout = new QHBoxLayout(this);
+    //        groupBoxLayout->addLayout(levelLayout);
+    //        zv_selectedConditionsLineEdit = new QLineEdit(this);
+    //        zv_selectedConditionsLineEdit->setReadOnly(true);
+    //        zv_selectedConditionsLineEdit->setText(zv_noSelectedConditionsString);
+    //        levelLayout->addWidget(zv_selectedConditionsLineEdit);
+    //        levelLayout->addStretch();
+    //    }
 
     // list table
     label = new QLabel(this);
@@ -293,25 +293,25 @@ void ZMeasuringConditionsListDialog::zh_onSelectionChange(const QItemSelection& 
 //======================================================
 void ZMeasuringConditionsListDialog::zh_updateSelectedMeasuringConditionsString()
 {
-//    int gainFactor = zp_gainFactor();
-//    int exposition = zp_exposition();
-//    if(gainFactor < 0)
-//    {
-//        zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
-//    }
-//    else
-//    {
-//        zv_selectedGainFactorLineEdit->setText(QString::number(gainFactor));
-//    }
+    //    int gainFactor = zp_gainFactor();
+    //    int exposition = zp_exposition();
+    //    if(gainFactor < 0)
+    //    {
+    //        zv_selectedGainFactorLineEdit->setText(zv_noSelectedConditionsString);
+    //    }
+    //    else
+    //    {
+    //        zv_selectedGainFactorLineEdit->setText(QString::number(gainFactor));
+    //    }
 
-//    if(exposition < 0)
-//    {
-//        zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
-//    }
-//    else
-//    {
-//        zv_selectedExpositionLineEdit->setText(QString::number(exposition));
-//    }
+    //    if(exposition < 0)
+    //    {
+    //        zv_selectedExpositionLineEdit->setText(zv_noSelectedConditionsString);
+    //    }
+    //    else
+    //    {
+    //        zv_selectedExpositionLineEdit->setText(QString::number(exposition));
+    //    }
 
 
     // zv_selectedConditionsLineEdit->setText(tr("G.F.:%1; Expo:%2").arg(QString::number(gainFactor), QString::number(exposition)));

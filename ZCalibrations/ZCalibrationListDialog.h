@@ -24,6 +24,7 @@ public:
                                     QSqlTableModel* measuringConditionsSQLTableModel = 0,
                                     QSqlTableModel* calibrationTableSQLModel = 0,
                                     QWidget *parent = 0);
+    ~ZCalibrationListDialog();
 
     bool zp_setFilter(int chemicalId , int gainFactor, int exposition);
 
@@ -36,8 +37,6 @@ signals:
 public slots:
 
 protected:
-
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 

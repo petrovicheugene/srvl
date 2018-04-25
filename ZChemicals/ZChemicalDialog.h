@@ -14,6 +14,8 @@ class ZChemicalDialog : public QDialog
 public:
 
     explicit ZChemicalDialog(QWidget *parent = 0);
+    ~ZChemicalDialog();
+
     QString zp_chemical() const;
     int zp_chemicalId() const;
     void zp_setChemical(int id, const QString& chemical);
@@ -24,7 +26,6 @@ signals:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 

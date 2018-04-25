@@ -21,7 +21,7 @@ class ZSampleTaskDialog2 : public QDialog
     Q_OBJECT
 public:
     explicit ZSampleTaskDialog2(QSqlTableModel* taskModel = 0, int sampleTaskId = -1, QWidget *parent = 0);
-
+    ~ZSampleTaskDialog2();
     bool zp_loadSampleTask(int sampleTaskId);
 
 signals:
@@ -36,7 +36,6 @@ private slots:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
 
 private:
 

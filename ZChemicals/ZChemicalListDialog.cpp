@@ -45,6 +45,11 @@ ZChemicalListDialog::ZChemicalListDialog(QSqlTableModel* chemicalModel, QWidget 
 
 }
 //===============================================================
+ZChemicalListDialog::~ZChemicalListDialog()
+{
+    zh_saveSettings();
+}
+//===============================================================
 void ZChemicalListDialog::zh_createActions()
 {
     zv_newChemicalAction = new ZControlAction(this);
@@ -129,11 +134,6 @@ void ZChemicalListDialog::zh_createConnections()
     connect(zv_editChemicalAction, &ZControlAction::triggered,
             this, &ZChemicalListDialog::zh_onEditChemicalAction);
 
-}
-//===============================================================
-void ZChemicalListDialog::closeEvent(QCloseEvent* event)
-{
-    zh_saveSettings();
 }
 //===============================================================
 bool ZChemicalListDialog::eventFilter(QObject* object, QEvent* event)

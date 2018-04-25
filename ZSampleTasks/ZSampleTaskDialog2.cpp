@@ -50,7 +50,7 @@ ZSampleTaskDialog2::ZSampleTaskDialog2(QSqlTableModel *sampleTaskModel, int samp
     zh_restoreSettings();
 }
 //===============================================================
-void ZSampleTaskDialog2::closeEvent(QCloseEvent* event)
+ZSampleTaskDialog2::~ZSampleTaskDialog2()
 {
     zh_saveSettings();
 }

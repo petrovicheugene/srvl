@@ -19,7 +19,7 @@ ZChemicalDialog::ZChemicalDialog(QWidget* parent) : QDialog(parent)
     zh_restoreSettings();
 }
 //===============================================================
-void ZChemicalDialog::closeEvent(QCloseEvent* event)
+ZChemicalDialog::~ZChemicalDialog()
 {
     zh_saveSettings();
 }
@@ -31,7 +31,7 @@ QString ZChemicalDialog::zp_chemical() const
 //===============================================================
 int ZChemicalDialog::zp_chemicalId() const
 {
-     return zv_id;
+    return zv_id;
 }
 //===============================================================
 void ZChemicalDialog::zp_setChemical(int id, const QString& chemical)
@@ -86,7 +86,7 @@ void ZChemicalDialog::zv_createConnections()
             this, &ZChemicalDialog::zh_onOkButtonClick);
     connect(zv_cancelButton, &QPushButton::clicked,
             this, &ZChemicalDialog::reject);
-     connect(zv_chemicalLineEdit, &QLineEdit::textChanged,
+    connect(zv_chemicalLineEdit, &QLineEdit::textChanged,
             this, &ZChemicalDialog::zh_resetMessageLabel);
 }
 //===============================================================

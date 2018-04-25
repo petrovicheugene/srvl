@@ -14,12 +14,12 @@ class ZSampleTaskListDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZSampleTaskListDialog(QWidget *parent = 0);
+    ~ZSampleTaskListDialog();
 
 signals:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
 
 private slots:

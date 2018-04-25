@@ -32,7 +32,7 @@ ZSampleTaskListDialog::ZSampleTaskListDialog(QWidget *parent)
     zh_restoreSettings();
 }
 //=======================================================
-void ZSampleTaskListDialog::closeEvent(QCloseEvent* event)
+ZSampleTaskListDialog::~ZSampleTaskListDialog()
 {
     zh_saveSettings();
 }

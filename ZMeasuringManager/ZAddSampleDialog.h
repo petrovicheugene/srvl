@@ -23,6 +23,7 @@ class ZAddSampleDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZAddSampleDialog(QWidget *parent = 0);
+    ~ZAddSampleDialog();
 
     QString zp_sampleName() const;
     int zp_sampleQuantity() const;
@@ -33,7 +34,6 @@ signals:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
     bool eventFilter(QObject *object, QEvent *event);
 
 public slots:

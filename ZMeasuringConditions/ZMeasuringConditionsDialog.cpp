@@ -19,7 +19,7 @@ ZMeasuringConditionsDialog::ZMeasuringConditionsDialog(QWidget *parent) : QDialo
     zh_createConnections();
 }
 //=======================================================
-void ZMeasuringConditionsDialog::closeEvent(QCloseEvent* event)
+ZMeasuringConditionsDialog::~ZMeasuringConditionsDialog()
 {
     zh_saveSettings();
 }

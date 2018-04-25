@@ -41,6 +41,11 @@ ZAddSampleDialog::ZAddSampleDialog(QWidget *parent) : QDialog(parent)
     zh_restoreSettings();
 }
 //======================================================
+ZAddSampleDialog::~ZAddSampleDialog()
+{
+    zh_saveSettings();
+}
+//======================================================
 void ZAddSampleDialog::zh_createActions()
 {
     zv_newSampleTaskAction = new ZControlAction(this);
@@ -162,11 +167,6 @@ void ZAddSampleDialog::zh_createConnections()
     connect(zv_sampleNameLineEdit, &QLineEdit::textChanged,
             this, &ZAddSampleDialog::zh_onSampleNameChange);
 
-}
-//======================================================
-void ZAddSampleDialog::closeEvent(QCloseEvent* event)
-{
-    zh_saveSettings();
 }
 //======================================================
 bool ZAddSampleDialog::eventFilter(QObject *object, QEvent *event)
@@ -347,8 +347,8 @@ void ZAddSampleDialog::zh_onNewSampleTaskButtonClick() const
 {
     zv_messageLabel->clear();
     ZSampleTaskDialog2 dialog(zv_sampleTaskTableModel);
-//    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
-//            this, &ZAddSampleDialog::zh_checkTaskName);
+    //    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
+    //            this, &ZAddSampleDialog::zh_checkTaskName);
 
     if(!dialog.exec())
     {
@@ -398,27 +398,27 @@ void ZAddSampleDialog::zh_onSampleNameChange(const QString& text)
 bool ZAddSampleDialog::zh_checkData()
 {
     QString msg;
-//    if(zv_selectedSampleTaskId < 0)
-//    {
-//        if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
-//        {
-//            msg = tr("Sample task is not selected.");
-//        }
-//        else
-//        {
-//            msg = tr("The id of the selected sample task is invalid.");
-//        }
+    //    if(zv_selectedSampleTaskId < 0)
+    //    {
+    //        if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
+    //        {
+    //            msg = tr("Sample task is not selected.");
+    //        }
+    //        else
+    //        {
+    //            msg = tr("The id of the selected sample task is invalid.");
+    //        }
 
-//        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
-//        return false;
-//    }
+    //        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
+    //        return false;
+    //    }
 
-//    if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
-//    {
-//        msg = tr("Sample task name is invalid.");
-//        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
-//        return false;
-//    }
+    //    if(zv_taskNameLineEdit->text() == zv_noSelectedTaskString)
+    //    {
+    //        msg = tr("Sample task name is invalid.");
+    //        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
+    //        return false;
+    //    }
 
     if(zv_sampleNameLineEdit->text() == zv_noSelectedTaskString
             || zv_sampleNameLineEdit->text().isEmpty())

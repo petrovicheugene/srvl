@@ -42,7 +42,7 @@ ZChemicalTaskListDialog::ZChemicalTaskListDialog(QWidget *parent) : QDialog(pare
 
 }
 //===============================================================
-void ZChemicalTaskListDialog::closeEvent(QCloseEvent* event)
+ZChemicalTaskListDialog::~ZChemicalTaskListDialog()
 {
     zh_saveSettings();
 }

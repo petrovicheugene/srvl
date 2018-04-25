@@ -20,6 +20,7 @@ class ZChemicalTaskListDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZChemicalTaskListDialog(QWidget *parent = 0);
+    ~ZChemicalTaskListDialog();
 
     int zp_currentChemicalTaskId() const;
 
@@ -28,8 +29,6 @@ signals:
 public slots:
 
 protected:
-
-    void closeEvent(QCloseEvent* event);
 
 private slots:
 

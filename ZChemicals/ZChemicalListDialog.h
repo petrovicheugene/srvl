@@ -15,6 +15,7 @@ class ZChemicalListDialog : public QDialog
     Q_OBJECT
 public:
     explicit ZChemicalListDialog(QSqlTableModel* chemicalModel = 0, QWidget *parent = 0);
+    ~ZChemicalListDialog();
 
     int zp_chemicalId() const;
     QString zp_chemical() const;
@@ -26,7 +27,6 @@ public slots:
 
 protected:
 
-    void closeEvent(QCloseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
 
 private slots:
