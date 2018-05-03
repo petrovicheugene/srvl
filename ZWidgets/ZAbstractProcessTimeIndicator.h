@@ -39,7 +39,8 @@ protected:
 
     // FUNCS
     void zh_createComponents();
-
+    QString zh_convertTimeToString(double time);
+    void zh_recalcTimeLabelMinWidth();
 
 };
 //=======================================================

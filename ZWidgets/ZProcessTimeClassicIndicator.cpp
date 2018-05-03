@@ -12,6 +12,7 @@ ZProcessTimeClassicIndicator::ZProcessTimeClassicIndicator(QWidget *parent)
 {
     zh_createComponents();
     zp_reset();
+    zh_recalcTimeLabelMinWidth();
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_setPercentTextOnProgressBar(bool visible)
@@ -39,25 +40,25 @@ void ZProcessTimeClassicIndicator::zp_setRange(double min, double max)
     zv_progressBar->setRange(min,max);
     zv_progressBar->setValue(0);
 
-    zv_timeLeftLabel->setText(QString::number(max));
-    zv_processDurationLabel->setText(QString::number(max));
+    zv_timeLeftLabel->setText(zh_convertTimeToString(max));
+    zv_processDurationLabel->setText(zh_convertTimeToString(max));
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_setValue(double value)
 {
-//    if(value < zv_progressBar->minimum())
-//    {
-//        value = zv_progressBar->minimum();
-//    }
+    //    if(value < zv_progressBar->minimum())
+    //    {
+    //        value = zv_progressBar->minimum();
+    //    }
 
-//    if(value > value > zv_progressBar->maximum())
-//    {
-//        value = zv_progressBar->maximum();
-//    }
+    //    if(value > value > zv_progressBar->maximum())
+    //    {
+    //        value = zv_progressBar->maximum();
+    //    }
 
-     zv_progressBar->setValue(value);
-     double left = zv_progressBar->maximum() - value;
-     zv_timeLeftLabel->setText(QString::number(left));
+    zv_progressBar->setValue(value);
+    double left = zv_progressBar->maximum() - value;
+    zv_timeLeftLabel->setText(zh_convertTimeToString(left));
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)
@@ -91,10 +92,12 @@ void ZProcessTimeClassicIndicator::zp_applyProgressBarOptions(const ZProgressBar
     zv_timeLeftLabel->setFont(font);
     zv_timeLeftLabel->setPalette(palette);
 
+    zh_recalcTimeLabelMinWidth();
+
     // color
-//    QPalette pal = zv_progressBar->palette();
-//    pal.setBrush(QPalette::Highlight, options.zv_barColor);
-//    zv_progressBar->setPalette(pal);
+    //    QPalette pal = zv_progressBar->palette();
+    //    pal.setBrush(QPalette::Highlight, options.zv_barColor);
+    //    zv_progressBar->setPalette(pal);
 
 }
 //=============================================================

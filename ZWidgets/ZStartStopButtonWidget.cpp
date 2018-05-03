@@ -79,8 +79,11 @@ void ZStartStopButtonWidget::zp_setButtonState(int state)
 //===========================================================
 void ZStartStopButtonWidget::zh_createComponents()
 {
-    QLayout* mainLayout = new QHBoxLayout;
+    QHBoxLayout* mainLayout = new QHBoxLayout;
     setLayout(mainLayout);
+
+    // stretch on left
+    mainLayout->addStretch();
 
     //zv_buttonGroup = new QButtonGroup(this);
 
@@ -163,11 +166,13 @@ void ZStartStopButtonWidget::zp_setOrientation(Qt::Orientation orientation)
     QLayout* mainLayout;
     if(orientation == Qt::Vertical)
     {
-        mainLayout = new QVBoxLayout(this);
+        mainLayout = new QVBoxLayout;
     }
     else
     {
-        mainLayout = new QHBoxLayout(this);
+        QHBoxLayout* hLayout = new QHBoxLayout;
+        hLayout->addStretch();
+        mainLayout = hLayout;
     }
 
     mainLayout->addWidget(zv_startButton);

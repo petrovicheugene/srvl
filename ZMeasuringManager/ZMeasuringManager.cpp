@@ -7,6 +7,7 @@
 #include "ZControlAction.h"
 #include "ZDeviceSettings.h"
 #include "ZEnergyCalibrationDialog.h"
+#include "ZEnergyCalibrationDialogV2.h"
 #include "ZMeasuringController.h"
 #include "ZSaveSpectraToFilesDialog.h"
 #include "ZSetGainFactorToCalibrationDialog.h"
@@ -1587,43 +1588,69 @@ void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selected
         {
             continue;
         }
-
-
-
     }
-
-
-
 }
 //======================================================
 void ZMeasuringManager::zh_onEnergyCalibrationAction()
 {
-    // create energy calibration widget
-    ZEnergyCalibrationDialog * energyCalibrationDialog = new ZEnergyCalibrationDialog;
-    connect(this, &ZMeasuringManager::zg_currentMeasuringConditions,
-            energyCalibrationDialog, &ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum);
-    connect(energyCalibrationDialog, &ZEnergyCalibrationDialog::zg_inquiryCurrentVisibleSceneRect,
-            this, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect);
+    // get selected spectra
+    QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > selectedSpectrumMap;
+    emit zg_inquirySelectedSpectrumMap(selectedSpectrumMap);
 
-    // current Index
-    QModelIndex currentIndex;
-    emit zg_inquiryCurrentIndex(currentIndex);
+    if(selectedSpectrumMap.isEmpty())
+    {
+        QString msg = tr("Select spectra for wich energy calibration is calculated!");
+        QMessageBox::critical(0, tr("Error"), msg, QMessageBox::Ok);
+        return;
+    }
 
-    qDebug() << "CURRENT INDEX VALIDITY" << currentIndex.isValid();
+    // create spectrum map for energyCalibrationDialog
+    QMap<quint8, QList<ZSpeSpectrum*> > spectrumMap;
+    for(auto & conditions : selectedSpectrumMap.keys())
+    {
+        for(auto& spectrum : selectedSpectrumMap.value(conditions))
+        {
+            spectrumMap[conditions.first].append(spectrum);
+        }
+    }
 
-    // measuring conditions and spectrum for current index
-    quint8 gainFactor = 0;
-    int exposition = -1;
-    const ZSpeSpectrum* spectrum = 0;
-    emit zg_inquiryMeasuringConditionsAndSpectrumForIndex(currentIndex, gainFactor, exposition, spectrum);
+    ZEnergyCalibrationDialogV2 energyCalibrationDialogV2(spectrumMap);
+    if(energyCalibrationDialogV2.exec())
+    {
 
-    qDebug() << "CURRENT G F " << gainFactor << "CURRENT EXPO " << exposition << "CURRENT SPE " << spectrum;
+    }
+
+    return;
 
 
-    energyCalibrationDialog->zp_setMeasuringConditionsAndSpectrum(gainFactor, exposition, spectrum);
-    energyCalibrationDialog->show();
 
-    // create connections
+
+//    // create energy calibration widget
+//    ZEnergyCalibrationDialog * energyCalibrationDialog = new ZEnergyCalibrationDialog;
+//    connect(this, &ZMeasuringManager::zg_currentMeasuringConditions,
+//            energyCalibrationDialog, &ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum);
+//    connect(energyCalibrationDialog, &ZEnergyCalibrationDialog::zg_inquiryCurrentVisibleSceneRect,
+//            this, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect);
+
+//    // current Index
+//    QModelIndex currentIndex;
+//    emit zg_inquiryCurrentIndex(currentIndex);
+
+//    qDebug() << "CURRENT INDEX VALIDITY" << currentIndex.isValid();
+
+//    // measuring conditions and spectrum for current index
+//    quint8 gainFactor = 0;
+//    int exposition = -1;
+//    const ZSpeSpectrum* spectrum = 0;
+//    emit zg_inquiryMeasuringConditionsAndSpectrumForIndex(currentIndex, gainFactor, exposition, spectrum);
+
+//    qDebug() << "CURRENT G F " << gainFactor << "CURRENT EXPO " << exposition << "CURRENT SPE " << spectrum;
+
+
+//    energyCalibrationDialog->zp_setMeasuringConditionsAndSpectrum(gainFactor, exposition, spectrum);
+//    energyCalibrationDialog->show();
+
+//    // create connections
 
 
 }

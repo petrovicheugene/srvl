@@ -88,7 +88,9 @@ private:
     // VARS
     // settings names
     const QString zv_settingsGroupName = "addCalibrationDialog"; /*!< TODO: describe */
+    const QString zv_geometrySectionName = "geometry";
     const QString zv_fileLacationDirSectionName = "fileLocationDir"; /*!< TODO: describe */
+
 
     ZCalibration* zv_calibration; /*!< TODO: describe */
     QString zv_fileLocationDirString; /*!< TODO: describe */

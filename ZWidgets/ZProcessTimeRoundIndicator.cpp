@@ -12,6 +12,7 @@ ZProcessTimeRoundIndicator::ZProcessTimeRoundIndicator(QWidget *parent)
 {
     zh_createComponents();
     zp_reset();
+    zh_recalcTimeLabelMinWidth();
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_setPercentTextOnProgressBar(bool visible)
@@ -38,25 +39,25 @@ void ZProcessTimeRoundIndicator::zp_setRange(double min, double max)
     zv_progressBar->setRange(min,max);
     zv_progressBar->setValue(0);
 
-    zv_timeLeftLabel->setText(QString::number(max));
-    zv_processDurationLabel->setText(QString::number(max));
+    zv_timeLeftLabel->setText(zh_convertTimeToString(max));
+    zv_processDurationLabel->setText(zh_convertTimeToString(max));
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_setValue(double value)
 {
-//    if(value < zv_progressBar->minimum())
-//    {
-//        value = zv_progressBar->minimum();
-//    }
+    //    if(value < zv_progressBar->minimum())
+    //    {
+    //        value = zv_progressBar->minimum();
+    //    }
 
-//    if(value > value > zv_progressBar->maximum())
-//    {
-//        value = zv_progressBar->maximum();
-//    }
+    //    if(value > value > zv_progressBar->maximum())
+    //    {
+    //        value = zv_progressBar->maximum();
+    //    }
 
-     zv_progressBar->setValue(value);
-     double left = zv_progressBar->maximum() - value;
-     zv_timeLeftLabel->setText(QString::number(left));
+    zv_progressBar->setValue(value);
+    double left = zv_progressBar->maximum() - value;
+    zv_timeLeftLabel->setText(zh_convertTimeToString(left));
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)
@@ -97,6 +98,7 @@ void ZProcessTimeRoundIndicator::zp_applyProgressBarOptions(const ZProgressBarOp
     zv_separatorDashLabel->setFont(font);
     zv_separatorDashLabel->setPalette(palette);
 
+    zh_recalcTimeLabelMinWidth();
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zh_createComponents()
@@ -125,7 +127,7 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
     timeLabelLayout->addWidget(zv_processDurationLabel);
 
     zv_separatorDashLabel = new QLabel(this);
-    zv_separatorDashLabel->setText(" - ");
+    zv_separatorDashLabel->setText("-");
     timeLabelLayout->addWidget(zv_separatorDashLabel);
 
     //zv_timeLeftLabel = new QLabel(this);

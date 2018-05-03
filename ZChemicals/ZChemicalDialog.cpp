@@ -77,7 +77,6 @@ void ZChemicalDialog::zv_createComponents()
     zv_cancelButton = new QPushButton(this);
     zv_cancelButton->setText(tr("Cancel"));
     buttonBox->addButton(zv_cancelButton, QDialogButtonBox::ActionRole);
-
 }
 //===============================================================
 void ZChemicalDialog::zv_createConnections()
