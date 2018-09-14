@@ -20,6 +20,9 @@ public:
     int type() const override;
 
     void zp_updateItem();
+    static bool zp_setTopAndButtonMargins(double top, double bottom);
+
+    void zp_setXPosition(double xPos);
 
 protected:
 
@@ -28,9 +31,9 @@ protected:
 private:
 
     //VARS
-    double zv_topMargin;
-    double zv_bottomMargin;
-
+    static double zv_topMargin;
+    static double zv_bottomMargin;
+    double xPosition;
 
     ZEnergyCalibrationLine* zv_energyCalibrationLine;
 

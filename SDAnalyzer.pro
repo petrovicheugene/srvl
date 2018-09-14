@@ -73,7 +73,8 @@ INCLUDEPATH += ZDialogs \
     ZMeasuringManager/ZSpectrumTableDelegate \
     ZEnergyCalibrator \
     ZPeriodicTableDialog \
-    ZPeriodicTable
+    ZPeriodicTable \
+    ZEnergyLineManager
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -205,7 +206,9 @@ SOURCES += main.cpp\
     ZPeriodicTable/ZPeriodicTableWidget.cpp \
     ZPeriodicTable/ZPropertyEditDialog.cpp \
     ZPeriodicTable/ZPropertySectionEditDialog.cpp \
-    ZPlotter/ZEnergyLineGraphicsItem.cpp
+    ZPlotter/ZEnergyLineGraphicsItem.cpp \
+    ZEnergyLineManager/ZEnergyLineManager.cpp \
+    ZEnergyLineManager/ZEnergyLineTableWidget.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -339,7 +342,9 @@ HEADERS  += MainWindow.h \
     ZPeriodicTable/ZPeriodicTableWidget.h \
     ZPeriodicTable/ZPropertyEditDialog.h \
     ZPeriodicTable/ZPropertySectionEditDialog.h \
-    ZPlotter/ZEnergyLineGraphicsItem.h
+    ZPlotter/ZEnergyLineGraphicsItem.h \
+    ZEnergyLineManager/ZEnergyLineManager.h \
+    ZEnergyLineManager/ZEnergyLineTableWidget.h
 
 RESOURCES += \
     resources.qrc \

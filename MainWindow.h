@@ -18,6 +18,7 @@ class QSqlRelationalTableModel;
 
 // models
 class ZMeasuringManager;
+class ZEnergyLineManager;
 class ZMeasuringResultTableModel;
 //class ZSeriesTaskTreeModel;
 //class ZCurrentMeasuringManager;
@@ -27,6 +28,7 @@ class ZMeasuringResultTableModel;
 
 // widgets
 class ZMeasuringCommonWidget;
+class ZEnergyLineTableWidget;
 class ZDashboard;
 class ZPlotter;
 class ZWidgetWithSidebar;
@@ -97,6 +99,7 @@ private:
     // docks
     QList<QDockWidget*> zv_dockList; /*!< TODO: describe */
     QDockWidget* zv_plotterDock;
+    QDockWidget* zv_energyLineTableDock;
 
     // actions
     QAction* zv_settingsAction;       /*!< TODO: describe */
@@ -114,9 +117,10 @@ private:
     bool zv_showMeasuringParameters;
     // views
     ZMeasuringCommonWidget* zv_measuringCommonWidget;
-
+    ZEnergyLineTableWidget* zv_energyLineTableWidget;
     // models
     ZMeasuringManager* zv_measuringManager;
+    ZEnergyLineManager* zv_energyLineManager;
 
     ZMeasuringResultTableModel* zv_measuringResultTableModel;
     //    ZSeriesTaskTreeModel* zv_currentMeasuringTaskTreeModel;

@@ -2,6 +2,9 @@
 #include "ZPlotterDataManager.h"
 #include "ZGeneral.h"
 #include "ZDefaultRectGraphicsItem.h"
+
+#include "ZEnergyLineGraphicsItem.h"
+
 #include "ZPlotter.h"
 #include "ZSpeSpectrum.h"
 #include "ZSpectrumGraphicsItem.h"
@@ -11,10 +14,11 @@
 ZPlotterDataManager::ZPlotterDataManager(QObject *parent)
     : QObject(parent)
 {
-    zv_measuringManager = 0;
-    zv_plotter = 0;
+    zv_measuringManager = nullptr;
+    zv_energyLineManager = nullptr;
+    zv_plotter = nullptr;
     zv_boundingRectTopFactor = 1.05;
-    zv_defaultItem = 0;
+    zv_defaultItem = nullptr;
     zv_verticalRuleLabel = tr("Intensity");
     zv_horizontalRuleLabel = tr("Channels");
     zv_horizontalRecalcedRuleLabel = tr("Energy");
@@ -34,6 +38,15 @@ void ZPlotterDataManager::zh_createConnections()
 {
     connect(zv_switchRuleMetrixAction, &QAction::toggled,
             this, &ZPlotterDataManager::zh_switchRuleMetrix);
+}
+//======================================================
+void ZPlotterDataManager::zp_connectToEnergyLineManager(ZEnergyLineManager* energyLineManager)
+{
+    zv_energyLineManager = energyLineManager;
+
+    connect(zv_energyLineManager, &ZEnergyLineManager::zg_lineOperation,
+            this, &ZPlotterDataManager::zh_onEnergyLineManagerOperation);
+
 }
 //======================================================
 void ZPlotterDataManager::zp_connectToMeasuringManager(ZMeasuringManager *measuringManager)
@@ -80,6 +93,11 @@ void ZPlotterDataManager::zp_connectToPlotter(ZPlotter *plotter)
         zv_defaultItem = new ZDefaultRectGraphicsItem(zv_defaultSceneRect, false, false, false);
         zv_plotter->zp_addItem(zv_defaultItem);
     }
+
+}
+//======================================================
+void ZPlotterDataManager::zh_onEnergyLineManagerOperation()
+{
 
 }
 //======================================================
@@ -168,11 +186,6 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
                                                              distortionFactor,
                                                              distortionCorrectionFactor);
                     zv_plotter->zp_addItem(spectrumItem);
-                }
-
-                if(spectrumItem != nullptr)
-                {
-                    qDebug() << "SAMPLE INSERTED" << first << last << spectrumItem->zp_spectrumId();
                 }
             }
             else if(type == ZMeasuringManager::SOT_SAMPLE_REMOVED)

@@ -15,13 +15,13 @@ int ZEnergyCalibrationLine::zp_channelNumber() const
     return zv_channelNumber;
 }
 //======================================================
-void ZEnergyCalibrationLine::zp_setChannelNumber(int channelNamber)
+void ZEnergyCalibrationLine::zp_setChannelNumber(int channelNumber)
 {
-    if(zv_channelNumber == channelNamber)
+    if(zv_channelNumber == channelNumber)
     {
         return;
     }
-    zv_channelNumber = channelNamber;
+    zv_channelNumber = channelNumber;
     emit zg_channelNumber(zv_channelNumber);
 }
 //======================================================

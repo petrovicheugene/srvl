@@ -9,6 +9,7 @@ const int WindowItemType = QGraphicsItem::UserType + 3;
 const int ChartPointItemType = QGraphicsItem::UserType + 4;
 
 const int VerticalLineItemType = QGraphicsItem::UserType + 5;
+const int EnergyLineItemType = QGraphicsItem::UserType + 6;
 
 #endif // ZGRAPHICSITEMUSERTYPES
 

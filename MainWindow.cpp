@@ -16,11 +16,13 @@
 #include "ZPlotter.h"
 #include "ZMeasuringResultTableWidget.h"
 #include "ZMeasuringSeriesTaskTreeWidget.h"
+#include "ZEnergyLineTableWidget.h"
 
 // models
 //#include "ZMeasuringResultTableModel.h"
 //#include "ZSeriesTaskTreeModel.h"
 #include "ZMeasuringManager.h"
+#include "ZEnergyLineManager.h"
 #include "ZMeasuringResultTableModel.h"
 
 
@@ -74,8 +76,9 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
 
     //    zv_currentMeasuringTaskTreeModel = 0;
     // zv_sqlSeriesModel = 0;
-    zv_measuringManager = 0;
-    zv_measuringResultTableModel = 0;
+    zv_measuringManager = nullptr;
+    zv_energyLineManager = nullptr;
+    zv_measuringResultTableModel = nullptr;
 
     zv_plotter = 0;
 
@@ -156,6 +159,9 @@ void MainWindow::zh_createComponents()
     zv_measuringCommonWidget = new ZMeasuringCommonWidget(this);
     setCentralWidget(zv_measuringCommonWidget);
 
+
+
+
     // Plotter
     // create plotter dock
     zv_plotterDock = new QDockWidget(this);
@@ -173,8 +179,26 @@ void MainWindow::zh_createComponents()
     // setting to plotter dock
     zv_plotterDock->setWidget(frame);
 
+
+    // Chemical element energy line widget
+    // create dock
+    zv_energyLineTableDock = new QDockWidget(this);
+    zv_energyLineTableDock->setObjectName("ENERGY_LINE_TABLE_DOCK");
+    zv_energyLineTableDock->setWindowTitle(tr("Energy lines"));
+    zv_dockList << zv_energyLineTableDock;
+    addDockWidget(Qt::BottomDockWidgetArea, zv_energyLineTableDock);
+
+    // create widget
+    zv_energyLineTableWidget = new ZEnergyLineTableWidget(this);
+    frame = zh_setWidgetToFrame(zv_energyLineTableWidget);
+
+    // setting to widget dock
+    zv_energyLineTableDock->setWidget(frame);
+
+
     // DATA MODELS
     zv_measuringManager = new ZMeasuringManager(this);
+    zv_energyLineManager = new ZEnergyLineManager(this);
 
     // measuring models
     zv_measuringResultTableModel = new ZMeasuringResultTableModel(this);
@@ -257,6 +281,7 @@ void MainWindow::zh_createConnections()
             zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_onCurrentIndexChanged);
 
     zv_plotterDataManager->zp_connectToMeasuringManager(zv_measuringManager);
+    zv_plotterDataManager->zp_connectToEnergyLineManager(zv_energyLineManager);
     zv_plotterDataManager->zp_connectToPlotter(zv_plotter);
 
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect,

@@ -4,6 +4,7 @@
 //======================================================
 #include <QObject>
 #include "ZMeasuringManager.h"
+#include "ZEnergyLineManager.h"
 
 //======================================================
 class QAction;
@@ -16,6 +17,7 @@ class ZPlotterDataManager : public QObject
 public:
     explicit ZPlotterDataManager(QObject *parent = 0);
 
+    void zp_connectToEnergyLineManager(ZEnergyLineManager* energyLineManager);
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
     void zp_connectToPlotter(ZPlotter* plotter);
 
@@ -31,6 +33,7 @@ private slots:
 
     void zh_onMeasuringManagerSampleOperation(ZMeasuringManager::SampleOperationType type,
                                               int first, int last);
+    void zh_onEnergyLineManagerOperation();
     void zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors);
     void zh_switchRuleMetrix(bool toggled);
 
@@ -42,6 +45,8 @@ private:
     QAction* zv_switchRuleMetrixAction;
 
     ZMeasuringManager* zv_measuringManager;
+    ZEnergyLineManager* zv_energyLineManager;
+
     ZPlotter* zv_plotter;
     ZDefaultRectGraphicsItem* zv_defaultItem;
     QString zv_verticalRuleLabel;
