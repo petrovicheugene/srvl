@@ -38,6 +38,9 @@ signals:
                                        quint32 deadTimeMs,
                                        quint32 spectrumIntensityIntegral);
 
+    void zg_currentSpectrumId(qint64 currentMeasuredSpectrumId) const;
+    void zg_currentEnergyCalibration(QList<double> energyCalibrationFactorList) const;
+
 public slots:
 
 

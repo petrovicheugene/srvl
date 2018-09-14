@@ -117,6 +117,11 @@ public:
                                const ZSpeSpectrum* spectrum,
                                QList<ZChemicalConcentration> &concentrationList) const;
 
+    qint64 zp_spectrumIdForConditions(quint8 gainFactor,
+                             int exposition) const;
+
+    QList<double> zp_spectrumEnergyCalibrationForConditions(quint8 gainFactor,
+    int exposition) const;
 
 signals:
 
@@ -135,7 +140,7 @@ private:
 
     // VARS
     ZMeasuringController* zv_measuringController;
-    int zv_id;
+    int zv_sampleTaskId;
     QString zv_name;
     QList<QObject*> zv_clientList;
     QList<ZMeasuringTask*> zv_measuringTaskList;
@@ -150,7 +155,7 @@ class ZMeasuringTask : public QObject
 {
     Q_OBJECT
 public:
-    explicit ZMeasuringTask(int id, int gainFactor, int exposition, QObject* parent);
+    explicit ZMeasuringTask(int id, QObject* parent);
 
     QStringList zp_chemicalList() const;
     QString zp_measuringConditionsString() const;
@@ -171,7 +176,7 @@ private:
 
     // FUNCS
 
-    void zh_initCalculationTasks();
+    void zh_initCalculationTasks(int measurementConditionsHasSampleTaskId);
 
 };
 //=================================================

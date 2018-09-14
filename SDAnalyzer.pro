@@ -15,7 +15,7 @@ RC_ICONS = "ZImages\gnome4.ico"
 
 VER_MAJ=0
 VER_MIN=0
-VER_PAT=0
+VER_PAT=1
 
 VER_RELEASE=b
 
@@ -71,7 +71,9 @@ INCLUDEPATH += ZDialogs \
     ZModelViewWidgets/ZNumericDelegate \
     ZSeriesTasks \
     ZMeasuringManager/ZSpectrumTableDelegate \
-    ZEnergyCalibrator
+    ZEnergyCalibrator \
+    ZPeriodicTableDialog \
+    ZPeriodicTable
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -98,7 +100,6 @@ SOURCES += main.cpp\
     ZWidgets/QRoundProgressBar.cpp \
     ZDialogs/ZSettingsDialog.cpp \
     ZWidgets/ZDashboard.cpp \
-    ZWidgets/ZColorLabel.cpp \
     ZComponents/ZAbstractTerm.cpp \
     ZComponents/ZDashboardSettings.cpp \
     ZComponents/ZAppSettings.cpp \
@@ -185,7 +186,25 @@ SOURCES += main.cpp\
     ZEnergyCalibrator/ZPeakWindowTableModel.cpp \
     ZEnergyCalibrator/ZPeakWindow.cpp \
     ZDialogs/ZSaveSpectraToFilesDialog.cpp \
-    ZEnergyCalibrator/ZEnergyCalibrationDialogV2.cpp
+    ZEnergyCalibrator/ZEnergyCalibrationDialogV2.cpp \
+    ZEnergyCalibrator/ZEnergyCalibrationSpectrumTableModel.cpp \
+    ZComponents/ZLESGaussSolver.cpp \
+    ZPlotter/ZVerticalLineGraphicsItem.cpp \
+    ZComponents/ZEnergyCalibrationLine.cpp \
+    ZWidgets/ZColorButton.cpp \
+    ZPeriodicTableDialog/ZEnergyLineSelectionDialog.cpp \
+    ZPeriodicTable/ZAbstractChemicalElementPropertyRepository.cpp \
+    ZPeriodicTable/ZBaseDialog.cpp \
+    ZPeriodicTable/ZCaptionFormatter.cpp \
+    ZPeriodicTable/ZChemicalElementButton.cpp \
+    ZPeriodicTable/ZChemicalElementPropertyIOManager.cpp \
+    ZPeriodicTable/ZChemicalElementPropertyItem.cpp \
+    ZPeriodicTable/ZChemicalElementPropertyTreeModel.cpp \
+    ZPeriodicTable/ZChemicalElementProprtyEditor.cpp \
+    ZPeriodicTable/ZChemicalPropertyProxyTableModel.cpp \
+    ZPeriodicTable/ZPeriodicTableWidget.cpp \
+    ZPeriodicTable/ZPropertyEditDialog.cpp \
+    ZPeriodicTable/ZPropertySectionEditDialog.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -213,7 +232,6 @@ HEADERS  += MainWindow.h \
     ZWidgets/QRoundProgressBar.h \
     ZDialogs/ZSettingsDialog.h \
     ZWidgets/ZDashboard.h \
-    ZWidgets/ZColorLabel.h \
     ZComponents/ZDashboardSettings.h \
     ZComponents/ZAppSettings.h \
     ZWidgets/ZAbstractProcessTimeIndicator.h \
@@ -301,9 +319,31 @@ HEADERS  += MainWindow.h \
     ZEnergyCalibrator/ZPeakWindowTableModel.h \
     ZEnergyCalibrator/ZPeakWindow.h \
     ZDialogs/ZSaveSpectraToFilesDialog.h \
-    ZEnergyCalibrator/ZEnergyCalibrationDialogV2.h
+    ZEnergyCalibrator/ZEnergyCalibrationDialogV2.h \
+    ZEnergyCalibrator/ZEnergyCalibrationSpectrumTableModel.h \
+    ZComponents/ZLESGaussSolver.h \
+    ZPlotter/ZVerticalLineGraphicsItem.h \
+    ZComponents/ZEnergyCalibrationLine.h \
+    ZWidgets/ZColorButton.h \
+    ZPeriodicTableDialog/ZEnergyLineSelectionDialog.h \
+    ZPeriodicTable/ZAbstractChemicalElementPropertyRepository.h \
+    ZPeriodicTable/ZBaseDialog.h \
+    ZPeriodicTable/ZCaptionFormatter.h \
+    ZPeriodicTable/ZChemicalElementButton.h \
+    ZPeriodicTable/ZChemicalElementPropertyIOManager.h \
+    ZPeriodicTable/ZChemicalElementPropertyItem.h \
+    ZPeriodicTable/ZChemicalElementPropertyTreeModel.h \
+    ZPeriodicTable/ZChemicalElementProprtyEditor.h \
+    ZPeriodicTable/ZChemicalPropertyProxyTableModel.h \
+    ZPeriodicTable/ZPeriodicTableWidget.h \
+    ZPeriodicTable/ZPropertyEditDialog.h \
+    ZPeriodicTable/ZPropertySectionEditDialog.h
 
 RESOURCES += \
-    resources.qrc
+    resources.qrc \
+    ZPeriodicTable/ChemicalElementModelResources.qrc
+
+DISTFILES += \
+    ZPeriodicTable/chemicalElementBasicProperties.csv
 
 

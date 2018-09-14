@@ -50,8 +50,11 @@ ZSpectrumGraphicsItem::ZSpectrumGraphicsItem(const ZAbstractSpectrum *spectrum,
     setFlags(flags);
     setZValue(gl_defaultSpectrumZValue);
 
+
+    //qDebug() << "SPE VIS" << spectrum->zp_isSpectrumVisible();
+    //setVisible(spectrum->zp_isSpectrumVisible());
     zp_updateSpectrumData(spectrum);
-    zp_updateCurrentSpectrum(true);
+    zp_updateCurrentSpectrum(spectrum->zp_isSpectrumVisible());
 }
 //======================================================
 QRectF ZSpectrumGraphicsItem::boundingRect() const

@@ -33,6 +33,7 @@ public:
     QString zp_description() const;
     int zp_exposition() const;
     int zp_gainFactor() const;
+    int zp_measurementConditionsId() const;
     void zp_calibrationIdList(QList<int> &calibrationIdList) const;
     void zp_concentrationLimitsList(QList<QPair<double, double> >& limitsList) const;
 
@@ -74,6 +75,7 @@ private:
     ZCalibrationTableWidget* zv_calibrationTableWidget;
     int zv_chemicalTaskId;
     int zv_chemicalId;
+    int zv_measurementConditionsId;
     int zv_gainFactor;
     int zv_exposition;
 
@@ -88,7 +90,8 @@ private:
     void zh_createConnections();
     void zh_restoreSettings();
     void zh_saveSettings() const;
-    void zh_setMeasuringConditions(int gainFactor, int exposition);
+    void zh_setMeasuringConditions(int measurementConditionsId,
+                                   int gainFactor, int exposition);
 
 };
 //=========================================================================

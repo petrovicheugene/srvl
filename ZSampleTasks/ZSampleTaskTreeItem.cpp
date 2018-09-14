@@ -162,6 +162,7 @@ ZSampleTaskTreeMeasuringConditionsItem::ZSampleTaskTreeMeasuringConditionsItem(Z
                                                                                ZSampleTaskTreeBaseItem* parent)
     : ZSampleTaskTreeBaseItem(ZSampleTaskTreeItemOptions::IT_MEASURING_CONDITIONS, parent)
 {
+    zv_id = options->zp_id();
     zv_gainFactor = options->zp_gainFactor();
     zv_exposition = options->zp_exposition();
     zh_createItemName();
@@ -196,6 +197,11 @@ ZSampleTaskTreeBaseItem* ZSampleTaskTreeMeasuringConditionsItem::zp_createChild(
     }
 
     return item;
+}
+//=================================================
+int ZSampleTaskTreeMeasuringConditionsItem::zp_id() const
+{
+    return zv_id;
 }
 //=================================================
 int ZSampleTaskTreeMeasuringConditionsItem::zp_gainFactor() const

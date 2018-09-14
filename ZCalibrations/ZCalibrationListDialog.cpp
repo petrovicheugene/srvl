@@ -389,26 +389,79 @@ void ZCalibrationListDialog::zh_setFilterToCalibrationTableSQLModel(const QModel
 void ZCalibrationListDialog::zh_repopulateMeasuringConditionsModel()
 {
     // store current measuring conditions
+    int currentMeasurementConditionsId = -1;
     int currentGainFactor = -1;
     int currentExposition = -1;
-    bool currentMeasuringConditionsisValid = zp_currentMeasuringConditions(currentGainFactor, currentExposition);
+    bool currentMeasuringConditionsisValid = zp_currentMeasuringConditions(currentMeasurementConditionsId,
+                                                                           currentGainFactor, currentExposition);
 
     zv_measuringConditionsModel->removeRows(0, zv_measuringConditionsModel->rowCount());
 
-    QList<QPair<int, int> > measuringConditionsList;
+    QList<int>  measuringConditionsList;
     zh_getMeasuringConditionsForCurrentChemical(measuringConditionsList);
     QStandardItem* item;
+    QSqlQuery query;
+    QString queryString;
     for(int row = 0; row < measuringConditionsList.count(); row++)
     {
-        // gain factor
-        item = new QStandardItem(QString::number(measuringConditionsList.at(row).first));
+
+        query.clear();
+        queryString = QString("SELECT gain_factor, exposition FROM measuring_conditions "
+                              "WHERE id=%1").arg(QString::number(measuringConditionsList.at(row)));
+
+        if(!query.prepare(queryString))
+        {
+            continue;
+        }
+
+        if(!query.exec())
+        {
+            continue;
+        }
+
+        if(!query.next())
+        {
+            continue;
+        }
+
+        bool ok;
+        QVariant vData = query.value(0);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        int gainFactor = vData.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        vData = query.value(1);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        int exposition = vData.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        // measuring conditions id
+        item = new QStandardItem(QString::number(measuringConditionsList.at(row)));
         item->setEditable(false);
         zv_measuringConditionsModel->setItem(row , 0, item);
 
-        // exposition
-        item = new QStandardItem(QString::number(measuringConditionsList.at(row).second));
+        item = new QStandardItem(QString::number(gainFactor));
         item->setEditable(false);
         zv_measuringConditionsModel->setItem(row , 1, item);
+
+        // exposition
+        item = new QStandardItem(QString::number(exposition));
+        item->setEditable(false);
+        zv_measuringConditionsModel->setItem(row, 2, item);
     }
 
     if(zv_measuringConditionsModel->rowCount() > 0)
@@ -432,11 +485,11 @@ void ZCalibrationListDialog::zh_onCurrentMeasuringConditionsChange(const QModelI
     //zv_calibrationProxyModel->invalidate();
     int row = current.row();
 
-    // gainFactor
+    // id
     QModelIndex index = zv_measuringConditionsModel->index(row, 0);
     if(!index.isValid())
     {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1);
         zv_calibrationTableWidget->zp_tableView()->reset();
         return;
     }
@@ -444,61 +497,61 @@ void ZCalibrationListDialog::zh_onCurrentMeasuringConditionsChange(const QModelI
     QVariant vData = index.data(Qt::DisplayRole);
     if(!vData.isValid() || !vData.canConvert<QString>())
     {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1);
         zv_calibrationTableWidget->zp_tableView()->reset();
         return;
     }
 
     QString sData = vData.toString();
     bool ok;
-    int gainFactor = sData.toInt(&ok);
+    int id = sData.toInt(&ok);
     if(!ok)
     {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1);
         zv_calibrationTableWidget->zp_tableView()->reset();
         return;
     }
 
-    // exposition
-    index = zv_measuringConditionsModel->index(row, 1);
-    if(!index.isValid())
-    {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-        zv_calibrationTableWidget->zp_tableView()->reset();
-        return;
-    }
+//    // exposition
+//    index = zv_measuringConditionsModel->index(row, 2);
+//    if(!index.isValid())
+//    {
+//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+//        zv_calibrationTableWidget->zp_tableView()->reset();
+//        return;
+//    }
 
-    vData = index.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<QString>())
-    {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-        zv_calibrationTableWidget->zp_tableView()->reset();
-        return;
-    }
+//    vData = index.data(Qt::DisplayRole);
+//    if(!vData.isValid() || !vData.canConvert<QString>())
+//    {
+//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+//        zv_calibrationTableWidget->zp_tableView()->reset();
+//        return;
+//    }
 
-    sData = vData.toString();
-    int exposition = sData.toInt(&ok);
-    if(!ok)
-    {
-        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-        zv_calibrationTableWidget->zp_tableView()->reset();
-        return;
-    }
+//    sData = vData.toString();
+//    int exposition = sData.toInt(&ok);
+//    if(!ok)
+//    {
+//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
+//        zv_calibrationTableWidget->zp_tableView()->reset();
+//        return;
+//    }
 
-    zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(gainFactor, exposition);
+    zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(id);
     // zv_calibrationTableWidget->zp_tableView()->reset();
     QHeaderView* horizontalHeader = zv_calibrationTableWidget->zp_tableView()->horizontalHeader();
     horizontalHeader->resizeSections(QHeaderView::ResizeToContents);
 
 }
 //===============================================================
-void ZCalibrationListDialog::zh_getMeasuringConditionsForCurrentChemical(QList<QPair<int, int> >& measuringConditionsList) const
+void ZCalibrationListDialog::zh_getMeasuringConditionsForCurrentChemical(QList<int>& measuringConditionsList) const
 {
     measuringConditionsList.clear();
     QModelIndex index;
     QVariant vData;
     bool ok;
-    QPair<int, int> pair;
+    int measurementConditionsId;
     for(int row = 0; row < zv_calibrationTableSQLModel->rowCount(); row++)
     {
         // gain factor
@@ -512,35 +565,20 @@ void ZCalibrationListDialog::zh_getMeasuringConditionsForCurrentChemical(QList<Q
         {
             continue;
         }
-        pair.first = vData.toInt(&ok);
+
+        measurementConditionsId = vData.toInt(&ok);
+
         if(!ok)
         {
             continue;
         }
 
-        // exposition
-        index = zv_calibrationTableSQLModel->index(row, 6);
-        if(!index.isValid())
-        {
-            continue;
-        }
-        vData = index.data(Qt::DisplayRole);
-        if(!vData.isValid() || !vData.canConvert<int>())
-        {
-            continue;
-        }
-        pair.second = vData.toInt(&ok);
-        if(!ok)
+        if(measuringConditionsList.contains(measurementConditionsId))
         {
             continue;
         }
 
-        if(measuringConditionsList.contains(pair))
-        {
-            continue;
-        }
-
-        measuringConditionsList.append(pair);
+        measuringConditionsList.append(measurementConditionsId);
     }
 }
 //===============================================================
@@ -666,9 +704,10 @@ bool ZCalibrationListDialog::zh_checkCalibrationConformity(const ZCalibration& c
         }
 
         // get measuring conditions
+        int measurementConditionsId;
         int gainFactor;
         int exposition;
-        if(!zp_currentMeasuringConditions(gainFactor, exposition))
+        if(!zp_currentMeasuringConditions(measurementConditionsId, gainFactor, exposition))
         {
             return true;
         }
@@ -759,9 +798,10 @@ bool ZCalibrationListDialog::zh_checkCalibrationConformity(const ZCalibration& c
         }
 
         // get measuring conditions
+        int measurementConditionsId;
         int gainFactor;
         int exposition;
-        if(!zp_currentMeasuringConditions(gainFactor, exposition))
+        if(!zp_currentMeasuringConditions(measurementConditionsId, gainFactor, exposition))
         {
             return false;
         }
@@ -808,7 +848,8 @@ bool ZCalibrationListDialog::zp_currentChemical(int& id, QString& chemical) cons
     return true;
 }
 //===============================================================
-bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& gainFactor, int& expositions) const
+bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& measurementConditionsId,
+                                                           int& gainFactor, int& exposition) const
 {
     // checks
     QModelIndex index = zv_measuringConditionsTableWidget->zp_tableView()->currentIndex();
@@ -832,13 +873,13 @@ bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& gainFactor, int&
     }
 
     bool ok;
-    gainFactor = vData.toInt(&ok);
+    measurementConditionsId = vData.toInt(&ok);
     if(!ok)
     {
         return false;
     }
 
-    // exposition
+    // gainFactor
     index = zv_measuringConditionsSQLTableModel->index(row, 1);
     if(!index.isValid())
     {
@@ -851,7 +892,26 @@ bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& gainFactor, int&
         return false;
     }
 
-    expositions = vData.toInt(&ok);
+    gainFactor = vData.toInt(&ok);
+    if(!ok)
+    {
+        return false;
+    }
+
+    // exposition
+    index = zv_measuringConditionsSQLTableModel->index(row, 2);
+    if(!index.isValid())
+    {
+        return false;
+    }
+
+    vData = index.data(Qt::DisplayRole);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+
+    exposition = vData.toInt(&ok);
     if(!ok)
     {
         return false;
@@ -877,7 +937,8 @@ bool ZCalibrationListDialog::zh_writeCalibrationToDatabase(const ZCalibration& c
     }
 
     // write measuring conditions to database if they don't exist
-    if(!zh_writeMeasuringConditionsToDatabase(calibration.zp_gainFactor(), calibration.zp_exposition(), msg))
+    int measurementConditionsId;
+    if(!zh_writeMeasuringConditionsToDatabase(calibration.zp_gainFactor(), calibration.zp_exposition(), measurementConditionsId, msg))
     {
         return false;
     }
@@ -889,8 +950,7 @@ bool ZCalibrationListDialog::zh_writeCalibrationToDatabase(const ZCalibration& c
     record.append(QSqlField("description", QVariant::String));
     record.append(QSqlField("calibration_data", QVariant::ByteArray));
     record.append(QSqlField("chemicals_id", QVariant::Int));
-    record.append(QSqlField("measuring_conditions_gain_factor", QVariant::Int));
-    record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
+    record.append(QSqlField("measuring_conditions_id", QVariant::Int));
     record.append(QSqlField("measurement_units_id", QVariant::Int));
 
     record.setValue(0, QVariant(calibrationId)); // id
@@ -898,9 +958,11 @@ bool ZCalibrationListDialog::zh_writeCalibrationToDatabase(const ZCalibration& c
     record.setValue(2, QVariant()); // description
     record.setValue(3, QVariant(calibrationXMLByteArray)); // byte array
     record.setValue(4, QVariant(chemicalId)); // chemical id
-    record.setValue(5, QVariant(calibration.zp_gainFactor())); // gain factor
-    record.setValue(6, QVariant(calibration.zp_exposition())); // exposition
-    record.setValue(7, QVariant()); // measurement unit
+    record.setValue(5, QVariant(measurementConditionsId)); // measurementConditionsId id
+    record.setValue(6, QVariant()); // measurement unit
+
+//    record.setValue(5, QVariant(calibration.zp_gainFactor())); // gain factor
+//    record.setValue(6, QVariant(calibration.zp_exposition())); // exposition
 
     if(!zv_calibrationTableSQLModel->insertRecord(-1, record))
     {
@@ -956,20 +1018,34 @@ bool ZCalibrationListDialog::zh_writeChemicalToDatabase(const QString& chemical,
     return true;
 }
 //===============================================================
-bool ZCalibrationListDialog::zh_writeMeasuringConditionsToDatabase(int gainFactor, int exposition, QString& msg)
+bool ZCalibrationListDialog::zh_writeMeasuringConditionsToDatabase(int gainFactor, int exposition, int &measurementConditionId, QString& msg)
 {
     int row;
-    if(zh_checkMeasuringConditionsExistance(gainFactor, exposition, row))
+    if(zh_checkMeasuringConditionsExistance(gainFactor, exposition, measurementConditionId, row))
     {
         return true;
     }
 
+    // write gain factor
+    if(!zh_checkGainFactorExistance(gainFactor, msg))
+    {
+        return false;
+    }
+
+    // define new measurement id
+    if(!zh_findNewMeasurementConditionsId(measurementConditionId, msg))
+    {
+        return false;
+    }
+
     QSqlRecord record;
+    record.append(QSqlField("id", QVariant::Int));
     record.append(QSqlField("gain_factor", QVariant::Int));
     record.append(QSqlField("exposition", QVariant::Int));
 
-    record.setValue(0, QVariant(gainFactor));
-    record.setValue(1, QVariant(exposition));
+    record.setValue(0, QVariant(measurementConditionId));
+    record.setValue(1, QVariant(gainFactor));
+    record.setValue(2, QVariant(exposition));
 
     if(!zv_measuringConditionsSQLTableModel->insertRecord(-1, record))
     {
@@ -1019,6 +1095,39 @@ int ZCalibrationListDialog::zh_findNewChemicalId() const
         }
     }
     return ++newChemicalId;
+}
+//===============================================================
+bool ZCalibrationListDialog::zh_findNewMeasurementConditionsId(int& newId, QString& msg) const
+{
+    QSqlQuery query;
+    QString queryString = "SELECT MAX(id) FROM measuring_conditions";
+    if(!query.prepare(queryString))
+    {
+        msg = query.lastError().text();
+        return false;
+    }
+    if(!query.exec())
+    {
+        msg = query.lastError().text();
+        return false;
+    }
+
+    if(!query.next())
+    {
+        newId = 1;
+        return true;
+    }
+
+    QVariant vData = query.value(0);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        msg = tr("Cannot convert measurement conditions id from QVariant to Int.");
+        return false;
+    }
+
+    newId = vData.toInt() + 1;
+
+    return true;
 }
 //===============================================================
 int ZCalibrationListDialog::zh_findNewCalibrationlId(QString& msg) const
@@ -1110,7 +1219,7 @@ bool ZCalibrationListDialog::zh_checkChemicalExistance(const QString& chemical, 
     return false;
 }
 //===============================================================
-bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int& modelRow) const
+bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int &modelRow) const
 {
     QModelIndex index;
     QVariant vData;
@@ -1120,7 +1229,7 @@ bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor
     for(int row = 0; row < zv_measuringConditionsSQLTableModel->rowCount(); row++)
     {
         // gain factor
-        index = zv_measuringConditionsSQLTableModel->index(row, 0);
+        index = zv_measuringConditionsSQLTableModel->index(row, 1);
         if(!index.isValid())
         {
             continue;;
@@ -1137,7 +1246,7 @@ bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor
         }
 
         // exposition
-        index = zv_measuringConditionsSQLTableModel->index(row, 1);
+        index = zv_measuringConditionsSQLTableModel->index(row, 2);
         if(!index.isValid())
         {
             continue;;
@@ -1158,10 +1267,85 @@ bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor
             modelRow = row;
             return true;
         }
-
     }
 
     return false;
+}
+//===============================================================
+bool ZCalibrationListDialog::zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int& measurementConditionsId,  int& modelRow) const
+{
+    if(zh_checkMeasuringConditionsExistance(gainFactor, exposition, modelRow) )
+    {
+        // measurementConditionsId
+        QModelIndex index = zv_measuringConditionsSQLTableModel->index(modelRow, 0);
+        if(!index.isValid())
+        {
+            return false;
+        }
+        QVariant vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            return false;
+        }
+
+        bool ok;
+        measurementConditionsId = vData.toInt(&ok);
+        if(!ok)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//===============================================================
+bool ZCalibrationListDialog::zh_checkGainFactorExistance(int gainFactor, QString& msg) const
+{
+    QSqlQuery query;
+    QString queryString = QString("SELECT * FROM gain_factors "
+                          "WHERE gain_factor=%1").arg(QString::number(gainFactor));
+
+    if(!query.prepare(queryString))
+    {
+        msg = query.lastError().text();
+        return -1;
+    }
+
+    if(!query.exec())
+    {
+        msg = query.lastError().text();
+        return -1;
+    }
+
+    if(query.next())
+    {
+        return true;
+    }
+
+    query.clear();
+    queryString = QString("INSERT INTO gain_factors (gain_factor, energyFactorK0, energyFactorK1, energyFactorK2) "
+                             "VALUES (:gain_factor, :energyFactorK0, :energyFactorK1, :energyFactorK2)");
+
+    if(!query.prepare(queryString))
+    {
+        msg = query.lastError().text();
+        return -1;
+    }
+
+    query.bindValue(":gain_factor", gainFactor);
+    query.bindValue(":energyFactorK0", 0.0);
+    query.bindValue(":energyFactorK1", 0.0);
+    query.bindValue(":energyFactorK2", 0.0);
+
+    if(!query.exec())
+    {
+        msg = query.lastError().text();
+        return false;
+    }
+
+    return true;
 }
 //===============================================================
 void ZCalibrationListDialog::zh_removeSelectedCalibration()

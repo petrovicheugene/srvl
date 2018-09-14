@@ -20,8 +20,10 @@
 #include <QSettings>
 #include <QSpinBox>
 #include <QSqlTableModel>
+#include <QSqlRelationalTableModel>
 #include <QSqlError>
 #include <QSqlField>
+#include <QSqlQuery>
 #include <QSqlRecord>
 
 //===========================================================
@@ -42,14 +44,19 @@ ZMeasuringConditionsListDialog::~ZMeasuringConditionsListDialog()
     zh_saveSettings();
 }
 //===========================================================
-int ZMeasuringConditionsListDialog::zp_gainFactor() const
+int ZMeasuringConditionsListDialog::zp_id() const
 {
     return zh_currentDataFromColumn(0);
 }
 //===========================================================
-int ZMeasuringConditionsListDialog::zp_exposition() const
+int ZMeasuringConditionsListDialog::zp_gainFactor() const
 {
     return zh_currentDataFromColumn(1);
+}
+//===========================================================
+int ZMeasuringConditionsListDialog::zp_exposition() const
+{
+    return zh_currentDataFromColumn(2);
 }
 //===========================================================
 int ZMeasuringConditionsListDialog::zp_quantity() const
@@ -99,6 +106,14 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     zv_measuringConditionsModel->setTable("measuring_conditions");
     zv_measuringConditionsModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_measuringConditionsModel->select();
+
+    //zv_measuringConditionsModel->setRelation(2, QSqlRelation("gain_factors", "gain_factor", "gain_factor"));
+
+    zv_gainFactorModel = new QSqlTableModel(this);
+    zv_gainFactorModel->setTable("gain_factors");
+    zv_gainFactorModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    zv_gainFactorModel->select();
+
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
@@ -349,18 +364,105 @@ void ZMeasuringConditionsListDialog::zh_newConditions()
         return;
     }
 
+    bool res = false;
+    zh_checkMeasuringConditions(dialog.zp_gainFactor(),
+                                dialog.zp_exposition(),
+                                res);
+    if(res)
+    {
+        zh_setCurrentMeasuringConditions(dialog.zp_gainFactor(),
+                                         dialog.zp_exposition());
+        return;
+    }
+
     //    QString sampleTaskName = dialog.zp_sampleTaskName();
     //    if(sampleTaskName.isEmpty())
     //    {
     //        return;
     //    }
 
+    // check out if gain factor exists
+    QSqlQuery query;
+    QString queryString = "SELECT gain_factor FROM gain_factors";
+    if(!query.prepare(queryString))
+    {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+        return;
+    }
+
+    if(!query.exec())
+    {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+        return;
+    }
+
+    bool searchRes = false;
+    int currentGainFactor;
+    QVariant vData;
+    bool ok;
+
+    while(query.next())
+    {
+        vData = query.value(0);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        currentGainFactor = vData.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        if(dialog.zp_gainFactor() == currentGainFactor)
+        {
+            searchRes = true;
+            break;
+        }
+    }
+
+    if(!searchRes)
+    {
+        QSqlRecord record;
+        record.append(QSqlField("gain_factor", QVariant::Int));
+        record.append(QSqlField("energyFactorK0", QVariant::Int));
+        record.append(QSqlField("energyFactorK1", QVariant::Int));
+        record.append(QSqlField("energyFactorK2", QVariant::Int));
+
+        record.setValue(0, QVariant(dialog.zp_gainFactor()));
+        record.setValue(1, QVariant(0.0));
+        record.setValue(2, QVariant(0.0));
+        record.setValue(3, QVariant(0.0));
+
+        if(!zv_gainFactorModel->insertRecord(-1, record))
+        {
+            QString msg = zv_gainFactorModel->lastError().text();
+            QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
+            return;
+        }
+
+        if(!zv_gainFactorModel->submitAll())
+        {
+            QString msg = zv_gainFactorModel->lastError().text();
+            QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
+            zv_gainFactorModel->revertAll();
+            return;
+        }
+    }
+
     QSqlRecord record;
+    record.append(QSqlField("id", QVariant::Int));
     record.append(QSqlField("gain_factor", QVariant::Int));
     record.append(QSqlField("exposition", QVariant::Int));
 
-    record.setValue(0, QVariant(dialog.zp_gainFactor()));
-    record.setValue(1, QVariant(dialog.zp_exposition()));
+    int id = zh_findNewMeasurementConditionsId();
+
+    record.setValue(0, QVariant(id));
+    record.setValue(1, QVariant(dialog.zp_gainFactor()));
+    record.setValue(2, QVariant(dialog.zp_exposition()));
 
     if(!zv_measuringConditionsModel->insertRecord(-1, record))
     {
@@ -382,6 +484,99 @@ void ZMeasuringConditionsListDialog::zh_newConditions()
     zv_measuringConditionsTable->scrollTo(insertedIndex);
 }
 //======================================================
+void ZMeasuringConditionsListDialog::zh_setCurrentMeasuringConditions(int gainFactor,
+                                 int exposition)
+{
+    QModelIndex index;
+    QVariant vData;
+    bool ok;
+    int currentGF;
+    int currentExpo;
+    for(int row = 0; row < zv_measuringConditionsModel->rowCount(); row++)
+    {
+        // G.F.
+        index = zv_measuringConditionsModel->index(row, 1);
+        if(!index.isValid())
+        {
+            continue;
+        }
+        vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+        currentGF = vData.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        if(currentGF != gainFactor)
+        {
+            continue;
+        }
+
+        // Expo
+        index = zv_measuringConditionsModel->index(row, 2);
+        if(!index.isValid())
+        {
+            continue;
+        }
+        vData = index.data(Qt::DisplayRole);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+        currentExpo = vData.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        // compare
+        if(currentExpo == exposition)
+        {
+            zv_measuringConditionsTable->setCurrentIndex(index);
+            zv_measuringConditionsTable->scrollTo(index);
+            return;
+        }
+    }
+}
+//======================================================
+int ZMeasuringConditionsListDialog::zh_findNewMeasurementConditionsId()
+{
+    QString queryString = QString("SELECT id FROM measuring_conditions");
+    QSqlQuery query;
+    if(!query.prepare(queryString))
+    {
+        return -1;
+    }
+
+    if(!query.exec())
+    {
+        return -1;
+    }
+
+    int id = 0;
+    int currentId;
+    QVariant vData;
+    while(query.next())
+    {
+        vData = query.value(0);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+        currentId = vData.toInt();
+        if(id < currentId)
+        {
+            id = currentId;
+        }
+    }
+
+    return ++id;
+}
+//======================================================
 void ZMeasuringConditionsListDialog::zh_checkMeasuringConditions(int gf,
                                                                  int expo,
                                                                  bool& res) const
@@ -394,7 +589,7 @@ void ZMeasuringConditionsListDialog::zh_checkMeasuringConditions(int gf,
     for(int row = 0; row < zv_measuringConditionsModel->rowCount(); row++)
     {
         // G.F.
-        index = zv_measuringConditionsModel->index(row, 0);
+        index = zv_measuringConditionsModel->index(row, 1);
         if(!index.isValid())
         {
             continue;
@@ -411,7 +606,7 @@ void ZMeasuringConditionsListDialog::zh_checkMeasuringConditions(int gf,
         }
 
         // Expo
-        index = zv_measuringConditionsModel->index(row, 1);
+        index = zv_measuringConditionsModel->index(row, 2);
         if(!index.isValid())
         {
             continue;
@@ -430,11 +625,11 @@ void ZMeasuringConditionsListDialog::zh_checkMeasuringConditions(int gf,
         // compare
         if(gf == currentGF && expo == currentExpo)
         {
-            res = false;
+            res = true;
             return;
         }
     }
 
-    res = true;
+    res = false;
 }
 //======================================================

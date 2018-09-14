@@ -27,6 +27,7 @@
 //#include "ZCur.h"
 
 // Qt
+#include <QApplication>
 #include <QCloseEvent>
 #include <QAction>
 #include <QDockWidget>
@@ -65,7 +66,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     qRegisterMetaType<ZAppSettings>("ZAppSettings");
     qRegisterMetaTypeStreamOperators<ZAppSettings>("ZAppSettings");
 
-    setWindowTitle(glAppProduct);
+    setWindowTitle(qApp->property("glAppProduct").toString());
 
     zv_exitAction = 0;
     zv_aboutAction = 0;
@@ -510,15 +511,15 @@ void MainWindow::zh_processMessage(QString msg, QMessageBox::Icon icon)
 {
     if(icon == QMessageBox::Information)
     {
-        QMessageBox::information(this, glAppProduct, msg, QMessageBox::Ok);
+        QMessageBox::information(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Critical)
     {
-        QMessageBox::critical(this, glAppProduct, msg, QMessageBox::Ok);
+        QMessageBox::critical(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Warning)
     {
-        QMessageBox::warning(this, glAppProduct, msg, QMessageBox::Ok);
+        QMessageBox::warning(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Question)
     {

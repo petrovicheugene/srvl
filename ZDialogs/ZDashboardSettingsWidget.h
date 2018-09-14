@@ -8,7 +8,7 @@
 class QPushButton;
 class QComboBox;
 class QLabel;
-class ZColorLabel;
+class ZColorButton;
 class QSlider;
 class ZLabeledSliderWidget;
 //============================================================
@@ -40,10 +40,10 @@ private:
     ZLabeledSliderWidget* zv_dashBoardSizeSliderWidget;
     QComboBox* zv_locationComboBox;
 
-    ZColorLabel* zv_progressBarColorLabel;
+    ZColorButton* zv_progressBarColorLabel;
     QPushButton* zv_progressBarColorDialogButton;
 
-    ZColorLabel* zv_textColorLabel;
+    ZColorButton* zv_textColorLabel;
     QPushButton* zv_textColorDialogButton;
 
     // FUNCS

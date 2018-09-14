@@ -62,6 +62,7 @@ private:
     bool zh_removeSampleTaskFromTable(int row = -1);
 
     bool zh_findNewMeasuringConditionsId(int &newId);
+    bool zh_findNewIdInTable(const QString& tableName, int& newId);
 
 
 };

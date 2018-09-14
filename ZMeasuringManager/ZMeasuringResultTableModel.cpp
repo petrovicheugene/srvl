@@ -15,8 +15,10 @@ void ZMeasuringResultTableModel::zp_connectToMeasuringManager(ZMeasuringManager*
     zv_measuringManager = measuringManager;
     connect(zv_measuringManager, &ZMeasuringManager::zg_sampleOperation,
             this, &ZMeasuringResultTableModel::zh_onSampleOperation);
-    connect(this, &ZMeasuringResultTableModel::zg_currentMeasuringConditions,
-            zv_measuringManager, &ZMeasuringManager::zg_currentMeasuringConditions);
+    connect(this, &ZMeasuringResultTableModel::zg_currentEnergyCalibrationChanged,
+            zv_measuringManager, &ZMeasuringManager::zh_currentEnergyCalibrationChanged);
+    connect(this, &ZMeasuringResultTableModel::zg_currentSpectrumChanged,
+            zv_measuringManager, &ZMeasuringManager::zh_currentSpectrumChanged);
 
 }
 //=========================================================
@@ -28,6 +30,7 @@ Qt::ItemFlags ZMeasuringResultTableModel::flags(const QModelIndex & index) const
     {
         flags |= Qt::ItemIsEditable;
     }
+
     return flags;
 }
 //=========================================================
@@ -191,14 +194,24 @@ void ZMeasuringResultTableModel::zp_onCurrentIndexChanged(const QModelIndex& cur
 {
     quint8 gainFactor;
     int exposition;
-    const ZSpeSpectrum* spectrum;
+    const ZSpeSpectrum* spectrum = nullptr;
     zp_measuringConditionsAndSpectrumForIndex(current, gainFactor, exposition, spectrum);
 
-    emit zg_currentMeasuringConditions(gainFactor, exposition, spectrum);
-    return;
+
+    qint64 spectrumId = -1;
+    QList<double> energyCalibrationFactorList;
+
+    if(spectrum)
+    {
+        spectrumId = spectrum->zp_spectrumId();
+        energyCalibrationFactorList = spectrum->zp_energyCalibration();
+    }
+
+    emit zg_currentSpectrumChanged(spectrumId);
+    emit zg_currentEnergyCalibrationChanged(energyCalibrationFactorList);
 }
 //=========================================================
-void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const QModelIndex& index,
+bool ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const QModelIndex& index,
                                                                            quint8& gainFactor,
                                                                            int& exposition,
                                                                            const ZSpeSpectrum*& spectrum)
@@ -209,19 +222,19 @@ void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const
     // check current index
     if(!index.isValid())
     {
-        return;
+        return false;
     }
 
     // check type of current index data
     QVariant vData = data(index, NS_DataRole::DataTypeRole);
     if(!vData.isValid() || vData.isNull() || !vData.canConvert<int>())
     {
-        return;
+        return false;
     }
 
     if(vData.toInt() != glSpectrumDataType)
     {
-        return;
+        return false;
     }
 
     // current index data is spectrum
@@ -231,7 +244,7 @@ void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const
     if(currentMeasuringConditionsIndex < 0
             || currentMeasuringConditionsIndex >= zv_measuringConditionsList.count())
     {
-        return;
+        return false;
     }
 
     gainFactor = zv_measuringConditionsList.at(currentMeasuringConditionsIndex).first;
@@ -240,6 +253,7 @@ void ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex(const
     // current spectrum
     spectrum = zv_measuringManager->zp_spectrum(index.row(), gainFactor, exposition);
 
+    return true;
 }
 //=========================================================
 void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap)
@@ -277,9 +291,6 @@ void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>
         }
         currentSpectrum->zp_setSpectrumName( zv_measuringManager->zp_sampleName(index.row()) );
         spectrumMap[conditions].append(currentSpectrum);
-
-        int spdc = currentSpectrum->zp_spectrumData().count();
-        qDebug() << "CUR SPE DATA CNT" << spdc;
     }
 }
 //=========================================================

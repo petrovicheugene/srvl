@@ -42,6 +42,7 @@ signals:
 
    void zg_inquiryForScrollBarVisible(Qt::Orientation, bool&);
    void zg_cursorAreaImage(QImage);
+   void zg_mousePressedAt(QPointF);
 
 protected:
 
@@ -53,6 +54,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     bool viewportEvent(QEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
+    void contextMenuEvent(QContextMenuEvent *event);
 
     // just hidden
     void	setViewport(QWidget * widget);

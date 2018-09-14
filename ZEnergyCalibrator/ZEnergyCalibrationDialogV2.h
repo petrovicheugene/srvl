@@ -3,21 +3,26 @@
 #define ZENERGYCALIBRATIONDIALOGV2_H
 //======================================================
 #include <QDialog>
+#include <QGridLayout>
 #include <QList>
 #include <QMap>
-
+#include <QModelIndex>
 #include <ZSpeSpectrum.h>
 //======================================================
+class ZEnergyCalibrationSpectrumTableModel;
+class ZEnergyCalibrationLine;
 class ZPlotter;
 class ZPlotterDataManager;
 
+class QAction;
+class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLineEdit;
-class QListWidget;
 class QPushButton;
 class QSpinBox;
-
+class QTableView;
+class QToolButton;
 //======================================================
 class ZEnergyCalibrationDialogV2 : public QDialog
 {
@@ -31,47 +36,67 @@ signals:
 
 public slots:
 
-
 private slots:
 
-    void zh_onOkClick();
+    void zh_calculateAndWriteEnergyCalibration();
+    void zh_onCurrentGainFactorIndexChange(int currentIndex);
+    void zh_onCurrentPeackCountIndexChange(int currentIndex);
+
+    void zh_onModelReset();
+    void zh_onModelDataChange(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+    void zh_onMousePressedOnPlotter(QPointF scenePos);
+    void zh_onChannelNumberAction();
+    void zh_onSelectEnergyLineAction();
+    void zh_onClearEnergyLineAction();
+    void zh_onLineColorChange(QColor color);
+    void zh_onChannelNumberChange(int channelValue);
 
 private:
 
     // VARS
     const QString zv_settingsGroupName = "energyCalibrationDialogV2";
     const QString zv_geometrySectionName = "geometry";
+    const QString zv_lineColorListSectionName = "lineColorList";
+    const QString zv_lineColorValueName = "lineColor";
+    const int zv_calibrationLineNumber = 3;
+    ZEnergyCalibrationSpectrumTableModel* zv_spectrumModel ;
 
-    QMap<quint8, QList<ZSpeSpectrum*> > zv_spectrumMap;
+    qreal zv_boundingRectTopFactor = 1.05;
+    QRectF zv_defaultSceneRect = QRectF(QPointF(0.0,-100.0), QPointF(2048.0, 0.0));
 
     QComboBox* zv_gainFactorComboBox;
-    QGroupBox* zv_mainGroupBox;
-    QSpinBox* zv_channel1;
-    QSpinBox* zv_channel2;
+    QComboBox* zv_peakInEnergyCalibrationCountComboBox;
+    QList<ZEnergyCalibrationLine*> zv_energyCalibrationLineList;
 
-    QLineEdit* zv_elementLine1;
-    QLineEdit* zv_elementLine2;
+    QList<QAction*> zv_channelNumberActionList;
 
-    QPushButton* zv_selectLineButton1;
-    QPushButton* zv_selectLineButton2;
-
-    QListWidget* zv_spectrumList;
-    ZPlotterDataManager* zv_plotterDataManager;
+    QTableView* zv_spectrumTableView;
     ZPlotter* zv_plotter;
 
-    QPushButton* zv_okButton;
-    QPushButton* zv_cancelButton;
+    QPushButton* zv_calculateButton;
+    QPushButton* zv_closeButton;
 
+    QList<QList<QWidget*> > zv_elementLinesWidgetList;
     // FUNCS
 
     void zh_createComponents();
-    QWidget* zh_createMainWidget();
-    QWidget* zh_createElementLinesWidget();
-    void zh_createConnections();
+    void zh_createContextMenu();
 
+    QWidget* zh_createMainWidget();
+    QWidget* zh_createElementLinesWidgetAndComponents();
+    void zh_createElementLineControlsAndComponents(QGridLayout *layout, int elementNumber);
+
+    void zh_createConnections();
+    void zh_loadSpectrumData(QMap<quint8, QList<ZSpeSpectrum *> > &spectrumMap);
+
+    //void zh_restoreLineColorList();
     void zh_restoreSettings();
     void zh_saveSettings();
 
+    bool zh_calculateEnergyFactors(QList<double> &energyCalibrationFactorList);
+    void zh_setElementLineControlsAndComponentVisibility();
+
+    void zh_updateVerticalLines();
 
 };
 //======================================================

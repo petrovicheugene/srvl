@@ -1,19 +1,19 @@
 //===========================================================
-#include "ZColorLabel.h"
+#include "ZColorButton.h"
 
 #include <QPaintEvent>
 #include <QPainter>
 #include <QColorDialog>
 
 //===========================================================
-ZColorLabel::ZColorLabel(QWidget *parent) : QWidget(parent)
+ZColorButton::ZColorButton(QWidget *parent) : QWidget(parent)
 {
     zp_setSizeHint(16);
     zv_color = QColor(Qt::transparent);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 //===========================================================
-void ZColorLabel::zp_setSizeHint(int size)
+void ZColorButton::zp_setSizeHint(int size)
 {
     if(size > 3)
     {
@@ -21,19 +21,20 @@ void ZColorLabel::zp_setSizeHint(int size)
     }
 }
 //===========================================================
-void ZColorLabel::zp_setColor(QColor color)
+void ZColorButton::zp_setColor(QColor color)
 {
     zv_color = color;
     update();
-    emit zg_colorChanged();
+    emit zg_colorChangedNotification();
+    emit zg_colorChanged(zv_color);
 }
 //===========================================================
-QColor ZColorLabel::zp_color() const
+QColor ZColorButton::zp_color() const
 {
     return zv_color;
 }
 //===========================================================
-void ZColorLabel::paintEvent(QPaintEvent* event)
+void ZColorButton::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     QPen pen = QPen(QBrush(QColor(Qt::black)), 1);
@@ -52,17 +53,17 @@ void ZColorLabel::paintEvent(QPaintEvent* event)
     painter.drawRect(event->rect().adjusted(0,0, -1, -1));
 }
 //===========================================================
-QSize ZColorLabel::sizeHint() const
+QSize ZColorButton::sizeHint() const
 {
     return zv_sizeHint;
 }
 //===========================================================
-void ZColorLabel::mouseReleaseEvent(QMouseEvent *)
+void ZColorButton::mouseReleaseEvent(QMouseEvent *)
 {
     zp_runColorSelectionDialog();
 }
 //===========================================================
-void ZColorLabel::zp_runColorSelectionDialog()
+void ZColorButton::zp_runColorSelectionDialog()
 {
     QColor color = QColorDialog::getColor(zv_color, this, tr("Select color"));
     if(!color.isValid())

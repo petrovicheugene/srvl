@@ -95,6 +95,8 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
                 emit zg_inquirySpectrumColor(color);
                 spectrum = new ZSpeSpectrum(intensityList, speAuxdata,
                                             QString(), color, false, this);
+                zh_setEnergyCalibrationToSpecrum(spectrum, measuringConditionsList.at(i).first);
+                spectrum->zp_setSpectrumVisible(false);
                 speElement.second = spectrum;
                 zv_spectrumList.append(speElement);
             }
@@ -332,7 +334,21 @@ ZSpeSpectrum* ZSample::zp_spectrumForMeasuringConditions(quint8 gainFactor, int 
         }
     }
 
-    return 0;
+    return nullptr;
+}
+//=====================================================
+bool ZSample::zp_spectrumVisibilityForSpectrumId(qint64 id, bool& visibility) const
+{
+    foreach(auto &spectrumData, zv_spectrumList)
+    {
+        if(spectrumData.second->zp_spectrumId() == id)
+        {
+            visibility = spectrumData.second->zp_isSpectrumVisible();
+            return true;
+        }
+    }
+
+    return false;
 }
 //=====================================================
 QStringList ZSample::zp_sampleChemicalList() const
@@ -465,5 +481,11 @@ void ZSample::zp_resetMeasuringResults()
     {
         zv_chemicalConcentrationList[c].zv_concentration = 0.0;
     }
+}
+//=====================================================
+void ZSample::zh_setEnergyCalibrationToSpecrum(ZSpeSpectrum* spectrum,
+                                               quint8 gainfactor)
+{
+
 }
 //=====================================================

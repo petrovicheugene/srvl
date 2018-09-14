@@ -26,8 +26,8 @@ void ZProcessTimeClassicIndicator::zp_reset()
     zv_progressBar->setRange(0.0,1.0);
     zv_progressBar->setValue(0);
 
-    zv_timeLeftLabel->setText("*");
-    zv_processDurationLabel->setText("*");
+    zv_timeLeftLabel->setText(" ");
+    zv_processDurationLabel->setText(" ");
 }
 //=============================================================
 void ZProcessTimeClassicIndicator::zp_setRange(double min, double max)
@@ -103,11 +103,11 @@ void ZProcessTimeClassicIndicator::zp_applyProgressBarOptions(const ZProgressBar
 //=============================================================
 void ZProcessTimeClassicIndicator::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // top level
-    QHBoxLayout* topLayout = new QHBoxLayout(this);
+    QHBoxLayout* topLayout = new QHBoxLayout;
     topLayout->setMargin(0);
     mainLayout->addLayout(topLayout);
 
@@ -124,7 +124,7 @@ void ZProcessTimeClassicIndicator::zh_createComponents()
     mainLayout->addWidget(zv_progressBar);
 
     // bottom level
-    QHBoxLayout* bottomLayout = new QHBoxLayout(this);
+    QHBoxLayout* bottomLayout = new QHBoxLayout;
     bottomLayout->setMargin(0);
     mainLayout->addLayout(bottomLayout);
 

@@ -25,8 +25,8 @@ void ZProcessTimeRoundIndicator::zp_reset()
     zv_progressBar->setRange(0.0,1.0);
     zv_progressBar->setValue(0);
 
-    zv_timeLeftLabel->setText("*");
-    zv_processDurationLabel->setText("*");
+    zv_timeLeftLabel->setText(" ");
+    zv_processDurationLabel->setText(" ");
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_setRange(double min, double max)
@@ -41,6 +41,7 @@ void ZProcessTimeRoundIndicator::zp_setRange(double min, double max)
 
     zv_timeLeftLabel->setText(zh_convertTimeToString(max));
     zv_processDurationLabel->setText(zh_convertTimeToString(max));
+    zh_updateSeparatorDashLabel();
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_setValue(double value)
@@ -58,6 +59,19 @@ void ZProcessTimeRoundIndicator::zp_setValue(double value)
     zv_progressBar->setValue(value);
     double left = zv_progressBar->maximum() - value;
     zv_timeLeftLabel->setText(zh_convertTimeToString(left));
+    zh_updateSeparatorDashLabel();
+}
+//=============================================================
+void ZProcessTimeRoundIndicator::zh_updateSeparatorDashLabel()
+{
+    if(zv_timeLeftLabel->text().isEmpty() || zv_processDurationLabel->text().isEmpty())
+    {
+        zv_separatorDashLabel->setText(" ");
+    }
+    else
+    {
+        zv_separatorDashLabel->setText("-");
+    }
 }
 //=============================================================
 void ZProcessTimeRoundIndicator::zp_applyProgressBarOptions(const ZProgressBarOptions& options)
@@ -108,7 +122,6 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
 
     // progress bar part
     zv_progressBar = new QRoundProgressBar(this);
-
     mainLayout->addWidget(zv_progressBar);
 
     // label part
@@ -127,7 +140,7 @@ void ZProcessTimeRoundIndicator::zh_createComponents()
     timeLabelLayout->addWidget(zv_processDurationLabel);
 
     zv_separatorDashLabel = new QLabel(this);
-    zv_separatorDashLabel->setText("-");
+    zv_separatorDashLabel->setText(" ");
     timeLabelLayout->addWidget(zv_separatorDashLabel);
 
     //zv_timeLeftLabel = new QLabel(this);

@@ -3,6 +3,7 @@
 #define ZXMLCALIBRATIONARRAYIOHANDLER_H
 //==========================================================
 #include <QObject>
+#include <QApplication>
 #include <QFile>
 #include <QStack>
 #include "ZCalibration.h"
@@ -49,7 +50,7 @@ private:
     ZRawWindow zv_rawWindow;
     QString zv_message;
 
-    const QString zv_magicString = glAppCompany + " 7D385RTNOW9SH31JZQL";
+    const QString zv_magicString = qApp->property("glAppCompany").toString() + " 7D385RTNOW9SH31JZQL";
     // elment names
     const QString zv_ROOT = "root";
     const QString zv_TYPE = "type";

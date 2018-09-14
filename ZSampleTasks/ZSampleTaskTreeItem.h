@@ -38,16 +38,22 @@ class ZSampleTaskTreeMeasuringConditionsItemOptions : public ZSampleTaskTreeItem
 {
 public:
     
-    ZSampleTaskTreeMeasuringConditionsItemOptions(int gainFactor,
+    ZSampleTaskTreeMeasuringConditionsItemOptions(int id,
+                                                  int gainFactor,
                                                   int exposition)
         : ZSampleTaskTreeItemOptions(IT_MEASURING_CONDITIONS)
     {
+        zv_id = id;
         zv_gainFactor = gainFactor;
         zv_exposition = exposition;
     }
     
     virtual ~ZSampleTaskTreeMeasuringConditionsItemOptions(){}
     
+    int zp_id() const
+    {
+        return zv_id;
+    }
     int zp_gainFactor() const
     {
         return zv_gainFactor;
@@ -60,6 +66,7 @@ public:
 protected:
     
     // VARS
+    int zv_id;
     int zv_gainFactor;
     int zv_exposition;
     
@@ -214,12 +221,14 @@ public:
                                                     ZSampleTaskTreeBaseItem* parent);
     virtual ZSampleTaskTreeBaseItem* zp_createChild(ZSampleTaskTreeItemOptions* options);
     
+    int zp_id() const;
     int zp_gainFactor() const;
     int zp_exposition() const;
     
 protected:
     
     // VARS
+    int zv_id;
     int zv_gainFactor;
     int zv_exposition;
 

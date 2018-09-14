@@ -2,7 +2,7 @@
 #include "ZDashboardSettingsWidget.h"
 #include <ZGeneral.h>
 #include "ZDashboardSettings.h"
-#include "ZColorLabel.h"
+#include "ZColorButton.h"
 #include "ZLabeledSliderWidget.h"
 
 #include <QGridLayout>
@@ -108,7 +108,7 @@ void ZDashboardSettingsWidget::zh_createComponents()
     QHBoxLayout* progressBarColorLayout = new QHBoxLayout(this);
     mainLayout->addLayout(progressBarColorLayout);
 
-    zv_progressBarColorLabel = new ZColorLabel(this);
+    zv_progressBarColorLabel = new ZColorButton(this);
     progressBarColorLayout->addWidget(zv_progressBarColorLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
     zv_progressBarColorLabel->zp_setColor(QColor(Qt::transparent));
     zv_progressBarColorDialogButton = new QPushButton(NS_CommonStrings::glSelectColor, this);
@@ -122,7 +122,7 @@ void ZDashboardSettingsWidget::zh_createComponents()
     QHBoxLayout* textColorLayout = new QHBoxLayout(this);
     mainLayout->addLayout(textColorLayout);
 
-    zv_textColorLabel = new ZColorLabel(this);
+    zv_textColorLabel = new ZColorButton(this);
     textColorLayout->addWidget(zv_textColorLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
     zv_textColorLabel->zp_setColor(QColor(Qt::transparent));
     zv_textColorDialogButton = new QPushButton(NS_CommonStrings::glSelectColor, this);
@@ -150,13 +150,13 @@ void ZDashboardSettingsWidget::zh_createConnections()
             this, SLOT(zh_someValueChange(int)));
 
     connect(zv_progressBarColorDialogButton, &QPushButton::clicked,
-            zv_progressBarColorLabel, &ZColorLabel::zp_runColorSelectionDialog);
-    connect(zv_progressBarColorLabel, &ZColorLabel::zg_colorChanged,
+            zv_progressBarColorLabel, &ZColorButton::zp_runColorSelectionDialog);
+    connect(zv_progressBarColorLabel, &ZColorButton::zg_colorChangedNotification,
             this, &ZDashboardSettingsWidget::zg_settingsChanged);
 
     connect(zv_textColorDialogButton, &QPushButton::clicked,
-            zv_textColorLabel, &ZColorLabel::zp_runColorSelectionDialog);
-    connect(zv_textColorLabel, &ZColorLabel::zg_colorChanged,
+            zv_textColorLabel, &ZColorButton::zp_runColorSelectionDialog);
+    connect(zv_textColorLabel, &ZColorButton::zg_colorChangedNotification,
             this, &ZDashboardSettingsWidget::zg_settingsChanged);
 
 

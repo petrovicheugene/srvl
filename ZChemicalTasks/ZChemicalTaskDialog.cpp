@@ -389,9 +389,10 @@ void ZChemicalTaskDialog::zh_onSelectCalibrationsAction()
     }
 
     // get measuring conditions from dialog
+    int measurementConditionsId;
     int gainFactor;
     int exposition;
-    if(!dialog.zp_currentMeasuringConditions(gainFactor, exposition))
+    if(!dialog.zp_currentMeasuringConditions(measurementConditionsId, gainFactor, exposition))
     {
         // reset chemical filter
         zv_calibrationSQLTableModel->setFilter(QString());
@@ -401,7 +402,7 @@ void ZChemicalTaskDialog::zh_onSelectCalibrationsAction()
     // check and load measuring conditions
     if(zv_gainFactor < 1 || zv_exposition < 1)
     {
-        zh_setMeasuringConditions(gainFactor, exposition);
+        zh_setMeasuringConditions(measurementConditionsId, gainFactor, exposition);
     }
     else if(zv_gainFactor != gainFactor || zv_exposition != exposition)
     {
@@ -422,7 +423,7 @@ void ZChemicalTaskDialog::zh_onSelectCalibrationsAction()
             return;
         }
 
-        zh_setMeasuringConditions(gainFactor, exposition);
+        zh_setMeasuringConditions(measurementConditionsId, gainFactor, exposition);
     }
 
     // load calibrations
@@ -431,8 +432,10 @@ void ZChemicalTaskDialog::zh_onSelectCalibrationsAction()
 
 }
 //=========================================================================
-void ZChemicalTaskDialog::zh_setMeasuringConditions(int gainFactor, int exposition)
+void ZChemicalTaskDialog::zh_setMeasuringConditions(int measurementConditionsId,
+                                                    int gainFactor, int exposition)
 {
+    zv_measurementConditionsId = measurementConditionsId;
     zv_gainFactor = gainFactor;
     zv_exposition = exposition;
 
@@ -468,7 +471,7 @@ void ZChemicalTaskDialog::zh_onRemoveCalibrationsAction()
     // reset measuring conditions
     if(zv_chemicalTaskCalibrationModel->rowCount() < 1)
     {
-        zh_setMeasuringConditions(-1, -1);
+        zh_setMeasuringConditions(-1, -1, -1);
     }
 }
 //=========================================================================
@@ -601,7 +604,9 @@ bool ZChemicalTaskDialog::zp_setChemicalTask(QSqlTableModel *calibrationStackTab
     }
 
     // measuring conditions
-    // gain factor
+
+
+    // measurementConditionsId
     index = calibrationStackTableModel->index(chemicalTaskRow, 4);
     if(!index.isValid())
     {
@@ -612,28 +617,60 @@ bool ZChemicalTaskDialog::zp_setChemicalTask(QSqlTableModel *calibrationStackTab
     {
         return false;
     }
-    int gainFactor = vData.toInt();
 
-    // exposition
-    index = calibrationStackTableModel->index(chemicalTaskRow, 5);
-    if(!index.isValid())
+    int measurementConditionsId = vData.toInt();
+
+    QSqlQuery query;
+    QString queryStrig = QString("SELECT gain_factor, exposition "
+                                 "FROM measuring_conditions "
+                                 "WHERE id=%1").arg(QString::number(measurementConditionsId));
+
+    if(!query.prepare(queryStrig))
     {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
         return false;
     }
-    vData = index.data(Qt::DisplayRole);
+
+    if(!query.exec())
+    {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+        return false;
+    }
+
+    if(!query.next())
+    {
+        QString msg = tr("Cannot get measurement conditions for id \"%1\" from database.").arg(QString::number(measurementConditionsId));
+        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
+        return false;
+    }
+
+    // gainFactor query
+    vData = query.value(0);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return false;
     }
+
+    int gainFactor = vData.toInt();
+
+    // exposition
+    vData = query.value(1);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+
     int exposition = vData.toInt();
 
-    zh_setMeasuringConditions(gainFactor, exposition);
+    zh_setMeasuringConditions(measurementConditionsId, gainFactor, exposition);
 
     // Load calibrations
     // request for calibration in the chemical task id list
     QString queryString = QString("SELECT calibrations_id  FROM calibrations_has_calibration_stacks "
                                   "WHERE calibration_stacks_id=%1").arg(QString::number(chemicalTaskId));
-    QSqlQuery query;
+    query.clear();
     if(!query.prepare(queryString))
     {
         return false;
@@ -738,6 +775,11 @@ QString ZChemicalTaskDialog::zp_description() const
 int ZChemicalTaskDialog::zp_exposition() const
 {
     return zv_exposition;
+}
+//=========================================================================
+int ZChemicalTaskDialog::zp_measurementConditionsId() const
+{
+    return zv_measurementConditionsId;
 }
 //=========================================================================
 int ZChemicalTaskDialog::zp_gainFactor() const

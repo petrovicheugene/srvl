@@ -163,10 +163,6 @@ bool ZMeasuringController::zp_measureSample(QList<QPair<quint8, int> > measuring
     zv_currentMeasuringConditions = measuringConditions;
     zv_currentSampleTask = currentSampleTask;
 
-#ifdef DBG
-    qDebug() << "zp_measureSample" << zv_currentSampleTask;
-#endif
-
     // reset current Measuring Index
     zv_currentMeasuringIndex = 0;
     zv_passedExpositionsSummMS = 0;
@@ -320,6 +316,7 @@ bool ZMeasuringController::zh_startSingleMeasuring()
     // expo started
     // create buffer
 
+
     // clear buffer and auxillary spe data
     // quint32 bufferSize = static_cast<quint32>(sizeof(quint32) * zv_bufferChannelSize );
     quint32 bufferSize = 0;
@@ -377,9 +374,11 @@ bool ZMeasuringController::zh_startSingleMeasuring()
     zv_measuringTimer = startTimer(zv_measuringInquiryPeriod, Qt::PreciseTimer);
     emit zg_expositionPassed(zv_passedExpositionsSummMS);
 
-#ifdef DBG
-    qDebug() << "zh_startSingleMeasuring" << zv_currentSampleTask;
-#endif
+    //    qint64 measuredSpectrumId = zv_currentSampleTask->zp_spectrumIdForConditions(gainFactor,
+    //                                                                                 zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+    ////    qDebug() << "SP ID" << measuredSpectrumId;
+    //    emit zg_spectrumIsMeasuring(measuredSpectrumId);
+
 
     return true;
 }
@@ -480,6 +479,14 @@ void ZMeasuringController::zh_processMeasurementResults()
                                                     deadTime,
                                                     false);
 
+        qint64 measuredSpectrumId = zv_currentSampleTask->zp_spectrumIdForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+        emit zg_currentSpectrumId(measuredSpectrumId);
+
+        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+        emit zg_currentEnergyCalibration(currentSpectrumEnergyCalibration);
+
         // continue measurement
         return;
     }
@@ -533,6 +540,14 @@ void ZMeasuringController::zh_processMeasurementResults()
                                                     zv_Time,
                                                     deadTime,
                                                     true);
+        qint64 measuredSpectrumId = zv_currentSampleTask->zp_spectrumIdForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+        emit zg_currentSpectrumId(measuredSpectrumId);
+
+        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+        emit zg_currentEnergyCalibration(currentSpectrumEnergyCalibration);
+
         break;
     }
 
@@ -546,6 +561,8 @@ void ZMeasuringController::zh_processMeasurementResults()
         }
         zv_currentSampleTask->zp_measuringFinished();
         zv_currentMeasuringIndex = -1;
+        //        emit zg_spectrumIsMeasuring(-1);
+
         // zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
         return;
     }

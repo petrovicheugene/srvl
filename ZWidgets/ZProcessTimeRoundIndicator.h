@@ -33,6 +33,10 @@ signals:
 
 public slots:
 
+protected slots:
+
+    void zh_updateSeparatorDashLabel();
+
 private:
 
     // VARS

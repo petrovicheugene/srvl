@@ -263,6 +263,9 @@ void ZSaveSpectraToFilesDialog::zh_onOkButtonClick()
         spCount = 0;
         foreach(ZSpeSpectrum* spectrum,  zv_spectrumMap[conditions])
         {
+            spectrum->zp_setGainFactor(conditions.first);
+            spectrum->zp_setExposition(conditions.second);
+
             if(nameTemplate.isEmpty())
             {
                 fileName = spectrum->zp_name();

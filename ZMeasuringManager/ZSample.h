@@ -50,6 +50,7 @@ public:
                             int exposition, quint32 time, quint32 deadTime,
                             bool finished);
     ZSpeSpectrum* zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const;
+    bool zp_spectrumVisibilityForSpectrumId(qint64 id, bool& visibility) const;
 
 
     QStringList zp_sampleChemicalList() const;
@@ -91,6 +92,8 @@ private:
     QList<ZChemicalConcentration> zv_chemicalConcentrationList;
 
     // FUNCS
+    void zh_setEnergyCalibrationToSpecrum(ZSpeSpectrum* spectrum, quint8 gainfactor);
+
 
 
 };

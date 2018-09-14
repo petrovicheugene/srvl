@@ -86,3 +86,19 @@ void ZSpeSpectrum::zp_setEnergyUnit(const QString& energyUnit)
     zv_auxData.zp_setEnergyUnit(energyUnit);
 }
 //===================================================
+void ZSpeSpectrum::zp_setEnergyCalibration(QList<double>& energyCalibrationFactorList)
+{
+    zv_auxData.zp_setEnergyK0(energyCalibrationFactorList.value(0, 0.0));
+    zv_auxData.zp_setEnergyK1(energyCalibrationFactorList.value(1, 0.0));
+    zv_auxData.zp_setEnergyK2(energyCalibrationFactorList.value(2, 0.0));
+}
+//===================================================
+QList<double> ZSpeSpectrum::zp_energyCalibration() const
+{
+    QList<double> energyCalibrationFactorList;
+    energyCalibrationFactorList.append(zv_auxData.zp_energyK0());
+    energyCalibrationFactorList.append(zv_auxData.zp_energyK1());
+    energyCalibrationFactorList.append(zv_auxData.zp_energyK2());
+    return energyCalibrationFactorList;
+}
+//===================================================
