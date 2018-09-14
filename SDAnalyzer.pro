@@ -204,7 +204,8 @@ SOURCES += main.cpp\
     ZPeriodicTable/ZChemicalPropertyProxyTableModel.cpp \
     ZPeriodicTable/ZPeriodicTableWidget.cpp \
     ZPeriodicTable/ZPropertyEditDialog.cpp \
-    ZPeriodicTable/ZPropertySectionEditDialog.cpp
+    ZPeriodicTable/ZPropertySectionEditDialog.cpp \
+    ZPlotter/ZEnergyLineGraphicsItem.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -337,7 +338,8 @@ HEADERS  += MainWindow.h \
     ZPeriodicTable/ZChemicalPropertyProxyTableModel.h \
     ZPeriodicTable/ZPeriodicTableWidget.h \
     ZPeriodicTable/ZPropertyEditDialog.h \
-    ZPeriodicTable/ZPropertySectionEditDialog.h
+    ZPeriodicTable/ZPropertySectionEditDialog.h \
+    ZPlotter/ZEnergyLineGraphicsItem.h
 
 RESOURCES += \
     resources.qrc \
