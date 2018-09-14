@@ -21,12 +21,13 @@ extern const QString glIconSidebarLeftClose = ":/images/ZWidgets/sidebarLeftClos
 extern const QString glIconSidebarRightOpen = ":/images/ZWidgets/sidebarRightOpen-1.png";
 extern const QString glIconSidebarRightClose = ":/images/ZWidgets/sidebarRightClose-1.png";
 
-extern const QString glIconShowGrid = ":/images/ZWidgets/sidebarRightClose-1.png";
-extern const QString glIconVerticalIncrease = ":/images/ZWidgets/sidebarRightClose-1.png";
-extern const QString glIconVerticalDecrease = ":/images/ZWidgets/sidebarRightClose-1.png";
-extern const QString glIconHorizontalIncrease = ":/images/ZWidgets/sidebarRightClose-1.png";
-extern const QString glIconHorizontalDecrease = ":/images/ZWidgets/sidebarRightClose-1.png";
-extern const QString glIconFitInRect = ":/images/ZWidgets/sidebarRightClose-1.png";
+extern const QString glAxisToEnergyIconString = ":/images/ZImages/energy.png";
+extern const QString glIconShowGrid = ":/images/ZImages/gridVisible-2.png";
+extern const QString glIconVerticalIncrease = ":/images/ZImages/verticalIncrease-2.png";
+extern const QString glIconVerticalDecrease = ":/images/ZImages/verticalDecrease-2.png";
+extern const QString glIconHorizontalIncrease = ":/images/ZImages/horizontalIncrease-2.png";
+extern const QString glIconHorizontalDecrease = ":/images/ZImages/horizontalDecrease-2.png";
+extern const QString glIconFitInRect = ":/images/ZImages/fitInSceneRect.png";
 
 }
 

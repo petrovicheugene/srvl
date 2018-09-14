@@ -10,6 +10,8 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QSqlTableModel;
+class QSqlRelationalTableModel;
+
 class QSpinBox;
 class QTableView;
 //===========================================================
@@ -20,6 +22,7 @@ public:
     explicit ZMeasuringConditionsListDialog(bool forSelection = true, QWidget *parent = 0);
     ~ZMeasuringConditionsListDialog();
 
+    int zp_id() const;
     int zp_gainFactor() const;
     int zp_exposition() const;
 
@@ -45,6 +48,8 @@ private:
 
     // VARS
     QSqlTableModel* zv_measuringConditionsModel;
+    QSqlTableModel* zv_gainFactorModel;
+
     //QLineEdit* zv_selectedConditionsLineEdit;
 //    QLineEdit* zv_selectedGainFactorLineEdit;
 //    QLineEdit* zv_selectedExpositionLineEdit;
@@ -71,6 +76,9 @@ private:
     void zh_updateSelectedMeasuringConditionsString();
 
     bool zh_checkData();
+    int zh_findNewMeasurementConditionsId();
+    void zh_setCurrentMeasuringConditions(int gainFactor, int exposition);
+
 };
 //===========================================================
 #endif // ZMEASUREMENTCONDITIONSLISTDIALOG_H

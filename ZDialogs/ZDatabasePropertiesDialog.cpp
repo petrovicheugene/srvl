@@ -2,6 +2,7 @@
 #include "ZDatabasePropertiesDialog.h"
 #include "ZGeneral.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -22,7 +23,7 @@ ZDatabasePropertiesDialog::ZDatabasePropertiesDialog(const QString& name,
                                                      const QString& path,
                                                      QWidget *parent) : QDialog(parent)
 {
-    setWindowTitle(glAppProduct);
+    setWindowTitle(qApp->property("glAppProduct").toString());
     setWindowFlags(Qt::Tool);
 
     zh_createComponents();

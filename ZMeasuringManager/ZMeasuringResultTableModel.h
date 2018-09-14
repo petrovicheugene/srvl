@@ -30,14 +30,15 @@ public:
 
 signals:
 
-    void zg_currentMeasuringConditions(quint8 gainFactor, int exposition, const ZSpeSpectrum* spectrum);
+    void zg_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList) const;
     void zg_selectedModelIndexList(QModelIndexList& ) const;
+    void zg_currentSpectrumChanged(qint64 spectrumId) const;
 
 public slots:
 
     //void zp_spectraColumnList(QList<int>& );
     void zp_onCurrentIndexChanged(const QModelIndex& current, const QModelIndex& previous);
-    void zp_measuringConditionsAndSpectrumForIndex(const QModelIndex& index,
+    bool zp_measuringConditionsAndSpectrumForIndex(const QModelIndex& index,
                                         quint8& gainFactor,
                                         int& exposition,
                                         const ZSpeSpectrum*& spectrum);

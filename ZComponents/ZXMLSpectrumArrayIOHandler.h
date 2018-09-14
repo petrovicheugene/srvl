@@ -3,6 +3,7 @@
 #define ZXMLARRAYIOHANDLER_H
 //============================================================
 #include <QObject>
+#include <QApplication>
 #include <QFile>
 #include "ZRawSpectrumArray.h"
 #include "ZGeneral.h"
@@ -26,7 +27,7 @@ signals:
 private:
 
     // VARS
-    const QString zv_magicString = glAppCompany + " 5FG3P72BNW8HS1L9FGX";
+    const QString zv_magicString = qApp->property("glAppCompany").toString() + " 5FG3P72BNW8HS1L9FGX";
     // elment names
     const QString zv_ROOT = "root";
     const QString zv_TYPE = "type";

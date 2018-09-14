@@ -401,6 +401,7 @@ void ZPlotter::zp_addItem(QGraphicsItem * item)
 
     zv_plotScene->zp_addItem(item);
     QRectF itemBoundingSceneRect = zv_plotScene->itemsBoundingRect();
+
     if(zv_autoDefineVerticalAbsMax)
     {
         zp_setVerticalAbsMax(itemBoundingSceneRect.top());
@@ -487,7 +488,7 @@ void ZPlotter::zp_appendWidgetToDashboard(QWidget* widget,
 //====================================================
 void ZPlotter::zp_setVerticalAbsMax(qreal max)
 {
-    if(zv_verticalAbsMax == qAbs(max))
+    if(zv_verticalAbsMax - qAbs(max) == 0.0)
     {
         return;
     }
@@ -529,6 +530,12 @@ void ZPlotter::zp_updatePlot()
 QBrush ZPlotter::zp_backgroundBrush()
 {
     return zv_plotView->backgroundBrush();
+}
+//====================================================
+void ZPlotter::zp_setContextMenu(QList<QAction*>& actionList)
+{
+    zv_plotView->addActions(actionList);
+    zv_plotView->setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 //====================================================
 void ZPlotter::zp_setLeftRuleVisible(bool visible)
@@ -649,6 +656,11 @@ void ZPlotter::zp_fitInBoundingRect()
     //zv_plotView->ensureVisible(rectToFit);
 }
 //====================================================
+QRectF ZPlotter::zp_boundingRect() const
+{
+     return zv_plotScene->itemsBoundingRect();
+}
+//====================================================
 void ZPlotter::resizeEvent(QResizeEvent* event)
 {
     if(zv_plotView && zv_plotScene && zv_mouseButtonDown)
@@ -701,6 +713,11 @@ void ZPlotter::zh_scrollBarVisible(Qt::Orientation orientation, bool& visible)
     {
         visible = zv_horizontalScrollBar->isVisible();
     }
+}
+//====================================================
+void ZPlotter::zh_onMousePress(QPointF mouseScenePos)
+{
+    qDebug() << "MOUSE CLICK X"  << mouseScenePos.x();
 }
 //====================================================
 void ZPlotter::zh_createComponents()
@@ -771,6 +788,9 @@ void ZPlotter::zh_createConnections()
             this, &ZPlotter::zh_scrollBarVisible);
     connect(zv_plotView, &ZPlotGraphicsView::zg_cursorAreaImage,
             this, &ZPlotter::zg_cursorAreaImage);
+    connect(zv_plotView, &ZPlotGraphicsView::zg_mousePressedAt,
+            this, &ZPlotter::zg_mousePressedAt);
+
 }
 //====================================================
 void ZPlotter::zh_connectScrollBars()

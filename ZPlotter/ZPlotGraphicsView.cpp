@@ -7,6 +7,7 @@
 #include <QRubberBand>
 #include <QGraphicsItem>
 #include <QWheelEvent>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QPixmap>
@@ -367,6 +368,7 @@ void ZPlotGraphicsView::mousePressEvent(QMouseEvent* event)
         zv_sceneCenterPos = mapToScene(viewport()->rect()).boundingRect().center();
         zv_sceneMousePos = mapToScene(event->pos());
         zv_mousePressStartViewPos = event->pos();
+        emit zg_mousePressedAt(zv_sceneMousePos);
         return;
         // }
     }
@@ -604,6 +606,22 @@ void ZPlotGraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
     }
 
     QGraphicsView::drawBackground(painter, rect);
+}
+//=============================================================
+void ZPlotGraphicsView::contextMenuEvent(QContextMenuEvent *event)
+{
+    if(zv_plotMode == PM_REGULAR && zv_mousePressStartViewPos == event->pos())
+    {
+        QMenu menu;
+        menu.addActions(this->actions());
+        menu.move(mapToGlobal(event->pos()));
+        QAction* action =  menu.exec();
+        if(action != nullptr)
+        {
+            action->setData(QVariant(mapToScene(event->pos())));
+            action->trigger();
+        }
+    }
 }
 //=============================================================
 void ZPlotGraphicsView::zh_createConnections()

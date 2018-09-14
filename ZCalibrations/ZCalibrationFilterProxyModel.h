@@ -10,7 +10,7 @@ class ZCalibrationFilterProxyModel : public QSortFilterProxyModel
 public:
     explicit ZCalibrationFilterProxyModel(QObject *parent = 0);
 
-    void zp_setMeasuringConditionsFilter(int gainFactor, int exposition);
+    void zp_setMeasuringConditionsFilter(int id);
 
 signals:
 
@@ -23,8 +23,10 @@ protected:
 private:
 
     // VARS
-    int zv_gainFactorFilter;
-    int zv_expositionFilter;
+    int zv_id;
+
+//    int zv_gainFactorFilter;
+//    int zv_expositionFilter;
 
 
 };

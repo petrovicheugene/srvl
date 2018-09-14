@@ -1,17 +1,17 @@
 //===========================================================
-#ifndef ZCOLORLABEL_H
-#define ZCOLORLABEL_H
+#ifndef ZCOLORBUTTON_H
+#define ZCOLORBUTTON_H
 //===========================================================
 #include <QWidget>
 #include <QColor>
 //===========================================================
 
 //===========================================================
-class ZColorLabel : public QWidget
+class ZColorButton : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ZColorLabel(QWidget *parent = 0);
+    explicit ZColorButton(QWidget *parent = 0);
 
     void zp_setSizeHint(int);
     void zp_setColor(QColor);
@@ -35,9 +35,10 @@ protected:
 
 signals:
 
-    void zg_colorChanged();
+    void zg_colorChangedNotification();
+    void zg_colorChanged(QColor);
 
 public slots:
 };
 //===========================================================
-#endif // ZCOLORLABEL_H
+#endif // ZCOLORBUTTON_H

@@ -14,6 +14,13 @@
         <file>ZImages/eyeSignBlack-1.png</file>
         <file>ZImages/hSplitterHandle.png</file>
         <file>ZImages/vSplitterHandle.png</file>
+        <file>ZImages/energy.png</file>
+        <file>ZImages/fitInSceneRect.png</file>
+        <file>ZImages/gridVisible-2.png</file>
+        <file>ZImages/horizontalDecrease-2.png</file>
+        <file>ZImages/horizontalIncrease-2.png</file>
+        <file>ZImages/verticalDecrease-2.png</file>
+        <file>ZImages/verticalIncrease-2.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>

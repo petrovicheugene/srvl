@@ -29,7 +29,7 @@ public:
     bool zp_setFilter(int chemicalId , int gainFactor, int exposition);
 
     bool zp_currentChemical(int& id, QString& chemical) const;
-    bool zp_currentMeasuringConditions(int& gainFactor, int& expositions) const;
+    bool zp_currentMeasuringConditions(int &measurementConditionsId, int& gainFactor, int& exposition) const;
     bool zp_selectedCalibrationIdList(QList<int>& calibrationIdList) const;
 
 signals:
@@ -87,18 +87,22 @@ private:
     void zh_saveSettings() const;
 
     bool zh_checkChemicalExistance(const QString& chemical, int &chemicalId) const;
-    bool zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int &row) const;
+    bool zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int& measurementConditionsId, int &modelRow) const;
+    bool zh_checkMeasuringConditionsExistance(int gainFactor, int exposition, int &modelRow) const;
+    bool zh_checkGainFactorExistance(int gainFactor, QString &msg) const;
+
 
     int zh_findNewChemicalId() const;
+    bool zh_findNewMeasurementConditionsId(int& newId, QString& msg) const;
     int zh_findNewCalibrationlId(QString &msg) const;
     bool zh_writeCalibrationToDatabase(const ZCalibration& calibration, const QByteArray &calibrationXMLByteArray, QString &msg);
     bool zh_writeChemicalToDatabase(const QString& chemical, int& id, QString &msg);
-    bool zh_writeMeasuringConditionsToDatabase(int gainFactor, int exposition, QString &msg);
+    bool zh_writeMeasuringConditionsToDatabase(int gainFactor, int exposition, int& measurementConditionId, QString &msg);
 
     bool zh_checkCalibrationConformity(const ZCalibration& calibration,
                                                                    LoadingPermission& loadingPermission) const;
 
-    void zh_getMeasuringConditionsForCurrentChemical(QList<QPair<int, int> >& measuringConditionsList) const;
+    void zh_getMeasuringConditionsForCurrentChemical(QList<int> &measuringConditionsList) const;
 
     void zh_repopulateMeasuringConditionsModel();
     void zh_setFilterToCalibrationTableSQLModel(const QModelIndex& chemicalIndex);

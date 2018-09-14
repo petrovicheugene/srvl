@@ -37,7 +37,9 @@ QRectF ZWindowGraphicsItem::boundingRect() const
     return zv_boundingRect;
 }
 //======================================================
-void ZWindowGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void ZWindowGraphicsItem::paint(QPainter * painter,
+                                const QStyleOptionGraphicsItem * option,
+                                QWidget * widget)
 {
     painter->save();
     // window body
@@ -77,7 +79,7 @@ void ZWindowGraphicsItem::zp_setCurrentWindowId(qint64 id)
 //======================================================
 bool ZWindowGraphicsItem::zp_setTopAndButtonMargins(qreal top, qreal bottom)
 {
-    if(top == bottom)
+    if(top - bottom == 0.0)
     {
         return false;
     }

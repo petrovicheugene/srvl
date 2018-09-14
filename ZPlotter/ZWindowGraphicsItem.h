@@ -18,8 +18,8 @@ public:
    // overrided
    QRectF boundingRect() const override;
    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
-   QPainterPath shape() const;
-   int type() const;
+   QPainterPath shape() const override;
+   int type() const override;
 
    // FUNCS
    static void zp_setCurrentWindowColor(QColor);
@@ -37,7 +37,7 @@ public:
 protected:
 
    // FUNCS
-   void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+   void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
    void zh_recalcShapeAndBoundingRect();
 
 private:

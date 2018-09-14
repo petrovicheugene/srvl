@@ -143,13 +143,13 @@ void ZMeasuringManager::zh_createActions()
         zv_connectionActionList.append(action);
     }
 
-//    zv_addSamplesToSeriesAction = new ZControlAction(this);
-//    zv_addSamplesToSeriesAction->setText(tr("Add samples"));
-     zv_energyCalibrationAction = new ZControlAction(this);
-     zv_energyCalibrationAction->setText(tr("Energy calibration"));
+    //    zv_addSamplesToSeriesAction = new ZControlAction(this);
+    //    zv_addSamplesToSeriesAction->setText(tr("Add samples"));
+    zv_energyCalibrationAction = new ZControlAction(this);
+    zv_energyCalibrationAction->setText(tr("Energy calibration"));
 
-     zv_spectrumInfoAction = new ZControlAction(this);
-     zv_spectrumInfoAction->setText(tr("Spectrum info"));
+    zv_spectrumInfoAction = new ZControlAction(this);
+    zv_spectrumInfoAction->setText(tr("Spectrum info"));
 
 
 }
@@ -188,7 +188,10 @@ void ZMeasuringManager::zh_createConnections()
             this, &ZMeasuringManager::zh_onExpositionPassedMSec);
     connect(zv_measuringController, &ZMeasuringController::zg_currentMeasuringParameters,
             this, &ZMeasuringManager::zg_measurementParameters);
-
+    connect(zv_measuringController, &ZMeasuringController::zg_currentSpectrumId,
+            this, &ZMeasuringManager::zh_onCurrentSpectrumMeasuring);
+    connect(zv_measuringController, &ZMeasuringController::zg_currentEnergyCalibration,
+            this, &ZMeasuringManager::zh_onCurrentEnergyCalibration);
 
 
     foreach(ZControlAction* action, zv_connectionActionList)
@@ -397,8 +400,6 @@ void ZMeasuringManager::zh_setConnectionActionsEnable(bool enabling)
 //======================================================
 void ZMeasuringManager::zh_recalcSeriesMeasuringTotalDuration()
 {
-    qDebug() << "RECALC DURATION";
-
     int totalSeriesDuration = 0;
     if(zv_sampleList.isEmpty())
     {
@@ -420,14 +421,24 @@ void ZMeasuringManager::zh_recalcSeriesMeasuringTotalDuration()
 
     zv_currentMeasuringState.zp_setSeriesDuration(totalSeriesDuration);
 
-#ifdef DBG
-    qDebug() << "TOTAL SERIES DURATION" << totalSeriesDuration;
-#endif
 }
 //======================================================
 bool ZMeasuringManager::zp_libraryState() const
 {
     return zv_UralAdcDeviceConnector != 0;
+}
+//======================================================
+bool ZMeasuringManager::zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const
+{
+    foreach(ZSample* sample, zv_sampleList)
+    {
+        if(sample->zp_spectrumVisibilityForSpectrumId(spectrumId, visibility))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 //======================================================
 bool ZMeasuringManager::zp_connectionState() const
@@ -790,6 +801,16 @@ void ZMeasuringManager::zh_notifyMeasuringStateChanged()
     emit zg_measuringStateChanged(zv_currentMeasuringState);
 }
 //======================================================
+void ZMeasuringManager::zh_onCurrentSpectrumMeasuring(qint64 currentMeasuredSpectrumId)
+{
+    emit zg_currentSpectrumChanged(currentMeasuredSpectrumId);
+}
+//======================================================
+void ZMeasuringManager::zh_onCurrentEnergyCalibration(QList<double> energyCalibrationFactorList)
+{
+    emit zg_currentEnergyCalibrationChanged(energyCalibrationFactorList);
+}
+//======================================================
 int ZMeasuringManager::zh_seriesMeasuringTotalDuration() const
 {
     int seriesMeasuringTotalDuration = 0;
@@ -819,10 +840,6 @@ void ZMeasuringManager::zp_notifyOfCurrentStatus()
 //======================================================
 void ZMeasuringManager::zp_startSeries()
 {
-#ifdef DBG
-    qDebug() << "START SERIES";
-#endif
-
     if(zv_expositionDelayTimer)
     {
         return;
@@ -873,11 +890,8 @@ void ZMeasuringManager::zp_startSeries()
         // if stopped - launch new measurement
         // if spe and results exist save savethem to database
 
-
-
         // clear spe and results from samples
         zh_resetMeasuringResults();
-
 
         // reset first
         // zv_currentMeasuringState.zp_setSeriesName(zv_currentSeriesTaskName);
@@ -902,10 +916,6 @@ void ZMeasuringManager::zp_startSeries()
 //======================================================
 void ZMeasuringManager::zp_stopSeries()
 {
-#ifdef DBG
-    qDebug() << "STOP SERIES";
-#endif
-
     zv_seriesTimePassed = 0;
 
     if(zv_expositionDelayTimer)
@@ -929,9 +939,6 @@ void ZMeasuringManager::zp_stopSeries()
 //======================================================
 void ZMeasuringManager::zh_onSampleMeasuringFinish()
 {
-#ifdef DBG
-    qDebug() << "zh_onSampleMeasuringFinish START FUNC: SeriesPassed" << zv_currentMeasuringState.zp_seriesTimePassed();
-#endif
 
     if(zv_deviceSampleQuantity <= 1)
     {
@@ -963,7 +970,7 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
         zh_notifyMeasuringStateChanged();
 
         QString msg = tr("Replace sample set and press the \"Start\" button for continue measuring.");
-        QMessageBox::information(0, glAppProduct, msg, QMessageBox::Ok);
+        QMessageBox::information(0, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
         return;
     }
 
@@ -1074,6 +1081,26 @@ void ZMeasuringManager::zh_onConcentrationChange()
     }
 
     emit zg_sampleOperation(SOT_CONCENTRATIONS_CHANGED, row, row);
+}
+//======================================================
+void ZMeasuringManager::zh_currentSpectrumChanged(qint64 spectrumId)
+{
+    if(zv_currentMeasuringState.zp_measuringAction() == ZMeasuringState::MA_RUNNING)
+    {
+        return;
+    }
+
+    emit zg_currentSpectrumChanged(spectrumId);
+}
+//======================================================
+void ZMeasuringManager::zh_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList)
+{
+    if(zv_currentMeasuringState.zp_measuringAction() == ZMeasuringState::MA_RUNNING)
+    {
+        return;
+    }
+
+    emit zg_currentEnergyCalibrationChanged(energyCalibrationFactorList);
 }
 //======================================================
 void ZMeasuringManager::zh_onSaveSeriesAction()
@@ -1552,31 +1579,6 @@ void ZMeasuringManager::zh_onSaveSpectraToFilesAction() const
     ZSaveSpectraToFilesDialog dialog(spectrumMap);
     dialog.exec();
 
-//    // get selected spectra
-//    QModelIndexList selectedIndexes;
-//    emit zg_inquirySelectedModelIndexList(selectedIndexes);
-//    qDebug() << "SELECTED INDEX COUNT" << selectedIndexes.count();
-
-//    QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> > spectrumMap;
-//    zh_getSpectraFromIndexes(selectedIndexes, spectrumMap);
-
-//    // QMap< QPair<folderPath, measuringConditions>,  QList<Spectrum*> >
-//    if(spectrumMap.isEmpty())
-//    {
-//        return;
-//    }
-
-//    QString path;
-//    QString fileNameTemplate;
-//    for(auto &measuringConditions : spectrumMap.keys())
-//    {
-//        ZSaveSpectraToFilesDialog dialog(path, fileNameTemplate, measuringConditions);
-
-//        if(!dialog.exec())
-//        {
-
-//        }
-//    }
 }
 //======================================================
 void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
@@ -1622,36 +1624,25 @@ void ZMeasuringManager::zh_onEnergyCalibrationAction()
 
     return;
 
-
-
-
-//    // create energy calibration widget
-//    ZEnergyCalibrationDialog * energyCalibrationDialog = new ZEnergyCalibrationDialog;
-//    connect(this, &ZMeasuringManager::zg_currentMeasuringConditions,
-//            energyCalibrationDialog, &ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum);
-//    connect(energyCalibrationDialog, &ZEnergyCalibrationDialog::zg_inquiryCurrentVisibleSceneRect,
-//            this, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect);
-
-//    // current Index
-//    QModelIndex currentIndex;
-//    emit zg_inquiryCurrentIndex(currentIndex);
-
-//    qDebug() << "CURRENT INDEX VALIDITY" << currentIndex.isValid();
-
-//    // measuring conditions and spectrum for current index
-//    quint8 gainFactor = 0;
-//    int exposition = -1;
-//    const ZSpeSpectrum* spectrum = 0;
-//    emit zg_inquiryMeasuringConditionsAndSpectrumForIndex(currentIndex, gainFactor, exposition, spectrum);
-
-//    qDebug() << "CURRENT G F " << gainFactor << "CURRENT EXPO " << exposition << "CURRENT SPE " << spectrum;
-
-
-//    energyCalibrationDialog->zp_setMeasuringConditionsAndSpectrum(gainFactor, exposition, spectrum);
-//    energyCalibrationDialog->show();
-
-//    // create connections
-
+    //    // create energy calibration widget
+    //    ZEnergyCalibrationDialog * energyCalibrationDialog = new ZEnergyCalibrationDialog;
+    //    connect(this, &ZMeasuringManager::zg_currentMeasuringConditions,
+    //            energyCalibrationDialog, &ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum);
+    //    connect(energyCalibrationDialog, &ZEnergyCalibrationDialog::zg_inquiryCurrentVisibleSceneRect,
+    //            this, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect);
+    //    // current Index
+    //    QModelIndex currentIndex;
+    //    emit zg_inquiryCurrentIndex(currentIndex);
+    //    qDebug() << "CURRENT INDEX VALIDITY" << currentIndex.isValid();
+    //    // measuring conditions and spectrum for current index
+    //    quint8 gainFactor = 0;
+    //    int exposition = -1;
+    //    const ZSpeSpectrum* spectrum = 0;
+    //    emit zg_inquiryMeasuringConditionsAndSpectrumForIndex(currentIndex, gainFactor, exposition, spectrum);
+    //    qDebug() << "CURRENT G F " << gainFactor << "CURRENT EXPO " << exposition << "CURRENT SPE " << spectrum;
+    //    energyCalibrationDialog->zp_setMeasuringConditionsAndSpectrum(gainFactor, exposition, spectrum);
+    //    energyCalibrationDialog->show();
+    //    // create connections
 
 }
 //======================================================

@@ -310,17 +310,18 @@ void ZSampleTaskTreeModel::zh_onAppendMeasuringConditionsAction()
     }
 
     // get measuring conditions data
+    int id = dialog.zp_id();
     int gainFactor = dialog.zp_gainFactor();
     int exposition = dialog.zp_exposition();
     int quantity = dialog.zp_quantity();
 
-    zp_appendMeasuringConditions(gainFactor, exposition, quantity);
+    zp_appendMeasuringConditions(id, gainFactor, exposition, quantity);
 }
 //===================================================
-void ZSampleTaskTreeModel::zp_appendMeasuringConditions(int gainFactor, int exposition, int quantity)
+void ZSampleTaskTreeModel::zp_appendMeasuringConditions(int id, int gainFactor, int exposition, int quantity)
 {
     // init options
-    ZSampleTaskTreeMeasuringConditionsItemOptions options(gainFactor, exposition);
+    ZSampleTaskTreeMeasuringConditionsItemOptions options(id, gainFactor, exposition);
     for(int i = 0; i < quantity; i++)
     {
         zv_rootItem->zp_createChild(&options);
@@ -343,7 +344,13 @@ void ZSampleTaskTreeModel::zh_onAppendChemicalTaskAction()
 void ZSampleTaskTreeModel::zp_appendChemicalTask(int chemicalTaskId)
 {
     // measuring conditions from chemical task
-    QString queryString = QString("SELECT * FROM calibration_stacks WHERE id=%1").arg(QString::number(chemicalTaskId));
+    QString queryString = QString("SELECT measuring_conditions.id, "
+                                  "measuring_conditions.gain_factor, "
+                                  "measuring_conditions.exposition "
+                                  "FROM calibration_stacks "
+                                  "JOIN measuring_conditions "
+                                  "ON calibration_stacks.measuring_conditions_id=measuring_conditions.id "
+                                  "WHERE calibration_stacks.id=%1").arg(QString::number(chemicalTaskId));
     QSqlQuery query;
     if(!query.prepare(queryString))
     {
@@ -360,18 +367,29 @@ void ZSampleTaskTreeModel::zp_appendChemicalTask(int chemicalTaskId)
         return;
     }
 
-    QVariant vData = query.value(4);
+    // chemical task id
+    QVariant vData = query.value(0);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
     }
-    int gainFactor = vData.toInt();
 
-    vData = query.value(5);
+    int measuringConditionsId = vData.toInt();
+
+
+    vData = query.value(1);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
     }
+
+    int gainFactor = vData.toInt();
+    vData = query.value(2);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return;
+    }
+
     int exposition = vData.toInt();
 
     // find measuring conditions item if it does exist
@@ -388,8 +406,7 @@ void ZSampleTaskTreeModel::zp_appendChemicalTask(int chemicalTaskId)
             continue;
         }
 
-        if(measuringConditionsItem->zp_gainFactor() == gainFactor &&
-                measuringConditionsItem->zp_exposition() == exposition)
+        if(measuringConditionsItem->zp_id() == measuringConditionsId)
         {
             itemExist = true;
             break;
@@ -399,7 +416,7 @@ void ZSampleTaskTreeModel::zp_appendChemicalTask(int chemicalTaskId)
     // create measuring conditions item if it doesn't exist
     if(!itemExist)
     {
-        ZSampleTaskTreeMeasuringConditionsItemOptions options(gainFactor, exposition);
+        ZSampleTaskTreeMeasuringConditionsItemOptions options(measuringConditionsId, gainFactor, exposition);
         baseItem = zv_rootItem->zp_createChild(&options);
         measuringConditionsItem = qobject_cast<ZSampleTaskTreeMeasuringConditionsItem*>(baseItem);
     }

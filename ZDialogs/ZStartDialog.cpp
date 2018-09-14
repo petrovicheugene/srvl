@@ -4,6 +4,7 @@
 #include "ZDatabasePropertiesDialog.h"
 #include "ZDatabaseInspector.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -25,7 +26,7 @@
 //=========================================================
 ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 {
-    setWindowTitle(glAppProduct);
+    setWindowTitle(qApp->property("glAppProduct").toString());
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Tool);
 
     zv_editedRow = -1;

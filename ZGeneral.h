@@ -38,6 +38,7 @@ extern const QString glIconSidebarLeftClose;
 extern const QString glIconSidebarRightOpen;
 extern const QString glIconSidebarRightClose;
 
+extern const QString glAxisToEnergyIconString;
 extern const QString glIconShowGrid;
 extern const QString glIconVerticalIncrease;
 extern const QString glIconVerticalDecrease;

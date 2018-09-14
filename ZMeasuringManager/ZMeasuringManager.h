@@ -192,7 +192,7 @@ public:
     QColor zp_spectrumColor(int sampleRow, int gainFactor, int exposition) const;
     bool zp_spectrumVisibility(int sampleRow, int gainFactor, int exposition, bool& visibility) const;
     bool zp_setSpectrumVisibility(int sampleRow, int gainFactor, int exposition, bool visibility);
-
+    bool zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const;
     bool zp_libraryState() const;
     bool zp_connectionState() const;
 
@@ -217,8 +217,12 @@ signals:
                                   quint32 deadTimeMs,
                                   quint32 spectrumIntensityIntegral) const;
 
-    void zg_currentMeasuringConditions(quint8 gainFactor, int exposition, const ZSpeSpectrum* spectrum) const;
+    void zg_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList) const;
     void zg_inquiryCurrentVisibleSceneRect(QRectF& sceneRect) const;
+
+    //void zg_currentSpectrumChanged(int row, int conditionsIndex);
+    void zg_currentSpectrumChanged(qint64 currentSpectrumId) const;
+
 
 public slots:
 
@@ -226,6 +230,8 @@ public slots:
     // void zp_setCurrentSampleIndex(int currentSampleIndex);
     void zp_startSeries();
     void zp_stopSeries();
+    void zh_currentSpectrumChanged(qint64 spectrumId);
+    void zh_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList);
 
 private slots:
 
@@ -246,6 +252,8 @@ private slots:
     void zh_onConnectToDeviceAction();
     void zh_onExpositionPassedMSec(qint64 expoPassedMs);
     void zh_notifyMeasuringStateChanged();
+    void zh_onCurrentSpectrumMeasuring(qint64 currentMeasuredSpectrumId);
+    void zh_onCurrentEnergyCalibration(QList<double> energyCalibrationFactorList);
 
     // sample measuring
     void zh_onSampleMeasuringFinish();

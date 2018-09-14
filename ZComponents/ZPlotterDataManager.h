@@ -6,6 +6,7 @@
 #include "ZMeasuringManager.h"
 
 //======================================================
+class QAction;
 class ZPlotter;
 class ZDefaultRectGraphicsItem;
 //======================================================
@@ -20,7 +21,7 @@ public:
 
 signals:
 
-
+    void zg_requestCurrentMeasuringConditions(quint8 gainFactor, int exposition);
 
 public slots:
 
@@ -30,10 +31,16 @@ private slots:
 
     void zh_onMeasuringManagerSampleOperation(ZMeasuringManager::SampleOperationType type,
                                               int first, int last);
+    void zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors);
+    void zh_switchRuleMetrix(bool toggled);
+
+    void zh_setSpectrumCurrent(qint64 spectrumId);
 
 private:
 
     //VARS
+    QAction* zv_switchRuleMetrixAction;
+
     ZMeasuringManager* zv_measuringManager;
     ZPlotter* zv_plotter;
     ZDefaultRectGraphicsItem* zv_defaultItem;
@@ -46,7 +53,8 @@ private:
 
 
     // FUNCS
-
+    void zh_createComponents();
+    void zh_createConnections();
 
 };
 //======================================================

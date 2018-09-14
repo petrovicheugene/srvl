@@ -79,6 +79,35 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(glAppExeBaseName);
     QApplication::setApplicationVersion(glAppVersion);
 
+    // create qApp properties and set .pro defines into them
+#ifdef APP_EXE_BASE_NAME
+    qApp->setProperty("glAppExeBaseName", QString(APP_EXE_BASE_NAME));
+#endif
+
+#ifdef APP_PRODUCT
+    qApp->setProperty("glAppProduct", QString(APP_PRODUCT));
+#endif
+
+#ifdef APP_VERSION
+    qApp->setProperty("glAppVersion", QString(APP_VERSION));
+#endif
+
+#ifdef APP_COMPANY
+    qApp->setProperty("glAppCompany", QString(APP_COMPANY));
+#endif
+
+#ifdef APP_COPYRIGHT
+    qApp->setProperty("glAppCopyright", QString(APP_COPYRIGHT));
+#endif
+
+#ifdef APP_COMPANY_URL
+    qApp->setProperty("glAppCompanyURL", QString(APP_COMPANY_URL));
+#endif
+
+#ifdef APP_ICON
+    qApp->setProperty("glAppIcon", QString(APP_ICON));
+#endif
+
     splash.showMessage("Loading translations...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
@@ -112,6 +141,7 @@ int main(int argc, char *argv[])
     splash.showMessage("Loading styles...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
+
     qApp->setStyleSheet(
                 "QSplitter::handle:vertical {height: 6px; image: url(:/images/ZImages/vSplitterHandle.png);}"
                 "QSplitter::handle:horizontal {width:  6px; image: url(:/images/ZImages/hSplitterHandle.png);}"
@@ -119,6 +149,13 @@ int main(int argc, char *argv[])
 
     splash.showMessage("Loading modules...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
+
+    // set path for sqlite plugin
+    QStringList paths = QCoreApplication::libraryPaths();
+    paths.append(".");
+    paths.append("platforms");
+    paths.append("sqldrivers");
+    QCoreApplication::setLibraryPaths(paths);
 
     // start
     ZStartDialog* dialog = new ZStartDialog();

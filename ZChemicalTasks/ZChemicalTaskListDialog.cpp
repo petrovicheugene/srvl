@@ -473,36 +473,30 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
 {
     // current chemical id
 
+    int chemicalId = -1;
     QModelIndex index = zv_chemicalTableWidget->zp_tableView()->currentIndex();
-    if(!index.isValid())
+    if(index.isValid())
     {
-        QString msg = tr("Chemical is not selected.");
-        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
-        return;
+        int row = index.row();
+        index = zv_chemicalTableModel->index(row, 0);
+        if(index.isValid())
+        {
+            QVariant vData = index.data(Qt::DisplayRole);
+            if(vData.isValid() || !vData.canConvert<int>())
+            {
+                bool ok;
+                chemicalId = vData.toInt(&ok);
+                if(!ok)
+                {
+                    chemicalId = -1;
+                }
+            }
+        }
     }
 
-    int row = index.row();
-    index = zv_chemicalTableModel->index(row, 0);
-    if(!index.isValid())
+    if(chemicalId < 0)
     {
-        QString msg = tr("Cannot get chemical id from model.");
-        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
-        return;
-    }
-
-    QVariant vData = index.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<int>())
-    {
-        QString msg = tr("Cannot cast chemical id from QVariant.");
-        QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
-        return;
-    }
-
-    bool ok;
-    int chemicalId = vData.toInt(&ok);
-    if(!ok)
-    {
-        QString msg = tr("Cannot cast chemical id from QVariant.");
+        QString msg = tr("Select a chemical element for which the task is created.");
         QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
         return;
     }
@@ -511,9 +505,11 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
     ZChemicalTaskDialog dialog(zv_chemicalTableModel);
     connect(&dialog, &ZChemicalTaskDialog::zg_checkChemicalTaskName,
             this, &ZChemicalTaskListDialog::zh_checkChemicalTaskName);
+
+    //dialog.zp_setChemicalId(chemicalId);
     if(!dialog.zp_setChemicalId(chemicalId))
     {
-        QString msg = tr("Cannot transfer chemical id to dialog.");
+        QString msg = tr("Cannot transfer the current chemical element id to the dialog.");
         QMessageBox::critical(this, tr("Error"), tr("Error: %1").arg(msg), QMessageBox::Ok);
         return;
     }
@@ -525,128 +521,7 @@ void ZChemicalTaskListDialog::zh_onNewChemicalTaskAction()
 
     // Write chemical task to database
     zh_saveNewChemicalTaskToDatabase(dialog);
-
-    //    // Calibration_stacks table
-    //    // new id
-    //    int id = zh_findNewChemicalTaskId();
-
-    //    // get calibration stack data
-    //    QList<int> calibrationIdList;
-    //    dialog.zp_calibrationIdList(calibrationIdList);
-    //    if(calibrationIdList.isEmpty())
-    //    {
-    //        QString msg = tr("No calibrations to append to chemical task.");
-    //        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
-    //        return;
-    //    }
-
-    //    // get calibration limits
-    //    QList<QPair<double, double> > concentrationLimitsList;
-    //    dialog.zp_concentrationLimitsList(concentrationLimitsList);
-
-    //    if(concentrationLimitsList.count() != calibrationIdList.count())
-    //    {
-    //        QString msg = tr("Cannot get concentration limits for calibrations.");
-    //        QMessageBox::critical(this, tr("Error"), msg, QMessageBox::Ok);
-    //        return;
-    //    }
-
-    //    // write to database
-    //    QSqlRecord record;
-    //    record.append(QSqlField("id", QVariant::Int));
-    //    record.append(QSqlField("name", QVariant::String));
-    //    record.append(QSqlField("description", QVariant::String));
-    //    record.append(QSqlField("chemicals_id", QVariant::Int));
-    //    record.append(QSqlField("measuring_conditions_gain_factor", QVariant::Int));
-    //    record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
-
-    //    record.setValue(0, QVariant(id));
-    //    record.setValue(1, QVariant(dialog.zp_chemicalTaskName()));
-    //    record.setValue(2, QVariant(dialog.zp_description()));
-    //    record.setValue(3, QVariant(chemicalId));
-    //    record.setValue(4, QVariant(dialog.zp_gainFactor()));
-    //    record.setValue(5, QVariant(dialog.zp_exposition()));
-
-    //    if(!zv_calibrationStackTableModel->insertRecord(-1, record))
-    //    {
-    //        QString msg = zv_calibrationStackTableModel->lastError().text();
-    //        QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
-    //        zv_calibrationStackTableModel->revertAll();
-    //        zv_chemicalTaskTableWidget->zp_tableView()->reset();
-    //        return;
-    //    }
-
-    //    if(!zv_calibrationStackTableModel->submitAll())
-    //    {
-    //        QString msg = zv_calibrationStackTableModel->lastError().text();
-    //        QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
-    //        zv_calibrationStackTableModel->revertAll();
-    //        zv_chemicalTaskTableWidget->zp_tableView()->reset();
-    //        return;
-    //    }
-
-    //    // calibrations_has_calibration_stacks table
-    //    // create SQL model
-    //    QSqlTableModel stackedCalibrationModel;
-    //    stackedCalibrationModel.setTable("calibrations_has_calibration_stacks");
-    //    stackedCalibrationModel.select();
-    //    stackedCalibrationModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
-
-    //    // write to database
-    //    record.clear();
-    //    record.append(QSqlField("calibrations_id", QVariant::Int));
-    //    record.append(QSqlField("calibrations_chemicals_id", QVariant::Int));
-    //    record.append(QSqlField("calibrations_measuring_conditions_gain_factor", QVariant::Int));
-    //    record.append(QSqlField("calibrations_measuring_conditions_exposition", QVariant::Int));
-    //    record.append(QSqlField("calibration_stacks_id", QVariant::Int));
-    //    record.append(QSqlField("calibration_stacks_chemicals_id", QVariant::Int));
-    //    record.append(QSqlField("calibration_stacks_measuring_conditions_gain_factor", QVariant::Int));
-    //    record.append(QSqlField("calibration_stacks_measuring_conditions_exposition", QVariant::Int));
-    //    record.append(QSqlField("calibration_min_limit", QVariant::Double));
-    //    record.append(QSqlField("calibration_max_limit", QVariant::Double));
-
-    //    for(int row = 0; row < calibrationIdList.count(); row++)
-    //    {
-    //        // get limits
-    //#ifdef DBG
-    //        qDebug() << "CALIBR ID" << calibrationIdList.at(row);
-    //#endif
-
-    //        record.clearValues();
-    //        record.setValue(0, QVariant(calibrationIdList.at(row)));  // calibration id
-    //        record.setValue(1, QVariant(chemicalId)); // calibration chemical id
-    //        record.setValue(2, QVariant(dialog.zp_gainFactor()));
-    //        record.setValue(3, QVariant(dialog.zp_exposition()));
-
-    //        record.setValue(4, QVariant(id)); // stack id
-    //        record.setValue(5, QVariant(chemicalId));
-    //        record.setValue(6, QVariant(dialog.zp_gainFactor()));
-    //        record.setValue(7, QVariant(dialog.zp_exposition()));
-    //        record.setValue(8, QVariant(concentrationLimitsList.at(row).first)); // min
-    //        record.setValue(9, QVariant(concentrationLimitsList.at(row).second)); // max
-
-    //        if(!stackedCalibrationModel.insertRecord(-1, record))
-    //        {
-    //            QString msg = stackedCalibrationModel.lastError().text();
-    //            QMessageBox::critical(this, tr("Error"), tr("Model data record error: %1").arg(msg), QMessageBox::Ok);
-    //            stackedCalibrationModel.revertAll();
-    //            zv_calibrationStackTableModel->removeRows(zv_calibrationStackTableModel->rowCount() - 1, 1);
-    //            zv_calibrationStackTableModel->submitAll();
-    //            return;
-    //        }
-
-    //        if(!stackedCalibrationModel.submitAll())
-    //        {
-    //            QString msg = stackedCalibrationModel.lastError().text();
-    //            QMessageBox::critical(this, tr("Error"), tr("Database record error: %1").arg(msg), QMessageBox::Ok);
-    //            stackedCalibrationModel.revertAll();
-    //            zv_calibrationStackTableModel->removeRows(zv_calibrationStackTableModel->rowCount() - 1, 1);
-    //            zv_calibrationStackTableModel->submitAll();
-    //            return;
-    //        }
-    //    }
 }
-
 //===============================================================
 void ZChemicalTaskListDialog::zh_onEditChemicalTaskAction()
 {
@@ -769,15 +644,13 @@ void ZChemicalTaskListDialog::zh_saveNewChemicalTaskToDatabase(ZChemicalTaskDial
     record.append(QSqlField("name", QVariant::String));
     record.append(QSqlField("description", QVariant::String));
     record.append(QSqlField("chemicals_id", QVariant::Int));
-    record.append(QSqlField("measuring_conditions_gain_factor", QVariant::Int));
-    record.append(QSqlField("measuring_conditions_exposition", QVariant::Int));
+    record.append(QSqlField("measuring_conditions_id", QVariant::Int));
 
     record.setValue(0, QVariant(id));
     record.setValue(1, QVariant(dialog.zp_chemicalTaskName()));
     record.setValue(2, QVariant(dialog.zp_description()));
     record.setValue(3, QVariant(dialog.zp_chemicalId()));
-    record.setValue(4, QVariant(dialog.zp_gainFactor()));
-    record.setValue(5, QVariant(dialog.zp_exposition()));
+    record.setValue(4, QVariant(dialog.zp_measurementConditionsId()));
 
     if(!zv_calibrationStackTableModel->insertRecord(-1, record))
     {
@@ -808,34 +681,26 @@ void ZChemicalTaskListDialog::zh_saveNewChemicalTaskToDatabase(ZChemicalTaskDial
     record.clear();
     record.append(QSqlField("calibrations_id", QVariant::Int));
     record.append(QSqlField("calibrations_chemicals_id", QVariant::Int));
-    record.append(QSqlField("calibrations_measuring_conditions_gain_factor", QVariant::Int));
-    record.append(QSqlField("calibrations_measuring_conditions_exposition", QVariant::Int));
+    record.append(QSqlField("calibrations_measuring_conditions_id", QVariant::Int));
     record.append(QSqlField("calibration_stacks_id", QVariant::Int));
     record.append(QSqlField("calibration_stacks_chemicals_id", QVariant::Int));
-    record.append(QSqlField("calibration_stacks_measuring_conditions_gain_factor", QVariant::Int));
-    record.append(QSqlField("calibration_stacks_measuring_conditions_exposition", QVariant::Int));
+    record.append(QSqlField("calibration_stacks_measuring_conditions_id", QVariant::Int));
     record.append(QSqlField("calibration_min_limit", QVariant::Double));
     record.append(QSqlField("calibration_max_limit", QVariant::Double));
 
     for(int row = 0; row < calibrationIdList.count(); row++)
     {
-        // get limits
-#ifdef DBG
-        qDebug() << "CALIBR ID" << calibrationIdList.at(row);
-#endif
 
         record.clearValues();
         record.setValue(0, QVariant(calibrationIdList.at(row)));  // calibration id
         record.setValue(1, QVariant(dialog.zp_chemicalId())); // calibration chemical id
-        record.setValue(2, QVariant(dialog.zp_gainFactor()));
-        record.setValue(3, QVariant(dialog.zp_exposition()));
+        record.setValue(2, QVariant(dialog.zp_measurementConditionsId()));
 
-        record.setValue(4, QVariant(id)); // stack id
-        record.setValue(5, QVariant(dialog.zp_chemicalId()));
-        record.setValue(6, QVariant(dialog.zp_gainFactor()));
-        record.setValue(7, QVariant(dialog.zp_exposition()));
-        record.setValue(8, QVariant(concentrationLimitsList.at(row).first)); // min
-        record.setValue(9, QVariant(concentrationLimitsList.at(row).second)); // max
+        record.setValue(3, QVariant(id)); // stack id
+        record.setValue(4, QVariant(dialog.zp_chemicalId()));
+        record.setValue(5, QVariant(dialog.zp_measurementConditionsId()));
+        record.setValue(6, QVariant(concentrationLimitsList.at(row).first)); // min
+        record.setValue(7, QVariant(concentrationLimitsList.at(row).second)); // max
 
         if(!stackedCalibrationModel.insertRecord(-1, record))
         {

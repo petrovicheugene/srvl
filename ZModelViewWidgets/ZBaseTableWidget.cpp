@@ -114,9 +114,8 @@ void ZBaseTableWidget::zp_appendContextActions(const QList<ZControlAction*>& act
 //=========================================================================
 void ZBaseTableWidget::zh_createComponents()
 {
-    zv_mainLayout = new QVBoxLayout(this);
+    zv_mainLayout = new QVBoxLayout;
     zv_mainLayout->setMargin(0);
-
     setLayout(zv_mainLayout);
 
     zv_table = new QTableView(this);
@@ -124,7 +123,7 @@ void ZBaseTableWidget::zh_createComponents()
 
     zv_mainLayout->addWidget(zv_table, INT_MAX);
 
-    zv_buttonLayout = new QHBoxLayout(this);
+    zv_buttonLayout = new QHBoxLayout;
     zv_mainLayout->addLayout(zv_buttonLayout);
 }
 //=========================================================================

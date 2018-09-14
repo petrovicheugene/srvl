@@ -129,14 +129,14 @@ void ZMeasuringConditionsDialog::zh_createConnections()
 void ZMeasuringConditionsDialog::zh_onOkButtonClick()
 {
     // Check data
-    bool res = false;
-    emit zg_checkMeasuringConditions(zv_gainFactorSpinBox->value(),
-                                     zv_expositionSpinBox->value(), res);
-    if(!res)
-    {
-        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(tr("Such measuring conditions alredy exist.")));
-        return;
-    }
+//    bool res = false;
+//    emit zg_checkMeasuringConditions(zv_gainFactorSpinBox->value(),
+//                                     zv_expositionSpinBox->value(), res);
+//    if(res)
+//    {
+//        zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(tr("Such measuring conditions alredy exist.")));
+//        return;
+//    }
 
     accept();
 }
