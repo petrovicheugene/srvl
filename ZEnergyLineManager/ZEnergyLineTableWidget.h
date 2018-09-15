@@ -4,8 +4,11 @@
 //======================================================
 #include <QWidget>
 //======================================================
+class ZPeriodicTableWidget;
+class ZChemicalElementPropertyTreeModel;
 
-
+class QSplitter;
+class QTableView;
 //======================================================
 class ZEnergyLineTableWidget : public QWidget
 {
@@ -21,6 +24,11 @@ public slots:
 private:
 
     // VARS
+    ZPeriodicTableWidget* zv_periodicTableWidget;
+    QTableView* zv_selectedChemicalElementTableView;
+    QSplitter* zv_mainSplitter;
+
+    ZChemicalElementPropertyTreeModel* zv_chemicalElementPropertyTreeModel;
 
 
     // FUNCS

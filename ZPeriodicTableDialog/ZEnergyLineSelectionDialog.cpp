@@ -56,11 +56,11 @@ void ZEnergyLineSelectionDialog::zh_createComponents()
     zv_mainSplitter->addWidget(zv_periodicTableWidget);
 
     // property table view
-    zv_chemicalElementpropertyTableView = new QTableView(this);
-    zv_chemicalElementpropertyTableView->setModel(zv_chemicalPropertyProxyTableModel);
-    zv_chemicalElementpropertyTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    zv_chemicalElementpropertyTableView->setSelectionMode( QAbstractItemView::SingleSelection);
-    zv_mainSplitter->addWidget(zv_chemicalElementpropertyTableView);
+    zv_chemicalElementPropertyTableView = new QTableView(this);
+    zv_chemicalElementPropertyTableView->setModel(zv_chemicalPropertyProxyTableModel);
+    zv_chemicalElementPropertyTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_chemicalElementPropertyTableView->setSelectionMode( QAbstractItemView::SingleSelection);
+    zv_mainSplitter->addWidget(zv_chemicalElementPropertyTableView);
 
 
     QHBoxLayout* selectedLineLayout = new QHBoxLayout;
@@ -105,7 +105,7 @@ void ZEnergyLineSelectionDialog::zh_createConnections()
     connect(zv_cancelButton, &QPushButton::clicked,
             this, &ZEnergyLineSelectionDialog::reject);
 
-    connect(zv_chemicalElementpropertyTableView->selectionModel(), &QItemSelectionModel::currentChanged,
+    connect(zv_chemicalElementPropertyTableView->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &ZEnergyLineSelectionDialog::zh_onCurrentEnergyLineChange);
 
 }
