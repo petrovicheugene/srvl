@@ -3,12 +3,17 @@
 #define ZCHEMICALELEMENTENERGYLINEWIDGET_H
 //======================================================
 #include <QWidget>
+
 //======================================================
 class ZPeriodicTableWidget;
 class ZChemicalElementPropertyTreeModel;
+class ZSelectedEnergyLineTableModel;
 
 class QSplitter;
 class QTableView;
+
+//======================================================
+typedef QList<QPair<QString, QString> > PropertyList;
 //======================================================
 class ZEnergyLineTableWidget : public QWidget
 {
@@ -29,12 +34,13 @@ private:
     QSplitter* zv_mainSplitter;
 
     ZChemicalElementPropertyTreeModel* zv_chemicalElementPropertyTreeModel;
-
+    ZSelectedEnergyLineTableModel* zv_selectedEnergyLineTableModel;
 
     // FUNCS
     void zh_createComponents();
     void zh_createConnections();
-
+    void zh_energyLinesForZNumber(int ZNumber, PropertyList &propertyList);
+    void zh_chemicalElementSymbol(int ZNumber, QString& symbol);
 
 };
 //======================================================

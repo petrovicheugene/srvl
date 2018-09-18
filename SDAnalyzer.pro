@@ -208,7 +208,10 @@ SOURCES += main.cpp\
     ZPeriodicTable/ZPropertySectionEditDialog.cpp \
     ZPlotter/ZEnergyLineGraphicsItem.cpp \
     ZEnergyLineManager/ZEnergyLineManager.cpp \
-    ZEnergyLineManager/ZEnergyLineTableWidget.cpp
+    ZEnergyLineManager/ZEnergyLineTableWidget.cpp \
+    ZEnergyLineManager/ZSelectedEnergyLineTableModel.cpp \
+    ZEnergyLineManager/ZEnergyLineSetItem.cpp \
+    ZEnergyLineManager/ZEnergyLineDelegate.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -344,7 +347,10 @@ HEADERS  += MainWindow.h \
     ZPeriodicTable/ZPropertySectionEditDialog.h \
     ZPlotter/ZEnergyLineGraphicsItem.h \
     ZEnergyLineManager/ZEnergyLineManager.h \
-    ZEnergyLineManager/ZEnergyLineTableWidget.h
+    ZEnergyLineManager/ZEnergyLineTableWidget.h \
+    ZEnergyLineManager/ZSelectedEnergyLineTableModel.h \
+    ZEnergyLineManager/ZEnergyLineSetItem.h \
+    ZEnergyLineManager/ZEnergyLineDelegate.h
 
 RESOURCES += \
     resources.qrc \

@@ -37,6 +37,8 @@ void ZEnergyLineSelectionDialog::zh_createComponents()
 {
     // models
     zv_chemicalElementPropertyTreeModel = new ZChemicalElementPropertyTreeModel(this);
+    zv_chemicalElementPropertyTreeModel->zp_setNamePropertyName("Name ru");
+
     zv_chemicalPropertyProxyTableModel = new ZChemicalPropertyProxyTableModel(this);
     zv_chemicalPropertyProxyTableModel->zp_setItemIsEditable(false);
     zv_chemicalPropertyProxyTableModel->setHeaderData(0, Qt::Horizontal, tr("Energy line"), Qt::EditRole);
@@ -169,7 +171,7 @@ void ZEnergyLineSelectionDialog::zh_onOkClick()
     accept();
 }
 //=============================================================
-void ZEnergyLineSelectionDialog::zh_onSelectedChemicalElementChange()
+void ZEnergyLineSelectionDialog::zh_onSelectedChemicalElementChange(int ZNumber, bool selected)
 {
     QList<int> selectedChemicalElementList = zv_periodicTableWidget->zp_selectedChemicalElementList();
 

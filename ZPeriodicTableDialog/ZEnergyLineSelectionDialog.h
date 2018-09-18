@@ -32,7 +32,7 @@ public slots:
 private slots:
 
     void zh_onOkClick();
-    void zh_onSelectedChemicalElementChange();
+    void zh_onSelectedChemicalElementChange(int ZNumber, bool selected);
     void zh_onCurrentEnergyLineChange(const QModelIndex& current, const QModelIndex& previous);
 
 private:

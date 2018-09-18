@@ -166,6 +166,11 @@ QList<int> ZPeriodicTableWidget::zp_selectedChemicalElementList() const
     return selectedChemicalElementList;
 }
 //======================================================
+void ZPeriodicTableWidget::zp_fillSelectedChemicalElementList(QList<int>& ZNumberList) const
+{
+    ZNumberList = zp_selectedChemicalElementList();
+}
+//======================================================
 void ZPeriodicTableWidget::zp_setSelectionMode(SelectionMode selectionMode)
 {
     zv_selectionMode = selectionMode;
@@ -192,6 +197,7 @@ void ZPeriodicTableWidget::zh_updatePeriodicTable()
     QModelIndex index;
     QVariant vData;
     QString dataString;
+    QString toolTipString;
     for(int row = 0; row < zv_elementButtonList.count(); row++)
     {
         index = zv_model->index(row, 0, QModelIndex());
@@ -215,6 +221,8 @@ void ZPeriodicTableWidget::zh_updatePeriodicTable()
             continue;
         }
         zv_elementButtonList[row]->zp_setChemicalElementName(vData.toString());
+        toolTipString = QString("%1 - %2").arg(QString::number(zv_elementButtonList[row]->zp_zNumber()), zv_elementButtonList[row]->zp_chemicalElementName());
+        zv_elementButtonList[row]->setToolTip(toolTipString);
     }
 }
 //======================================================
@@ -240,7 +248,7 @@ void ZPeriodicTableWidget::zh_onButtonToggle(bool toggled)
         }
     }
 
-    emit zg_selectedChemicalElementChanged();
+    emit zg_selectedChemicalElementChanged(toggledButton->zp_zNumber(), toggledButton->isChecked());
 }
 //======================================================
 void ZPeriodicTableWidget::zh_recalcAndApplyMinButtonSize()

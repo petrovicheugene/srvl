@@ -29,13 +29,14 @@ public:
 
     QList<int> zp_selectedChemicalElementList() const;
 
+
 signals:
 
-    void zg_selectedChemicalElementChanged();
-
+    void zg_selectedChemicalElementChanged(int zNumber, bool selected);
 
 public slots:
 
+    void zp_fillSelectedChemicalElementList(QList<int>& ZNumberList) const;
 
 protected:
 
