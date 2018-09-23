@@ -77,7 +77,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     //    zv_currentMeasuringTaskTreeModel = 0;
     // zv_sqlSeriesModel = 0;
     zv_measuringManager = nullptr;
-    zv_energyLineManager = nullptr;
+    zv_energyLineTableWidget = nullptr;
     zv_measuringResultTableModel = nullptr;
 
     zv_plotter = 0;
@@ -198,7 +198,6 @@ void MainWindow::zh_createComponents()
 
     // DATA MODELS
     zv_measuringManager = new ZMeasuringManager(this);
-    zv_energyLineManager = new ZEnergyLineManager(this);
 
     // measuring models
     zv_measuringResultTableModel = new ZMeasuringResultTableModel(this);
@@ -281,7 +280,18 @@ void MainWindow::zh_createConnections()
             zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_onCurrentIndexChanged);
 
     zv_plotterDataManager->zp_connectToMeasuringManager(zv_measuringManager);
-    zv_plotterDataManager->zp_connectToEnergyLineManager(zv_energyLineManager);
+    // connect to zv_energyLineTableWidget
+
+    connect(zv_energyLineTableWidget, &ZEnergyLineTableWidget::zg_energyLineOperation,
+            zv_plotterDataManager, &ZPlotterDataManager::zp_onEnergyLineOperation);
+    connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineEnergyValue,
+            zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineEnergyValue);
+    connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineVisibility,
+            zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineVisibility);
+    connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineColor,
+            zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineColor);
+
+
     zv_plotterDataManager->zp_connectToPlotter(zv_plotter);
 
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentVisibleSceneRect,

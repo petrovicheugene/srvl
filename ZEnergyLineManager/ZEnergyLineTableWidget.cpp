@@ -12,7 +12,8 @@
 #include <QTableView>
 #include <QVBoxLayout>
 //======================================================
-ZEnergyLineTableWidget::ZEnergyLineTableWidget(QWidget *parent) : QWidget(parent)
+ZEnergyLineTableWidget::ZEnergyLineTableWidget(QWidget *parent)
+    : QWidget(parent)
 {
     zh_createComponents();
     zh_createConnections();
@@ -64,6 +65,12 @@ void ZEnergyLineTableWidget::zh_createConnections()
     connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_requestChemicalElementSymbol,
             this, &ZEnergyLineTableWidget::zh_chemicalElementSymbol);
 
+    connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_energyLineVisibilityChanged,
+            this, &ZEnergyLineTableWidget::zg_energyLineVisibilityChanged);
+
+    connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_energyLineOperation,
+            this, &ZEnergyLineTableWidget::zg_energyLineOperation);
+
 
 }
 //======================================================
@@ -96,4 +103,33 @@ void ZEnergyLineTableWidget::zh_chemicalElementSymbol(int ZNumber, QString& symb
     }
 }
 //======================================================
-
+void ZEnergyLineTableWidget::zp_energyLineEnergyValue(const QString& elementSymbol,
+                       const QString& lineName,
+                       double& energyValue) const
+{
+    if(!zv_selectedEnergyLineTableModel->zp_energyLineEnergyValue(elementSymbol, lineName, energyValue))
+    {
+        energyValue = 0.0;
+    }
+}
+//======================================================
+void ZEnergyLineTableWidget::zp_energyLineVisibility(const QString& elementSymbol,
+                       const QString& lineName,
+                       bool& visible) const
+{
+    if(!zv_selectedEnergyLineTableModel->zp_energyLineVisibility(elementSymbol, lineName, visible))
+    {
+        visible = false;
+    }
+}
+//======================================================
+void ZEnergyLineTableWidget::zp_energyLineColor(const QString& elementSymbol,
+                        const QString& lineName,
+                        QColor& color) const
+{
+    if(!zv_selectedEnergyLineTableModel->zp_energyLineColor(elementSymbol, lineName, color))
+    {
+        color = QColor();
+    }
+}
+//======================================================

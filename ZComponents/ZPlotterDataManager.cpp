@@ -15,7 +15,6 @@ ZPlotterDataManager::ZPlotterDataManager(QObject *parent)
     : QObject(parent)
 {
     zv_measuringManager = nullptr;
-    zv_energyLineManager = nullptr;
     zv_plotter = nullptr;
     zv_boundingRectTopFactor = 1.05;
     zv_defaultItem = nullptr;
@@ -38,15 +37,6 @@ void ZPlotterDataManager::zh_createConnections()
 {
     connect(zv_switchRuleMetrixAction, &QAction::toggled,
             this, &ZPlotterDataManager::zh_switchRuleMetrix);
-}
-//======================================================
-void ZPlotterDataManager::zp_connectToEnergyLineManager(ZEnergyLineManager* energyLineManager)
-{
-    zv_energyLineManager = energyLineManager;
-
-    connect(zv_energyLineManager, &ZEnergyLineManager::zg_lineOperation,
-            this, &ZPlotterDataManager::zh_onEnergyLineManagerOperation);
-
 }
 //======================================================
 void ZPlotterDataManager::zp_connectToMeasuringManager(ZMeasuringManager *measuringManager)
@@ -96,9 +86,84 @@ void ZPlotterDataManager::zp_connectToPlotter(ZPlotter *plotter)
 
 }
 //======================================================
-void ZPlotterDataManager::zh_onEnergyLineManagerOperation()
+void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QString lineName,
+                                                   EnergyLineOperationType operationType)
 {
+//    enum EnergyLineOperation{EL_REMOVED,
+//                            EL_INSERTED,
+//                            EL_VISIBILITY_CHANGED,
+//                            EL_COLOR_CHANGED};
+    // find item
+    ZEnergyLineGraphicsItem* energyLineItem = nullptr;
+    QList<QGraphicsItem*> energyLineList = zv_plotter->zp_itemListForType(EnergyLineItemType);
+    for(int i = 0; i < energyLineList.count(); i++)
+    {
+        energyLineItem = qgraphicsitem_cast<ZEnergyLineGraphicsItem*>(energyLineList.at(i));
+        if(energyLineItem != nullptr && energyLineItem->zp_chemicalElementSymbol() == elementSymbol
+                && energyLineItem->zp_lineName() == lineName)
+        {
+            // item found
+            break;
+        }
 
+        // reset item pointer and go on
+        energyLineItem = nullptr;
+        continue;
+    }
+
+    if(operationType == 0)
+    {
+        //"EL_REMOVED";
+        if(energyLineItem)
+        {
+            zv_plotter->zp_removeItem(energyLineItem);
+        }
+    }
+    else if(operationType == 1)
+    {
+        //"EL_INSERTED";
+
+        if(energyLineItem)
+        {
+            zv_plotter->zp_removeItem(energyLineItem);
+        }
+
+        double energyVal;
+        emit zg_requestEnergyLineEnergyValue(elementSymbol, lineName, energyVal);
+
+        bool visibility;
+        emit zg_requestEnergyLineVisibility(elementSymbol, lineName, visibility);
+
+        QColor color;
+        emit zg_requestEnergyLineColor(elementSymbol, lineName, color);
+
+        energyLineItem = new ZEnergyLineGraphicsItem(elementSymbol, lineName, 100);
+        zv_plotter->zp_addItem(energyLineItem);
+
+        energyLineItem->zp_setXPosition(energyVal * 100);
+        energyLineItem->setVisible(visibility);
+        energyLineItem->zp_setColor(color);
+    }
+    else if(operationType == 2)
+    {
+        // "EL_VISIBILITY_CHANGED";
+        if(energyLineItem)
+        {
+            bool visibility;
+            emit zg_requestEnergyLineVisibility(elementSymbol, lineName, visibility);
+            energyLineItem->setVisible(visibility);
+        }
+    }
+    else if(operationType == 3)
+    {
+        // "EL_COLOR_CHANGED";
+        if(energyLineItem)
+        {
+            QColor color;
+            emit zg_requestEnergyLineColor(elementSymbol, lineName, color);
+            energyLineItem->zp_setColor(color);
+        }
+    }
 }
 //======================================================
 void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager::SampleOperationType type,

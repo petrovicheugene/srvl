@@ -14,6 +14,7 @@ class QTableView;
 
 //======================================================
 typedef QList<QPair<QString, QString> > PropertyList;
+typedef int EnergyLineOperationType;
 //======================================================
 class ZEnergyLineTableWidget : public QWidget
 {
@@ -23,7 +24,28 @@ public:
 
 signals:
 
+    void zg_energyLineVisibilityChanged(QString elementSymbol, QString lineName,
+                                        double energy,
+                                        bool visible) const;
+
+    void zg_energyLineOperation(const QString& elementSymbol,
+                           const QString& lineName,
+                           EnergyLineOperationType operationType);
+
 public slots:
+
+
+    void zp_energyLineEnergyValue(const QString& elementSymbol,
+                           const QString& lineName,
+                           double& energyValue) const;
+
+    void zp_energyLineVisibility(const QString& elementSymbol,
+                           const QString& lineName,
+                           bool& visible) const;
+
+    void zp_energyLineColor(const QString& elementSymbol,
+                            const QString& lineName,
+                            QColor& visible) const;
 
 
 private:

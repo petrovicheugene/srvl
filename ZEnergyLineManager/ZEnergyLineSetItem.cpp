@@ -1,5 +1,8 @@
 //======================================================
 #include "ZEnergyLineSetItem.h"
+#include <QApplication>
+//======================================================
+const QString ZEnergyLineSetItem::zv_settingsSectionName("EnergyLineVisibility");
 //======================================================
 ZEnergyLineProperties::ZEnergyLineProperties()
 {
@@ -17,6 +20,14 @@ ZEnergyLineProperties::ZEnergyLineProperties(const ZEnergyLineProperties& src)
 {
     zv_energyLineValue = src.zv_energyLineValue;
     zv_visibility = src.zv_visibility;
+    zv_color = src.zv_color;
+}
+//======================================================
+ZEnergyLineProperties::ZEnergyLineProperties(const QString& energyLineValue, QColor color)
+{
+    zv_energyLineValue = energyLineValue;
+    zv_color = color;
+    zv_visibility = false;
 }
 //======================================================
 QString ZEnergyLineProperties::zp_energyLineValue() const
@@ -34,19 +45,99 @@ void ZEnergyLineProperties::zp_setVisible(bool visible)
     zv_visibility = visible;
 }
 //======================================================
+QColor ZEnergyLineProperties::zp_color() const
+{
+    return zv_color;
+}
+//======================================================
+void ZEnergyLineProperties::zp_setColor(QColor color)
+{
+    zv_color = color;
+}
+//======================================================
 // END ZEnergyLineProperties
 //======================================================
 ZEnergyLineSetItem::ZEnergyLineSetItem(int ZNumber,
                                        const QString &symbol,
-                                       PropertyList& propertyList)
+                                       QObject *parent)
+    : QObject(parent)
 {
+    qRegisterMetaType<PropertyList>("PropertyList");
+
     zv_ZNumber = ZNumber;
     zv_symbol = symbol;
+    //    QColor color;
+    //    for(auto& property : propertyList)
+    //    {
+    //        if(property.first.contains(QChar('K'), Qt::CaseSensitive))
+    //        {
+    //            color = QColor(Qt::blue);
+    //        }
+    //        else if(property.first.contains(QChar('L'), Qt::CaseSensitive))
+    //        {
+    //            color = QColor(Qt::green);
+    //        }
+    //        else if(property.first.contains(QChar('M'), Qt::CaseSensitive))
+    //        {
+    //            color = QColor(Qt::red);
+    //        }
+    //        else
+    //        {
+    //            color = QColor(Qt::magenta);
+    //        }
 
+    //        zv_energyLinePropertyMap.insert(property.first, ZEnergyLineProperties(property.second, color));
+
+    //        emit zg_energyLineOperation(zv_symbol, property.first, EL_INSERTED);
+
+    //    }
+
+    //    QMetaObject::invokeMethod(this, "zh_restoreVisibility",
+    //                              Qt::QueuedConnection);
+
+//    QMetaObject::invokeMethod(this, "zh_createEnergyLines",
+//                              Qt::QueuedConnection,
+//                              Q_ARG(PropertyList, propertyList));
+}
+//======================================================
+ZEnergyLineSetItem::~ZEnergyLineSetItem()
+{
+    zh_saveVisibility();
+
+    for(auto& key : zv_energyLinePropertyMap.keys())
+    {
+        emit zg_energyLineOperation(zv_symbol, key, EL_REMOVED);
+    }
+}
+//======================================================
+void ZEnergyLineSetItem::zp_createEnergyLines(const PropertyList &propertyList)
+{
+    QColor color;
     for(auto& property : propertyList)
     {
-        zv_energyLinePropertyMap.insert(property.first, ZEnergyLineProperties (property.second));
+        if(property.first.contains(QChar('K'), Qt::CaseSensitive))
+        {
+            color = QColor(Qt::blue);
+        }
+        else if(property.first.contains(QChar('L'), Qt::CaseSensitive))
+        {
+            color = QColor(Qt::green);
+        }
+        else if(property.first.contains(QChar('M'), Qt::CaseSensitive))
+        {
+            color = QColor(Qt::red);
+        }
+        else
+        {
+            color = QColor(Qt::magenta);
+        }
+
+        zv_energyLinePropertyMap.insert(property.first, ZEnergyLineProperties(property.second, color));
+
+        emit zg_energyLineOperation(zv_symbol, property.first, EL_INSERTED);
     }
+
+    zh_restoreVisibility();
 }
 //======================================================
 int ZEnergyLineSetItem::zp_ZNumber() const
@@ -60,7 +151,7 @@ QString ZEnergyLineSetItem::zp_symbol() const
 }
 //======================================================
 bool ZEnergyLineSetItem::zp_energyLineValue(const QString& lineName,
-                                            QString& value)
+                                            QString& value) const
 {
     if(!zv_energyLinePropertyMap.keys().contains(lineName))
     {
@@ -68,6 +159,42 @@ bool ZEnergyLineSetItem::zp_energyLineValue(const QString& lineName,
     }
 
     value = zv_energyLinePropertyMap[lineName].zp_energyLineValue();
+    return true;
+}
+//======================================================
+bool ZEnergyLineSetItem::zp_isEnergyLineVisible(const QString& lineName, bool& visibility) const
+{
+    if(!zv_energyLinePropertyMap.keys().contains(lineName))
+    {
+        return false;
+    }
+
+    visibility = zv_energyLinePropertyMap[lineName].zp_isVisible();
+    return true;
+}
+//======================================================
+bool ZEnergyLineSetItem::zp_energyLineColor(const QString& lineName, QColor &color) const
+{
+    if(!zv_energyLinePropertyMap.keys().contains(lineName))
+    {
+        return false;
+    }
+
+    color = zv_energyLinePropertyMap[lineName].zp_color();
+    return true;
+}
+//======================================================
+bool ZEnergyLineSetItem::zp_setEnergyLineVisible(const QString& lineName, bool visibility)
+{
+    if(!zv_energyLinePropertyMap.keys().contains(lineName))
+    {
+        return false;
+    }
+
+    zv_energyLinePropertyMap[lineName].zp_setVisible(visibility);
+
+    emit zg_energyLineOperation(zv_symbol, lineName, EL_VISIBILITY_CHANGED);
+
     return true;
 }
 //======================================================
@@ -80,5 +207,56 @@ QStringList ZEnergyLineSetItem::zp_energyLineNameStringList() const
 {
     QStringList energyLineNameStringList = zv_energyLinePropertyMap.keys();
     return energyLineNameStringList;
+}
+//======================================================
+void ZEnergyLineSetItem::zh_restoreVisibility()
+{
+    QSettings settings;
+    zh_openSettingsGroup(settings);
+    QStringList keys = settings.childKeys();
+    QVariant vData;
+    zv_energyLinePropertyMap.keys();
+    foreach(QString key, keys)
+    {
+        vData = settings.value(key);
+        if(!zv_energyLinePropertyMap.keys().contains(key) || !vData.isValid() || !vData.canConvert<bool>())
+        {
+            continue;
+        }
+
+        zv_energyLinePropertyMap[key].zp_setVisible(vData.toBool());
+        emit zg_energyLineOperation(zv_symbol, key, EL_VISIBILITY_CHANGED);
+
+    }
+    zh_closeSettingsGroup(settings);
+}
+//======================================================
+void ZEnergyLineSetItem::zh_saveVisibility()
+{
+    QSettings settings;
+    zh_openSettingsGroup(settings);
+
+    QMap<QString, ZEnergyLineProperties>::const_iterator it;
+    for(it = zv_energyLinePropertyMap.begin(); it != zv_energyLinePropertyMap.end(); it++)
+    {
+        settings.setValue(it.key(), QVariant(it.value().zp_isVisible()));
+    }
+
+    zh_closeSettingsGroup(settings);
+}
+//======================================================
+void ZEnergyLineSetItem::zh_openSettingsGroup(QSettings& settings)
+{
+    settings.beginGroup(qApp->property("glAppVersion").toString());
+    settings.beginGroup(zv_settingsSectionName);
+    settings.beginGroup(QString::number(zv_ZNumber));
+}
+//======================================================
+void ZEnergyLineSetItem::zh_closeSettingsGroup(QSettings& settings)
+{
+    while(settings.group().isEmpty())
+    {
+        settings.endGroup();
+    }
 }
 //======================================================

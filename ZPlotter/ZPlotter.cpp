@@ -4,6 +4,7 @@
 #include "ZPlotGraphicsView.h"
 #include "ZRulersAndGridManager.h"
 #include "ZRulerWidget.h"
+#include "ZEnergyLineGraphicsItem.h"
 #include "ZSpectrumGraphicsItem.h"
 #include "ZWindowGraphicsItem.h"
 #include "ZChartPointGraphicsItem.h"
@@ -861,6 +862,16 @@ void ZPlotter::zh_recalcRulesAndItemCoordinates()
             }
 
             spectrumItem->zp_setDistortion(zv_verticalDistortionFactor, zv_verticalDistortionCorrectionFactor);
+        }
+        else if(itemList.value(i)->type() == EnergyLineItemType)
+        {
+            ZEnergyLineGraphicsItem* energyLineItem = qgraphicsitem_cast<ZEnergyLineGraphicsItem*>(itemList.value(i));
+            if(!energyLineItem)
+            {
+                continue;
+            }
+
+            energyLineItem->zp_updateItem();
         }
     }
 }

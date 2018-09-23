@@ -6,12 +6,14 @@
 #include "ZGraphicsItemUserTypes.h"
 #include <QColor>
 //======================================================
-class ZEnergyCalibrationLine;
+
 //======================================================
 class ZEnergyLineGraphicsItem : public QGraphicsItem
 {
 public:
-    explicit ZEnergyLineGraphicsItem(ZEnergyCalibrationLine* energyCalibrationLine,
+    explicit ZEnergyLineGraphicsItem(const QString& chemicalElementSymbol,
+                                     const QString &name,
+                                     int heightPercent,
                                      QGraphicsItem * parent = 0);
     // overrided
     QRectF boundingRect() const override;
@@ -23,6 +25,10 @@ public:
     static bool zp_setTopAndButtonMargins(double top, double bottom);
 
     void zp_setXPosition(double xPos);
+    QString zp_chemicalElementSymbol() const;
+    QString zp_lineName() const;
+    void zp_setColor(QColor color);
+
 
 protected:
 
@@ -33,9 +39,12 @@ private:
     //VARS
     static double zv_topMargin;
     static double zv_bottomMargin;
-    double xPosition;
 
-    ZEnergyCalibrationLine* zv_energyCalibrationLine;
+    double xPosition;
+    int zv_heightPercent;
+    QString zv_chemicalElementSymbol;
+    QString zv_lineName;
+    QColor zv_color;
 
     QRectF zv_boundingRect;
     QPainterPath zv_shape;

@@ -4,7 +4,6 @@
 //======================================================================
 #include <QStyledItemDelegate>
 //======================================================================
-
 //======================================================================
 class ZEnergyLineDelegate : public QStyledItemDelegate
 {
@@ -19,6 +18,19 @@ signals:
 
 
 public slots:
+
+
+private:
+
+    // VARS
+
+    // FUNCS
+    bool editorEvent ( QEvent * event,
+                       QAbstractItemModel * model,
+                       const QStyleOptionViewItem & option,
+                       const QModelIndex & index );
+
+    bool eventFilter(QObject *object, QEvent *event);
 
 
 };

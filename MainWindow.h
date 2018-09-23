@@ -120,7 +120,6 @@ private:
     ZEnergyLineTableWidget* zv_energyLineTableWidget;
     // models
     ZMeasuringManager* zv_measuringManager;
-    ZEnergyLineManager* zv_energyLineManager;
 
     ZMeasuringResultTableModel* zv_measuringResultTableModel;
     //    ZSeriesTaskTreeModel* zv_currentMeasuringTaskTreeModel;

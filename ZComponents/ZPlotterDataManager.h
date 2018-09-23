@@ -4,12 +4,14 @@
 //======================================================
 #include <QObject>
 #include "ZMeasuringManager.h"
-#include "ZEnergyLineManager.h"
 
 //======================================================
 class QAction;
 class ZPlotter;
 class ZDefaultRectGraphicsItem;
+class ZEnergyLineGraphicsItem;
+
+typedef int EnergyLineOperationType;
 //======================================================
 class ZPlotterDataManager : public QObject
 {
@@ -17,7 +19,6 @@ class ZPlotterDataManager : public QObject
 public:
     explicit ZPlotterDataManager(QObject *parent = 0);
 
-    void zp_connectToEnergyLineManager(ZEnergyLineManager* energyLineManager);
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
     void zp_connectToPlotter(ZPlotter* plotter);
 
@@ -25,15 +26,21 @@ signals:
 
     void zg_requestCurrentMeasuringConditions(quint8 gainFactor, int exposition);
 
+    void zg_requestEnergyLineEnergyValue(QString elementSymbol, QString lineName, double& energyValue) const;
+    void zg_requestEnergyLineVisibility(QString elementSymbol, QString lineName, bool& visibility) const;
+    void zg_requestEnergyLineColor(QString elementSymbol, QString lineName, QColor& color) const;
+
 public slots:
 
+
+    void zp_onEnergyLineOperation(QString elementSymbol, QString lineName,
+                                  EnergyLineOperationType operationType);
 
 
 private slots:
 
     void zh_onMeasuringManagerSampleOperation(ZMeasuringManager::SampleOperationType type,
                                               int first, int last);
-    void zh_onEnergyLineManagerOperation();
     void zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors);
     void zh_switchRuleMetrix(bool toggled);
 
@@ -45,7 +52,6 @@ private:
     QAction* zv_switchRuleMetrixAction;
 
     ZMeasuringManager* zv_measuringManager;
-    ZEnergyLineManager* zv_energyLineManager;
 
     ZPlotter* zv_plotter;
     ZDefaultRectGraphicsItem* zv_defaultItem;
@@ -60,6 +66,8 @@ private:
     // FUNCS
     void zh_createComponents();
     void zh_createConnections();
+
+
 
 };
 //======================================================

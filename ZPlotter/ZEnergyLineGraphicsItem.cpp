@@ -7,12 +7,17 @@
 double ZEnergyLineGraphicsItem::zv_topMargin = -100.0;
 double ZEnergyLineGraphicsItem::zv_bottomMargin = 0.0;
 //======================================================
-ZEnergyLineGraphicsItem::ZEnergyLineGraphicsItem(ZEnergyCalibrationLine *energyCalibrationLine, QGraphicsItem *parent)
+ZEnergyLineGraphicsItem::ZEnergyLineGraphicsItem(const QString &chemicalElementSymbol,
+                                                 const QString& name,
+                                                 int heightPercent,
+                                                 QGraphicsItem *parent)
 {
-    zv_energyCalibrationLine = energyCalibrationLine;
+    zv_chemicalElementSymbol = chemicalElementSymbol;
+    zv_lineName = name;
+    zv_heightPercent = heightPercent;
+    setToolTip(QString("%1 %2").arg(zv_chemicalElementSymbol, zv_lineName));
     xPosition = 100.5;
     zp_updateItem();
-
 }
 //======================================================
 QRectF ZEnergyLineGraphicsItem::boundingRect() const
@@ -28,11 +33,12 @@ void ZEnergyLineGraphicsItem::paint(QPainter * painter,
     painter->setBrush(Qt::NoBrush);
 
     //QPen pen(zv_energyCalibrationLine->zp_lineColor(), 1);
-    QPen pen(QColor(Qt::red), 1);
-
+    QPen pen(zv_color, 1);
     pen.setCosmetic(true);
     painter->setPen(pen);
     painter->drawPath(zv_linePainterPath);
+
+
     painter->restore();
 }
 //======================================================
@@ -48,7 +54,6 @@ int ZEnergyLineGraphicsItem::type() const
 //======================================================
 void ZEnergyLineGraphicsItem::zp_updateItem()
 {
-    setVisible(true);
     zh_recalcShapeAndBoundingRect();
     update();
 }
@@ -102,5 +107,22 @@ void ZEnergyLineGraphicsItem::zp_setXPosition(double xPos)
     xPosition = xPos;
     zh_recalcShapeAndBoundingRect();
     update();
+}
+//======================================================
+void ZEnergyLineGraphicsItem::zp_setColor(QColor color)
+{
+    zv_color = color;
+    zh_recalcShapeAndBoundingRect();
+    update();
+}
+//======================================================
+QString ZEnergyLineGraphicsItem::zp_chemicalElementSymbol() const
+{
+    return zv_chemicalElementSymbol;
+}
+//======================================================
+QString ZEnergyLineGraphicsItem::zp_lineName() const
+{
+    return zv_lineName;
 }
 //======================================================

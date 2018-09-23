@@ -1,8 +1,10 @@
 //=============================================================
 #include "ZSelectedEnergyLineTableModel.h"
+#include "ZGeneral.h"
 
 #include <algorithm>
 #include <QDebug>
+//=============================================================
 //=============================================================
 ZSelectedEnergyLineTableModel::ZSelectedEnergyLineTableModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -10,15 +12,17 @@ ZSelectedEnergyLineTableModel::ZSelectedEnergyLineTableModel(QObject *parent)
 
 }
 //=============================================================
+ZSelectedEnergyLineTableModel::~ZSelectedEnergyLineTableModel()
+{
+    qDeleteAll(zv_itemMap.values());
+}
+//=============================================================
 Qt::ItemFlags	ZSelectedEnergyLineTableModel::flags(const QModelIndex & index) const
 {
     Qt::ItemFlags	flags;
-    flags |= Qt::ItemIsEnabled
-            | Qt::ItemIsSelectable;
-    if(true)
-    {
-        flags |= Qt::ItemIsEditable;
-    }
+    flags |= Qt::ItemIsEnabled;
+
+    // flags |= Qt::ItemIsEditable;
 
     return flags;
 }
@@ -41,10 +45,10 @@ QVariant ZSelectedEnergyLineTableModel::data(const QModelIndex & index, int role
         return QVariant();
     }
 
+    int ZNumber = zv_itemMap.keys().at(index.row());
+    QString energyLineName = zv_columnHederList.value(index.column() - 1, QString());
     if(role == Qt::DisplayRole)
     {
-        int ZNumber = zv_itemMap.keys().at(index.row());
-
         if(index.column() == 0)
         {
             QString symbolString = zv_itemMap.value(ZNumber)->zp_symbol();
@@ -52,7 +56,6 @@ QVariant ZSelectedEnergyLineTableModel::data(const QModelIndex & index, int role
         }
         else
         {
-            QString energyLineName = zv_columnHederList.value(index.column() - 1, QString());
             QString energyLineValue;
             if(zv_itemMap.value(ZNumber)->zp_energyLineValue(energyLineName, energyLineValue))
             {
@@ -61,11 +64,67 @@ QVariant ZSelectedEnergyLineTableModel::data(const QModelIndex & index, int role
         }
     }
 
+    if(role == NS_DataRole::VisibleRole)
+    {
+        if(index.column() == 0)
+        {
+            return QVariant();
+        }
+        else
+        {
+            bool visible;
+            if(!zv_itemMap.value(ZNumber)->zp_isEnergyLineVisible(energyLineName, visible))
+            {
+                return QVariant();
+            }
+
+            return QVariant(visible);
+        }
+    }
+
+    if(role == Qt::DecorationRole)
+    {
+        if(index.column() == 0)
+        {
+            return QVariant();
+        }
+        else
+        {
+            QVariant vData = index.data(Qt::DisplayRole);
+            if(!vData.isValid() || vData.isNull() || !vData.canConvert<QString>() ||
+                    vData.toString().isEmpty())
+            {
+                return QVariant();
+            }
+
+            QColor energyLineColor;
+            if(zv_itemMap.value(ZNumber)->zp_energyLineColor(energyLineName, energyLineColor))
+            {
+                return QVariant(energyLineColor);
+            }
+
+            return QVariant(QColor(Qt::black));
+        }
+    }
+
     return QVariant();
 }
 //=============================================================
 bool ZSelectedEnergyLineTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
+    if(!index.isValid() || index.row() < 0 || index.row() >= rowCount() || index.column() < 1
+            || index.column() >= columnCount() || !value.isValid() || !value.canConvert<bool>())
+    {
+        return false;
+    }
+
+    if(role ==  NS_DataRole::VisibleRole)
+    {
+        int ZNumber = zv_itemMap.keys().at(index.row());
+        QString energyLineName = zv_columnHederList.value(index.column() - 1, QString());
+        return zv_itemMap.value(ZNumber)->zp_setEnergyLineVisible(energyLineName, value.toBool());
+    }
+
     return false;
 }
 //=============================================================
@@ -117,9 +176,13 @@ void ZSelectedEnergyLineTableModel::zp_onSelectedChemicalElementChange(int ZNumb
 
             beginInsertRows(QModelIndex(), row, row);
             ZEnergyLineSetItem* item = new ZEnergyLineSetItem(ZNumber,
-                                                              symbol,
-                                                              propertyList);
+                                                              symbol);
             zv_itemMap.insert(ZNumber, item);
+
+            connect(item, &ZEnergyLineSetItem::zg_energyLineOperation,
+                    this, &ZSelectedEnergyLineTableModel::zg_energyLineOperation);
+
+            item->zp_createEnergyLines(propertyList);
             endInsertRows();
         }
     }
@@ -201,6 +264,100 @@ void ZSelectedEnergyLineTableModel::zh_updateColumns()
     }
 
     return;
+}
+//=============================================================
+bool ZSelectedEnergyLineTableModel::zp_energyLineEnergyValue(const QString& elementSymbol,
+                       const QString& lineName,
+                       double& energyValue) const
+{
+    QMap<int, ZEnergyLineSetItem*>::const_iterator it;
+    for(it = zv_itemMap.begin(); it != zv_itemMap.end(); it++ )
+    {
+        if(it.value()->zp_symbol() != elementSymbol)
+        {
+            continue;
+        }
+
+        if(!it.value()->zp_energyLineNameStringList().contains(lineName))
+        {
+            continue;
+        }
+
+        QString energyValueString;
+        if(!it.value()->zp_energyLineValue(lineName, energyValueString))
+        {
+            continue;
+        }
+
+        bool ok;
+        energyValue = energyValueString.toDouble(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//=============================================================
+bool ZSelectedEnergyLineTableModel::zp_energyLineVisibility(const QString& elementSymbol,
+                       const QString& lineName,
+                       bool& visible) const
+{
+    QMap<int, ZEnergyLineSetItem*>::const_iterator it;
+    for(it = zv_itemMap.begin(); it != zv_itemMap.end(); it++ )
+    {
+        if(it.value()->zp_symbol() != elementSymbol)
+        {
+            continue;
+        }
+
+        if(!it.value()->zp_energyLineNameStringList().contains(lineName))
+        {
+            continue;
+        }
+
+        QString energyValueString;
+        if(!it.value()->zp_isEnergyLineVisible(lineName, visible))
+        {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//=============================================================
+bool ZSelectedEnergyLineTableModel::zp_energyLineColor(const QString& elementSymbol,
+                       const QString& lineName,
+                       QColor& color) const
+{
+    QMap<int, ZEnergyLineSetItem*>::const_iterator it;
+    for(it = zv_itemMap.begin(); it != zv_itemMap.end(); it++ )
+    {
+        if(it.value()->zp_symbol() != elementSymbol)
+        {
+            continue;
+        }
+
+        if(!it.value()->zp_energyLineNameStringList().contains(lineName))
+        {
+            continue;
+        }
+
+        QString energyValueString;
+        if(!it.value()->zp_energyLineColor(lineName, color))
+        {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 //=============================================================
 
