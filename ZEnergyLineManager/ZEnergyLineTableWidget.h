@@ -29,25 +29,27 @@ signals:
                                         bool visible) const;
 
     void zg_energyLineOperation(const QString& elementSymbol,
-                           const QString& lineName,
-                           EnergyLineOperationType operationType);
+                                const QString& lineName,
+                                EnergyLineOperationType operationType);
 
 public slots:
 
 
     void zp_energyLineEnergyValue(const QString& elementSymbol,
-                           const QString& lineName,
-                           double& energyValue) const;
+                                  const QString& lineName,
+                                  double& energyValue) const;
 
     void zp_energyLineVisibility(const QString& elementSymbol,
-                           const QString& lineName,
-                           bool& visible) const;
+                                 const QString& lineName,
+                                 bool& visible) const;
 
     void zp_energyLineColor(const QString& elementSymbol,
                             const QString& lineName,
                             QColor& visible) const;
 
-
+    void zp_energyLineRelativeIntensity(const QString &elementSymbol,
+                                        const QString& lineName,
+                                        int& reletiveIntensity) const;
 private:
 
     // VARS
@@ -62,6 +64,7 @@ private:
     void zh_createComponents();
     void zh_createConnections();
     void zh_energyLinesForZNumber(int ZNumber, PropertyList &propertyList);
+    void zh_energyLinesRelativeIntensityForZNumber(int ZNumber, PropertyList &propertyList);
     void zh_chemicalElementSymbol(int ZNumber, QString& symbol);
 
 };

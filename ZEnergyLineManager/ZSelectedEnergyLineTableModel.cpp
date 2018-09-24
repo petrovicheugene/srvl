@@ -170,19 +170,15 @@ void ZSelectedEnergyLineTableModel::zp_onSelectedChemicalElementChange(int ZNumb
             QString symbol;
             emit zg_requestChemicalElementSymbol(ZNumber, symbol);
 
-            // get chemelement energy lines
-            PropertyList propertyList;
-            emit zg_requestEnergyLinesForZNumber(ZNumber, propertyList);
-
             beginInsertRows(QModelIndex(), row, row);
             ZEnergyLineSetItem* item = new ZEnergyLineSetItem(ZNumber,
                                                               symbol);
-            zv_itemMap.insert(ZNumber, item);
-
             connect(item, &ZEnergyLineSetItem::zg_energyLineOperation,
                     this, &ZSelectedEnergyLineTableModel::zg_energyLineOperation);
 
-            item->zp_createEnergyLines(propertyList);
+            zv_itemMap.insert(ZNumber, item);
+            zh_loadEnergyLinesToItem(item);
+
             endInsertRows();
         }
     }
@@ -204,6 +200,21 @@ void ZSelectedEnergyLineTableModel::zp_onSelectedChemicalElementChange(int ZNumb
     }
 
     zh_updateColumns();
+}
+//=============================================================
+void ZSelectedEnergyLineTableModel::zh_loadEnergyLinesToItem(ZEnergyLineSetItem* item)
+
+{
+    // energy values
+    PropertyList propertyList;
+    emit zg_requestEnergyLinesForZNumber(item->zp_ZNumber(), propertyList);
+
+    item->zp_createEnergyLines(propertyList);
+
+    // relative intensity
+    propertyList.clear();
+    emit zg_requestEnergyLineRelativeIntensityForZNumber(item->zp_ZNumber(), propertyList);
+    item->zp_loadRelativeIntensity(propertyList);
 }
 //=============================================================
 int ZSelectedEnergyLineTableModel::zh_findRowToInsert(int ZNumber) const
@@ -302,9 +313,45 @@ bool ZSelectedEnergyLineTableModel::zp_energyLineEnergyValue(const QString& elem
     return false;
 }
 //=============================================================
+bool ZSelectedEnergyLineTableModel::zp_energyLineReletiveIntensity(const QString& elementSymbol,
+                                                                   const QString& lineName,
+                                                                   int& relativeIntensity) const
+{
+    QMap<int, ZEnergyLineSetItem*>::const_iterator it;
+    for(it = zv_itemMap.begin(); it != zv_itemMap.end(); it++ )
+    {
+        if(it.value()->zp_symbol() != elementSymbol)
+        {
+            continue;
+        }
+
+        if(!it.value()->zp_energyLineNameStringList().contains(lineName))
+        {
+            continue;
+        }
+
+        QString relativeIntensityString;
+        if(!it.value()->zp_energyLineRelativeIntensity(lineName, relativeIntensityString))
+        {
+            continue;
+        }
+
+        bool ok;
+        relativeIntensity = relativeIntensityString.toInt(&ok);
+        if(!ok)
+        {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//=============================================================
 bool ZSelectedEnergyLineTableModel::zp_energyLineVisibility(const QString& elementSymbol,
-                       const QString& lineName,
-                       bool& visible) const
+                                                            const QString& lineName,
+                                                            bool& visible) const
 {
     QMap<int, ZEnergyLineSetItem*>::const_iterator it;
     for(it = zv_itemMap.begin(); it != zv_itemMap.end(); it++ )

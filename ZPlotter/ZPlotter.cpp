@@ -418,7 +418,6 @@ void ZPlotter::zp_removeItem(QGraphicsItem * item)
     item->setVisible(false);
     zv_plotScene->zp_removeItem(item);
     zv_plotView->update();
-
 }
 //====================================================
 void ZPlotter::zp_removeItemsForType(int type)
@@ -647,7 +646,7 @@ void ZPlotter::zp_fitInBoundingRect()
     {
         rectToFit = zv_plotScene->sceneRect();
     }
-    zv_plotView->fitInView(rectToFit);
+    zv_plotView->zp_fitInView(rectToFit);
 
     // deblock signals
     zv_verticalScrollBar->blockSignals(false);
@@ -791,6 +790,8 @@ void ZPlotter::zh_createConnections()
             this, &ZPlotter::zg_cursorAreaImage);
     connect(zv_plotView, &ZPlotGraphicsView::zg_mousePressedAt,
             this, &ZPlotter::zg_mousePressedAt);
+    connect(zv_plotView, &ZPlotGraphicsView::zg_viewportRectChanged,
+            this, &ZPlotter::zg_viewportRectChanged);
 
 }
 //====================================================
@@ -800,6 +801,12 @@ void ZPlotter::zh_connectScrollBars()
             this, &ZPlotter::zh_scrollBarVisibleControl);
     connect(zv_verticalScrollBar, &QScrollBar::rangeChanged,
             this, &ZPlotter::zh_scrollBarVisibleControl);
+
+    connect(zv_horizontalScrollBar, &QScrollBar::valueChanged,
+            this, &ZPlotter::zh_notifySceneRect);
+    connect(zv_verticalScrollBar, &QScrollBar::valueChanged,
+            this, &ZPlotter::zh_notifySceneRect);
+
 }
 //====================================================
 void ZPlotter::zh_updateScrollBarsVisible()
@@ -821,9 +828,16 @@ void ZPlotter::zh_scrollBarVisibleControl(int min , int max)
     scrollBar->setHidden(min == 0 && max == 0);
 }
 //====================================================
+void ZPlotter::zh_notifySceneRect(int value)
+{
+    QRectF viewportRect;
+    zv_plotView->zp_viewPortSceneRect(viewportRect);
+    emit zg_viewportRectChanged(viewportRect);
+}
+//====================================================
 bool ZPlotter::zh_recalcVerticalDistortionFactors(qreal distortionValue)
 {
-    if(zv_verticalAbsMax == 0)
+    if(zv_verticalAbsMax == 0.0)
     {
         return false;
     }
@@ -844,6 +858,8 @@ bool ZPlotter::zh_recalcVerticalDistortionFactors(qreal distortionValue)
 //====================================================
 void ZPlotter::zh_recalcRulesAndItemCoordinates()
 {
+    qDebug() << "Recalc RULES";
+
     if(zv_rulersAndGreedManager != 0)
     {
         zv_rulersAndGreedManager->zp_recalcRulesAndGrid();

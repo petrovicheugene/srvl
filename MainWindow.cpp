@@ -286,6 +286,9 @@ void MainWindow::zh_createConnections()
             zv_plotterDataManager, &ZPlotterDataManager::zp_onEnergyLineOperation);
     connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineEnergyValue,
             zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineEnergyValue);
+    connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineRelativeIntensity,
+            zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineRelativeIntensity);
+
     connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineVisibility,
             zv_energyLineTableWidget, &ZEnergyLineTableWidget::zp_energyLineVisibility);
     connect(zv_plotterDataManager, &ZPlotterDataManager::zg_requestEnergyLineColor,

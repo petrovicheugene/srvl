@@ -29,6 +29,9 @@ public:
     bool zp_energyLineEnergyValue(const QString& elementSymbol,
                            const QString& lineName,
                            double& energyValue) const;
+    bool zp_energyLineReletiveIntensity(const QString& elementSymbol,
+                                                                       const QString& lineName,
+                                                                       int& reletiveIntensity) const;
     bool zp_energyLineVisibility(const QString& elementSymbol,
                            const QString& lineName,
                            bool& visible) const;
@@ -39,6 +42,7 @@ signals:
 
     void zg_requestSelectedChemicalElements(QList<int>& ZNumberList) const;
     void zg_requestEnergyLinesForZNumber(int ZNumber, PropertyList&) const;
+    void zg_requestEnergyLineRelativeIntensityForZNumber(int ZNumber, PropertyList&) const;
     void zg_requestChemicalElementSymbol(int ZNumber, QString& symbol) const;
 
     void zg_energyLineVisibilityChanged(QString elementSymbol, QString lineName,
@@ -65,7 +69,7 @@ private:
     // FUNCS
     int zh_findRowToInsert(int ZNumber) const;
     void zh_updateColumns();
-
+    void zh_loadEnergyLinesToItem(ZEnergyLineSetItem* item);
 
 
 };

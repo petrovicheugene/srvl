@@ -20,10 +20,15 @@ public:
     ZEnergyLineProperties();
     ZEnergyLineProperties(const QString& energyLineValue);
     ZEnergyLineProperties(const QString& energyLineValue, QColor color);
+    ZEnergyLineProperties(const QString& energyLineValue,
+                          const QString& energyLineRelativeIntensity,
+                          QColor color);
 
     ZEnergyLineProperties(const ZEnergyLineProperties &);
 
     QString zp_energyLineValue() const;
+    QString zp_energyLineRelativeIntensity() const;
+    void zp_setEnergyLineRelativeIntensity(const QString relativeIntensity);
     bool zp_isVisible() const;
     void zp_setVisible(bool visible);
     QColor zp_color() const;
@@ -32,6 +37,7 @@ public:
 private:
 
     QString zv_energyLineValue;
+    QString zv_energyLineRelativeIntensity;
     bool zv_visibility;
     QColor zv_color;
 
@@ -47,7 +53,8 @@ public:
     enum EnergyLineOperation{EL_REMOVED = 0,
                              EL_INSERTED = 1,
                              EL_VISIBILITY_CHANGED = 2,
-                             EL_COLOR_CHANGED = 3};
+                             EL_COLOR_CHANGED = 3,
+                             EL_PROPERTY_CHANGED = 4};
 
     explicit ZEnergyLineSetItem(int ZNumber, const QString& symbol,
                                 QObject* parent = nullptr);
@@ -57,6 +64,7 @@ public:
     QString zp_symbol() const;
 
     bool zp_energyLineValue(const QString& lineName, QString &value) const;
+    bool zp_energyLineRelativeIntensity(const QString& lineName, QString &value) const;
     bool zp_isEnergyLineVisible(const QString& lineName, bool &visibility) const;
     bool zp_energyLineColor(const QString& lineName, QColor &color) const;
     bool zp_setEnergyLineVisible(const QString& lineName, bool visibility);
@@ -64,6 +72,7 @@ public:
     QStringList zp_energyLineNameStringList() const;
 
     void zp_createEnergyLines(const PropertyList& propertyList);
+    void zp_loadRelativeIntensity(const PropertyList &propertyList);
 
 signals:
 

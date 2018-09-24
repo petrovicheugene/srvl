@@ -61,6 +61,9 @@ void ZEnergyLineTableWidget::zh_createConnections()
 
     connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_requestEnergyLinesForZNumber,
             this, &ZEnergyLineTableWidget::zh_energyLinesForZNumber);
+    connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_requestEnergyLineRelativeIntensityForZNumber,
+            this, &ZEnergyLineTableWidget::zh_energyLinesRelativeIntensityForZNumber);
+
 
     connect(zv_selectedEnergyLineTableModel, &ZSelectedEnergyLineTableModel::zg_requestChemicalElementSymbol,
             this, &ZEnergyLineTableWidget::zh_chemicalElementSymbol);
@@ -78,6 +81,13 @@ void ZEnergyLineTableWidget::zh_energyLinesForZNumber(int ZNumber, PropertyList&
 {
     QStringList propertySectionBranch;
     propertySectionBranch << "Energy Lines";
+    zv_chemicalElementPropertyTreeModel->zp_chemicalElementProperties(ZNumber, propertySectionBranch, propertyList);
+}
+//======================================================
+void ZEnergyLineTableWidget::zh_energyLinesRelativeIntensityForZNumber(int ZNumber, PropertyList& propertyList)
+{
+    QStringList propertySectionBranch;
+    propertySectionBranch << "Relative Intensity";
     zv_chemicalElementPropertyTreeModel->zp_chemicalElementProperties(ZNumber, propertySectionBranch, propertyList);
 
     for(auto& property : propertyList)
@@ -110,6 +120,16 @@ void ZEnergyLineTableWidget::zp_energyLineEnergyValue(const QString& elementSymb
     if(!zv_selectedEnergyLineTableModel->zp_energyLineEnergyValue(elementSymbol, lineName, energyValue))
     {
         energyValue = 0.0;
+    }
+}
+//======================================================
+void ZEnergyLineTableWidget::zp_energyLineRelativeIntensity(const QString& elementSymbol,
+                                    const QString& lineName,
+                                    int& reletiveIntensity) const
+{
+    if(!zv_selectedEnergyLineTableModel->zp_energyLineReletiveIntensity(elementSymbol, lineName, reletiveIntensity))
+    {
+        reletiveIntensity = 100;
     }
 }
 //======================================================

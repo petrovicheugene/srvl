@@ -84,6 +84,10 @@ void ZPlotterDataManager::zp_connectToPlotter(ZPlotter *plotter)
         zv_plotter->zp_addItem(zv_defaultItem);
     }
 
+    connect(zv_plotter, &ZPlotter::zg_viewportRectChanged,
+            this, &ZPlotterDataManager::zp_onPlotterViewPortRectChange);
+
+
 }
 //======================================================
 void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QString lineName,
@@ -128,6 +132,7 @@ void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QStrin
             zv_plotter->zp_removeItem(energyLineItem);
         }
 
+        // request energy line properties
         double energyVal;
         emit zg_requestEnergyLineEnergyValue(elementSymbol, lineName, energyVal);
 
@@ -137,11 +142,24 @@ void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QStrin
         QColor color;
         emit zg_requestEnergyLineColor(elementSymbol, lineName, color);
 
-        energyLineItem = new ZEnergyLineGraphicsItem(elementSymbol, lineName, 100);
+        int relativeIntensity = 100;
+        emit zg_requestEnergyLineRelativeIntensity(elementSymbol, lineName, relativeIntensity);
+
+        energyLineItem = new ZEnergyLineGraphicsItem(elementSymbol, lineName, relativeIntensity, energyVal);
         zv_plotter->zp_addItem(energyLineItem);
 
-        energyLineItem->zp_setXPosition(energyVal * 100);
-        energyLineItem->setVisible(visibility);
+        double channel;
+        if(zh_convertEnergyToChannel(energyVal, channel))
+        {
+            energyLineItem->zp_setXPosition(channel);
+            energyLineItem->setVisible(visibility);
+        }
+        else
+        {
+            energyLineItem->zp_setXPosition(0.0);
+            energyLineItem->setVisible(false);
+        }
+
         energyLineItem->zp_setColor(color);
     }
     else if(operationType == 2)
@@ -162,6 +180,75 @@ void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QStrin
             QColor color;
             emit zg_requestEnergyLineColor(elementSymbol, lineName, color);
             energyLineItem->zp_setColor(color);
+        }
+    }
+    else if(operationType == 4)
+    {
+        // "EL_CHANGED";
+        if(energyLineItem)
+        {
+            int relativeIntensity;
+            emit zg_requestEnergyLineRelativeIntensity(elementSymbol, lineName, relativeIntensity);
+            energyLineItem->zp_setXPosition(relativeIntensity);
+        }
+    }
+}
+//======================================================
+bool ZPlotterDataManager::zh_convertEnergyToChannel(double energyValue, double& channel)
+{
+    if(zv_calibrationFactors.count() < 2)
+    {
+        return false;
+    }
+
+    if(zv_calibrationFactors.count() == 2 || (zv_calibrationFactors.count() > 2 && zv_calibrationFactors.at(2) == 0.0))
+    {
+        // linear equation
+        if(zv_calibrationFactors.at(1) == 0.0)
+        {
+            return false;
+        }
+
+        channel = (energyValue - zv_calibrationFactors.at(0)) / zv_calibrationFactors.at(1);
+        return true;
+    }
+
+    // square equation
+    // D = b^2 - 4*(ac)
+    double D = pow(zv_calibrationFactors.at(1), 2) - (4*(zv_calibrationFactors.at(2) * (zv_calibrationFactors.at(0) - energyValue)));
+
+    if(D < 0.0)
+    {
+        return false;
+    }
+
+    if(D == 0.0)
+    {
+        channel = (-zv_calibrationFactors.at(1)) / (2 * zv_calibrationFactors.at(2));
+    }
+    else // D > 0
+    {
+        double ch1 = (-zv_calibrationFactors.at(1) + sqrt(D)) / 2 * zv_calibrationFactors.at(2);
+        double ch2 = (-zv_calibrationFactors.at(1) - sqrt(D)) / 2 * zv_calibrationFactors.at(2);
+
+        channel = qMax(ch1, ch2);
+    }
+
+    return true;
+}
+//======================================================
+void ZPlotterDataManager::zp_onPlotterViewPortRectChange(QRectF rect)
+{
+    ZEnergyLineGraphicsItem::zp_setTopAndButtonMargins(rect.top(), rect.bottom());
+    ZEnergyLineGraphicsItem* energyLineItem = nullptr;
+    QList<QGraphicsItem*> energyLineList = zv_plotter->zp_itemListForType(EnergyLineItemType);
+    for(int i = 0; i < energyLineList.count(); i++)
+    {
+        energyLineItem = qgraphicsitem_cast<ZEnergyLineGraphicsItem*>(energyLineList.at(i));
+        if(energyLineItem != nullptr)
+        {
+            energyLineItem->zp_updateItem();
+
         }
     }
 }
@@ -271,8 +358,6 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
         }
     }
 
-
-
     if(!isPlotScaled)
     {
         zv_plotter->zp_fitInBoundingRect();
@@ -285,6 +370,37 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
 void ZPlotterDataManager::zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors)
 {
     qDebug() << "CURRENT CALIBRATION:" << calibrationFactors;
+
+
+    zv_calibrationFactors.clear();
+    zv_calibrationFactors.append(0.0);
+    zv_calibrationFactors.append(1.0);
+    zv_calibrationFactors.append(0.0);
+
+
+    zh_updateEnergyLines();
+}
+//======================================================
+void ZPlotterDataManager::zh_updateEnergyLines()
+{
+    ZEnergyLineGraphicsItem* energyLineItem = nullptr;
+    QList<QGraphicsItem*> energyLineList = zv_plotter->zp_itemListForType(EnergyLineItemType);
+    for(int i = 0; i < energyLineList.count(); i++)
+    {
+        energyLineItem = qgraphicsitem_cast<ZEnergyLineGraphicsItem*>(energyLineList.at(i));
+        if(energyLineItem == nullptr)
+        {
+            continue;
+        }
+
+        double channel = 0.0;
+        if(!zh_convertEnergyToChannel(energyLineItem->zp_energyValue(), channel))
+        {
+           channel = 0.0;
+        }
+
+        energyLineItem->zp_setXPosition(channel);
+    }
 }
 //======================================================
 void ZPlotterDataManager::zh_switchRuleMetrix(bool toggled)

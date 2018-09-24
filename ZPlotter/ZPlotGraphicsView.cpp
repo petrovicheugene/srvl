@@ -274,6 +274,13 @@ QColor ZPlotGraphicsView::zp_gridColor() const
     return zv_gridColor;
 }
 //=============================================================
+void ZPlotGraphicsView::zp_fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode)
+{
+    QGraphicsView::fitInView(rect, aspectRatioMode);
+    emit zg_viewportRectChanged(rect);
+
+}
+//=============================================================
 QRectF ZPlotGraphicsView::zp_currentVisibleSceneRect() const
 {
     // QRect rect = viewport()->rect().adjusted(1,1,-1,-1);
@@ -349,7 +356,7 @@ void ZPlotGraphicsView::wheelEvent(QWheelEvent * event)
         displayedSceneRect.setRight(oldDisplayedSceneRect.right());
     }
 
-    fitInView(displayedSceneRect.normalized());
+    zp_fitInView(displayedSceneRect.normalized());
     //ensureVisible(displayedSceneRect.normalized(), 2, 2);
     zv_sceneCenterPos = mapToScene(viewport()->rect()).boundingRect().center();
     zv_sceneMousePos = mapToScene(event->pos());
@@ -426,7 +433,7 @@ void ZPlotGraphicsView::mouseReleaseEvent(QMouseEvent* event)
         {
             newSceneRect.moveCenter(newSceneCenter);
         }
-        fitInView(newSceneRect);
+        zp_fitInView(newSceneRect);
         //ensureVisible(newSceneRect, 2, 2);
     }
     else if(zv_plotMode == PM_REGULAR && zv_mousePressStartViewPos == event->pos())
@@ -529,8 +536,7 @@ bool ZPlotGraphicsView::viewportEvent(QEvent * event)
             centerOn(sceneCenterPos);
         }
     }
-
-    if(event->type() == QEvent::Paint && scene())
+    else if(event->type() == QEvent::Paint && scene())
     {
         if(zv_rulersAndGreedManager)
         {

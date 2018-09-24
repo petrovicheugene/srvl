@@ -38,11 +38,14 @@ public:
 
     QColor zp_gridColor() const;
 
+    void zp_fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+
 signals:
 
    void zg_inquiryForScrollBarVisible(Qt::Orientation, bool&);
    void zg_cursorAreaImage(QImage);
    void zg_mousePressedAt(QPointF);
+   void zg_viewportRectChanged(QRectF) const;
 
 protected:
 
@@ -58,6 +61,13 @@ protected:
 
     // just hidden
     void	setViewport(QWidget * widget);
+
+
+    void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+    void fitInView(qreal x, qreal y, qreal w, qreal h, Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+    void fitInView(const QGraphicsItem *item, Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+
+
 private:
 
     // VARS

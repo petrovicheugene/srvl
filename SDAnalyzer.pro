@@ -211,7 +211,8 @@ SOURCES += main.cpp\
     ZEnergyLineManager/ZEnergyLineTableWidget.cpp \
     ZEnergyLineManager/ZSelectedEnergyLineTableModel.cpp \
     ZEnergyLineManager/ZEnergyLineSetItem.cpp \
-    ZEnergyLineManager/ZEnergyLineDelegate.cpp
+    ZEnergyLineManager/ZEnergyLineDelegate.cpp \
+    ZPlotter/ZTextGraphicsItem.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -350,7 +351,8 @@ HEADERS  += MainWindow.h \
     ZEnergyLineManager/ZEnergyLineTableWidget.h \
     ZEnergyLineManager/ZSelectedEnergyLineTableModel.h \
     ZEnergyLineManager/ZEnergyLineSetItem.h \
-    ZEnergyLineManager/ZEnergyLineDelegate.h
+    ZEnergyLineManager/ZEnergyLineDelegate.h \
+    ZPlotter/ZTextGraphicsItem.h
 
 RESOURCES += \
     resources.qrc \
