@@ -25,6 +25,7 @@ public:
 
     bool zp_setGainFactor(const QString&);
     void zp_setGainFactor(quint8 gainFactor);
+    void zp_setEnergyCalibrationFactors(const QList<double>& energyCalibrationfactorList);
 
     bool zp_setEnergyUnit(const QString&);
 

@@ -19,6 +19,13 @@ ZTextGraphicsItem::ZTextGraphicsItem(const QString& text, QGraphicsItem * parent
     zh_recalcShapeAndBoundingRect();
 }
 //======================================================
+ZTextGraphicsItem::ZTextGraphicsItem(QGraphicsItem * parent)
+{
+    zv_font = qApp->font();
+    zv_textPixelSize = 6;
+    zh_recalcShapeAndBoundingRect();
+}
+//======================================================
 QRectF ZTextGraphicsItem::boundingRect() const
 {
     return zv_boundingRect;

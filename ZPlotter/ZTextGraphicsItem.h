@@ -12,6 +12,7 @@ class ZTextGraphicsItem: public QGraphicsItem
 {
 public:
     ZTextGraphicsItem(const QString &text, QGraphicsItem * parent = 0);
+    ZTextGraphicsItem(QGraphicsItem * parent = 0);
 
     // overrided
     QRectF boundingRect() const override;

@@ -2,10 +2,9 @@
 #include "ZPlotterDataManager.h"
 #include "ZGeneral.h"
 #include "ZDefaultRectGraphicsItem.h"
-
 #include "ZEnergyLineGraphicsItem.h"
-
 #include "ZPlotter.h"
+#include "ZRulerToolGraphicsItem.h"
 #include "ZSpeSpectrum.h"
 #include "ZSpectrumGraphicsItem.h"
 
@@ -21,6 +20,7 @@ ZPlotterDataManager::ZPlotterDataManager(QObject *parent)
     zv_verticalRuleLabel = tr("Intensity");
     zv_horizontalRuleLabel = tr("Channels");
     zv_horizontalRecalcedRuleLabel = tr("Energy");
+    zv_energyRuleMetrixFlag = false;
 
     zh_createComponents();
     zh_createConnections();
@@ -55,7 +55,7 @@ void ZPlotterDataManager::zp_connectToMeasuringManager(ZMeasuringManager *measur
 void ZPlotterDataManager::zp_connectToPlotter(ZPlotter *plotter)
 {
     zv_plotter = plotter;
-    zv_plotter->zp_setAutoDefineVerticalAbsMax(false);
+    zv_plotter->zp_setAutoDefineVerticalAbsMax(true);
 
     QList<QAction*> actionList;
     actionList << zv_switchRuleMetrixAction;
@@ -86,17 +86,18 @@ void ZPlotterDataManager::zp_connectToPlotter(ZPlotter *plotter)
 
     connect(zv_plotter, &ZPlotter::zg_viewportRectChanged,
             this, &ZPlotterDataManager::zp_onPlotterViewPortRectChange);
-
+    connect(zv_plotter, &ZPlotter::zg_rulerToolChanged,
+            this, &ZPlotterDataManager::zh_updateRulerTool);
 
 }
 //======================================================
 void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QString lineName,
                                                    EnergyLineOperationType operationType)
 {
-//    enum EnergyLineOperation{EL_REMOVED,
-//                            EL_INSERTED,
-//                            EL_VISIBILITY_CHANGED,
-//                            EL_COLOR_CHANGED};
+    //    enum EnergyLineOperation{EL_REMOVED,
+    //                            EL_INSERTED,
+    //                            EL_VISIBILITY_CHANGED,
+    //                            EL_COLOR_CHANGED};
     // find item
     ZEnergyLineGraphicsItem* energyLineItem = nullptr;
     QList<QGraphicsItem*> energyLineList = zv_plotter->zp_itemListForType(EnergyLineItemType);
@@ -189,7 +190,7 @@ void ZPlotterDataManager::zp_onEnergyLineOperation(QString elementSymbol, QStrin
         {
             int relativeIntensity;
             emit zg_requestEnergyLineRelativeIntensity(elementSymbol, lineName, relativeIntensity);
-            energyLineItem->zp_setXPosition(relativeIntensity);
+            energyLineItem->zp_setHeightPercent(relativeIntensity);
         }
     }
 }
@@ -215,7 +216,7 @@ bool ZPlotterDataManager::zh_convertEnergyToChannel(double energyValue, double& 
 
     // square equation
     // D = b^2 - 4*(ac)
-    double D = pow(zv_calibrationFactors.at(1), 2) - (4*(zv_calibrationFactors.at(2) * (zv_calibrationFactors.at(0) - energyValue)));
+    double D = pow(zv_calibrationFactors.at(1), 2.0) - (4*zv_calibrationFactors.at(2) * (zv_calibrationFactors.at(0) - energyValue));
 
     if(D < 0.0)
     {
@@ -224,12 +225,12 @@ bool ZPlotterDataManager::zh_convertEnergyToChannel(double energyValue, double& 
 
     if(D == 0.0)
     {
-        channel = (-zv_calibrationFactors.at(1)) / (2 * zv_calibrationFactors.at(2));
+        channel = (-zv_calibrationFactors.at(1)) / (2.0 * zv_calibrationFactors.at(2));
     }
     else // D > 0
     {
-        double ch1 = (-zv_calibrationFactors.at(1) + sqrt(D)) / 2 * zv_calibrationFactors.at(2);
-        double ch2 = (-zv_calibrationFactors.at(1) - sqrt(D)) / 2 * zv_calibrationFactors.at(2);
+        double ch1 = (-zv_calibrationFactors.at(1) + sqrt(D)) / (2.0 * zv_calibrationFactors.at(2));
+        double ch2 = (-zv_calibrationFactors.at(1) - sqrt(D)) / (2.0 * zv_calibrationFactors.at(2));
 
         channel = qMax(ch1, ch2);
     }
@@ -344,7 +345,7 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
             {
                 if(spectrumItem != nullptr)
                 {
-                    qDebug() << "SAMPLE REMOVED" << first << last << spectrumItem->zp_spectrumId();
+
                 }
             }
             else if(type == ZMeasuringManager::SOT_SAMPLE_ABOUT_TO_BE_REMOVED)
@@ -369,16 +370,10 @@ void ZPlotterDataManager::zh_onMeasuringManagerSampleOperation(ZMeasuringManager
 //======================================================
 void ZPlotterDataManager::zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors)
 {
-    qDebug() << "CURRENT CALIBRATION:" << calibrationFactors;
-
-
-    zv_calibrationFactors.clear();
-    zv_calibrationFactors.append(0.0);
-    zv_calibrationFactors.append(1.0);
-    zv_calibrationFactors.append(0.0);
-
-
+    zv_calibrationFactors = calibrationFactors;
+    zv_plotter->zp_setEnergyCalibration(zv_calibrationFactors);
     zh_updateEnergyLines();
+    zh_updateRuleMetrix();
 }
 //======================================================
 void ZPlotterDataManager::zh_updateEnergyLines()
@@ -396,7 +391,7 @@ void ZPlotterDataManager::zh_updateEnergyLines()
         double channel = 0.0;
         if(!zh_convertEnergyToChannel(energyLineItem->zp_energyValue(), channel))
         {
-           channel = 0.0;
+            channel = 0.0;
         }
 
         energyLineItem->zp_setXPosition(channel);
@@ -405,35 +400,34 @@ void ZPlotterDataManager::zh_updateEnergyLines()
 //======================================================
 void ZPlotterDataManager::zh_switchRuleMetrix(bool toggled)
 {
-    //    if(zv_currentArrayIndex < 0 || !zv_spectrumArrayRepositiry || zv_plotter == 0 || !toggled)
-    //    {
-    //        zv_plotter->zp_setBottomMarkRecalcFlag(false);
-    //        zv_plotter->zp_setTopMarkRecalcFlag(false);
-    //        zv_plotter->zp_setHorizontalMarkRecalcFactors(zv_horizontalRuleLabel,
-    //                                                      0, 1, 0);
-    //        return;
-    //    }
+    zv_energyRuleMetrixFlag = toggled;
+    zh_updateRuleMetrix();
+}
+//======================================================
+void ZPlotterDataManager::zh_updateRuleMetrix()
+{
+    if(!zv_energyRuleMetrixFlag || zv_calibrationFactors.isEmpty() ||
+            (!(zv_calibrationFactors.value(1, 0.0) ||
+               zv_calibrationFactors.value(2, 0.0))))
+    {
+        zv_plotter->zp_setBottomMarkRecalcFlag(false);
+        zv_plotter->zp_setTopMarkRecalcFlag(false);
+        zv_plotter->zp_setHorizontalMarkRecalcFactors(zv_horizontalRuleLabel,
+                                                      0, 1, 0);
+        return;
+    }
 
-    //    qreal K0;
-    //    qreal K1;
-    //    qreal K2;
-    //    QString energyUnit;
-    //    if(!zv_spectrumArrayRepositiry->zp_energyCalibrationForArrayId(zv_currentArrayId,
-    //                                                                   K0, K1, K2, energyUnit))
-    //    {
-    //        zv_plotter->zp_setBottomMarkRecalcFlag(false);
-    //        zv_plotter->zp_setTopMarkRecalcFlag(false);
-    //        zv_plotter->zp_setHorizontalMarkRecalcFactors(zv_horizontalRuleLabel,
-    //                                                      0, 1, 0);
-    //    }
-    //    else
-    //    {
-    //        QString labelString = zv_horizontalRecalcedRuleLabel + " " + energyUnit;
-    //        zv_plotter->zp_setBottomMarkRecalcFlag(true);
-    //        zv_plotter->zp_setTopMarkRecalcFlag(true);
-    //        zv_plotter->zp_setHorizontalMarkRecalcFactors(labelString,
-    //                                                      K0, K1, K2);
-    //    }
+    qreal K0 = zv_calibrationFactors.value(0, 0.0);
+    qreal K1 = zv_calibrationFactors.value(1, 1.0);
+    qreal K2 = zv_calibrationFactors.value(2, 0.0);
+    QString energyUnit = tr("kEv");
+
+    QString labelString = zv_horizontalRecalcedRuleLabel + " " + energyUnit;
+    zv_plotter->zp_setBottomMarkRecalcFlag(true);
+    zv_plotter->zp_setTopMarkRecalcFlag(true);
+    zv_plotter->zp_setHorizontalMarkRecalcFactors(labelString,
+                                                  K0, K1, K2);
+
 }
 //======================================================
 void ZPlotterDataManager::zh_setSpectrumCurrent(qint64 spectrumId)
@@ -459,6 +453,64 @@ void ZPlotterDataManager::zh_setSpectrumCurrent(qint64 spectrumId)
         spectrumItem->zp_updateCurrentSpectrum(spectrumVisibility);
     }
 
-    qDebug() << "CURRENT SPE SET - ID:" <<  spectrumId;
+}
+//======================================================
+void ZPlotterDataManager::zh_updateRulerTool(QPointF startPoint, QPointF endPoint, bool visibility)
+{
+    // qDebug() << "UPDATE RT" << startPoint.x() << endPoint.x() << visibility;
+    QRectF plotterRect = zv_plotter->zp_viewportSceneRect();
+    QSize plotterPixelSize = zv_plotter->zp_viewportPixelSize();
+
+    if(!visibility || !plotterRect.isValid() || plotterRect.isNull())
+    {
+        zv_plotter->zp_removeItemsForType(RulerToolItemType);
+        return;
+    }
+
+    ZRulerToolGraphicsItem* rulerItem = nullptr;
+    QList<QGraphicsItem*> itemList = zv_plotter->zp_itemListForType(RulerToolItemType);
+
+    for(int i = 0; i < itemList.count(); i++)
+    {
+        rulerItem = qgraphicsitem_cast<ZRulerToolGraphicsItem*>(itemList.at(i));
+        if(rulerItem)
+        {
+            break;
+        }
+    }
+
+    if(!rulerItem)
+    {
+        rulerItem = new ZRulerToolGraphicsItem;
+        zv_plotter->zp_addItem(rulerItem);
+    }
+
+    // first channel
+    QString infoString = tr("Start: %1<br>End: %2").arg(QString::number(static_cast<int>(startPoint.x()) + 1),
+                                                                     QString::number(static_cast<int>(endPoint.x()) + 1));
+
+    QList<QGraphicsItem*> spectrumList = zv_plotter->zp_itemListForType(SpectrumItemType);
+    if(!spectrumList.isEmpty())
+    {
+        qint64 id = ZSpectrumGraphicsItem::zp_currentSpectrumId();
+        ZSpeSpectrum* currentSpectrum = zv_measuringManager->zp_spectrumForId(id);
+        if(currentSpectrum)
+        {
+            double intensity;
+            if(currentSpectrum->zp_intensityInWindow(static_cast<int>(startPoint.x()),
+                                                     static_cast<int>(endPoint.x()),
+                                                     intensity))
+            {
+                infoString += tr("<br>Integral: %1").arg(QString::number(intensity, 'f', 0));
+            }
+        }
+    }
+
+    rulerItem->zp_setProperties(startPoint,
+                                endPoint,
+                                plotterRect,
+                                plotterPixelSize,
+                                infoString);
+
 }
 //======================================================

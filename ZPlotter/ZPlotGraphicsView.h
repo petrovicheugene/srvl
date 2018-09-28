@@ -42,10 +42,15 @@ public:
 
 signals:
 
-   void zg_inquiryForScrollBarVisible(Qt::Orientation, bool&);
-   void zg_cursorAreaImage(QImage);
-   void zg_mousePressedAt(QPointF);
-   void zg_viewportRectChanged(QRectF) const;
+    void zg_mouseScenePositionChanged(QPointF scenePos) const;
+    void zg_mouseLeaved() const;
+
+    void zg_inquiryForScrollBarVisible(Qt::Orientation, bool&);
+    void zg_cursorAreaImage(QImage);
+    void zg_mousePressedAt(QPointF);
+    void zg_viewportRectChanged(QRectF) const;
+    void zg_rulerToolChanged(QPointF startPoint, QPointF endPoint, bool visibility) const;
+
 
 protected:
 
@@ -54,9 +59,12 @@ protected:
     void wheelEvent(QWheelEvent * event);
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
+
     void mouseMoveEvent(QMouseEvent *event);
     bool viewportEvent(QEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
+    void drawForeground(QPainter *painter, const QRectF &rect);
+
     void contextMenuEvent(QContextMenuEvent *event);
 
     // just hidden
@@ -73,19 +81,22 @@ private:
     // VARS
     enum PlotMode{PM_REGULAR,
                   PM_PAD_DRAGGING,
-                 PM_RUBBER_BAND};
+                  PM_RUBBER_BAND,
+                  PM_RULE};
 
     ZRulersAndGridManager* zv_rulersAndGreedManager;
     PlotMode zv_plotMode;
     QPointF zv_sceneCenterPos;
     QPointF zv_sceneMousePos;
     QPoint zv_mousePressStartViewPos;
+    QPoint zv_currentMousePos;
     QRubberBand* zv_rubberBand;
     bool zv_scaleViewWhenResizeFlag;
     bool zv_drawGridFlag;
 
     qreal zv_minSideSizeOfVisibleScene;
     int zv_rubberBandSideMinSize;
+    int zv_ruleToolMinSize;
     QList<RulePoint> * zv_XRuleList;
     QList<RulePoint> * zv_YRuleList;
 

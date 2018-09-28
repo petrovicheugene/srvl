@@ -238,7 +238,6 @@ bool ZChemicalElementPropertyTreeModel::setData(const QModelIndex & index, const
         else
         {
             // property
-            qDebug() << "EDIT PROPERTY column" << index.column();
             // get property name
             QVariant vData = headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
             if(!vData.isValid() || !vData.canConvert<QString>())

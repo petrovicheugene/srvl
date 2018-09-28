@@ -48,10 +48,9 @@ private slots:
                                               int first, int last);
     void zh_onCurrentEnergyCalibrationChange(QList<double> calibrationFactors);
     void zh_updateEnergyLines();
-
     void zh_switchRuleMetrix(bool toggled);
-
     void zh_setSpectrumCurrent(qint64 spectrumId);
+    void zh_updateRulerTool(QPointF startPoint, QPointF endPoint, bool visibility);
 
 private:
 
@@ -65,6 +64,7 @@ private:
     QString zv_verticalRuleLabel;
     QString zv_horizontalRuleLabel;
     QString zv_horizontalRecalcedRuleLabel;
+    bool zv_energyRuleMetrixFlag;
 
     qreal zv_boundingRectTopFactor;
     QRectF zv_defaultSceneRect = QRectF(QPointF(0.0,-100.0), QPointF(2048.0, 0.0));
@@ -74,7 +74,7 @@ private:
     void zh_createComponents();
     void zh_createConnections();
     bool zh_convertEnergyToChannel(double energyValue, double& channel);
-
+    void zh_updateRuleMetrix();
 
 };
 //======================================================

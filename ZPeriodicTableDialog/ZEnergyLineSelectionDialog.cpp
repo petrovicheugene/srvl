@@ -178,6 +178,7 @@ void ZEnergyLineSelectionDialog::zh_onSelectedChemicalElementChange(int ZNumber,
     if(selectedChemicalElementList.isEmpty())
     {
         zv_chemicalPropertyProxyTableModel->zp_onCurrentTreeElementChanged(QModelIndex(), QModelIndex());
+        return;
     }
 
     QStringList sectionBranch;

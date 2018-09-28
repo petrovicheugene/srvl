@@ -6,7 +6,7 @@
 #include <QSet>
 #include "ZRulersAndGridManager.h"
 //=========================================================
-
+class QLabel;
 //=========================================================
 class ZRulerProperty
 {
@@ -109,6 +109,7 @@ public:
     void zp_setBottomMarkRecalcFlag(bool flag);
 
     void zp_setHorizontalMarkRecalcFactors(const QString &label, qreal K0, qreal K1, qreal K2);
+    void zp_horizontalMarkRecalcFactors(QString& label, qreal& K0, qreal& K1, qreal& K2) const;
     void zp_setVerticalMarkRecalcFactors(const QString &label, qreal K0, qreal K1, qreal K2);
 
     void zp_setTopRuleVisibility(bool visibility);
@@ -132,6 +133,8 @@ public:
     int zp_maxMarkWidth();
     int zp_maxMarkHeight();
 
+    void zp_setInfoLabelText(const QString& text);
+
 signals:
 
 public slots:
@@ -151,6 +154,8 @@ protected:
 
     int zv_maxMarkHeight;
     int zv_maxMarkWidth;
+
+    QLabel* zv_infoLabel;
 
     ZRulersAndGridManager* zv_rulersAndGreedManager;
 

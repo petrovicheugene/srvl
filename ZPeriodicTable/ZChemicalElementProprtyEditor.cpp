@@ -576,7 +576,6 @@ void ZChemicalElementProprtyEditor::zh_removeSelectedChemicalElementProperties()
 
     for(int i = rowList.count() - 1; i >= 0;  i--)
     {
-        qDebug() << "Removing Rows" << rowList.at(i) << "Z" << zNumber << "Branch" << branch;
         model->zp_removeChemicalElementProperty(zNumber, branch, rowList.at(i));
     }
 
@@ -585,7 +584,6 @@ void ZChemicalElementProprtyEditor::zh_removeSelectedChemicalElementProperties()
 void ZChemicalElementProprtyEditor::zh_copyPropertyToClipboard()
 {
     // TODO Copy Selected Properties
-    qDebug() << "Copy Selected Properties";
 }
 //======================================================
 void ZChemicalElementProprtyEditor::zh_pastePropertyFromClipboard()

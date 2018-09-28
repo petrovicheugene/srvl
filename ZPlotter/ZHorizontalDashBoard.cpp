@@ -81,7 +81,7 @@ void ZHorizontalDashBoard::zp_appendButtonsToDashboard(QList<QAction*>& actionLi
     int insertIndex;
     if(position == AWP_LEFT_OF_BUTTONS)
     {
-        insertIndex = 1; // 0 - log slider
+        insertIndex = 1; // o - log slider
     }
     else
     {
@@ -297,8 +297,9 @@ void ZHorizontalDashBoard::zh_fitViewInScene() const
     {
         rectToFit = zv_plotGraphicsScene->sceneRect();
     }
+
     zv_plotGraphicsView->zp_fitInView(rectToFit);
-    //zv_plotGraphicsView->ensureVisible(rectToFit, 2, 2);
+
 }
 //===========================================================
 void ZHorizontalDashBoard::zh_hideGrid(bool toggled) const

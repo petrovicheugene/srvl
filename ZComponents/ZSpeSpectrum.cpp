@@ -86,7 +86,7 @@ void ZSpeSpectrum::zp_setEnergyUnit(const QString& energyUnit)
     zv_auxData.zp_setEnergyUnit(energyUnit);
 }
 //===================================================
-void ZSpeSpectrum::zp_setEnergyCalibration(QList<double>& energyCalibrationFactorList)
+void ZSpeSpectrum::zp_setEnergyCalibration(const QList<double>& energyCalibrationFactorList)
 {
     zv_auxData.zp_setEnergyK0(energyCalibrationFactorList.value(0, 0.0));
     zv_auxData.zp_setEnergyK1(energyCalibrationFactorList.value(1, 0.0));

@@ -645,7 +645,6 @@ void ZRulersAndGridManager::zh_recalcDistortedLeftRule(qreal distortionFactor, q
         RulePoint rulePoint;
         RulePoint::MarkType markType;
 
-
         qreal currentMarkValue = 0;
         qreal currentMarkScPos = 0;
         qreal currentMarkVpPos = zv_A;
@@ -754,11 +753,22 @@ void ZRulersAndGridManager::zh_recalcDistortedLeftRule(qreal distortionFactor, q
 //                currentMarkScPos *= -1;
 //            }
             currentMarkVpPos = currentMarkScPos * zv_K + zv_A;
-
             // sratches defining (they may be marks if interval will allow)
-
             zh_divideDistortedVerticalInterval(p, currentMarkValue, currentMarkVpPos, prevMarkValue);
         }
+    }
+}
+//========================================================
+double ZRulersAndGridManager::zp_recalcSceneVerticalPos(double scenePosition) const
+{
+    if(zv_distortionFactor == 0.0 || zv_distortionFactor == 1.0 || zv_distortionCorrectionFactor == 0.0)
+    {
+        return -scenePosition;
+    }
+    else
+    {
+        double posValue = pow((qAbs(scenePosition) / zv_distortionCorrectionFactor), 1/zv_distortionFactor);
+        return posValue;
     }
 }
 //========================================================

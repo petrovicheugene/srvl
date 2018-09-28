@@ -271,6 +271,9 @@ void MainWindow::zh_createConnections()
 
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentIndex,
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_currentIndex);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_invokeNotifyCurrent,
+            zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_notifyCurrent);
+
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryMeasuringConditionsAndSpectrumForIndex,
             zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex);
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSpectrumMap,

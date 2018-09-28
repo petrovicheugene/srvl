@@ -22,6 +22,7 @@ public:
     int type() const override;
     static void zp_setCurrentSpectrumColor(QColor);
     static void zp_setCurrentSpectrumId(qint64);
+    static qint64 zp_currentSpectrumId();
     //
     void zp_setSpectrumData(const QList<quint32> &);
     qint64 zp_spectrumId();

@@ -459,6 +459,21 @@ bool ZMeasuringManager::zp_connectionState() const
     return false;
 }
 //======================================================
+ZSpeSpectrum* ZMeasuringManager::zp_spectrumForId(qint64 id) const
+{
+    ZSpeSpectrum* spectrum = nullptr;
+    foreach(ZSample* sample, zv_sampleList)
+    {
+        spectrum = sample->zp_spectrumForId(id);
+        if(spectrum)
+        {
+            return spectrum;
+        }
+    }
+
+    return nullptr;
+}
+//======================================================
 bool ZMeasuringManager::zh_createLibraryFromResources(const QString& libraryFileName, QString &errorMsg)
 {
     // check library file in resources
@@ -934,6 +949,7 @@ void ZMeasuringManager::zp_stopSeries()
     zv_currentMeasuringState.zp_setMeasuringAction(ZMeasuringState::MA_STOPPED);
     zh_notifyMeasuringStateChanged();
 
+    emit zg_invokeNotifyCurrent();
     // QMessageBox::information(0, "MM", "STOP SERIES", QMessageBox::Ok);
 }
 //======================================================
@@ -995,11 +1011,6 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
     else
     {
         zv_expositionDelayTimer = startTimer(zv_expositionDelayDuration * 1000);
-        qDebug("WAIT FOR DELAYED START");
-#ifdef DBG
-        qDebug() << "zh_onSampleMeasuringFinish END FUNC: SeriesPassed" << zv_currentMeasuringState.zp_seriesTimePassed();
-#endif
-
     }
 }
 //======================================================
@@ -1009,19 +1020,9 @@ void ZMeasuringManager::timerEvent(QTimerEvent* event)
     {
         killTimer(zv_expositionDelayTimer);
         zv_expositionDelayTimer = 0;
-        qDebug("DELAYED START");
-
-#ifdef DBG
-        qDebug() << "timerEvent BEFORE: SeriesPassed" << zv_currentMeasuringState.zp_seriesTimePassed();
-#endif
-
 
         zv_seriesTimePassed += zv_expositionDelayDuration;
         zh_notifyMeasuringStateChanged();
-
-#ifdef DBG
-        qDebug() << "timerEvent AFTER: SeriesPassed" << zv_currentMeasuringState.zp_seriesTimePassed();
-#endif
 
         zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_startMeasuring();
     }
@@ -1617,6 +1618,8 @@ void ZMeasuringManager::zh_onEnergyCalibrationAction()
     }
 
     ZEnergyCalibrationDialogV2 energyCalibrationDialogV2(spectrumMap);
+    connect(&energyCalibrationDialogV2, &ZEnergyCalibrationDialogV2::zg_energyCalibrationChanged,
+            this, &ZMeasuringManager::zh_onEnergyCalibrationChange);
     if(energyCalibrationDialogV2.exec())
     {
 
@@ -1644,6 +1647,23 @@ void ZMeasuringManager::zh_onEnergyCalibrationAction()
     //    energyCalibrationDialog->show();
     //    // create connections
 
+}
+//======================================================
+void ZMeasuringManager::zh_onEnergyCalibrationChange(int gainFactor,
+                                                     const QList<double>& energyCalibrationFactorList)
+{
+    foreach(ZSample* sample, zv_sampleList)
+    {
+        sample->zp_setEnergyCalibration(gainFactor, energyCalibrationFactorList);
+    }
+
+    foreach(ZSampleTask* sampleTask, zv_sampleTaskList)
+    {
+        sampleTask->zp_setEnergyCalibration(static_cast<quint8>(gainFactor), energyCalibrationFactorList);
+    }
+
+    // notify current spectrum
+    emit zg_invokeNotifyCurrent();
 }
 //======================================================
 void ZMeasuringManager::zh_clearSampleList()

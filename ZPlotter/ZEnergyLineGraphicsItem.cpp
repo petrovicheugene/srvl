@@ -95,7 +95,13 @@ void ZEnergyLineGraphicsItem::zh_recalcShapeAndBoundingRect()
 
     zv_linePainterPath = newLinePainterPath;
 
-    zv_shape = zv_linePainterPath;
+    //zv_shape = zv_linePainterPath;
+    QRectF shapeRect = QRectF(zv_xPosition - 1, topPoint.y() - 1,
+                              3, bottomPoint.y() - topPoint.y());
+    QPainterPath newShape;
+    newShape.addRect(shapeRect);
+    zv_shape = newShape;
+
     zv_boundingRect = zv_shape.boundingRect();
 
     // text

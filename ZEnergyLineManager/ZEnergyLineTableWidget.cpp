@@ -107,9 +107,6 @@ void ZEnergyLineTableWidget::zh_chemicalElementSymbol(int ZNumber, QString& symb
         {
             symbol = property.second;
         }
-
-        qDebug() << property.first << property.second;
-
     }
 }
 //======================================================

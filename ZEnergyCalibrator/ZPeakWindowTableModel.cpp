@@ -112,25 +112,23 @@ void ZPeakWindowTableModel::zh_onAddPeakWindowAction()
 {
     // define peak window margins
     // ask plotter for visible rect
-    QRectF currentVisibleSceneRect;
-    emit zg_inquiryCurrentVisibleSceneRect(currentVisibleSceneRect);
+//    QRectF currentVisibleSceneRect;
+//    emit zg_inquiryCurrentVisibleSceneRect(currentVisibleSceneRect);
 
-    int windowWidth = qRound(currentVisibleSceneRect.width() / 20);
-    int offset = qRound((currentVisibleSceneRect.width() - windowWidth) / 2);
-    int firstChannel;
-    int lastChannel;
-    if(currentVisibleSceneRect.width() > 0)
-    {
-        firstChannel = qRound(currentVisibleSceneRect.left()) + offset;
-        lastChannel = qRound(currentVisibleSceneRect.right()) - offset;
-    }
-    else
-    {
-        firstChannel = 0;
-        lastChannel = 1;
-    }
-
-    qDebug() << "FIRST CHANEL" << firstChannel << "LAST CHANNEL" << lastChannel;
+//    int windowWidth = qRound(currentVisibleSceneRect.width() / 20);
+//    int offset = qRound((currentVisibleSceneRect.width() - windowWidth) / 2);
+//    int firstChannel;
+//    int lastChannel;
+//    if(currentVisibleSceneRect.width() > 0)
+//    {
+//        firstChannel = qRound(currentVisibleSceneRect.left()) + offset;
+//        lastChannel = qRound(currentVisibleSceneRect.right()) - offset;
+//    }
+//    else
+//    {
+//        firstChannel = 0;
+//        lastChannel = 1;
+//    }
 
     // create a new Peak Window
     ZPeakWindow* peakWindow = new ZPeakWindow(this);
@@ -139,9 +137,6 @@ void ZPeakWindowTableModel::zh_onAddPeakWindowAction()
     beginInsertRows(QModelIndex(), row, row);
     zv_peakWindowList.append(peakWindow);
     endInsertRows();
-
-    //
-
 
 }
 //===================================================
