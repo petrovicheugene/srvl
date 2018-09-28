@@ -107,6 +107,14 @@ void ZSpeAuxData::zp_setGainFactor(quint8 gainFactor)
     zv_gainFactor = gainFactor;
 }
 //=================================================
+void ZSpeAuxData::zp_setEnergyCalibrationFactors(const QList<double>& energyCalibrationfactorList)
+{
+    zv_energyK0 = energyCalibrationfactorList.value(0, 0.0);
+    zv_energyK1 = energyCalibrationfactorList.value(1, 0.0);;
+    zv_energyK2 = energyCalibrationfactorList.value(2, 0.0);;
+
+}
+//=================================================
 bool ZSpeAuxData::zp_setEnergyUnit(const QString& string)
 {
     if(string.isEmpty())

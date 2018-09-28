@@ -123,6 +123,10 @@ public:
     QList<double> zp_spectrumEnergyCalibrationForConditions(quint8 gainFactor,
     int exposition) const;
 
+    QList<double> zp_energyCalibrationForGainFactor(quint8 gainFactor) const;
+    void zp_setEnergyCalibration(quint8 gainFactor, const QList<double>& energyCalibrationFactorList);
+
+
 signals:
 
     void zg_inquiryToDelete();
@@ -164,6 +168,8 @@ public:
 
     void zp_calcConcentrations(const ZSpeSpectrum *spectrum,
                                QList<ZChemicalConcentration> &chemicalConcentrationList);
+    QList<double> zp_energyCalibrationFactorList() const;
+    void zp_setEnergyCalibrationFactorList(const QList<double>& energyCalibrationFactorList);
 
 private:
 
@@ -171,12 +177,14 @@ private:
     int zv_id;
     quint8 zv_gainFactor;
     int zv_exposition;
+    QList<double> zv_energyCalibrationFactorList;
 
     QList<ZChemicalTask*> zv_chemicalTaskList;
 
     // FUNCS
 
     void zh_initCalculationTasks(int measurementConditionsHasSampleTaskId);
+    void zh_initEnergyCalibration();
 
 };
 //=================================================

@@ -34,6 +34,8 @@ public:
 
 signals:
 
+    void zg_energyCalibrationChanged(int gainFactor, const QList<double>& energyCalibrationFactors) const;
+
 public slots:
 
 private slots:

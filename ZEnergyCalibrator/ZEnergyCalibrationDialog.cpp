@@ -150,7 +150,6 @@ void ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum(quint8 gainF
 {
 
     QString spectrumName = spectrum ? spectrum->zp_name() : "NON SPECTRUM";
-    qDebug() << "CURRENT GAIN FACTOR" << gainFactor << "EXPOSITION" << exposition << "SPECTRUM" << spectrumName;
 
     // zv_gainFactorSpinBox->setValue(gainFactor);
 

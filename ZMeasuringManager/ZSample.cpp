@@ -90,12 +90,21 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
             {
                 speElement.first = measuringConditionsList.at(i);
 
-                //                const QList<int> &intensityList, const ZSpeAuxData& speAuxdata,
-                //                                          const QString& path, QColor color, QObject* parent
+                speAuxdata.zp_setEnergyUnit("kEv");
+                speAuxdata.zp_setGainFactor(measuringConditionsList.at(i).first);
+
+
+                QList<double> energyCalibrationFactorList =
+                        zv_sampleTask->zp_energyCalibrationForGainFactor(measuringConditionsList.at(i).first);
+
+
+                speAuxdata.zp_setEnergyCalibrationFactors(energyCalibrationFactorList);
+
+
                 emit zg_inquirySpectrumColor(color);
                 spectrum = new ZSpeSpectrum(intensityList, speAuxdata,
                                             QString(), color, false, this);
-                zh_setEnergyCalibrationToSpecrum(spectrum, measuringConditionsList.at(i).first);
+
                 spectrum->zp_setSpectrumVisible(false);
                 speElement.second = spectrum;
                 zv_spectrumList.append(speElement);
@@ -483,9 +492,28 @@ void ZSample::zp_resetMeasuringResults()
     }
 }
 //=====================================================
-void ZSample::zh_setEnergyCalibrationToSpecrum(ZSpeSpectrum* spectrum,
-                                               quint8 gainfactor)
+void ZSample::zp_setEnergyCalibration(int gainFactor, const QList<double>& energyCalibrationFactorList)
 {
-
+    for(auto& spectrumData : zv_spectrumList)
+    {
+        if(spectrumData.first.first == gainFactor)
+        {
+            spectrumData.second->zp_setEnergyCalibration(energyCalibrationFactorList);
+        }
+    }
 }
 //=====================================================
+ZSpeSpectrum* ZSample::zp_spectrumForId(qint64 id)
+{
+    for(auto& spectrumData : zv_spectrumList)
+    {
+        if(spectrumData.second->zp_spectrumId() == id)
+        {
+            return spectrumData.second;
+        }
+    }
+
+    return nullptr;
+}
+//=====================================================
+

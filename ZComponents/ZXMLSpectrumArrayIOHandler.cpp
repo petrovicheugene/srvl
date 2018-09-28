@@ -94,9 +94,6 @@ void ZXMLSpectrumArrayIOHandler::zh_parseXMLElement(QList<ZRawSpectrumArray> &ar
     // current start tag handling
     // attributes handling
     QString currentTagName = reader.name().toString();
-#ifdef DBG
-    qDebug() << "OPEN TAG" << currentTagName;
-#endif
 
     if(currentTagName == zv_ARRAY)
     {

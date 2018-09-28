@@ -33,6 +33,7 @@ public:
     int zp_distortionValue();
     void zp_setDistortionSliderVisible(bool visible);
 
+
 signals:
 
     void zg_distortionFactorChanged(int);
@@ -47,6 +48,8 @@ private:
 
     // VARS
     QHBoxLayout* zv_mainLayout;
+    QHBoxLayout* zv_leftLayout;
+
     QToolButton* zv_hideGridButton;
     QToolButton* zv_increaseVerticalButton;
     QToolButton* zv_increaseHorizontalButton;
@@ -55,6 +58,7 @@ private:
     QToolButton* zv_fitViewInSceneButton;
 
     QSlider* zv_distortionSlider;
+
 
     ZPlotGraphicsView* zv_plotGraphicsView;
     ZPlotGraphicsScene* zv_plotGraphicsScene;

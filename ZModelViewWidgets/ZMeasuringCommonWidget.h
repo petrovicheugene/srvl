@@ -45,6 +45,7 @@ public slots:
     void zp_selectedSampleList(QList<int>& selectedSampleList) const;
     void zp_selectedModelIndexList(QModelIndexList& selectedModelIndexList) const;
     void zp_currentIndex(QModelIndex& index) const;
+    void zp_notifyCurrent() const;
 
 private slots:
 

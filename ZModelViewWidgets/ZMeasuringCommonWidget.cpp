@@ -76,8 +76,8 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     zp_appendSampleButtonActions(zv_measuringManager->zp_sampleActions());
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSampleList,
             this, &ZMeasuringCommonWidget::zp_selectedSampleList);
-//    connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSpectrumMap,
-//            this, &ZMeasuringCommonWidget::zp_selectedModelIndexList);
+    //    connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSpectrumMap,
+    //            this, &ZMeasuringCommonWidget::zp_selectedModelIndexList);
 
 
     connect(zv_dashboard, &ZDashboard::zg_startSeries,
@@ -87,8 +87,8 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     connect(zv_measuringManager, &ZMeasuringManager::zg_measuringStateChanged,
             this, &ZMeasuringCommonWidget::zp_setMeasuringState, Qt::QueuedConnection);
 
-//    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentSampleIndexChanged,
-//            zv_measuringManager, &ZMeasuringManager::zp_setCurrentSampleIndex);
+    //    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentSampleIndexChanged,
+    //            zv_measuringManager, &ZMeasuringManager::zp_setCurrentSampleIndex);
 
     measuringManager->zp_notifyOfCurrentStatus();
 
@@ -202,14 +202,21 @@ void ZMeasuringCommonWidget::zp_currentIndex(QModelIndex& index) const
     zv_measuringResultTableWidget->zp_currentIndex(index);
 }
 //==========================================================
+void ZMeasuringCommonWidget::zp_notifyCurrent() const
+{
+    QModelIndex index;
+    zv_measuringResultTableWidget->zp_currentIndex(index);
+    emit zg_currentIndexChanged(index, index);
+}
+//==========================================================
 void ZMeasuringCommonWidget::zp_setMeasuringState(ZMeasuringState measuringState)
 {
     // define current sample index
-//    int currentSampleIndex = -1;
-//    if(measuringState.zp_measuringAction() != ZMeasuringState::MA_STOPPED)
-//    {
-//        currentSampleIndex = zv_measuringManager->zp_indexForSampleName(measuringState.zp_currentSampleName());
-//    }
+    //    int currentSampleIndex = -1;
+    //    if(measuringState.zp_measuringAction() != ZMeasuringState::MA_STOPPED)
+    //    {
+    //        currentSampleIndex = zv_measuringManager->zp_indexForSampleName(measuringState.zp_currentSampleName());
+    //    }
 
     zv_dashboard->zp_setMeasuringState(measuringState);
 }

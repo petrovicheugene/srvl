@@ -121,8 +121,8 @@ void ZRulersAndGridManager::zp_recalcRulesAndGrid()
     if(zv_viewportGlobalRect == viewportGlobalRect
             && zv_viewportSceneRect == viewportSceneRect
             && zv_globalZeroPoint == globalZeroPoint
-            && zv_distortionFactor == distortionFactor
-            && zv_distortionCorrectionFactor == distortionCorrectionFactor)
+            && zv_distortionFactor - distortionFactor == 0.0
+            && zv_distortionCorrectionFactor - distortionCorrectionFactor == 0.0)
     {
         // coordinates are not changed
         return;
@@ -138,7 +138,7 @@ void ZRulersAndGridManager::zp_recalcRulesAndGrid()
     // bottom rule haven't be distorted
     zh_recalcBottomRule();
 
-    if(distortionFactor == 0 || distortionFactor == 1 || distortionCorrectionFactor == 0)
+    if(distortionFactor == 0.0 || distortionFactor == 1.0 || distortionCorrectionFactor == 0.0)
     {
         zh_recalcLeftRule();
     }
@@ -155,7 +155,7 @@ void ZRulersAndGridManager::zh_recalcBottomRule()
     zv_XRulePointList.clear();
 
     if(zv_viewportGlobalRect.left() != zv_viewportGlobalRect.right()
-            && zv_viewportSceneRect.left() != zv_viewportSceneRect.right()
+            && zv_viewportSceneRect.left() - zv_viewportSceneRect.right() != 0.0
             && zv_rulerWidget != 0)
     {
         int maxVpMarkInterval = zv_rulerWidget->zp_maxMarkWidth() * 2 ;
@@ -645,7 +645,6 @@ void ZRulersAndGridManager::zh_recalcDistortedLeftRule(qreal distortionFactor, q
         RulePoint rulePoint;
         RulePoint::MarkType markType;
 
-
         qreal currentMarkValue = 0;
         qreal currentMarkScPos = 0;
         qreal currentMarkVpPos = zv_A;
@@ -754,11 +753,22 @@ void ZRulersAndGridManager::zh_recalcDistortedLeftRule(qreal distortionFactor, q
 //                currentMarkScPos *= -1;
 //            }
             currentMarkVpPos = currentMarkScPos * zv_K + zv_A;
-
             // sratches defining (they may be marks if interval will allow)
-
             zh_divideDistortedVerticalInterval(p, currentMarkValue, currentMarkVpPos, prevMarkValue);
         }
+    }
+}
+//========================================================
+double ZRulersAndGridManager::zp_recalcSceneVerticalPos(double scenePosition) const
+{
+    if(zv_distortionFactor == 0.0 || zv_distortionFactor == 1.0 || zv_distortionCorrectionFactor == 0.0)
+    {
+        return -scenePosition;
+    }
+    else
+    {
+        double posValue = pow((qAbs(scenePosition) / zv_distortionCorrectionFactor), 1/zv_distortionFactor);
+        return posValue;
     }
 }
 //========================================================

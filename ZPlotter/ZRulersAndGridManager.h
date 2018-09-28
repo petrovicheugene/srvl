@@ -67,6 +67,8 @@ public:
 
     void zp_recalcRulesAndGrid();
 
+    double zp_recalcSceneVerticalPos(double scenePosition) const;
+
 signals:
 
 public slots:

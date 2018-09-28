@@ -6,13 +6,15 @@
 #include <QGraphicsItem>
 #include "ZHorizontalDashBoard.h"
 //====================================================
+class QLabel;
+class QScrollBar;
+
 class ZMarkLine;
 class ZVerticalMarkLine;
 class ZScratchLine;
 class ZVerticalScratchLine;
 class ZPlotGraphicsView;
 class ZPlotGraphicsScene;
-class QScrollBar;
 class ZRulersAndGridManager;
 class ZRulerWidget;
 //====================================================
@@ -99,10 +101,20 @@ public:
 
     void zp_setContextMenu(QList<QAction *> &actionList);
 
+    void zp_setEnergyCalibration(QList<double> energyCalibrationFactorList);
+
+    QRectF zp_viewportSceneRect() const;
+    QSize zp_viewportPixelSize() const;
+
 signals:
 
     void zg_cursorAreaImage(QImage);
     void zg_mousePressedAt(QPointF mousePos) const;
+    void zg_viewportRectChanged(QRectF) const;
+
+    void zg_rulerToolChanged(QPointF startPoint, QPointF endPoint, bool visibility) const;
+//    void zg_mouseScenePositionChanged(QPointF scenePos) const;
+//    void zg_mouseLeaved() const;
 
 public slots:
 
@@ -134,6 +146,10 @@ private slots:
     void zh_scrollBarVisible(Qt::Orientation, bool&);
     void zh_onMousePress(QPointF mouseScenePos);
 
+    void zh_mouseScenePositionChanged(QPointF scenePos) const;
+    void zh_mouseLeaved() const;
+
+
 private:
 
     // VARS
@@ -148,6 +164,8 @@ private:
     bool zv_autoDefineVerticalAbsMax;
     qreal zv_verticalDistortionFactor;
     qreal zv_verticalDistortionCorrectionFactor;
+
+    QList<double> zv_energyCalibrationFactorList;
     // recalc when max or log base are changed
     //
     //
@@ -171,6 +189,8 @@ private:
     void zh_updateScrollBarsVisible();
 
     void zh_scrollBarVisibleControl(int min , int max);
+    void zh_notifySceneRect(int value);
+
     bool zh_recalcVerticalDistortionFactors(qreal distortionValue);
     void zh_recalcRulesAndItemCoordinates();
 

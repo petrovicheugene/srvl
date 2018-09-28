@@ -4,6 +4,7 @@
 #include "ZPlotGraphicsView.h"
 #include "ZRulersAndGridManager.h"
 #include "ZRulerWidget.h"
+#include "ZEnergyLineGraphicsItem.h"
 #include "ZSpectrumGraphicsItem.h"
 #include "ZWindowGraphicsItem.h"
 #include "ZChartPointGraphicsItem.h"
@@ -12,12 +13,12 @@
 #include "ZPlotterDefaulVariables.h"
 
 #include <QApplication>
+#include <QLabel>
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QScrollBar>
-
 #include <QDebug>
 
 //====================================================
@@ -410,25 +411,22 @@ void ZPlotter::zp_addItem(QGraphicsItem * item)
 //====================================================
 void ZPlotter::zp_removeItem(QGraphicsItem * item)
 {
-    if(item == 0)
-    {
-        return;
-    }
-    item->setVisible(false);
+//    if(!item)
+//    {
+//        return;
+//    }
+
+    //item->setVisible(false);
     zv_plotScene->zp_removeItem(item);
     zv_plotView->update();
-
 }
 //====================================================
 void ZPlotter::zp_removeItemsForType(int type)
 {
-    QList<QGraphicsItem*> itemList = zv_plotScene->items();
+    QList<QGraphicsItem*> itemList = zp_itemListForType(type);
     for(int i = itemList.count() - 1; i >= 0; i--)
     {
-        if(itemList.value(i)->type() == type)
-        {
-            zp_removeItem(itemList.value(i));
-        }
+        zp_removeItem(itemList.at(i));
     }
 }
 //====================================================
@@ -519,7 +517,7 @@ void ZPlotter::zp_verticalDistortionFactors(qreal& distortionFactor, qreal& dist
 bool ZPlotter::zp_isPlotScaled()
 {
     return zv_horizontalScrollBar->isVisible()
-            && zv_verticalScrollBar->isVisible();
+            || zv_verticalScrollBar->isVisible();
 }
 //====================================================
 void ZPlotter::zp_updatePlot()
@@ -536,6 +534,27 @@ void ZPlotter::zp_setContextMenu(QList<QAction*>& actionList)
 {
     zv_plotView->addActions(actionList);
     zv_plotView->setContextMenuPolicy(Qt::DefaultContextMenu);
+}
+//====================================================
+void ZPlotter::zp_setEnergyCalibration(QList<double> energyCalibrationFactorList)
+{
+    zv_energyCalibrationFactorList = energyCalibrationFactorList;
+}
+//====================================================
+QRectF ZPlotter::zp_viewportSceneRect() const
+{
+    QRectF rect;
+    if(!zv_plotView->zp_viewPortSceneRect(rect))
+    {
+        return QRectF();
+    }
+
+    return rect;
+}
+//====================================================
+QSize ZPlotter::zp_viewportPixelSize() const
+{
+    return zv_plotView->viewport()->size();
 }
 //====================================================
 void ZPlotter::zp_setLeftRuleVisible(bool visible)
@@ -646,7 +665,7 @@ void ZPlotter::zp_fitInBoundingRect()
     {
         rectToFit = zv_plotScene->sceneRect();
     }
-    zv_plotView->fitInView(rectToFit);
+    zv_plotView->zp_fitInView(rectToFit);
 
     // deblock signals
     zv_verticalScrollBar->blockSignals(false);
@@ -658,7 +677,7 @@ void ZPlotter::zp_fitInBoundingRect()
 //====================================================
 QRectF ZPlotter::zp_boundingRect() const
 {
-     return zv_plotScene->itemsBoundingRect();
+    return zv_plotScene->itemsBoundingRect();
 }
 //====================================================
 void ZPlotter::resizeEvent(QResizeEvent* event)
@@ -680,7 +699,8 @@ bool ZPlotter::eventFilter(QObject *obj, QEvent *event)
         zv_mouseButtonDown = true;
         bool res = QObject::eventFilter(obj, event);
         return res;
-    }else if(event->type() == QEvent::MouseButtonRelease
+    }
+    else if(event->type() == QEvent::MouseButtonRelease
             || event->type() == QEvent::NonClientAreaMouseButtonRelease)
     {
         zv_mouseButtonDown = false;
@@ -691,13 +711,14 @@ bool ZPlotter::eventFilter(QObject *obj, QEvent *event)
         return res;
     }
 
+
     bool res = QObject::eventFilter(obj, event);
     return res;
 }
 //====================================================
 void ZPlotter::zh_verticalDistortionChanged(int distortionValue)
 {
-    if(zh_recalcVerticalDistortionFactors((qreal)distortionValue))
+    if(zh_recalcVerticalDistortionFactors(static_cast<qreal>(distortionValue)))
     {
         zh_recalcRulesAndItemCoordinates();
     }
@@ -717,7 +738,40 @@ void ZPlotter::zh_scrollBarVisible(Qt::Orientation orientation, bool& visible)
 //====================================================
 void ZPlotter::zh_onMousePress(QPointF mouseScenePos)
 {
-    qDebug() << "MOUSE CLICK X"  << mouseScenePos.x();
+
+}
+//====================================================
+void ZPlotter::zh_mouseScenePositionChanged(QPointF scenePos) const
+{
+    if(!zv_rulerWidget)
+    {
+        return;
+    }
+
+
+    QString text = tr("Channel: %1").arg(QString::number(scenePos.x(), 'f', 0));
+
+    QString energyString;
+    if(!(zv_energyCalibrationFactorList.value(2, 0.0) == 0.0 &&
+         (zv_energyCalibrationFactorList.value(1, 0.0) == 1.0 ||
+          zv_energyCalibrationFactorList.value(1, 0.0) == 0.0) &&
+         zv_energyCalibrationFactorList.value(0, 0.0) == 0.0))
+    {
+        double XValue = (pow(scenePos.x(), 2.0) *zv_energyCalibrationFactorList.value(2)) +
+                (scenePos.x() *zv_energyCalibrationFactorList.value(1)) +
+                zv_energyCalibrationFactorList.value(0);
+        text += tr(" Energy: %1").arg(QString::number(XValue, 'f', 2));
+    }
+
+    double YValue = zv_rulersAndGreedManager->zp_recalcSceneVerticalPos(scenePos.y());
+    text += tr(" Intensity: %1").arg(QString::number(YValue, 'f', 0));
+    zv_rulerWidget->zp_setInfoLabelText(text);
+
+}
+//====================================================
+void ZPlotter::zh_mouseLeaved() const
+{
+    zv_rulerWidget->zp_setInfoLabelText(QString());
 }
 //====================================================
 void ZPlotter::zh_createComponents()
@@ -790,6 +844,16 @@ void ZPlotter::zh_createConnections()
             this, &ZPlotter::zg_cursorAreaImage);
     connect(zv_plotView, &ZPlotGraphicsView::zg_mousePressedAt,
             this, &ZPlotter::zg_mousePressedAt);
+    connect(zv_plotView, &ZPlotGraphicsView::zg_viewportRectChanged,
+            this, &ZPlotter::zg_viewportRectChanged);
+
+    connect(zv_plotView, &ZPlotGraphicsView::zg_mouseScenePositionChanged,
+            this, &ZPlotter::zh_mouseScenePositionChanged);
+    connect(zv_plotView, &ZPlotGraphicsView::zg_mouseLeaved,
+            this, &ZPlotter::zh_mouseLeaved);
+    connect(zv_plotView, &ZPlotGraphicsView::zg_rulerToolChanged,
+            this, &ZPlotter::zg_rulerToolChanged);
+
 
 }
 //====================================================
@@ -799,6 +863,12 @@ void ZPlotter::zh_connectScrollBars()
             this, &ZPlotter::zh_scrollBarVisibleControl);
     connect(zv_verticalScrollBar, &QScrollBar::rangeChanged,
             this, &ZPlotter::zh_scrollBarVisibleControl);
+
+    connect(zv_horizontalScrollBar, &QScrollBar::valueChanged,
+            this, &ZPlotter::zh_notifySceneRect);
+    connect(zv_verticalScrollBar, &QScrollBar::valueChanged,
+            this, &ZPlotter::zh_notifySceneRect);
+
 }
 //====================================================
 void ZPlotter::zh_updateScrollBarsVisible()
@@ -820,9 +890,16 @@ void ZPlotter::zh_scrollBarVisibleControl(int min , int max)
     scrollBar->setHidden(min == 0 && max == 0);
 }
 //====================================================
+void ZPlotter::zh_notifySceneRect(int value)
+{
+    QRectF viewportRect;
+    zv_plotView->zp_viewPortSceneRect(viewportRect);
+    emit zg_viewportRectChanged(viewportRect);
+}
+//====================================================
 bool ZPlotter::zh_recalcVerticalDistortionFactors(qreal distortionValue)
 {
-    if(zv_verticalAbsMax == 0)
+    if(zv_verticalAbsMax == 0.0)
     {
         return false;
     }
@@ -861,6 +938,16 @@ void ZPlotter::zh_recalcRulesAndItemCoordinates()
             }
 
             spectrumItem->zp_setDistortion(zv_verticalDistortionFactor, zv_verticalDistortionCorrectionFactor);
+        }
+        else if(itemList.value(i)->type() == EnergyLineItemType)
+        {
+            ZEnergyLineGraphicsItem* energyLineItem = qgraphicsitem_cast<ZEnergyLineGraphicsItem*>(itemList.value(i));
+            if(!energyLineItem)
+            {
+                continue;
+            }
+
+            energyLineItem->zp_updateItem();
         }
     }
 }

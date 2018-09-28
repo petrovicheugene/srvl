@@ -21,7 +21,7 @@ public:
 
 public slots:
 
-    void zp_setChannelNumber(int channelNamber);
+    void zp_setChannelNumber(int channelNumber);
     void zp_setEnergyValue(double energyValue);
     void zp_setEnergyValueString(const QString& value);
     void zp_setLineName(const QString& lineName);
@@ -29,7 +29,7 @@ public slots:
 
 signals:
 
-    void zg_channelNumber(int channelNamber);
+    void zg_channelNumber(int channelNumber);
     void zg_energyValue(double energyValue);
     void zg_lineName(const QString& lineName);
     void zg_lineColor(QColor color);

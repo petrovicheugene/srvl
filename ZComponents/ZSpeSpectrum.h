@@ -29,7 +29,7 @@ public:
     void zp_setGainFactor(quint8 gainFactor);
     void zp_setAliveTime(quint32 aliveTime);
     void zp_setEnergyUnit(const QString& energyUnit);
-    void zp_setEnergyCalibration(QList<double>& energyCalibrationFactorList);
+    void zp_setEnergyCalibration(const QList<double> &energyCalibrationFactorList);
     QList<double> zp_energyCalibration() const;
 
 private:

@@ -94,6 +94,11 @@ void ZSpectrumGraphicsItem::zp_setCurrentSpectrumId(qint64 id)
     zv_currentSpectrumId = id;
 }
 //======================================================
+qint64 ZSpectrumGraphicsItem::zp_currentSpectrumId()
+{
+    return zv_currentSpectrumId;
+}
+//======================================================
 void ZSpectrumGraphicsItem::zp_setSpectrumData(const QList<quint32>& data)
 {
     zv_spectrumData = data;
@@ -209,33 +214,22 @@ void ZSpectrumGraphicsItem::zp_updateCurrentSpectrum(bool visible)
 //======================================================
 void ZSpectrumGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
-#ifdef DBG
-    qDebug() << "RELEASE";
-#endif
     QGraphicsItem::mouseReleaseEvent(event);
 }
 //======================================================
 void ZSpectrumGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-#ifdef DBG
-    qDebug() << "PRESS";
-#endif
+
     QGraphicsItem::mousePressEvent(event);
 }
 //======================================================
 void ZSpectrumGraphicsItem::focusInEvent(QFocusEvent *event)
 {
-#ifdef DBG
-    qDebug() << "FOCUS IN";
-#endif
     QGraphicsItem::focusInEvent(event);
 }
 //======================================================
 void ZSpectrumGraphicsItem::focusOutEvent(QFocusEvent *event)
 {
-#ifdef DBG
-    qDebug() << "FOCUS OUT";
-#endif
     QGraphicsItem::focusOutEvent(event);
 }
 //======================================================

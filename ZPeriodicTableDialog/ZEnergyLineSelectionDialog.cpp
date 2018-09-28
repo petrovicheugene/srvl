@@ -37,6 +37,8 @@ void ZEnergyLineSelectionDialog::zh_createComponents()
 {
     // models
     zv_chemicalElementPropertyTreeModel = new ZChemicalElementPropertyTreeModel(this);
+    zv_chemicalElementPropertyTreeModel->zp_setNamePropertyName("Name ru");
+
     zv_chemicalPropertyProxyTableModel = new ZChemicalPropertyProxyTableModel(this);
     zv_chemicalPropertyProxyTableModel->zp_setItemIsEditable(false);
     zv_chemicalPropertyProxyTableModel->setHeaderData(0, Qt::Horizontal, tr("Energy line"), Qt::EditRole);
@@ -56,11 +58,11 @@ void ZEnergyLineSelectionDialog::zh_createComponents()
     zv_mainSplitter->addWidget(zv_periodicTableWidget);
 
     // property table view
-    zv_chemicalElementpropertyTableView = new QTableView(this);
-    zv_chemicalElementpropertyTableView->setModel(zv_chemicalPropertyProxyTableModel);
-    zv_chemicalElementpropertyTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    zv_chemicalElementpropertyTableView->setSelectionMode( QAbstractItemView::SingleSelection);
-    zv_mainSplitter->addWidget(zv_chemicalElementpropertyTableView);
+    zv_chemicalElementPropertyTableView = new QTableView(this);
+    zv_chemicalElementPropertyTableView->setModel(zv_chemicalPropertyProxyTableModel);
+    zv_chemicalElementPropertyTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_chemicalElementPropertyTableView->setSelectionMode( QAbstractItemView::SingleSelection);
+    zv_mainSplitter->addWidget(zv_chemicalElementPropertyTableView);
 
 
     QHBoxLayout* selectedLineLayout = new QHBoxLayout;
@@ -105,7 +107,7 @@ void ZEnergyLineSelectionDialog::zh_createConnections()
     connect(zv_cancelButton, &QPushButton::clicked,
             this, &ZEnergyLineSelectionDialog::reject);
 
-    connect(zv_chemicalElementpropertyTableView->selectionModel(), &QItemSelectionModel::currentChanged,
+    connect(zv_chemicalElementPropertyTableView->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &ZEnergyLineSelectionDialog::zh_onCurrentEnergyLineChange);
 
 }
@@ -169,13 +171,14 @@ void ZEnergyLineSelectionDialog::zh_onOkClick()
     accept();
 }
 //=============================================================
-void ZEnergyLineSelectionDialog::zh_onSelectedChemicalElementChange()
+void ZEnergyLineSelectionDialog::zh_onSelectedChemicalElementChange(int ZNumber, bool selected)
 {
     QList<int> selectedChemicalElementList = zv_periodicTableWidget->zp_selectedChemicalElementList();
 
     if(selectedChemicalElementList.isEmpty())
     {
         zv_chemicalPropertyProxyTableModel->zp_onCurrentTreeElementChanged(QModelIndex(), QModelIndex());
+        return;
     }
 
     QStringList sectionBranch;

@@ -69,6 +69,10 @@ public:
     bool zp_concentration(const QString& chemical, double& concentration);
     void zp_resetMeasuringResults();
 
+    void zp_setEnergyCalibration(int gainFactor, const QList<double>& energyCalibrationFactorList);
+
+    ZSpeSpectrum* zp_spectrumForId(qint64 id);
+
 signals:
 
     void zg_inquirySpeListClear(SampleTaskSetFlag& flag) const;
@@ -76,6 +80,7 @@ signals:
     void zg_measuringFinished() const;
     void zg_spectrumDataChanged(quint8 gainfactor, int exposition);
     void zg_concentrationChanged();
+
 
 public slots:
 
@@ -92,7 +97,6 @@ private:
     QList<ZChemicalConcentration> zv_chemicalConcentrationList;
 
     // FUNCS
-    void zh_setEnergyCalibrationToSpecrum(ZSpeSpectrum* spectrum, quint8 gainfactor);
 
 
 

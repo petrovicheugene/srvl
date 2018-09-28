@@ -28,6 +28,8 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QSpinBox>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QTableView>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -98,8 +100,8 @@ void ZEnergyCalibrationDialogV2::zh_createComponents()
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     mainLayout->addWidget(buttonBox);
 
-//    zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
-//    buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
+    //    zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
+    //    buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
 
     zv_closeButton = new QPushButton(tr("Close"), this);
     buttonBox->addButton(zv_closeButton, QDialogButtonBox::ActionRole);
@@ -116,11 +118,11 @@ QWidget* ZEnergyCalibrationDialogV2::zh_createMainWidget()
     rightLayout->setMargin(0);
     mainGroupBoxlayout->addLayout(rightLayout);
 
-//    QDialogButtonBox* mainWidgetButtonBox = new QDialogButtonBox(this);
-//    mainGroupBoxlayout->addWidget(mainWidgetButtonBox);
+    //    QDialogButtonBox* mainWidgetButtonBox = new QDialogButtonBox(this);
+    //    mainGroupBoxlayout->addWidget(mainWidgetButtonBox);
 
-//    zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
-//    mainWidgetButtonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
+    //    zv_okButton = new QPushButton(NS_Buttons::glButtonOk, this);
+    //    mainWidgetButtonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
 
     // plotter
     zv_plotter = new ZPlotter;
@@ -336,7 +338,7 @@ void ZEnergyCalibrationDialogV2::zh_loadSpectrumData(QMap<quint8, QList<ZSpeSpec
     for(auto &gainFactor : spectrumMap.keys())
     {
         itemString = tr("Gain Factor: %1").arg(QString::number(gainFactor));
-        zv_gainFactorComboBox->addItem(itemString, QVariant(gainFactor));
+        zv_gainFactorComboBox->addItem(itemString, QVariant(static_cast<int>(gainFactor)));
     }
     zv_gainFactorComboBox->setCurrentIndex(0);
 
@@ -453,16 +455,45 @@ void ZEnergyCalibrationDialogV2::zh_calculateAndWriteEnergyCalibration()
 
     // write energy calibration to gain factor
     QString msg = tr("Do you want to bind the energy calibration to the current gain factor equals %1?").arg(zv_gainFactorComboBox->currentText());
-    if(QMessageBox::question(this, tr(""), msg, QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+    if(QMessageBox::question(this, tr("Energy calibration error"), msg, QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
     {
         return;
     }
 
+    //  current gain factor value
+    bool ok;
+    int currentGainFactor = zv_gainFactorComboBox->currentData().toInt(&ok);
+    if(!ok)
+    {
+        QString msg = tr("Cannot get current gain factor!").arg(zv_gainFactorComboBox->currentText());
+        QMessageBox::critical(this, tr("Energy calibration error"), msg, QMessageBox::Yes);
+        return;
+    }
 
+    QSqlQuery query;
+    QString queryString = QString("UPDATE gain_factors SET energyFactorK0 = %1, "
+                                  "energyFactorK1 = %2, "
+                                  "energyFactorK2 = %3 "
+                                  "WHERE gain_factor=%4").arg(QString::number(energyCalibrationFactorList.value(0, 0.0)),
+                                                              QString::number(energyCalibrationFactorList.value(1, 0.0)),
+                                                              QString::number(energyCalibrationFactorList.value(2, 0.0)),
+                                                              QString::number(currentGainFactor));
 
+    if(!query.prepare(queryString))
+    {
+        msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Energy calibration error"), msg, QMessageBox::Yes);
+        return;
+    }
 
+    if(!query.exec())
+    {
+        msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Energy calibration error"), msg, QMessageBox::Yes);
+        return;
+    }
 
-
+    emit zg_energyCalibrationChanged(currentGainFactor, energyCalibrationFactorList);
 }
 //======================================================
 void ZEnergyCalibrationDialogV2::zh_onCurrentGainFactorIndexChange(int currentIndex)
@@ -563,7 +594,6 @@ void ZEnergyCalibrationDialogV2::zh_onModelDataChange(const QModelIndex& topLeft
 //======================================================
 void ZEnergyCalibrationDialogV2::zh_onMousePressedOnPlotter(QPointF scenePos)
 {
-    qDebug() << "mouse press" << scenePos;
 
 
 }
@@ -751,11 +781,9 @@ bool ZEnergyCalibrationDialogV2::zh_calculateEnergyFactors(QList<double>& energy
         return false;
     }
 
-    qDebug() << "FACTORS";
     for(int mc = 0; mc <  matrixColumnList.count(); mc++)
     {
         energyCalibrationFactorList.append(matrixColumnList[mc].first);
-        qDebug() << "FACTOR" <<  mc << matrixColumnList[mc].first;
     }
 
     return true;

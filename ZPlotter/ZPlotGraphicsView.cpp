@@ -24,6 +24,7 @@ ZPlotGraphicsView::ZPlotGraphicsView(QWidget* parent) : QGraphicsView(parent)
     zv_rulersAndGreedManager = 0;
     zv_minSideSizeOfVisibleScene = 15;
     zv_rubberBandSideMinSize = 5;
+    zv_ruleToolMinSize = 5;
     zv_colorPickUpAuxCoverageSize = 1;
     zv_gridColor = viewport()->palette().color(QPalette::Mid);
 
@@ -274,6 +275,19 @@ QColor ZPlotGraphicsView::zp_gridColor() const
     return zv_gridColor;
 }
 //=============================================================
+void ZPlotGraphicsView::zp_fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode)
+{
+    QGraphicsView::fitInView(rect, aspectRatioMode);
+    emit zg_viewportRectChanged(rect);
+
+    if(zv_plotMode == PM_RULE)
+    {
+
+        emit zg_rulerToolChanged(mapToScene(zv_mousePressStartViewPos),
+                                 mapToScene(zv_currentMousePos), true);
+    }
+}
+//=============================================================
 QRectF ZPlotGraphicsView::zp_currentVisibleSceneRect() const
 {
     // QRect rect = viewport()->rect().adjusted(1,1,-1,-1);
@@ -349,7 +363,7 @@ void ZPlotGraphicsView::wheelEvent(QWheelEvent * event)
         displayedSceneRect.setRight(oldDisplayedSceneRect.right());
     }
 
-    fitInView(displayedSceneRect.normalized());
+    zp_fitInView(displayedSceneRect.normalized());
     //ensureVisible(displayedSceneRect.normalized(), 2, 2);
     zv_sceneCenterPos = mapToScene(viewport()->rect()).boundingRect().center();
     zv_sceneMousePos = mapToScene(event->pos());
@@ -426,12 +440,16 @@ void ZPlotGraphicsView::mouseReleaseEvent(QMouseEvent* event)
         {
             newSceneRect.moveCenter(newSceneCenter);
         }
-        fitInView(newSceneRect);
+        zp_fitInView(newSceneRect);
         //ensureVisible(newSceneRect, 2, 2);
     }
     else if(zv_plotMode == PM_REGULAR && zv_mousePressStartViewPos == event->pos())
     {
         emit zg_cursorAreaImage(zh_grabCursorArea(event->pos()));
+    }
+    else if(zv_plotMode == PM_RULE)
+    {
+        emit zg_rulerToolChanged(QPointF(), QPointF(), false);
     }
 
     qApp->restoreOverrideCursor();
@@ -441,6 +459,10 @@ void ZPlotGraphicsView::mouseReleaseEvent(QMouseEvent* event)
 //=============================================================
 void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
+    emit zg_mouseScenePositionChanged(mapToScene(event->pos()));
+
+    zv_currentMousePos = event->pos();
+
     if(zv_plotMode == PM_PAD_DRAGGING)
     {
         QPointF newSceneMousePos = mapToScene(event->pos());
@@ -454,9 +476,8 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
     }
     else if(zv_plotMode == PM_RUBBER_BAND)
     {
-        QPoint currentMousePos = event->pos();
-        if(qAbs(zv_mousePressStartViewPos.x() - currentMousePos.x()) < zv_rubberBandSideMinSize
-                && qAbs(zv_mousePressStartViewPos.y() - currentMousePos.y()) < zv_rubberBandSideMinSize)
+        if(qAbs(zv_mousePressStartViewPos.x() - zv_currentMousePos.x()) < zv_rubberBandSideMinSize
+                || qAbs(zv_mousePressStartViewPos.y() - zv_currentMousePos.y()) < zv_rubberBandSideMinSize)
         {
             zv_rubberBand->hide();
             zv_plotMode = PM_REGULAR;
@@ -469,9 +490,8 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
     }
     else if(zv_plotMode == PM_REGULAR && event->buttons() == Qt::RightButton)
     {
-        QPoint currentMousePos = event->pos();
-        if(qAbs(zv_mousePressStartViewPos.x() - currentMousePos.x()) > zv_rubberBandSideMinSize
-                && qAbs(zv_mousePressStartViewPos.y() - currentMousePos.y()) > zv_rubberBandSideMinSize)
+        if(qAbs(zv_mousePressStartViewPos.x() - zv_currentMousePos.x()) > zv_rubberBandSideMinSize
+                && qAbs(zv_mousePressStartViewPos.y() - zv_currentMousePos.y()) > zv_rubberBandSideMinSize)
         {
             QRectF sceneRect = mapToScene(viewport()->rect().adjusted(1,1,-1,-1)).boundingRect().normalized();
             if(sceneRect.width() > zv_minSideSizeOfVisibleScene + 1
@@ -485,6 +505,17 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
                 zv_rubberBand->setGeometry(QRect(zv_mousePressStartViewPos, QSize()));
                 zv_rubberBand->show();
             }
+        }
+        else if(qAbs(zv_mousePressStartViewPos.x() - zv_currentMousePos.x()) > zv_ruleToolMinSize)
+        {
+            zv_plotMode = PM_RULE;
+            emit zg_rulerToolChanged(mapToScene(zv_mousePressStartViewPos),
+                                     mapToScene(zv_currentMousePos), true);
+        }
+        else
+        {
+            zv_plotMode = PM_REGULAR;
+            emit zg_rulerToolChanged(QPointF(), QPointF(), false);
         }
     }
     else if(zv_plotMode == PM_REGULAR && event->buttons() == Qt::LeftButton)
@@ -503,12 +534,42 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
             return;
         }
     }
+    else if(zv_plotMode == PM_RULE)
+    {
+        if(qAbs(zv_mousePressStartViewPos.x() - zv_currentMousePos.x()) > zv_rubberBandSideMinSize
+                && qAbs(zv_mousePressStartViewPos.y() - zv_currentMousePos.y()) > zv_rubberBandSideMinSize)
+        {
+            QRectF sceneRect = mapToScene(viewport()->rect().adjusted(1,1,-1,-1)).boundingRect().normalized();
+            if(sceneRect.width() > zv_minSideSizeOfVisibleScene + 1
+                    || sceneRect.height() > zv_minSideSizeOfVisibleScene +1)
+            {
+                zv_plotMode = PM_RUBBER_BAND;
+                emit zg_rulerToolChanged(QPointF(), QPointF(), false);
+                if(!zv_rubberBand)
+                {
+                    zv_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+                }
+                zv_rubberBand->setGeometry(QRect(zv_mousePressStartViewPos, QSize()));
+                zv_rubberBand->show();
+            }
+        }
+        else
+        {
+            emit zg_rulerToolChanged(mapToScene(zv_mousePressStartViewPos),
+                                     mapToScene(zv_currentMousePos), true);
+        }
 
+    }
     QGraphicsView::mouseMoveEvent(event);
 }
 //=============================================================
 bool ZPlotGraphicsView::viewportEvent(QEvent * event)
 {
+    if(event->type() == QEvent::HoverLeave || event->type() == QEvent::Leave)
+    {
+        emit zg_mouseLeaved();
+    }
+
     if(event->type() == QEvent::Resize && scene())
     {
         QResizeEvent* resizeEvent = static_cast<QResizeEvent*>(event);
@@ -529,8 +590,7 @@ bool ZPlotGraphicsView::viewportEvent(QEvent * event)
             centerOn(sceneCenterPos);
         }
     }
-
-    if(event->type() == QEvent::Paint && scene())
+    else if(event->type() == QEvent::Paint && scene())
     {
         if(zv_rulersAndGreedManager)
         {
@@ -606,6 +666,11 @@ void ZPlotGraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
     }
 
     QGraphicsView::drawBackground(painter, rect);
+}
+//=============================================================
+void ZPlotGraphicsView::drawForeground(QPainter *painter, const QRectF &rect)
+{
+    QGraphicsView::drawForeground(painter, rect);
 }
 //=============================================================
 void ZPlotGraphicsView::contextMenuEvent(QContextMenuEvent *event)

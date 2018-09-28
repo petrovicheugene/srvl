@@ -1,5 +1,6 @@
 //=========================================================
 #include "ZRulerWidget.h"
+#include <QLabel>
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QPainter>
@@ -15,6 +16,8 @@ ZRulerWidget::ZRulerWidget(QWidget *parent) : QWidget(parent)
     //    zv_topRulerProperty.visibility = false;
     zv_lineColor = palette().color(QPalette::Text);
     zv_lineWidth = 1;
+
+    zv_infoLabel = new QLabel(this);
     zh_recalcRuleSizes();
 }
 //=========================================================
@@ -321,6 +324,15 @@ void ZRulerWidget::zp_setHorizontalMarkRecalcFactors(const QString& label, qreal
     update();
 }
 //=========================================================
+void ZRulerWidget::zp_horizontalMarkRecalcFactors(QString& label, qreal& K0, qreal& K1, qreal& K2) const
+{
+    label = zv_topRulerProperty.ruleLabel;
+    K0 = zv_topRulerProperty.K0;
+    K1 = zv_topRulerProperty.K1;
+    K2 = zv_topRulerProperty.K2;
+
+}
+//=========================================================
 void ZRulerWidget::zp_setVerticalMarkRecalcFactors(const QString& label, qreal K0, qreal K1, qreal K2)
 {
     zv_leftRulerProperty.ruleLabel = label;
@@ -443,6 +455,11 @@ int ZRulerWidget::zp_maxMarkHeight()
     return zv_maxMarkHeight;
 }
 //=========================================================
+void ZRulerWidget::zp_setInfoLabelText(const QString& text)
+{
+    zv_infoLabel->setText(text);
+}
+//=========================================================
 void ZRulerWidget::resizeEvent(QResizeEvent* event)
 {
     if(zv_plot != 0)
@@ -540,7 +557,15 @@ void ZRulerWidget::resizeEvent(QResizeEvent* event)
         }
 
         zv_plot->setGeometry(geometryRect);
+
+        QRect infoLabelRect = zv_bottomRulerProperty.ruleLabelRect;
+        infoLabelRect.setLeft(geometryRect.left());
+        QFontMetrics fm(this->font());
+        int ruleLabelWidth = fm.width(zv_bottomRulerProperty.ruleLabel);
+        infoLabelRect.setRight(geometryRect.center().x() - ruleLabelWidth);
+        zv_infoLabel->setGeometry(infoLabelRect);
     }
+
     QWidget::resizeEvent(event);
 }
 //=========================================================

@@ -100,8 +100,6 @@ void ZSampleTask::zh_initMeasuringTasks()
     }
 
     int measuringConditionsHasSampleTaskId;
-    int gainFactor;
-    int exposition;
     QVariant vData;
 
     while(query.next())
@@ -114,24 +112,6 @@ void ZSampleTask::zh_initMeasuringTasks()
         }
 
         measuringConditionsHasSampleTaskId = vData.toInt();
-
-//        //gain factor
-//        vData = query.value(1);
-//        if(!vData.isValid() || !vData.canConvert<int>())
-//        {
-//            continue;;
-//        }
-
-//        gainFactor = vData.toInt();
-
-//        // exposition
-//        vData = query.value(2);
-//        if(!vData.isValid() || !vData.canConvert<int>())
-//        {
-//            continue;;
-//        }
-
-//        exposition = vData.toInt();
 
         ZMeasuringTask* measuringTask = new ZMeasuringTask(measuringConditionsHasSampleTaskId, this);
 
@@ -163,8 +143,6 @@ void ZSampleTask::zp_appendClient(QObject *client)
     }
 
     zv_clientList.append(client);
-    qDebug() << QString("Appended client to %1: ").arg(zv_name);
-
 }
 //=================================================
 void ZSampleTask::zp_removeClient(QObject* client )
@@ -175,7 +153,6 @@ void ZSampleTask::zp_removeClient(QObject* client )
     }
 
     zv_clientList.removeAt(zv_clientList.indexOf(client));
-    qDebug() << QString("Removed client from %1: ").arg(zv_name);
 
     if(zv_clientList.count() < 1)
     {
@@ -324,6 +301,31 @@ QList<double> ZSampleTask::zp_spectrumEnergyCalibrationForConditions(quint8 gain
     return energyCalibration;
 }
 //=================================================
+QList<double> ZSampleTask::zp_energyCalibrationForGainFactor(quint8 gainFactor) const
+{
+    for(auto& measuringTask : zv_measuringTaskList)
+    {
+        if(measuringTask->zp_measuringConditions().first == gainFactor)
+        {
+            return measuringTask->zp_energyCalibrationFactorList();
+        }
+    }
+
+    return QList<double>();
+}
+//=================================================
+void ZSampleTask::zp_setEnergyCalibration(quint8 gainFactor,
+                                          const QList<double>& energyCalibrationFactorList)
+{
+    for(auto& measuringTask : zv_measuringTaskList)
+    {
+        if(measuringTask->zp_measuringConditions().first == gainFactor)
+        {
+            measuringTask->zp_setEnergyCalibrationFactorList(energyCalibrationFactorList);
+        }
+    }
+}
+//=================================================
 // MEASURING TASK
 //=================================================
 ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject* parent)
@@ -370,7 +372,49 @@ ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject
 
     zv_exposition = vData.toInt();
 
+    zh_initEnergyCalibration();
     zh_initCalculationTasks(measurementConditionsHasSampleTaskId);
+}
+//=================================================
+void ZMeasuringTask::zh_initEnergyCalibration()
+{
+    QSqlQuery query;
+    QString queryString = QString("SELECT energyFactorK0, energyFactorK1, energyFactorK2 "
+                                  "FROM gain_factors "
+                                  "WHERE gain_factor=%1").arg(QString::number(zv_gainFactor));
+
+    if(!query.prepare(queryString))
+    {
+        return;
+    }
+
+    if(!query.exec())
+    {
+        return;
+    }
+
+    QVariant vData;
+    double energyFactor;
+    bool ok;
+    if(query.next())
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            energyFactor = 0.0;
+
+            vData = query.value(i);
+            if(vData.isValid() && vData.canConvert<double>())
+            {
+                energyFactor = vData.toDouble(&ok);
+                if(!ok)
+                {
+                    energyFactor = 0.0;
+                }
+            }
+
+            zv_energyCalibrationFactorList.append(energyFactor);
+        }
+    }
 }
 //=================================================
 void ZMeasuringTask::zh_initCalculationTasks(int measurementConditionsHasSampleTaskId)
@@ -457,6 +501,16 @@ void ZMeasuringTask::zp_calcConcentrations(const ZSpeSpectrum* spectrum,
             chemicalConcentrationList.append(chemicalConcentration);
         }
     }
+}
+//=================================================
+QList<double> ZMeasuringTask::zp_energyCalibrationFactorList() const
+{
+    return zv_energyCalibrationFactorList;
+}
+//=================================================
+void ZMeasuringTask::zp_setEnergyCalibrationFactorList(const QList<double>& energyCalibrationFactorList)
+{
+    zv_energyCalibrationFactorList = energyCalibrationFactorList;
 }
 //=================================================
 // CALCULATION TASK

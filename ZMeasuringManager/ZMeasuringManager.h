@@ -196,6 +196,8 @@ public:
     bool zp_libraryState() const;
     bool zp_connectionState() const;
 
+    ZSpeSpectrum* zp_spectrumForId(qint64 id) const;
+
 signals:
 
     void zg_connectionState(QString connectionState, QMessageBox::Icon) const;
@@ -211,7 +213,9 @@ signals:
 
     //    void zg_seriesTaskNameChanged(const QString& taskName) const;
     //    void zg_seriesTaskNameDirtyChanged(bool dirty) const;
+
     void zg_inquiryCurrentIndex(QModelIndex& currentIndex) const;
+    void zg_invokeNotifyCurrent();
     void zg_measuringStateChanged(ZMeasuringState) const;
     void zg_measurementParameters(quint32 expoPassedMs,
                                   quint32 deadTimeMs,
@@ -254,11 +258,14 @@ private slots:
     void zh_notifyMeasuringStateChanged();
     void zh_onCurrentSpectrumMeasuring(qint64 currentMeasuredSpectrumId);
     void zh_onCurrentEnergyCalibration(QList<double> energyCalibrationFactorList);
+    void zh_onEnergyCalibrationChange(int gainFactor,
+                                      const QList<double>& energyCalibrationFactorList);
 
     // sample measuring
     void zh_onSampleMeasuringFinish();
     void zh_onSpectrumDataChange(quint8 gainFactor, int exposition);
     void zh_onConcentrationChange();
+
 
 protected:
 
