@@ -124,6 +124,9 @@ void ZMeasuringCommonWidget::zh_createConnections()
 {
     connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_currentIndexChanged,
             this, &ZMeasuringCommonWidget::zg_currentIndexChanged);
+    connect(zv_measuringResultTableWidget, &ZMeasuringResultTableWidget::zg_selectionChanged,
+            this, &ZMeasuringCommonWidget::zg_selectionChanged);
+
 }
 //==========================================================
 void ZMeasuringCommonWidget::zh_rebuildLayout()

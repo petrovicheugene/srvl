@@ -113,7 +113,8 @@ CREATE INDEX "calibrations.fk_calibrations_measurement_units1_idx" ON "calibrati
 CREATE INDEX "calibrations.fk_calibrations_measuring_conditions1_idx" ON "calibrations" ("measuring_conditions_id");
 CREATE TABLE "operators"(
   "id" INTEGER PRIMARY KEY NOT NULL,
-  "name" VARCHAR(80) NOT NULL
+  "name" VARCHAR(80) NOT NULL,
+  "password" BLOB
 );
 CREATE TABLE "calibration_stacks"(
   "id" INTEGER NOT NULL,

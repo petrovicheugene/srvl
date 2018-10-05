@@ -21,6 +21,9 @@
         <file>ZImages/horizontalIncrease-2.png</file>
         <file>ZImages/verticalDecrease-2.png</file>
         <file>ZImages/verticalIncrease-2.png</file>
+        <file>ZImages/blue_home.ico</file>
+        <file>ZImages/blue_left.ico</file>
+        <file>ZImages/blue_right.ico</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>

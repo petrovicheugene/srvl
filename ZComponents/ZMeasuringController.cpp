@@ -631,8 +631,7 @@ void ZMeasuringController::zh_inquiryDeviceButton()
     }
 
     // connection ok
-    static int timerCount = 0;
-    QString msg = tr("Connection to ADC -OK: %1.").arg(QString::number(++timerCount));
+    QString msg = tr("Connection to ADC -OK.");
     zv_controllerState = CS_SUSPENDED;
     emit zg_connectionState(msg, QMessageBox::Information);
 }

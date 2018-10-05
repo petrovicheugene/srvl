@@ -5,7 +5,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QSqlDatabase>
-
+#include <QTextDocument>
 #include "ZAppSettings.h"
 //============================================================
 // Qt
@@ -20,6 +20,7 @@ class QSqlRelationalTableModel;
 class ZMeasuringManager;
 class ZEnergyLineManager;
 class ZMeasuringResultTableModel;
+class ZHelpBrowser;
 //class ZSeriesTaskTreeModel;
 //class ZCurrentMeasuringManager;
 
@@ -31,6 +32,7 @@ class ZMeasuringCommonWidget;
 class ZEnergyLineTableWidget;
 class ZDashboard;
 class ZPlotter;
+class QPrinter;
 class ZWidgetWithSidebar;
 class ZPlotterDataManager;
 //============================================================
@@ -73,11 +75,17 @@ private slots:
 
     */
     void zh_onAboutAction() const;
+
     /*!
      \brief
 
     */
-    void zh_onHelpAction() const;
+    void zh_onHelpAction();
+    void zh_onExitAction();
+    void zh_onCalibrationsAction();
+    void zh_onChemicalElementTasksAction();
+    void zh_onSampleTasksAction();
+
     void zh_onRunSQLCommandAction() const;
     void zh_onSettingsAction();
 
@@ -90,6 +98,11 @@ private slots:
                                                 quint32 spectrumIntensityIntegral);
 
     void zh_processMessage(QString msg, QMessageBox::Icon);
+    void zh_printResults() const;
+    void zh_previewAndPrintResults() const;
+    void zh_printResultDoc(QPrinter* printer) const;
+    void zh_createOperatorMenu();
+    void zh_assignOperator();
 
 private:
 
@@ -104,13 +117,22 @@ private:
     // actions
     QAction* zv_settingsAction;       /*!< TODO: describe */
     QAction* zv_runSQLCommandAction;       /*!< TODO: describe */
+    QAction* zv_calibrationsAction;
+    QAction* zv_chemicalElementTasksAction;
+    QAction* zv_sampleTasksAction;
+
     QAction* zv_exitAction;       /*!< TODO: describe */
+//    QAction* zv_previewAndPrintAction;
     QAction* zv_aboutAction;    /*!< TODO: describe */
+    QAction* zv_aboutQtAction;
     QAction* zv_helpAction;      /*!< TODO: describe */
+    ZHelpBrowser* zv_helpBrowser;
 
     // widgets
     ZPlotter* zv_plotter;
     ZPlotterDataManager* zv_plotterDataManager;
+    QMenu* zv_operatorMenu;
+    const QString zv_unknownOperatorString = tr("Unknown operator");
 
     QLabel* zv_connectionStatusLabel;
     QLabel* zv_spectrumMeasurementParametersLabel;
@@ -171,8 +193,10 @@ private:
 
 
     void zh_saveAppSettingsToSettings(const ZAppSettings &);
-    void zh_getAppSettingsFromSettings(ZAppSettings& appSettings);
+    void zh_getAppSettingsFromSettings(ZAppSettings& appSettings) const;
     void zh_appendActionsToMenu(QMenu* menu);
+
+    void zh_createResultTextDocument(QTextDocument& textDoc) const;
 
 };
 //============================================================

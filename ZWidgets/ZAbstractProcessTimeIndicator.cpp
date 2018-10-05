@@ -61,7 +61,7 @@ QString ZAbstractProcessTimeIndicator::zh_convertTimeToString(double time)
     QString timeString;
     if(hours > 0)
     {
-        timeString = QString::number(hours) + tr(":");
+        timeString = QString::number(hours) + QString(":");
     }
 
     if(minutes < 10)
@@ -69,7 +69,7 @@ QString ZAbstractProcessTimeIndicator::zh_convertTimeToString(double time)
         // set 0 in decimal
         timeString += "0";
     }
-    timeString += QString::number(minutes) + tr(":");
+    timeString += QString::number(minutes) + QString(":");
 
     if(seconds < 10)
     {

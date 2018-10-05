@@ -4,6 +4,7 @@
 //=========================================================================
 #include <QWidget>
 #include <QModelIndexList>
+#include <QItemSelection>
 //=========================================================================
 class QAbstractItemModel;
 class QTableView;
@@ -29,7 +30,7 @@ public:
     void zp_setStretchLastSection(bool stretch);
 
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
-    void zp_appendContextActions(const QList<ZControlAction*>& actionList);
+    void zp_appendContextActions(const QList<ZControlAction *> &actionList);
 
     QList<int> zp_selectedRowList();
     QModelIndexList zp_selectedModelIndexList() const;
@@ -40,9 +41,12 @@ public:
 signals:
 
     void zg_currentChanged(const QModelIndex& current, const QModelIndex& previous) const;
+    void zg_selectionChanged();
 
-public slots:
+protected slots:
 
+    void zh_onSelectionChange(const QItemSelection& selected,
+                              const QItemSelection& deselected);
 
 protected:
 

@@ -27,7 +27,6 @@
 ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(qApp->property("glAppProduct").toString());
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Tool);
 
     zv_editedRow = -1;
     zh_createComponents();
@@ -333,6 +332,8 @@ void ZStartDialog::zh_editAndRecordDatabase(QString name, QString path)
 {
     // run dialog
     ZDatabasePropertiesDialog dialog(name, path, this);
+    dialog.setWindowFlags(Qt::Tool);
+
     connect(&dialog, &ZDatabasePropertiesDialog::zg_inquiryRecordDatabase,
             this, &ZStartDialog::zh_checkAndStoreDatabase);
     // dialog closes itself after database is checked / created and stored to the list

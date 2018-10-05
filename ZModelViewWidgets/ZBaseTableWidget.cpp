@@ -24,7 +24,16 @@ void ZBaseTableWidget::zp_setModel(QAbstractItemModel* model, bool alternatingRo
     zv_table->setModel(model);
     connect(zv_table->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &ZBaseTableWidget::zg_currentChanged);
+    connect(zv_table->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, &ZBaseTableWidget::zh_onSelectionChange);
+
     zv_table->setAlternatingRowColors(alternatingRowColorFlag);
+}
+//=========================================================================
+void ZBaseTableWidget::zh_onSelectionChange(const QItemSelection& selected,
+                                            const QItemSelection& deselected)
+{
+    emit zg_selectionChanged();
 }
 //=========================================================================
 QTableView* ZBaseTableWidget::zp_tableView() const
@@ -87,7 +96,7 @@ void ZBaseTableWidget::zp_appendButtonActions(const QList<ZControlAction*>& acti
 
     for(int a = 0; a < actionList.count(); a++)
     {
-        if(actionList.at(a) == 0)
+        if(actionList.at(a) == nullptr)
         {
             // Separator for context menu
             continue;
@@ -109,7 +118,13 @@ void ZBaseTableWidget::zp_appendButtonActions(const QList<ZControlAction*>& acti
 //=========================================================================
 void ZBaseTableWidget::zp_appendContextActions(const QList<ZControlAction*>& actionList)
 {
-
+    QList<QAction*> qactionList;
+    foreach(ZControlAction* action, actionList)
+    {
+        qactionList.append(static_cast<QAction*>(action));
+    }
+    zv_table->addActions(qactionList);
+    zv_table->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 //=========================================================================
 void ZBaseTableWidget::zh_createComponents()

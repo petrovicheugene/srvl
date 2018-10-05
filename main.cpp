@@ -1,10 +1,12 @@
 //===============================================================
 #include "MainWindow.h"
+#include "ZPasswordDialog.h"
 #include "ZStartDialog.h"
 #include "ZGeneral.h"
 
 #include <QApplication>
 #include <QTextCodec>
+#include <QSettings>
 #include <QSplashScreen>
 #include <QTranslator>
 #include <QDir>
@@ -63,14 +65,53 @@ extern const QString glAppCompanyURL = APP_COMPANY_URL;
 //extern const QString glOpenFileString = QObject::tr("Open file");
 
 //===============================================================
+bool passwordCheckOut()
+{
+    QSettings settings;
+    settings.beginGroup(glAppVersion);
+
+    settings.beginGroup("AppSettings");
+    QVariant vPassword = settings.value("pw");
+    settings.endGroup();
+    settings.endGroup();
+
+    if(!vPassword.isValid() || vPassword.isNull())
+    {
+        return true;
+    }
+
+    QByteArray byteArray = vPassword.toByteArray();
+    if(byteArray.isEmpty())
+    {
+        return true;
+    }
+
+    QString passwordString;
+    if(!ZPasswordDialog::mf_decryptByteArrayToString(passwordString, byteArray))
+    {
+        return false;
+    }
+
+    ZPasswordDialog dialog(passwordString);
+    dialog.setWindowFlags(Qt::Tool);
+
+    if(dialog.exec())
+    {
+        return true;
+    }
+
+    return false;
+}
+//===============================================================
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QPixmap pixmap(":/images/ZImages/Chemistry.png");
-    QSplashScreen splash(pixmap);
-    splash.show();
-    splash.showMessage("Loading codecs...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
-    a.processEvents();
+//    QPixmap pixmap(":/images/ZImages/Chemistry.png");
+//    QSplashScreen splash(pixmap);
+//    splash.show();
+//    splash.showMessage("Loading codecs...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+//    a.processEvents();
+
 
     QTextCodec* codec = QTextCodec::codecForName("windows-1251");
     QTextCodec::setCodecForLocale(codec);
@@ -78,6 +119,11 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(glAppCompany);
     QApplication::setApplicationName(glAppExeBaseName);
     QApplication::setApplicationVersion(glAppVersion);
+
+    if(!passwordCheckOut())
+    {
+        return 0;
+    }
 
     // create qApp properties and set .pro defines into them
 #ifdef APP_EXE_BASE_NAME
@@ -108,7 +154,7 @@ int main(int argc, char *argv[])
     qApp->setProperty("glAppIcon", QString(APP_ICON));
 #endif
 
-    splash.showMessage("Loading translations...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+//    splash.showMessage("Loading translations...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
     QTranslator appTranslator;
@@ -138,7 +184,7 @@ int main(int argc, char *argv[])
         a.installTranslator(&qtTranslator);
     }
 
-    splash.showMessage("Loading styles...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+//    splash.showMessage("Loading styles...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
 
@@ -147,7 +193,7 @@ int main(int argc, char *argv[])
                 "QSplitter::handle:horizontal {width:  6px; image: url(:/images/ZImages/hSplitterHandle.png);}"
                 );
 
-    splash.showMessage("Loading modules...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
+//    splash.showMessage("Loading modules...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     a.processEvents();
 
     // set path for sqlite plugin
@@ -159,7 +205,9 @@ int main(int argc, char *argv[])
 
     // start
     ZStartDialog* dialog = new ZStartDialog();
-    splash.finish(dialog);
+    dialog->setWindowFlags(Qt::Tool);
+
+//    splash.finish(dialog);
 
     if(dialog->exec() == QDialog::Rejected)
     {

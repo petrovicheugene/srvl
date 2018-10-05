@@ -32,6 +32,7 @@ signals:
     void zg_currentSampleIndexChanged(int currentSampleIndex) const;
     void zg_currentIndexChanged(const QModelIndex& current, const QModelIndex& previous) const;
 
+
 public slots:
 
 private slots:

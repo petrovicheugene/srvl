@@ -3,7 +3,9 @@
 #define ZMEASURINGRESULTTABLEMODEL_H
 //=========================================================
 #include <QAbstractTableModel>
+#include <QTextDocument>
 #include "ZMeasuringManager.h"
+
 //=========================================================
 class ZSpeSpectrum;
 //=========================================================
@@ -28,6 +30,8 @@ public:
     ZSpeSpectrum* zp_spectrum(int row, quint8 gainFactor, int exposition) const;
     bool zp_measuringConditionsForColumn(int column, QPair<quint8, int> &measuringConditions) const;
 
+    void zp_setConcentrationDisplayPrecisioin(int precision);
+
 signals:
 
     void zg_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList) const;
@@ -50,8 +54,6 @@ protected slots:
                               int first,
                               int last);
 
-
-
 private:
 
     // VARS
@@ -60,6 +62,7 @@ private:
     QStringList zv_measuringConditionsStringList;
     QList<QPair<quint8, int> > zv_measuringConditionsList;
 
+    int zv_concentrationDisplayPrecisioin;
     // FUNCS
     void zh_recalcColumnCount();
     void zh_repaintAllSpectra();

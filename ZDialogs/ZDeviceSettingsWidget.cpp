@@ -36,7 +36,6 @@ void ZDeviceSettingsWidget::zp_setAppSettings(const ZDeviceSettings& settings)
     zv_expositionStarterComboBox->setCurrentIndex(settings.zv_expositionStarter);
     zv_sampleShiftImpulseDurationSpinBox->setValue(settings.zv_sampleShiftImpulseDuration);
     zv_expositionDelayTimeSpinBox->setValue(settings.zv_expositionDelayTime);
-
 }
 //=======================================================
 void ZDeviceSettingsWidget::zp_appSettings(ZDeviceSettings& settings)
@@ -84,7 +83,6 @@ void ZDeviceSettingsWidget::zh_createComponents()
     zv_deviceSampleQuantitySpinBox->setMaximum(999);
     sampleNumberLayout->addWidget(zv_deviceSampleQuantitySpinBox);
     sampleNumberLayout->addStretch();
-
 
     // channel quantity
     captionLabel = new QLabel(this);

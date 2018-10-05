@@ -10,6 +10,7 @@
 
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
+#include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
@@ -135,9 +136,14 @@ void ZChemicalTaskListDialog::zh_createConnections()
     zv_chemicalTableWidget->zp_tableView()->setItemDelegate(delegate);
     zv_chemicalTableWidget->zp_tableView()->setSelectionMode(QAbstractItemView::SingleSelection);
     zv_chemicalTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_chemicalTableWidget->zp_tableView()->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
     // chemical task table
     zv_chemicalTaskTableWidget->zp_setModel(zv_calibrationStackTableModel);
+    zv_chemicalTaskTableWidget->zp_setColumnHidden(0, true);
+    zv_chemicalTaskTableWidget->zp_setColumnHidden(3, true);
+    zv_chemicalTaskTableWidget->zp_setColumnHidden(4, true);
+    zv_chemicalTaskTableWidget->zp_tableView()->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
 
     // add actions to widgets
     QList<ZControlAction*> actionList;
@@ -261,8 +267,9 @@ void ZChemicalTaskListDialog::zh_onChemicalChange(const QModelIndex& current, co
 
     QString filterString = QString("chemicals_id=%1").arg(QString::number(currentChemicalId));
     zv_calibrationStackTableModel->setFilter(filterString);
-
     zv_editChemicalAction->setEnabled(currentChemicalId > 0);
+
+    zv_chemicalTaskTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 }
 //===============================================================
 void ZChemicalTaskListDialog::zh_onChemicalTaskChange(const QModelIndex& current, const QModelIndex& previous)

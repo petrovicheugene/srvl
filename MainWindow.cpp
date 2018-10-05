@@ -11,12 +11,17 @@
 #include "ZSQLCommanderDialog.h"
 #include "ZPlotterDataManager.h"
 #include "ZMeasurementParametersHandler.h"
+#include "ZPasswordDialog.h"
 
 // views
 #include "ZPlotter.h"
 #include "ZMeasuringResultTableWidget.h"
 #include "ZMeasuringSeriesTaskTreeWidget.h"
 #include "ZEnergyLineTableWidget.h"
+#include "ZHelpBrowser.h"
+#include "ZCalibrationListDialog.h"
+#include "ZSampleTaskListDialog.h"
+#include "ZChemicalTaskListDialog.h"
 
 // models
 //#include "ZMeasuringResultTableModel.h"
@@ -25,23 +30,35 @@
 #include "ZEnergyLineManager.h"
 #include "ZMeasuringResultTableModel.h"
 
-
 //#include "ZCur.h"
 
 // Qt
 #include <QApplication>
 #include <QCloseEvent>
 #include <QAction>
+#include <QDesktopWidget>
+#include <QDir>
 #include <QDockWidget>
 #include <QFrame>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QMenuBar>
+#include <QPageSetupDialog>
 #include <QPixmap>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QPrintPreviewDialog>
 #include <QSettings>
 #include <QStatusBar>
+#include <QSqlError>
 #include <QSqlRelationalTableModel>
 #include <QStyle>
+#include <QTableView>
+#include <QTextDocumentFragment>
+#include <QTextTable>
+#include <QTextTableCell>
+#include <QTextTableCellFormat>
 #include <QVBoxLayout>
 
 // Qt controls
@@ -73,7 +90,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zv_exitAction = 0;
     zv_aboutAction = 0;
     zv_helpAction = 0;
-
+    zv_helpBrowser = nullptr;
     //    zv_currentMeasuringTaskTreeModel = 0;
     // zv_sqlSeriesModel = 0;
     zv_measuringManager = nullptr;
@@ -136,10 +153,43 @@ void MainWindow::zh_createActions()
     zv_exitAction->setText(NS_CommonStrings::glExit);
     zv_exitAction->setToolTip(NS_CommonStrings::glExitToolTip);
 
+
+
+    zv_calibrationsAction = new QAction(this);
+    zv_calibrationsAction->setIcon(QIcon());
+    zv_calibrationsAction->setText(tr("Calibrations"));
+    zv_calibrationsAction->setToolTip(tr("Manage calibration list"));
+
+    zv_chemicalElementTasksAction = new QAction(this);
+    zv_chemicalElementTasksAction->setIcon(QIcon());
+    zv_chemicalElementTasksAction->setText(tr("Chemical element tasks"));
+    zv_chemicalElementTasksAction->setToolTip(tr("Manage chemical element task list"));
+
+    zv_sampleTasksAction = new QAction(this);
+    zv_sampleTasksAction->setIcon(QIcon());
+    zv_sampleTasksAction->setText(tr("Sample tasks"));
+    zv_sampleTasksAction->setToolTip(tr("Manage sample task list"));
+
+
+    //    zv_printAction  = new QAction(this);
+    //    zv_printAction->setIcon(QIcon(NS_Icons::glIconStringExitApp));
+    //    zv_printAction->setText(tr("Print"));
+    //    zv_printAction->setToolTip(tr("Print results"));
+
+    //    zv_previewAndPrintAction = new QAction(this);
+    //    zv_previewAndPrintAction->setIcon(QIcon(NS_Icons::glIconStringExitApp));
+    //    zv_previewAndPrintAction->setText(tr("Preview and print"));
+    //    zv_previewAndPrintAction->setToolTip(tr("Preview and print results"));
+
     zv_aboutAction = new QAction(this);
     zv_aboutAction->setIcon(QIcon(NS_Icons::glIconStringAbout));
     zv_aboutAction->setText(NS_CommonStrings::glAbout);
     zv_aboutAction->setToolTip(NS_CommonStrings::glAboutToolTip);
+
+    zv_aboutQtAction = new QAction(this);
+    zv_aboutQtAction->setIcon(QIcon(NS_Icons::glIconStringAbout));
+    zv_aboutQtAction->setText(tr("About Qt"));
+    zv_aboutQtAction->setToolTip(tr("About Qt framework"));
 
     zv_helpAction = new QAction(this);
     zv_helpAction->setIcon(QIcon(NS_Icons::glIconStringHelp));
@@ -158,8 +208,6 @@ void MainWindow::zh_createComponents()
     // Measuring Widget
     zv_measuringCommonWidget = new ZMeasuringCommonWidget(this);
     setCentralWidget(zv_measuringCommonWidget);
-
-
 
 
     // Plotter
@@ -198,6 +246,8 @@ void MainWindow::zh_createComponents()
 
     // DATA MODELS
     zv_measuringManager = new ZMeasuringManager(this);
+    QList<ZControlAction*> contextActionList = zv_measuringManager->zp_sampleContextActions();
+    zv_measuringCommonWidget->zp_appendSampleContextMenuActions(contextActionList);
 
     // measuring models
     zv_measuringResultTableModel = new ZMeasuringResultTableModel(this);
@@ -210,6 +260,7 @@ void MainWindow::zh_createComponents()
 
     zv_spectrumMeasurementParametersLabel = new QLabel(this);
     statusBar()->addWidget(zv_spectrumMeasurementParametersLabel);
+
 }
 //============================================================
 void MainWindow::zh_createMenu()
@@ -220,13 +271,14 @@ void MainWindow::zh_createMenu()
     QMenu* menu = menubar->addMenu(NS_Menus::glMenuFile);
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuFile);
+    zv_measuringManager->zp_appendActionsToMenu(menu);
     zh_appendActionsToMenu(menu);
 
-    // Edit
-    menu = menubar->addMenu(NS_Menus::glMenuEdit);
-    menu->setCursor(Qt::PointingHandCursor);
-    menu->setObjectName(NS_ObjectNames::glObjectNameMenuEdit);
-    zh_appendActionsToMenu(menu);
+    //    // Edit
+    //    menu = menubar->addMenu(NS_Menus::glMenuEdit);
+    //    menu->setCursor(Qt::PointingHandCursor);
+    //    menu->setObjectName(NS_ObjectNames::glObjectNameMenuEdit);
+    //    zh_appendActionsToMenu(menu);
 
     // View
     menu = menubar->addMenu(NS_Menus::glMenuView);
@@ -238,6 +290,7 @@ void MainWindow::zh_createMenu()
     menu = menubar->addMenu(NS_Menus::glMenuActions);
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuActions);
+    zv_measuringManager->zp_appendActionsToMenu(menu);
     zh_appendActionsToMenu(menu);
 
     // Help
@@ -246,6 +299,125 @@ void MainWindow::zh_createMenu()
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuHelp);
     zh_appendActionsToMenu(menu);
 
+    QMenuBar* rightMenu = new QMenuBar(this);
+    zv_operatorMenu = rightMenu->addMenu(tr("Operator"));
+    connect(zv_operatorMenu, &QMenu::aboutToShow,
+            this, &MainWindow::zh_createOperatorMenu);
+    menubar->setCornerWidget(rightMenu);
+}
+//============================================================
+void MainWindow::zh_createOperatorMenu()
+{
+    zv_operatorMenu->clear();
+
+    QSqlQuery query;
+    QString queryString = QString("SELECT * FROM operators");
+
+    if(!query.prepare(queryString))
+    {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Operator loading error"), msg, QMessageBox::Ok);
+        return ;
+    }
+
+    if(!query.exec())
+    {
+        QString msg = query.lastError().text();
+        QMessageBox::critical(this, tr("Operator loading error"), msg, QMessageBox::Ok);
+        return ;
+    }
+
+    QVariant vData;
+    //    int id;
+    QString login;
+    QByteArray password;
+    QAction* action;
+    while(query.next())
+    {
+        //        vData = query.value(0);
+        //        if(!vData.isValid() || !vData.canConvert<int>())
+        //        {
+        //            continue;
+        //        }
+
+        //        id = vData.toInt();
+
+        vData = query.value(1);
+        if(!vData.isValid() || !vData.canConvert<QString>())
+        {
+            continue;
+        }
+
+        login = vData.toString();
+
+        vData = query.value(2);
+        if(!vData.isValid() || !vData.canConvert<int>())
+        {
+            continue;
+        }
+
+        password = vData.toByteArray();
+
+        action = new QAction(zv_operatorMenu);
+        action->setText(login);
+        action->setData(password);
+        connect(action, &QAction::triggered,
+                this, &MainWindow::zh_assignOperator);
+        zv_operatorMenu->addAction(action);
+    }
+
+    if(!zv_operatorMenu->actions().isEmpty())
+    {
+        action = new QAction(zv_operatorMenu);
+        action->setText(tr("Unknown"));
+        action->setData(QByteArray());
+        connect(action, &QAction::triggered,
+                this, &MainWindow::zh_assignOperator);
+        zv_operatorMenu->insertAction(zv_operatorMenu->actions().first(), action);
+    }
+}
+//============================================================
+void MainWindow::zh_assignOperator()
+{
+    if(!sender())
+    {
+        return;
+    }
+
+    QAction* action = qobject_cast<QAction*>(sender());
+    if(!action)
+    {
+        return;
+    }
+
+    // password request if needed
+    QByteArray password = action->data().toByteArray();
+    if(!password.isEmpty())
+    {
+        QString passwordString;
+        if(!ZPasswordDialog::mf_decryptByteArrayToString(passwordString, password))
+        {
+            QString msg = tr("Cannot decrypt password for operator %1.").arg(action->text());
+            QMessageBox::critical(this, tr("Operator selection error"), msg, QMessageBox::Ok);
+            return;
+        }
+
+        ZPasswordDialog dialog(passwordString);
+        if(!dialog.exec())
+        {
+            return;
+        }
+    }
+
+    QString operatorText;
+    if(action->text() == zv_unknownOperatorString)
+    {
+        operatorText = tr("Operator");
+    }
+    else
+    {
+        zv_operatorMenu->setTitle(action->text());
+    }
 }
 //============================================================
 void MainWindow::zh_createToolbar()
@@ -269,10 +441,37 @@ void MainWindow::zh_createConnections()
     connect(zv_measuringManager, &ZMeasuringManager::zg_measurementParameters,
             this, &MainWindow::zh_setMeasurementParametersToStatusbar);
 
+    connect(zv_aboutAction, &QAction::triggered,
+            this, &MainWindow::zh_onAboutAction);
+    connect(zv_aboutQtAction, &QAction::triggered,
+            qApp, &QApplication::aboutQt);
+
+    connect(zv_helpAction, &QAction::triggered,
+            this, &MainWindow::zh_onHelpAction);
+
+    connect(zv_exitAction, &QAction::triggered,
+            this, &MainWindow::zh_onExitAction);
+
+    connect(zv_calibrationsAction, &QAction::triggered,
+            this, &MainWindow::zh_onCalibrationsAction);
+    connect(zv_chemicalElementTasksAction, &QAction::triggered,
+            this, &MainWindow::zh_onChemicalElementTasksAction);
+    connect(zv_sampleTasksAction, &QAction::triggered,
+            this, &MainWindow::zh_onSampleTasksAction);
+
+
+
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentIndex,
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_currentIndex);
     connect(zv_measuringManager, &ZMeasuringManager::zg_invokeNotifyCurrent,
             zv_measuringCommonWidget, &ZMeasuringCommonWidget::zp_notifyCurrent);
+    connect(zv_measuringCommonWidget, &ZMeasuringCommonWidget::zg_selectionChanged,
+            zv_measuringManager, &ZMeasuringManager::zp_onSelectionChange);
+
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryResultsPrinting,
+            this, &MainWindow::zh_printResults);
+    connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryResultsPreviewAndPrinting,
+            this, &MainWindow::zh_previewAndPrintResults);
 
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryMeasuringConditionsAndSpectrumForIndex,
             zv_measuringResultTableModel, &ZMeasuringResultTableModel::zp_measuringConditionsAndSpectrumForIndex);
@@ -374,7 +573,7 @@ void MainWindow::zh_saveAppSettingsToSettings(const ZAppSettings& appSettings)
     settings.endGroup();
 }
 //============================================================
-void MainWindow::zh_getAppSettingsFromSettings(ZAppSettings& appSettings)
+void MainWindow::zh_getAppSettingsFromSettings(ZAppSettings& appSettings) const
 {
     QSettings settings;
     settings.beginGroup(glAppVersion);
@@ -392,7 +591,9 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
 {
     if(menu->objectName() == NS_ObjectNames::glObjectNameMenuFile)
     {
-        menu->addSeparator();
+        //        menu->addAction(zv_printAction);
+        //        menu->addAction(zv_previewAndPrintAction);
+        //        menu->addSeparator();
         menu->addAction(zv_exitAction);
         menu->addSeparator();
         return;
@@ -400,23 +601,15 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
 
     if(menu->objectName() == NS_ObjectNames::glObjectNameMenuActions)
     {
-        QMenu* connectMenu = new QMenu(tr("Connect to..."),this);
-        QList<ZControlAction*> connectActionList = zv_measuringManager->zp_connectionActions();
-        foreach(ZControlAction* action, connectActionList)
-        {
-            connectMenu->addAction(action);
-        }
-
-        menu->addMenu(connectMenu);
+        menu->addSeparator();
+        menu->addAction(zv_calibrationsAction);
+        menu->addAction(zv_chemicalElementTasksAction);
+        menu->addAction(zv_sampleTasksAction);
 
         menu->addSeparator();
-        QList<ZControlAction*> toolActionList = zv_measuringManager->zp_toolActions();
-        foreach(ZControlAction* action, toolActionList)
-        {
-            menu->addAction(action);
-        }
         menu->addAction(zv_runSQLCommandAction);
         menu->addAction(zv_settingsAction);
+
         return;
     }
 
@@ -446,6 +639,8 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
     {
         menu->addAction(zv_helpAction);
         menu->addAction(zv_aboutAction);
+        menu->addAction(zv_aboutQtAction);
+
         menu->addSeparator();
         return;
     }
@@ -453,17 +648,127 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
 //============================================================
 void MainWindow::zh_onAboutAction() const
 {
+    QString title = tr("About %1").arg(qApp->property("glAppProduct").toString());
+    //    QString text = tr("The application is a supplement to a SRV spectrometer software. It provides to make extra calculation of chemical concentration that cannot be directly  measured."
+    //                      "");
+    //    QString htmlText = QString(
+    //                "<table border=0 cellspacing = 15>"
+    //                "<tr>"
+    //                "<td align = left><img src=:/images/ZImages/CR3_64.png></td>"
+    //                "<td align = left><h2 align = center>CRecalc 2.3</h2>"
+    //                "<p>Copyright &copy; TechnoAnalyt Ltd., 2014.  All rights reserved.</p>"
+    //                "<p>%1</p>"
+    //                "</td>"
+    //                "</tr>"
+    //                "</table>").arg(text);
 
+    QString text = QString();//tr("%1 is an application that controls other console application.").arg(glAppProduct);
+
+    QString htmlText = QString(
+                "<table border=0 cellspacing = 15>"
+                "<tr>"
+                "<td align = left><img src=:/images/ZImages/SDC2.png></td>"
+                "<td align = left><h1 align = center>%1</h1>"
+                "</td>"
+                "</tr>"
+                "</table>"
+                "<p>%6 - %2</p>"
+                "<p>%3</p>"
+                "<p>%7<br> "
+                "Company website: <a href=\"http://%8/\">%8</a><br>"
+                "%5: %4.<br>"
+                "Author's email: <a href=mailto:petrovich.eugene@gmail.com?Subject=My%20Subject>petrovich.eugene@gmail.com</a></p>"
+                ).arg(qApp->property("glAppProduct").toString(),
+                      qApp->applicationVersion(),
+                      text,
+                      tr("Eugene Petrovich"),
+                      tr("Author"),
+                      tr("Version"),
+                      qApp->property("glAppCopyright").toString(),
+                      qApp->property("glAppCompanyURL").toString()
+                      );
+
+    QMessageBox::about(centralWidget(), title, htmlText);
 }
 //============================================================
-void MainWindow::zh_onHelpAction() const
+void MainWindow::zh_onHelpAction()
 {
+    if(zv_helpBrowser == nullptr)
+    {
+        QUrl source = QUrl(".htm");
+        QStringList searchList;
 
+        QDir dir = QApplication::applicationDirPath();
+        dir.cd("Doc");
+        searchList << dir.absolutePath(); // << ":/docs"; Streams.files
+        dir.cd("StreamControl.files");
+        searchList << dir.absolutePath() << ":/docs";
+
+        zv_helpBrowser = ZHelpBrowser::zp_instance(searchList, source, centralWidget());
+        zv_helpBrowser->setAttribute(Qt::WA_GroupLeader);
+        QSettings settings;
+        settings.beginGroup(qApp->property("glAppVersion").toString());
+
+        settings.beginGroup("AppState");
+        QVariant vData = settings.value("help browser geometry");
+        settings.endGroup();
+        settings.endGroup();
+
+        if(vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
+        {
+            zv_helpBrowser->restoreGeometry(vData.toByteArray());
+        }
+        zv_helpBrowser->show();
+    }
+    else if(!zv_helpBrowser->isVisible())
+    {
+        zv_helpBrowser->setVisible(true);
+        zv_helpBrowser->zp_restoreGeometry();
+    }
+}
+//============================================================
+void MainWindow::zh_onExitAction()
+{
+    close();
+}
+//============================================================
+void MainWindow::zh_onCalibrationsAction()
+{
+    QSqlTableModel chemicalSQLTableModel;
+    chemicalSQLTableModel.setTable("chemicals");
+    chemicalSQLTableModel.select();
+    chemicalSQLTableModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    chemicalSQLTableModel.setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+
+    QSqlTableModel calibrationSQLTableModel;
+    calibrationSQLTableModel.setTable("calibrations");
+    calibrationSQLTableModel.select();
+    calibrationSQLTableModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    calibrationSQLTableModel.setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+    calibrationSQLTableModel.setHeaderData(2, Qt::Horizontal, QVariant(tr("Description")));
+
+    ZCalibrationListDialog dialog(&chemicalSQLTableModel, 0, &calibrationSQLTableModel);
+
+    dialog.exec();
+}
+//============================================================
+void MainWindow::zh_onChemicalElementTasksAction()
+{
+    ZChemicalTaskListDialog dialog;
+    dialog.exec();
+}
+//============================================================
+void MainWindow::zh_onSampleTasksAction()
+{
+    ZSampleTaskListDialog dialog;
+    dialog.exec();
 }
 //============================================================
 void MainWindow::zh_onRunSQLCommandAction() const
 {
     ZSQLCommanderDialog dialog;
+    dialog.setWindowFlags(Qt::Tool);
+
     dialog.exec();
 
 }
@@ -471,6 +776,8 @@ void MainWindow::zh_onRunSQLCommandAction() const
 void MainWindow::zh_onSettingsAction()
 {
     ZSettingsDialog dialog;
+    dialog.setWindowFlags(Qt::Tool);
+
     ZAppSettings appSettings;
     zh_getAppSettingsFromSettings(appSettings);
     dialog.zh_setAppSettings(appSettings);
@@ -566,6 +873,157 @@ void MainWindow::zh_processMessage(QString msg, QMessageBox::Icon icon)
     {
         // connectionStateString = tr("<font color=blue><b>%1</b></font>").arg(connectionState);
     }
+
+}
+//============================================================
+void MainWindow::zh_printResults() const
+{
+    QPrinter printer;
+    if(!printer.isValid())
+    {
+        QPrintDialog dialog(&printer);
+        if(!dialog.exec())
+        {
+            return;
+        }
+    }
+
+    zh_printResultDoc(&printer);
+}
+//============================================================
+void  MainWindow::zh_previewAndPrintResults() const
+{
+    QPrinter printer;
+    QPrintPreviewDialog dialog(&printer);
+    connect(&dialog, &QPrintPreviewDialog::paintRequested,
+            this, &MainWindow::zh_printResultDoc);
+
+    dialog.exec();
+
+}
+//============================================================
+void MainWindow::zh_printResultDoc(QPrinter* printer) const
+{
+    // create text doc
+    QTextDocument textDoc;
+    zh_createResultTextDocument(textDoc);
+
+    textDoc.print(printer);
+}
+//============================================================
+void MainWindow::zh_createResultTextDocument(QTextDocument& textDoc) const
+{
+    ZAppSettings appSettings;
+    zh_getAppSettingsFromSettings(appSettings);
+
+    QString deviceSerialNumber = appSettings.zv_deviceSettings.zv_deviceSerial;
+
+    QDateTime startDateTime = zv_measuringManager->zp_currentMeasuringStartDateTime();
+    QDateTime finishDateTime = zv_measuringManager->zp_currentMeasuringFinishDateTime();
+    QString currentSeriesName = zv_measuringManager->zp_currentSeriesName();
+
+
+    if(currentSeriesName.isEmpty())
+    {
+        currentSeriesName = tr("No name");
+    }
+    QString formatString = "dd.MM.yyyy hh:mm:ss";
+    QString startTimeString = startDateTime.isValid()? startDateTime.toString(formatString) : tr("Unknown");
+    QString finishTimeString = finishDateTime.isValid()? finishDateTime.toString(formatString) : tr("Unknown");
+
+    QString infoString = tr("<h6>SRV %1<br>").arg(deviceSerialNumber);
+    infoString += tr("Sample series: %1</h6><br>").arg(currentSeriesName);
+    infoString += tr("Start: %1<br>").arg(startTimeString, finishTimeString);
+    infoString += tr("Finish: %1<br>").arg(finishTimeString);
+
+    QTextCursor cursor(&textDoc);
+    cursor.insertHtml(infoString);
+
+    // insert table
+    QTextDocument tableTextDoc;
+    QTextCursor tableCursor(&tableTextDoc);
+    // row and column count
+    int rowCount = zv_measuringResultTableModel->rowCount();
+    int columnCount = zv_measuringResultTableModel->columnCount();
+    int spectrumCount = zv_measuringResultTableModel->zp_spectrumColumnCount();
+    if(rowCount > 0 && (columnCount - spectrumCount) > 0)
+    {
+        // tableFormat
+        QTextTableFormat tableFormat;
+        tableFormat.setCellPadding(5);
+        tableFormat.setCellSpacing(0);
+        tableFormat.setPadding(0);
+        tableFormat.setBorder(1);
+
+        //        tableFormat.setCellPadding(10);
+        tableFormat.setTopMargin(5);
+        tableFormat.setBottomMargin(5);
+        tableFormat.setBorderBrush(QBrush(QColor(Qt::black), Qt::SolidPattern));
+
+
+        tableFormat.setHeaderRowCount(1);
+        tableFormat.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
+
+        int tableColumnCount = columnCount - spectrumCount + 1;
+        QTextTable* table = tableCursor.insertTable(rowCount + 1, tableColumnCount, tableFormat);
+        QVariant vData;
+        int modelColumn;
+        for(int row = 0; row < rowCount + 1; row++)
+        {
+            for(int col = 0; col < tableColumnCount; col++)
+            {
+                QTextTableCell headerCell = table->cellAt(row, col);
+                QTextCursor headerCellCursor = headerCell.firstCursorPosition();
+
+                if(col == 0 && row > 0)
+                {
+                    // row number
+                    headerCellCursor.insertText(QString::number(row));
+                    continue;
+                }
+
+                modelColumn = col - 1;
+
+                if(col > 2)
+                {
+                    modelColumn += spectrumCount;
+                }
+
+                if(row == 0)
+                {
+                    // header
+                    vData = zv_measuringResultTableModel->headerData(modelColumn, Qt::Horizontal, Qt::DisplayRole);
+                }
+                else
+                {
+                    QModelIndex index = zv_measuringResultTableModel->index(row - 1, modelColumn, QModelIndex());
+                    if(!index.isValid())
+                    {
+                        continue;
+                    }
+
+                    vData = index.data(Qt::DisplayRole);
+                }
+
+                if(!vData.isValid() || !vData.canConvert<QString>())
+                {
+                    continue;
+                }
+
+                headerCellCursor.insertText(vData.toString());
+            }
+        }
+    }
+
+    cursor.insertFragment(QTextDocumentFragment(&tableTextDoc));
+
+
+    // insert offset
+    cursor.insertHtml("<p><br><br><br></p>");
+
+    // basement
+    infoString = tr("Operator: _______________________________   %1").arg(zv_operatorMenu->title());
+    cursor.insertHtml(infoString);
 
 }
 //============================================================

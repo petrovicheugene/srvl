@@ -82,7 +82,7 @@ private:
     enum PlotMode{PM_REGULAR,
                   PM_PAD_DRAGGING,
                   PM_RUBBER_BAND,
-                  PM_RULE};
+                  PM_RULER};
 
     ZRulersAndGridManager* zv_rulersAndGreedManager;
     PlotMode zv_plotMode;

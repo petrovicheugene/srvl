@@ -203,6 +203,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
         zv_chemicalTableSQLModel->setTable("chemicals");
         zv_chemicalTableSQLModel->select();
         zv_chemicalTableSQLModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+        zv_chemicalTableSQLModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
     }
     else
     {
@@ -237,6 +238,10 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
     {
         zv_measuringConditionsSQLTableModel = measuringConditionsSQLTableModel;
     }
+
+    zv_measuringConditionsSQLTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Gain factor")));
+    zv_measuringConditionsSQLTableModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Exposition")));
+
 
     zv_measuringConditionsModel = new QStandardItemModel(this);
     QStringList horizontalHeaderLabelList;
@@ -321,6 +326,10 @@ void ZCalibrationListDialog::zh_createConnections()
     zv_chemicalTableWidget->zp_tableView()->setSelectionMode(QAbstractItemView::SingleSelection);
     zv_chemicalTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    zv_chemicalTableWidget->zp_setColumnHidden(0, true);
+    zv_chemicalTableWidget->zp_tableView()->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+
     zv_calibrationTableWidget->zp_setModel(zv_calibrationProxyModel);
     zv_calibrationTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
     zv_calibrationTableWidget->zp_tableView()->setColumnHidden(0, true);
@@ -329,9 +338,12 @@ void ZCalibrationListDialog::zh_createConnections()
     zv_calibrationTableWidget->zp_tableView()->setColumnHidden(5, true);
     zv_calibrationTableWidget->zp_tableView()->setColumnHidden(6, true);
     zv_calibrationTableWidget->zp_tableView()->setColumnHidden(7, true);
+    zv_calibrationTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
     zv_measuringConditionsTableWidget->zp_setModel(zv_measuringConditionsModel);
+
     zv_measuringConditionsTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_measuringConditionsTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
     // connect dependent tables filtering
     connect(zv_chemicalTableWidget->zp_tableView()->selectionModel(), &QItemSelectionModel::currentChanged,
@@ -464,6 +476,9 @@ void ZCalibrationListDialog::zh_repopulateMeasuringConditionsModel()
         zv_measuringConditionsModel->setItem(row, 2, item);
     }
 
+    zv_measuringConditionsModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Gain factor")));
+    zv_measuringConditionsModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Exposition")));
+
     if(zv_measuringConditionsModel->rowCount() > 0)
     {
         int currentRow;
@@ -471,6 +486,9 @@ void ZCalibrationListDialog::zh_repopulateMeasuringConditionsModel()
         {
             currentRow = 0;
         }
+
+        zv_measuringConditionsTableWidget->zp_setColumnHidden(0, true);
+        zv_measuringConditionsTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
         QModelIndex index = zv_measuringConditionsModel->index(currentRow,0);
         if(index.isValid())
@@ -512,36 +530,10 @@ void ZCalibrationListDialog::zh_onCurrentMeasuringConditionsChange(const QModelI
         return;
     }
 
-//    // exposition
-//    index = zv_measuringConditionsModel->index(row, 2);
-//    if(!index.isValid())
-//    {
-//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-//        zv_calibrationTableWidget->zp_tableView()->reset();
-//        return;
-//    }
-
-//    vData = index.data(Qt::DisplayRole);
-//    if(!vData.isValid() || !vData.canConvert<QString>())
-//    {
-//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-//        zv_calibrationTableWidget->zp_tableView()->reset();
-//        return;
-//    }
-
-//    sData = vData.toString();
-//    int exposition = sData.toInt(&ok);
-//    if(!ok)
-//    {
-//        zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(-1, -1);
-//        zv_calibrationTableWidget->zp_tableView()->reset();
-//        return;
-//    }
-
     zv_calibrationProxyModel->zp_setMeasuringConditionsFilter(id);
-    // zv_calibrationTableWidget->zp_tableView()->reset();
-    QHeaderView* horizontalHeader = zv_calibrationTableWidget->zp_tableView()->horizontalHeader();
-    horizontalHeader->resizeSections(QHeaderView::ResizeToContents);
+    zv_calibrationTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
+//    QHeaderView* horizontalHeader = zv_calibrationTableWidget->zp_tableView()->horizontalHeader();
+//    horizontalHeader->resizeSections(QHeaderView::ResizeToContents);
 
 }
 //===============================================================
@@ -961,8 +953,8 @@ bool ZCalibrationListDialog::zh_writeCalibrationToDatabase(const ZCalibration& c
     record.setValue(5, QVariant(measurementConditionsId)); // measurementConditionsId id
     record.setValue(6, QVariant()); // measurement unit
 
-//    record.setValue(5, QVariant(calibration.zp_gainFactor())); // gain factor
-//    record.setValue(6, QVariant(calibration.zp_exposition())); // exposition
+    //    record.setValue(5, QVariant(calibration.zp_gainFactor())); // gain factor
+    //    record.setValue(6, QVariant(calibration.zp_exposition())); // exposition
 
     if(!zv_calibrationTableSQLModel->insertRecord(-1, record))
     {
@@ -1305,7 +1297,7 @@ bool ZCalibrationListDialog::zh_checkGainFactorExistance(int gainFactor, QString
 {
     QSqlQuery query;
     QString queryString = QString("SELECT * FROM gain_factors "
-                          "WHERE gain_factor=%1").arg(QString::number(gainFactor));
+                                  "WHERE gain_factor=%1").arg(QString::number(gainFactor));
 
     if(!query.prepare(queryString))
     {
@@ -1326,7 +1318,7 @@ bool ZCalibrationListDialog::zh_checkGainFactorExistance(int gainFactor, QString
 
     query.clear();
     queryString = QString("INSERT INTO gain_factors (gain_factor, energyFactorK0, energyFactorK1, energyFactorK2) "
-                             "VALUES (:gain_factor, :energyFactorK0, :energyFactorK1, :energyFactorK2)");
+                          "VALUES (:gain_factor, :energyFactorK0, :energyFactorK1, :energyFactorK2)");
 
     if(!query.prepare(queryString))
     {

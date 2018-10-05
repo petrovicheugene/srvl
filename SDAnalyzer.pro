@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += sql
+QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -213,7 +214,12 @@ SOURCES += main.cpp\
     ZEnergyLineManager/ZEnergyLineSetItem.cpp \
     ZEnergyLineManager/ZEnergyLineDelegate.cpp \
     ZPlotter/ZTextGraphicsItem.cpp \
-    ZPlotter/ZRulerToolGraphicsItem.cpp
+    ZPlotter/ZRulerToolGraphicsItem.cpp \
+    ZWidgets/ZHelpBrowser.cpp \
+    ZDialogs/ZOperatorDialog.cpp \
+    ZDialogs/ZPasswordChangeDialog.cpp \
+    ZDialogs/ZPasswordDialog.cpp \
+    ZComponents/simplecrypt.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -354,7 +360,12 @@ HEADERS  += MainWindow.h \
     ZEnergyLineManager/ZEnergyLineSetItem.h \
     ZEnergyLineManager/ZEnergyLineDelegate.h \
     ZPlotter/ZTextGraphicsItem.h \
-    ZPlotter/ZRulerToolGraphicsItem.h
+    ZPlotter/ZRulerToolGraphicsItem.h \
+    ZWidgets/ZHelpBrowser.h \
+    ZDialogs/ZOperatorDialog.h \
+    ZDialogs/ZPasswordChangeDialog.h \
+    ZDialogs/ZPasswordDialog.h \
+    ZComponents/simplecrypt.h
 
 RESOURCES += \
     resources.qrc \

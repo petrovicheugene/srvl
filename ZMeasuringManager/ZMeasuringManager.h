@@ -4,6 +4,7 @@
 //======================================================
 #include <QCloseEvent>
 #include <QColor>
+#include <QDateTime>
 #include <QMessageBox>
 #include <QModelIndexList>
 #include <QObject>
@@ -17,6 +18,7 @@ class ZSampleTask;
 class ZUralAdcDeviceConnector;
 class ZMeasuringController;
 class QTimerEvent;
+class QMenu;
 class ZSpeSpectrum;
 //======================================================
 class SpectrumCommonProperties
@@ -137,6 +139,7 @@ private:
 
     int zv_seriesDuration;
     int zv_sampleDuration;
+
 };
 Q_DECLARE_METATYPE(ZMeasuringState)
 //======================================================
@@ -175,6 +178,8 @@ public:
     int zp_indexForSampleName(const QString& sampleName) const;
     bool zp_setSampleName(int sampleIndex, const QString& name);
 
+    void zp_appendActionsToMenu(QMenu* menu) const;
+
     QString zp_sampleTaskName(int sampleIndex) const;
     QStringList zp_chemicalListForSample(int sampleIndex) const;
     QStringList zp_measuringConditionsStringListForSample(int sampleIndex) const;
@@ -197,6 +202,10 @@ public:
     bool zp_connectionState() const;
 
     ZSpeSpectrum* zp_spectrumForId(qint64 id) const;
+    QDateTime zp_currentMeasuringStartDateTime() const;
+    QDateTime zp_currentMeasuringFinishDateTime() const;
+    QString zp_currentSeriesName() const;
+
 
 signals:
 
@@ -227,14 +236,17 @@ signals:
     //void zg_currentSpectrumChanged(int row, int conditionsIndex);
     void zg_currentSpectrumChanged(qint64 currentSpectrumId) const;
 
+    void zg_inquiryResultsPrinting() const;
+    void zg_inquiryResultsPreviewAndPrinting() const;
 
 public slots:
 
+    void zp_onSelectionChange();
     void zp_notifyOfCurrentStatus();
     // void zp_setCurrentSampleIndex(int currentSampleIndex);
     void zp_startSeries();
     void zp_stopSeries();
-    void zh_currentSpectrumChanged(qint64 spectrumId);
+    void zh_onCurrentSpectrumChange(qint64 spectrumId);
     void zh_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList);
 
 private slots:
@@ -247,6 +259,8 @@ private slots:
     void zh_onLoadSpectraFromFilesAction();
     void zh_onSaveSpectraToFilesAction() const;
     void zh_onEnergyCalibrationAction();
+    void zh_onPrintAction() const;
+    void zh_onPreviewAndPrintAction() const;
 
     void zh_deleteSampleTask();
     void zh_sampleTaskIdList(QList<int>& idList) const;
@@ -281,6 +295,8 @@ private:
     ZControlAction* zv_loadSeriesAction;
     ZControlAction* zv_loadSpectraFromFilesAction;
     ZControlAction* zv_saveSpectraToFilesAction;
+    ZControlAction* zv_printAction;
+    ZControlAction* zv_previewAndPrintAction;
 
     ZControlAction* zv_addSamplesToSeriesAction;
     ZControlAction* zv_removeSamplesFromSeriesAction;
@@ -305,6 +321,9 @@ private:
     int zv_expositionDelayTimer;
     int zv_totalSeriesDuration;
     int zv_seriesTimePassed;
+    QDateTime zv_startDateTime;
+    QDateTime zv_finishDateTime;
+
     ZMeasuringState zv_currentMeasuringState;
 
     // FUNCS
@@ -336,7 +355,6 @@ private:
     void zh_clearSeriesTask();
     bool zh_loadSeriesTask(int seriesTaskId);
     void zh_createCurrentMeasuringState(ZMeasuringState& measuringState) const;
-    int zh_seriesMeasuringTotalDuration() const;
 
     void zh_calcSpectrumCommonProperties(quint8 gainFactor, int exposition);
 

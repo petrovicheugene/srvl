@@ -38,6 +38,7 @@ public:
 signals:
 
     void zg_currentIndexChanged(const QModelIndex& current, const QModelIndex& previous) const;
+    void zg_selectionChanged() const;
 
 public slots:
 

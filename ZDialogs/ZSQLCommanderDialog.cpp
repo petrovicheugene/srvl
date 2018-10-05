@@ -27,8 +27,6 @@
 //=====================================================
 ZSQLCommanderDialog::ZSQLCommanderDialog(QWidget *parent) : QDialog(parent)
 {
-    setWindowFlags(Qt::Tool);
-
     zh_createComponents();
     zh_createConnections();
     zh_loadDatabaseTableList();

@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QSettings>
@@ -116,6 +117,7 @@ void ZMeasuringManager::zh_createActions()
 {
     zv_saveSeriesAction = new ZControlAction(this);
     zv_saveSeriesAction->setText(tr("Save series"));
+    zv_saveSeriesAction->setEnabled(false);
 
     zv_loadSeriesAction = new ZControlAction(this);
     zv_loadSeriesAction->setText(tr("Load series"));
@@ -125,12 +127,20 @@ void ZMeasuringManager::zh_createActions()
 
     zv_removeSamplesFromSeriesAction = new ZControlAction(this);
     zv_removeSamplesFromSeriesAction->setText(tr("Remove samples"));
+    zv_removeSamplesFromSeriesAction->setEnabled(false);
 
     zv_loadSpectraFromFilesAction = new ZControlAction(this);
     zv_loadSpectraFromFilesAction->setText(tr("Load spectra from files"));
 
     zv_saveSpectraToFilesAction = new ZControlAction(this);
     zv_saveSpectraToFilesAction->setText(tr("Save spectra to files"));
+    zv_saveSpectraToFilesAction->setEnabled(false);
+
+    zv_printAction = new ZControlAction(this);
+    zv_printAction->setText(tr("Print"));
+
+    zv_previewAndPrintAction = new ZControlAction(this);
+    zv_previewAndPrintAction->setText(tr("Preview and print"));
 
     // connection actions
     QStringList deviceNameList = ZUralAdcDeviceConnector::zp_deviceNameList();
@@ -178,6 +188,10 @@ void ZMeasuringManager::zh_createConnections()
 
     connect(zv_energyCalibrationAction, &ZControlAction::triggered,
             this, &ZMeasuringManager::zh_onEnergyCalibrationAction);
+    connect(zv_printAction, &ZControlAction::triggered,
+            this, &ZMeasuringManager::zh_onPrintAction);
+    connect(zv_previewAndPrintAction, &ZControlAction::triggered,
+            this, &ZMeasuringManager::zh_onPreviewAndPrintAction);
 
 
     connect(zv_measuringController, &ZMeasuringController::zg_connectionState,
@@ -256,7 +270,6 @@ void ZMeasuringManager::zp_applyAppSettings(const ZAppSettings& appSettings)
             }
         }
     }
-
 
     // try to load library
     bool ok;
@@ -474,6 +487,21 @@ ZSpeSpectrum* ZMeasuringManager::zp_spectrumForId(qint64 id) const
     return nullptr;
 }
 //======================================================
+QDateTime ZMeasuringManager::zp_currentMeasuringStartDateTime() const
+{
+    return zv_startDateTime;
+}
+//======================================================
+QDateTime ZMeasuringManager::zp_currentMeasuringFinishDateTime() const
+{
+    return zv_finishDateTime;
+}
+//======================================================
+QString  ZMeasuringManager::zp_currentSeriesName() const
+{
+    return zv_currentMeasuringState.zp_currentSeriesName();
+}
+//======================================================
 bool ZMeasuringManager::zh_createLibraryFromResources(const QString& libraryFileName, QString &errorMsg)
 {
     // check library file in resources
@@ -511,11 +539,14 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleActions() const
     QList<ZControlAction*> actionList;
     actionList.append(zv_saveSeriesAction);
     actionList.append(zv_loadSeriesAction);
-
+    actionList.append(nullptr);
     actionList.append(zv_addSamplesToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
-    actionList.append(zv_loadSpectraFromFilesAction);
-    actionList.append(zv_saveSpectraToFilesAction);
+//    actionList.append(nullptr);
+//    actionList.append(zv_saveSpectraToFilesAction);
+    actionList.append(nullptr);
+    actionList.append(zv_previewAndPrintAction);
+    actionList.append(zv_printAction);
 
     return actionList;
 }
@@ -525,11 +556,14 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleContextActions() const
     QList<ZControlAction*> actionList;
     actionList.append(zv_saveSeriesAction);
     actionList.append(zv_loadSeriesAction);
-
+    actionList.append(nullptr);
     actionList.append(zv_addSamplesToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
-    actionList.append(zv_loadSpectraFromFilesAction);
+    actionList.append(nullptr);
     actionList.append(zv_saveSpectraToFilesAction);
+    actionList.append(nullptr);
+    actionList.append(zv_previewAndPrintAction);
+    actionList.append(zv_printAction);
 
     return actionList;
 }
@@ -543,7 +577,7 @@ QList<ZControlAction*> ZMeasuringManager::zp_toolActions() const
 {
     QList<ZControlAction*> actionList;
     actionList.append(zv_energyCalibrationAction);
-    actionList.append(zv_spectrumInfoAction);
+    //actionList.append(zv_spectrumInfoAction);
 
     return actionList;
 }
@@ -589,6 +623,46 @@ bool ZMeasuringManager::zp_setSampleName(int sampleIndex, const QString& name)
     }
 
     return zv_sampleList.at(sampleIndex)->zp_setSampleName(name);
+}
+//======================================================
+void ZMeasuringManager::zp_appendActionsToMenu(QMenu* menu) const
+{
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuFile)
+    {
+        menu->addAction(zv_saveSeriesAction);
+        menu->addAction(zv_loadSeriesAction);
+        menu->addSeparator();
+
+        menu->addAction(zv_addSamplesToSeriesAction);
+        menu->addAction(zv_removeSamplesFromSeriesAction);
+        menu->addSeparator();
+
+        menu->addAction(zv_saveSpectraToFilesAction);
+        menu->addSeparator();
+
+        menu->addAction(zv_printAction);
+        menu->addAction(zv_previewAndPrintAction);
+
+    }
+
+    if(menu->objectName() == NS_ObjectNames::glObjectNameMenuActions)
+    {
+        QMenu* connectMenu = new QMenu(tr("Connect to..."));
+        QList<ZControlAction*> connectActionList = zp_connectionActions();
+        foreach(ZControlAction* action, connectActionList)
+        {
+            connectMenu->addAction(action);
+        }
+
+        menu->addMenu(connectMenu);
+        menu->addSeparator();
+        QList<ZControlAction*> toolActionList = zp_toolActions();
+        foreach(ZControlAction* action, toolActionList)
+        {
+            menu->addAction(action);
+        }
+
+    }
 }
 //======================================================
 QString ZMeasuringManager::zp_sampleTaskName(int sampleIndex) const
@@ -826,15 +900,9 @@ void ZMeasuringManager::zh_onCurrentEnergyCalibration(QList<double> energyCalibr
     emit zg_currentEnergyCalibrationChanged(energyCalibrationFactorList);
 }
 //======================================================
-int ZMeasuringManager::zh_seriesMeasuringTotalDuration() const
+void ZMeasuringManager::zp_onSelectionChange()
 {
-    int seriesMeasuringTotalDuration = 0;
-    for(int i = 0; i < zv_sampleList.count(); i++)
-    {
-
-    }
-
-    return seriesMeasuringTotalDuration;
+    zh_manageControlEnable();
 }
 //======================================================
 void ZMeasuringManager::zp_notifyOfCurrentStatus()
@@ -910,6 +978,8 @@ void ZMeasuringManager::zp_startSeries()
 
         // reset first
         // zv_currentMeasuringState.zp_setSeriesName(zv_currentSeriesTaskName);
+        zv_finishDateTime = QDateTime();
+        zv_startDateTime = QDateTime::currentDateTime();
         zv_currentMeasuringState.zp_setCurrentSampleName(zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_sampleName());
         int sampleDuration = zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_totalMeasuringDuration();
         zv_currentMeasuringState.zp_setSampleDuration(sampleDuration);
@@ -932,6 +1002,7 @@ void ZMeasuringManager::zp_startSeries()
 void ZMeasuringManager::zp_stopSeries()
 {
     zv_seriesTimePassed = 0;
+    zv_finishDateTime = QDateTime::currentDateTime();
 
     if(zv_expositionDelayTimer)
     {
@@ -950,12 +1021,13 @@ void ZMeasuringManager::zp_stopSeries()
     zh_notifyMeasuringStateChanged();
 
     emit zg_invokeNotifyCurrent();
+
+
     // QMessageBox::information(0, "MM", "STOP SERIES", QMessageBox::Ok);
 }
 //======================================================
 void ZMeasuringManager::zh_onSampleMeasuringFinish()
 {
-
     if(zv_deviceSampleQuantity <= 1)
     {
         zp_stopSeries();
@@ -1084,7 +1156,7 @@ void ZMeasuringManager::zh_onConcentrationChange()
     emit zg_sampleOperation(SOT_CONCENTRATIONS_CHANGED, row, row);
 }
 //======================================================
-void ZMeasuringManager::zh_currentSpectrumChanged(qint64 spectrumId)
+void ZMeasuringManager::zh_onCurrentSpectrumChange(qint64 spectrumId)
 {
     if(zv_currentMeasuringState.zp_measuringAction() == ZMeasuringState::MA_RUNNING)
     {
@@ -1092,6 +1164,10 @@ void ZMeasuringManager::zh_currentSpectrumChanged(qint64 spectrumId)
     }
 
     emit zg_currentSpectrumChanged(spectrumId);
+    zh_manageControlEnable();
+    //    QMap<QPair<quint8, int>, QList<ZSpeSpectrum*> > selectedSpectrumList;
+    //    emit zg_inquirySelectedSpectrumMap(selectedSpectrumList);
+    //    zv_saveSpectraToFilesAction->setEnabled(!selectedSpectrumList.isEmpty());
 }
 //======================================================
 void ZMeasuringManager::zh_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList)
@@ -1578,8 +1654,20 @@ void ZMeasuringManager::zh_onSaveSpectraToFilesAction() const
     }
 
     ZSaveSpectraToFilesDialog dialog(spectrumMap);
+    dialog.setWindowFlags(Qt::Tool);
+
     dialog.exec();
 
+}
+//======================================================
+void ZMeasuringManager::zh_onPrintAction() const
+{
+    emit zg_inquiryResultsPrinting();
+}
+//======================================================
+void ZMeasuringManager::zh_onPreviewAndPrintAction() const
+{
+    emit zg_inquiryResultsPreviewAndPrinting();
 }
 //======================================================
 void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
@@ -1846,5 +1934,13 @@ bool ZMeasuringManager::zh_checkSampleName(const QString& sampleName) const
 void ZMeasuringManager::zh_manageControlEnable()
 {
     zv_saveSeriesAction->setDisabled(zv_sampleList.isEmpty() && zv_sampleTaskList.isEmpty());
+
+    QMap<QPair<quint8, int>, QList<ZSpeSpectrum*> > selectedSpectrumList;
+    emit zg_inquirySelectedSpectrumMap(selectedSpectrumList);
+    zv_saveSpectraToFilesAction->setEnabled(!selectedSpectrumList.isEmpty());
+
+    QList<int> selectedSampleList;
+    emit zg_inquirySelectedSampleList(selectedSampleList);
+    zv_removeSamplesFromSeriesAction->setEnabled(!selectedSampleList.isEmpty());
 }
 //======================================================

@@ -18,7 +18,6 @@
 ZSettingsDialog::ZSettingsDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(NS_CommonStrings::glSettings);
-    setWindowFlags(Qt::Tool);
 
     zh_createComponents();
     zh_createConnections();

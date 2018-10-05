@@ -100,6 +100,8 @@ void ZSampleTaskListDialog::zh_createConnections()
 {
     zv_sampleTaskTable->setModel(zv_sampleTaskTableModel);
     zv_sampleTaskTable->setColumnHidden(0, true);
+    zv_sampleTaskTable->setColumnHidden(2, true);
+    zv_sampleTaskTable->horizontalHeader()->setStretchLastSection(true);
 
     connect(zv_okButton, &QPushButton::clicked,
             this, &ZSampleTaskListDialog::zh_onOkButtonClick);

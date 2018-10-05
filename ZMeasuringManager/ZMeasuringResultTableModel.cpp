@@ -3,11 +3,14 @@
 #include "ZGeneral.h"
 #include "ZSpectrumPaintData.h"
 #include "ZSpeSpectrum.h"
+
+#include <QTextCursor>
 //=========================================================
 ZMeasuringResultTableModel::ZMeasuringResultTableModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     zv_measuringManager = 0;
+    zv_concentrationDisplayPrecisioin = 3;
 }
 //=========================================================
 void ZMeasuringResultTableModel::zp_connectToMeasuringManager(ZMeasuringManager* measuringManager)
@@ -18,7 +21,7 @@ void ZMeasuringResultTableModel::zp_connectToMeasuringManager(ZMeasuringManager*
     connect(this, &ZMeasuringResultTableModel::zg_currentEnergyCalibrationChanged,
             zv_measuringManager, &ZMeasuringManager::zh_currentEnergyCalibrationChanged);
     connect(this, &ZMeasuringResultTableModel::zg_currentSpectrumChanged,
-            zv_measuringManager, &ZMeasuringManager::zh_currentSpectrumChanged);
+            zv_measuringManager, &ZMeasuringManager::zh_onCurrentSpectrumChange);
 
 }
 //=========================================================
@@ -126,7 +129,8 @@ QVariant ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
                 return QVariant();
             }
 
-            return QVariant(concentration);
+            QString concentrationString = QString::number(concentration, 'f', zv_concentrationDisplayPrecisioin);
+            return QVariant(concentrationString);
         }
     }
 
@@ -188,6 +192,11 @@ bool ZMeasuringResultTableModel::zp_measuringConditionsForColumn(int column,
 
     measuringConditions = zv_measuringConditionsList.value(column - 2, QPair<int, int>(-1, -1));
     return true;
+}
+//=========================================================
+void ZMeasuringResultTableModel::zp_setConcentrationDisplayPrecisioin(int precision)
+{
+    zv_concentrationDisplayPrecisioin = precision;
 }
 //=========================================================
 void ZMeasuringResultTableModel::zp_onCurrentIndexChanged(const QModelIndex& current, const QModelIndex& previous)
@@ -264,13 +273,13 @@ void ZMeasuringResultTableModel::zp_selectedSpectrumMap(QMap< QPair<quint8, int>
     zh_sortIndexesForRow(selectedIndexList, 0, selectedIndexList.count() - 1);
 
     int firstSpeColumn = 2;
-    int lastSpeColumn = zv_measuringConditionsList.count() + firstSpeColumn;
+    int lastSpeColumn = zv_measuringConditionsList.count() + firstSpeColumn -1;
     ZSpeSpectrum* currentSpectrum = nullptr;
     QPair<quint8, int> conditions;
 
     for(auto& index : selectedIndexList)
     {
-        if(index.column() < firstSpeColumn || index.column() >= lastSpeColumn)
+        if(index.column() < firstSpeColumn || index.column() > lastSpeColumn)
         {
             continue;
         }
