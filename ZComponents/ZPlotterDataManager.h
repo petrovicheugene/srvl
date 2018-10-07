@@ -9,7 +9,6 @@
 class QAction;
 class ZPlotter;
 class ZDefaultRectGraphicsItem;
-class ZEnergyLineGraphicsItem;
 
 typedef int EnergyLineOperationType;
 //======================================================

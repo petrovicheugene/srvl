@@ -279,6 +279,7 @@ bool ZChemicalElementPropertyIOManager::zp_extractFromXML(ZAbstractChemicalEleme
     {
         zv_errorStringList.append(tr("Cannot recognize file \"%1\" as data source.<br>"
                                      "Root type is invalid").arg(filePath));
+        file.close();
         return false;
     }
 
@@ -292,10 +293,12 @@ bool ZChemicalElementPropertyIOManager::zp_extractFromXML(ZAbstractChemicalEleme
         reader.readNext();
         if(!zh_parseXmlElement(repository, reader, sectionBranch, propertyName, tokenNameStack))
         {
+            file.close();
             return false;
         }
     }
 
+    file.close();
     return true;
 }
 //======================================================

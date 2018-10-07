@@ -6,10 +6,6 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QSqlDatabase>
-#define DBG
-#ifdef DBG
-#include <QDebug>
-#endif
 
 //==========================================================
 extern const QString glAppExeBaseName; /*!< Exe file name without version */
@@ -28,17 +24,17 @@ extern const QString glAppStateKeyName; /*!< TODO: describe */
 // Icons
 namespace NS_Icons
 {
-extern const QString glIconStringSettings; /*!< TODO: describe */
-extern const QString glIconStringExitApp; /*!< TODO: describe */
-extern const QString glIconStringAbout; /*!< TODO: describe */
-extern const QString glIconStringHelp; /*!< TODO: describe */
+extern const QString glIconSettings; /*!< TODO: describe */
+extern const QString glIconExitApp; /*!< TODO: describe */
+extern const QString glIconAbout; /*!< TODO: describe */
+extern const QString glIconHelp; /*!< TODO: describe */
 
 extern const QString glIconSidebarLeftOpen;
 extern const QString glIconSidebarLeftClose;
 extern const QString glIconSidebarRightOpen;
 extern const QString glIconSidebarRightClose;
 
-extern const QString glAxisToEnergyIconString;
+extern const QString glIconAxisToEnergy;
 extern const QString glIconShowGrid;
 extern const QString glIconVerticalIncrease;
 extern const QString glIconVerticalDecrease;

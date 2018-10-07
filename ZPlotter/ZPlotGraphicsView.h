@@ -40,6 +40,8 @@ public:
 
     void zp_fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
 
+    void zp_update();
+
 signals:
 
     void zg_mouseScenePositionChanged(QPointF scenePos) const;

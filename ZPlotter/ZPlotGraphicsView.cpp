@@ -282,10 +282,14 @@ void ZPlotGraphicsView::zp_fitInView(const QRectF &rect, Qt::AspectRatioMode asp
 
     if(zv_plotMode == PM_RULER)
     {
-
         emit zg_rulerToolChanged(mapToScene(zv_mousePressStartViewPos),
                                  mapToScene(zv_currentMousePos), true);
     }
+}
+//=============================================================
+void ZPlotGraphicsView::zp_update()
+{
+    viewport()->update();
 }
 //=============================================================
 QRectF ZPlotGraphicsView::zp_currentVisibleSceneRect() const
@@ -560,7 +564,12 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
             emit zg_rulerToolChanged(mapToScene(zv_mousePressStartViewPos),
                                      mapToScene(zv_currentMousePos), true);
         }
-
+        else
+        {
+            zv_plotMode = PM_REGULAR;
+            emit zg_rulerToolChanged(QPointF(), QPointF(), false);
+            qDebug() << "REG";
+        }
     }
     QGraphicsView::mouseMoveEvent(event);
 }

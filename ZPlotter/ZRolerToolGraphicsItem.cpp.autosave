@@ -1,8 +1,0 @@
-//======================================================
-#include "ZRolerToolGraphicsItem.h"
-//======================================================
-ZRolerToolGraphicsItem::ZRolerToolGraphicsItem(QGraphicsItem *parent)
-{
-
-}
-//======================================================

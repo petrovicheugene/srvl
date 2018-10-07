@@ -157,12 +157,6 @@ void ZEnergyCalibrationDialog::zp_setMeasuringConditionsAndSpectrum(quint8 gainF
 //======================================================
 void ZEnergyCalibrationDialog::zh_calculateSaveAndClose()
 {
-    // calculate
-    qDebug() << "calculate";
-
-    // save
-    qDebug() << "save";
-
 
     // close
     close();

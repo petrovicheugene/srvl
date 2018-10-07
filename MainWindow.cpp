@@ -144,12 +144,12 @@ void MainWindow::closeEvent(QCloseEvent* e)
 void MainWindow::zh_createActions()
 {
     zv_settingsAction = new QAction(this);
-    zv_settingsAction->setIcon(QIcon(NS_Icons::glIconStringSettings));
+    zv_settingsAction->setIcon(QIcon(NS_Icons::glIconSettings));
     zv_settingsAction->setText(NS_CommonStrings::glSettings);
     zv_settingsAction->setToolTip(NS_CommonStrings::glSettingsToolTip);
 
     zv_exitAction = new QAction(this);
-    zv_exitAction->setIcon(QIcon(NS_Icons::glIconStringExitApp));
+    zv_exitAction->setIcon(QIcon(NS_Icons::glIconExitApp));
     zv_exitAction->setText(NS_CommonStrings::glExit);
     zv_exitAction->setToolTip(NS_CommonStrings::glExitToolTip);
 
@@ -182,17 +182,17 @@ void MainWindow::zh_createActions()
     //    zv_previewAndPrintAction->setToolTip(tr("Preview and print results"));
 
     zv_aboutAction = new QAction(this);
-    zv_aboutAction->setIcon(QIcon(NS_Icons::glIconStringAbout));
+    zv_aboutAction->setIcon(QIcon(NS_Icons::glIconAbout));
     zv_aboutAction->setText(NS_CommonStrings::glAbout);
     zv_aboutAction->setToolTip(NS_CommonStrings::glAboutToolTip);
 
     zv_aboutQtAction = new QAction(this);
-    zv_aboutQtAction->setIcon(QIcon(NS_Icons::glIconStringAbout));
+    zv_aboutQtAction->setIcon(QIcon(NS_Icons::glIconAbout));
     zv_aboutQtAction->setText(tr("About Qt"));
     zv_aboutQtAction->setToolTip(tr("About Qt framework"));
 
     zv_helpAction = new QAction(this);
-    zv_helpAction->setIcon(QIcon(NS_Icons::glIconStringHelp));
+    zv_helpAction->setIcon(QIcon(NS_Icons::glIconHelp));
     zv_helpAction->setText(NS_CommonStrings::glHelp);
     zv_helpAction->setToolTip(NS_CommonStrings::glHelpToolTip);
 

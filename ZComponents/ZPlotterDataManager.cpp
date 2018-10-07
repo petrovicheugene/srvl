@@ -29,7 +29,7 @@ ZPlotterDataManager::ZPlotterDataManager(QObject *parent)
 void ZPlotterDataManager::zh_createComponents()
 {
     zv_switchRuleMetrixAction = new QAction(this);
-    zv_switchRuleMetrixAction->setIcon(QIcon(NS_Icons::glAxisToEnergyIconString));
+    zv_switchRuleMetrixAction->setIcon(QIcon(NS_Icons::glIconAxisToEnergy));
     zv_switchRuleMetrixAction->setCheckable(true);
 }
 //===========================================================

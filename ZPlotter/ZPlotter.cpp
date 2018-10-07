@@ -721,6 +721,7 @@ void ZPlotter::zh_verticalDistortionChanged(int distortionValue)
     if(zh_recalcVerticalDistortionFactors(static_cast<qreal>(distortionValue)))
     {
         zh_recalcRulesAndItemCoordinates();
+        zv_plotView->zp_update();
     }
 }
 //====================================================
@@ -912,7 +913,7 @@ bool ZPlotter::zh_recalcVerticalDistortionFactors(qreal distortionValue)
     {
         distortionValue = 15;
     }
-    zv_verticalDistortionFactor = 1.0 - (qreal)distortionValue / 20.0;
+    zv_verticalDistortionFactor = 1.0 - static_cast<qreal>(distortionValue) / 20.0;
     zv_verticalDistortionCorrectionFactor = zv_verticalAbsMax / pow(zv_verticalAbsMax, zv_verticalDistortionFactor);
 
     return true;

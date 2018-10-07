@@ -53,7 +53,7 @@ private:
 
     QStringList zv_errorStringList;
 
-    const QString zv_magicString = qApp->property("glAppCompany").toString() + " GWSOT76D429YWFP";
+    const QString zv_magicString = "GWSOT76D429YWFP";
     const QString zv_ROOT = "root";
     const QString zv_TYPE = "type";
     const QString zv_SECTION = "section";

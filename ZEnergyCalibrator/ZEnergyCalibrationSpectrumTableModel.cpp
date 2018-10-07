@@ -57,18 +57,25 @@ QVariant ZEnergyCalibrationSpectrumTableModel::data(const QModelIndex & index, i
         return QVariant();
     }
 
+    QList<ZSpeSpectrum*> spectrumList = zv_spectrumMap.value(zv_gainFactorFilter);
+    ZSpeSpectrum* spectrum = spectrumList.value(index.row(), nullptr);
+    if(!spectrum)
+    {
+        return QVariant();
+    }
+
     if(role == Qt::DisplayRole)
     {
         if(index.column() == 0)
         {
-            QString speName = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_name();
-            return QVariant(zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_name());
+            QString speName = spectrum->zp_name();
+            return QVariant(speName);
         }
 
         if(index.column() == 1)
         {
             ZSpectrumPaintData paintData;
-            paintData.spectrumData = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_spectrumData();
+            paintData.spectrumData = spectrum->zp_spectrumData();
             paintData.maxChannel = zv_maxChannelNumber;
             paintData.maxIntensity = zv_maxIntensity;
 
@@ -80,7 +87,7 @@ QVariant ZEnergyCalibrationSpectrumTableModel::data(const QModelIndex & index, i
     {
         if(index.column() == 1)
         {
-            QColor spectrumColor = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_color();
+            QColor spectrumColor = spectrum->zp_color();
             if(!spectrumColor.isValid())
             {
                 return QVariant();
@@ -94,7 +101,7 @@ QVariant ZEnergyCalibrationSpectrumTableModel::data(const QModelIndex & index, i
     {
         if(index.column() == 1)
         {
-            bool visibility = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_isSpectrumVisible();
+            bool visibility = spectrum->zp_isSpectrumVisible();
             return QVariant(visibility);
         }
     }
@@ -111,7 +118,7 @@ QVariant ZEnergyCalibrationSpectrumTableModel::data(const QModelIndex & index, i
     {
         if(index.column() == 0)
         {
-            if(zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_isSpectrumChecked())
+            if(spectrum->zp_isSpectrumChecked())
             {
                 return Qt::Checked;
             }
@@ -133,13 +140,19 @@ bool ZEnergyCalibrationSpectrumTableModel::setData(const QModelIndex & index, co
         return false;
     }
 
-// here
+    QList<ZSpeSpectrum*> spectrumList = zv_spectrumMap.value(zv_gainFactorFilter);
+    ZSpeSpectrum* spectrum = spectrumList.value(index.row(), nullptr);
+    if(!spectrum)
+    {
+        return false;
+    }
+
     if(role == Qt::CheckStateRole)
     {
         if(index.column() == 0)
         {
-            bool checked = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_isSpectrumChecked();
-            zv_spectrumMap.value(zv_gainFactorFilter)[index.row()]->zp_setSpectrumChecked(!checked);
+            bool checked = spectrum->zp_isSpectrumChecked();
+            spectrum->zp_setSpectrumChecked(!checked);
             emit dataChanged(index, index);
             return true;
         }
@@ -149,8 +162,8 @@ bool ZEnergyCalibrationSpectrumTableModel::setData(const QModelIndex & index, co
     {
         if(index.column() == 1)
         {
-            bool visibility = zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_isSpectrumVisible();
-            zv_spectrumMap.value(zv_gainFactorFilter).at(index.row())->zp_setSpectrumVisible(!visibility);
+            bool visibility = spectrum->zp_isSpectrumVisible();
+            spectrum->zp_setSpectrumVisible(!visibility);
             emit dataChanged(index, index);
             return true;
         }
