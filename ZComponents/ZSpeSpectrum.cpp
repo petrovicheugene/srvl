@@ -43,12 +43,12 @@ QStringList ZSpeSpectrum::zp_isEnergyCalibrationAndExpositionSuitable(const QStr
         inconsistenciesList << tr("energy factor K0");
     }
 
-    if(zv_auxData.zp_energyK1() != K1)
+    if(zv_auxData.zp_energyK1() - K1 != 0.0)
     {
         inconsistenciesList << tr("energy factor K1");
     }
 
-    if(zv_auxData.zp_energyK2() != K2)
+    if(zv_auxData.zp_energyK2() - K2 != 0.0)
     {
         inconsistenciesList << tr("energy factor K2");
     }
@@ -74,6 +74,12 @@ void ZSpeSpectrum::zp_setExposition(int exposition)
 void ZSpeSpectrum::zp_setGainFactor(quint8 gainFactor)
 {
     zv_auxData.zp_setGainFactor(gainFactor);
+    emit zg_gainFactorChanged();
+}
+//===================================================
+quint8 ZSpeSpectrum::zp_gainFactor() const
+{
+    return zv_auxData.zp_gainFactor();
 }
 //===================================================
 void ZSpeSpectrum::zp_setAliveTime(quint32 aliveTime)
@@ -91,6 +97,7 @@ void ZSpeSpectrum::zp_setEnergyCalibration(const QList<double>& energyCalibratio
     zv_auxData.zp_setEnergyK0(energyCalibrationFactorList.value(0, 0.0));
     zv_auxData.zp_setEnergyK1(energyCalibrationFactorList.value(1, 0.0));
     zv_auxData.zp_setEnergyK2(energyCalibrationFactorList.value(2, 0.0));
+    emit zg_energyCalibrationChanged();
 }
 //===================================================
 QList<double> ZSpeSpectrum::zp_energyCalibration() const

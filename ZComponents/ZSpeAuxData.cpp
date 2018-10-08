@@ -8,17 +8,21 @@ ZSpeAuxData::ZSpeAuxData()
     zv_time = QTime();
     zv_exposition = -1;
     zv_aliveTime = -1;
-    zv_energyUnit = QString("kEv");
+    zv_energyUnit = QString();
     zv_energyK0 = 0;
     zv_energyK1 = 0;
     zv_energyK2 = 0;
-    zv_gainFactor = 1;
 
     zv_peakWidth = 0;
     zv_peakWidthK0 = 0;
     zv_peakWidthK1 = 0;
     zv_peakWidthK2 = 0;
 
+}
+//=================================================
+void ZSpeAuxData::zp_setSrvN(const QString& srvN)
+{
+    zv_srvN = srvN;
 }
 //=================================================
 bool ZSpeAuxData::zp_setDate(const QString& string)
@@ -28,7 +32,7 @@ bool ZSpeAuxData::zp_setDate(const QString& string)
         return false;
     }
 
-    zv_date = QDate::fromString(string);
+    zv_date = QDate::fromString(string, "dd.MM.yyyy");
     return zv_date.isValid();
 }
 //=================================================
@@ -105,14 +109,6 @@ bool ZSpeAuxData::zp_setGainFactor(const QString& gainFactor)
 void ZSpeAuxData::zp_setGainFactor(quint8 gainFactor)
 {
     zv_gainFactor = gainFactor;
-}
-//=================================================
-void ZSpeAuxData::zp_setEnergyCalibrationFactors(const QList<double>& energyCalibrationfactorList)
-{
-    zv_energyK0 = energyCalibrationfactorList.value(0, 0.0);
-    zv_energyK1 = energyCalibrationfactorList.value(1, 0.0);;
-    zv_energyK2 = energyCalibrationfactorList.value(2, 0.0);;
-
 }
 //=================================================
 bool ZSpeAuxData::zp_setEnergyUnit(const QString& string)
@@ -228,6 +224,21 @@ bool ZSpeAuxData::zp_setPeakWidthK2(const QString& string)
     bool ok;
     zv_peakWidthK2 = string.toDouble(&ok);
     return ok;
+}
+//=================================================
+void ZSpeAuxData::zp_setComment(int lineNumber, const QString& comment)
+{
+    zv_commentMap[lineNumber] = comment;
+}
+//=================================================
+QString ZSpeAuxData::zp_comment(int lineNumber) const
+{
+    return zv_commentMap.value(lineNumber, QString());
+}
+//=================================================
+QString ZSpeAuxData::zp_srvN() const
+{
+    return zv_srvN;
 }
 //=================================================
 QDateTime ZSpeAuxData::zp_dateTime() const

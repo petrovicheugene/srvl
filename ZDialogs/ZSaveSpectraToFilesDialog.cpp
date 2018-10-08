@@ -275,7 +275,7 @@ void ZSaveSpectraToFilesDialog::zh_onOkButtonClick()
                 fileName = nameTemplate + "-" + QString::number(++spCount);
             }
 
-            speIOHandler.zp_saveSpectrumToFile(folderPath, fileName, spectrum);
+            speIOHandler.zp_saveSpectrumToFile(folderPath, fileName, spectrum, false);
         }
     }
 

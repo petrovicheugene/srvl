@@ -27,10 +27,16 @@ public:
     void zp_setSpectrumDateTime(QDateTime datetime);
     void zp_setExposition(int exposition);
     void zp_setGainFactor(quint8 gainFactor);
+    quint8 zp_gainFactor() const;
     void zp_setAliveTime(quint32 aliveTime);
     void zp_setEnergyUnit(const QString& energyUnit);
     void zp_setEnergyCalibration(const QList<double> &energyCalibrationFactorList);
     QList<double> zp_energyCalibration() const;
+
+signals:
+
+    void zg_energyCalibrationChanged() const;
+    void zg_gainFactorChanged() const;
 
 private:
 

@@ -21,9 +21,10 @@ public:
 
     bool zp_saveSpectrumToFile(const QString& path,
                                const QString& fileName,
-                               ZSpeSpectrum *&spectrum);
+                               ZSpeSpectrum *spectrum,
+                               bool dontAsk = true);
 
-    bool zp_saveSpectrumToFile(QFile& file, ZSpeSpectrum*& spectrum);
+    bool zp_saveSpectrumToFile(QFile& file, ZSpeSpectrum *spectrum);
 
 signals:
 
