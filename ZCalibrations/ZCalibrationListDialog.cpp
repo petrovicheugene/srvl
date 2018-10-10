@@ -9,6 +9,7 @@
 #include "ZCalibrationFilterProxyModel.h"
 
 #include <QItemSelectionModel>
+#include <QDebug>
 #include <QDir>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
@@ -502,6 +503,7 @@ void ZCalibrationListDialog::zh_onCurrentMeasuringConditionsChange(const QModelI
 {
     //zv_calibrationProxyModel->invalidate();
     int row = current.row();
+    qDebug() << "CURRENT ROW" << row;
 
     // id
     QModelIndex index = zv_measuringConditionsModel->index(row, 0);
@@ -845,14 +847,17 @@ bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& measurementCondi
 {
     // checks
     QModelIndex index = zv_measuringConditionsTableWidget->zp_tableView()->currentIndex();
-    if(!index.isValid() || index.row() < 0 || index.row() >= zv_measuringConditionsSQLTableModel->rowCount())
+
+    qDebug() << "CURRENT ROW" << index.row();
+
+    if(!index.isValid() || index.row() < 0 || index.row() >= zv_measuringConditionsModel->rowCount())
     {
         return false;
     }
 
     int row = index.row();
     // gainFactor
-    index = zv_measuringConditionsSQLTableModel->index(row, 0);
+    index = zv_measuringConditionsModel->index(row, 0);
     if(!index.isValid())
     {
         return false;
@@ -872,7 +877,7 @@ bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& measurementCondi
     }
 
     // gainFactor
-    index = zv_measuringConditionsSQLTableModel->index(row, 1);
+    index = zv_measuringConditionsModel->index(row, 1);
     if(!index.isValid())
     {
         return false;
@@ -891,7 +896,7 @@ bool ZCalibrationListDialog::zp_currentMeasuringConditions(int& measurementCondi
     }
 
     // exposition
-    index = zv_measuringConditionsSQLTableModel->index(row, 2);
+    index = zv_measuringConditionsModel->index(row, 2);
     if(!index.isValid())
     {
         return false;

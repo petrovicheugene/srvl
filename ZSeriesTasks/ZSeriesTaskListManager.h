@@ -15,7 +15,6 @@ class ZSeriesTaskListManager : public QObject
 public:
     explicit ZSeriesTaskListManager(QObject *parent = 0);
 
-    void zp_connectViewToModel(QAbstractItemView* view);
     QAbstractTableModel* zp_model();
 
     bool zp_loadSeriesTask();

@@ -219,7 +219,8 @@ SOURCES += main.cpp\
     ZDialogs/ZOperatorDialog.cpp \
     ZDialogs/ZPasswordChangeDialog.cpp \
     ZDialogs/ZPasswordDialog.cpp \
-    ZComponents/simplecrypt.cpp
+    ZComponents/simplecrypt.cpp \
+    ZModelViewWidgets/ZSampleTaskDelegate.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -365,7 +366,8 @@ HEADERS  += MainWindow.h \
     ZDialogs/ZOperatorDialog.h \
     ZDialogs/ZPasswordChangeDialog.h \
     ZDialogs/ZPasswordDialog.h \
-    ZComponents/simplecrypt.h
+    ZComponents/simplecrypt.h \
+    ZModelViewWidgets/ZSampleTaskDelegate.h
 
 RESOURCES += \
     resources.qrc \

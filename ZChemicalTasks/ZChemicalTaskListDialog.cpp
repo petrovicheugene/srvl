@@ -78,10 +78,18 @@ void ZChemicalTaskListDialog::zh_createComponents()
     zv_chemicalTableModel->select();
     zv_chemicalTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
+    zv_chemicalTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_chemicalTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+
     zv_calibrationStackTableModel = new QSqlTableModel(this);
     zv_calibrationStackTableModel->setTable("calibration_stacks");
     zv_calibrationStackTableModel->select();
     zv_calibrationStackTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    zv_calibrationStackTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_calibrationStackTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+    zv_calibrationStackTableModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Description")));
+
 
     // controls
     QVBoxLayout* mainLayout = new QVBoxLayout;

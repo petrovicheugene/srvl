@@ -29,7 +29,7 @@ Qt::ItemFlags ZMeasuringResultTableModel::flags(const QModelIndex & index) const
 {
     Qt::ItemFlags flags;
     flags |= Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    if(index.isValid() && index.column() == 0)
+    if(index.isValid() && index.column() < 2)
     {
         flags |= Qt::ItemIsEditable;
     }
@@ -131,6 +131,14 @@ QVariant ZMeasuringResultTableModel::data(const QModelIndex & index, int role) c
 
             QString concentrationString = QString::number(concentration, 'f', zv_concentrationDisplayPrecisioin);
             return QVariant(concentrationString);
+        }
+    }
+
+    if(role == Qt::EditRole)
+    {
+        if(index.column() == 1)
+        {
+            return QVariant(zv_measuringManager->zp_sampleTaskId(index.row()) );
         }
     }
 

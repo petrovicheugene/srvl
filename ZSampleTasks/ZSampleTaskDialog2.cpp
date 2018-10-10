@@ -41,6 +41,10 @@ ZSampleTaskDialog2::ZSampleTaskDialog2(QSqlTableModel *sampleTaskModel, int samp
         zv_sampleTaskTableModel->setTable("sample_tasks");
         zv_sampleTaskTableModel->select();
         zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+        zv_sampleTaskTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+        zv_sampleTaskTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+        zv_sampleTaskTableModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Description")));
     }
 
     zv_sampleTaskTreeModel = 0;

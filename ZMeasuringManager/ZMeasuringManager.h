@@ -181,6 +181,7 @@ public:
     void zp_appendActionsToMenu(QMenu* menu) const;
 
     QString zp_sampleTaskName(int sampleIndex) const;
+    int zp_sampleTaskId(int sampleIndex) const;
     QStringList zp_chemicalListForSample(int sampleIndex) const;
     QStringList zp_measuringConditionsStringListForSample(int sampleIndex) const;
     QList<QPair<quint8, int> > zp_measuringConditionsListForSample(int sampleIndex) const;

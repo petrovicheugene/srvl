@@ -146,6 +146,8 @@ void ZSeriesTaskListDialog::zp_connectToManager(ZSeriesTaskListManager* manager)
     // zv_manager->zp_connectViewToModel(zv_seriesTaskTableWidget->zp_tableView());
     zv_seriesTaskTableWidget->zp_setModel(zv_manager->zp_model());
 
+    zv_seriesTaskTableWidget->zp_tableView()->setColumnHidden(0, true);
+
     connect(zv_seriesTaskTableWidget, &ZSeriesTaskTableWidget::zg_currentChanged,
             zv_manager, &ZSeriesTaskListManager::zp_onCurrentChange);
     connect(zv_manager, &ZSeriesTaskListManager::zg_currentTaskProperties,

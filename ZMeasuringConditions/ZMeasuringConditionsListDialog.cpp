@@ -106,6 +106,10 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     zv_measuringConditionsModel->setTable("measuring_conditions");
     zv_measuringConditionsModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_measuringConditionsModel->select();
+    zv_measuringConditionsModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_measuringConditionsModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Gain Factor")));
+    zv_measuringConditionsModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Exposition")));
+
 
     //zv_measuringConditionsModel->setRelation(2, QSqlRelation("gain_factors", "gain_factor", "gain_factor"));
 
@@ -113,6 +117,10 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     zv_gainFactorModel->setTable("gain_factors");
     zv_gainFactorModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_gainFactorModel->select();
+    zv_measuringConditionsModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Gain Factor")));
+    zv_measuringConditionsModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("En K0")));
+    zv_measuringConditionsModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("En K1")));
+    zv_measuringConditionsModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("En K2")));
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -232,6 +240,8 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
 void ZMeasuringConditionsListDialog::zh_createConnections()
 {
     zv_measuringConditionsTable->setModel(zv_measuringConditionsModel);
+    zv_measuringConditionsTable->setColumnHidden(0, true);
+
     // set read only delegate
     if(zv_measuringConditionsTable->itemDelegate())
     {

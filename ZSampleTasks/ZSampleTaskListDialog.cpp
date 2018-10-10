@@ -60,15 +60,19 @@ void ZSampleTaskListDialog::zh_createComponents()
     zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_sampleTaskTableModel->select();
 
+    zv_sampleTaskTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_sampleTaskTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+    zv_sampleTaskTableModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Description")));
+
     QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
-    // name
-    //    QLabel* label = new QLabel(this);
-    //    label->setText(glCreateCaption(tr("Sample tasks:")));
-    //    mainLayout->addWidget(label);
+            // name
+            //    QLabel* label = new QLabel(this);
+            //    label->setText(glCreateCaption(tr("Sample tasks:")));
+            //    mainLayout->addWidget(label);
 
-    zv_sampleTaskTable = new QTableView(this);
+            zv_sampleTaskTable = new QTableView(this);
     mainLayout->addWidget(zv_sampleTaskTable);
 
     zv_messageLabel = new QLabel(this);
@@ -150,8 +154,8 @@ void ZSampleTaskListDialog::zh_onOkButtonClick() const
 void ZSampleTaskListDialog::zh_newSampleTask()
 {
     ZSampleTaskDialog2 dialog;
-//    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
-//            this, &ZSampleTaskListDialog::zh_checkTaskName);
+    //    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
+    //            this, &ZSampleTaskListDialog::zh_checkTaskName);
 
     if(!dialog.exec())
     {

@@ -675,6 +675,16 @@ QString ZMeasuringManager::zp_sampleTaskName(int sampleIndex) const
     return zv_sampleList.at(sampleIndex)->zp_sampleTaskName();
 }
 //======================================================
+int ZMeasuringManager::zp_sampleTaskId(int sampleIndex) const
+{
+    if(sampleIndex < 0 || sampleIndex >= zv_sampleList.count())
+    {
+        return -1;
+    }
+
+    return zv_sampleList.at(sampleIndex)->zp_sampleTaskId();
+}
+//======================================================
 QStringList ZMeasuringManager::zp_chemicalListForSample(int sampleIndex) const
 {
     if(sampleIndex < 0 || sampleIndex >= zv_sampleList.count())

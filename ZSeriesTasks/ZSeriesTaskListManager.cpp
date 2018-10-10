@@ -27,7 +27,9 @@ void ZSeriesTaskListManager::zh_createComponents()
     zv_seriesSqlTableModel->select();
     zv_seriesSqlTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-
+    zv_seriesSqlTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_seriesSqlTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+    zv_seriesSqlTableModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Description")));
 }
 //======================================================
 void ZSeriesTaskListManager::zh_createActions()
@@ -38,16 +40,6 @@ void ZSeriesTaskListManager::zh_createActions()
 void ZSeriesTaskListManager::zh_createConnections()
 {
 
-}
-//======================================================
-void ZSeriesTaskListManager::zp_connectViewToModel(QAbstractItemView* view)
-{
-    if(!view)
-    {
-        return;
-    }
-
-    view->setModel(zv_seriesSqlTableModel);
 }
 //======================================================
 QAbstractTableModel* ZSeriesTaskListManager::zp_model()

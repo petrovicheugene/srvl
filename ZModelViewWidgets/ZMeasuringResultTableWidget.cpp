@@ -1,6 +1,9 @@
 //=============================================================
 #include "ZMeasuringResultTableWidget.h"
 #include "ZMeasuringResultTableModel.h"
+#include "ZSampleTaskDelegate.h"
+
+
 #include <QItemSelectionModel>
 #include <QMetaObject>
 #include <QTableView>
@@ -17,11 +20,14 @@ void ZMeasuringResultTableWidget::zp_setModel(QAbstractItemModel* model, bool al
 {
     ZBaseTableWidget::zp_setModel(model, alternatingRowColorFlag);
 
+    ZSampleTaskDelegate* sampleTaskDelegate = new ZSampleTaskDelegate;
+    zv_table->setItemDelegateForColumn(1, sampleTaskDelegate);
     connect(model, &QAbstractItemModel::modelReset,
             this, &ZMeasuringResultTableWidget::zh_onModelReset);
 
     connect(model, &QAbstractItemModel::modelAboutToBeReset,
             this, &ZMeasuringResultTableWidget::zh_onModelAboutToBeReset);
+
 
 }
 //=============================================================

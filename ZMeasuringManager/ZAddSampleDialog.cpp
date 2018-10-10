@@ -69,7 +69,11 @@ void ZAddSampleDialog::zh_createComponents()
     zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_sampleTaskTableModel->select();
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    zv_sampleTaskTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
+    zv_sampleTaskTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
+    zv_sampleTaskTableModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Description")));
+
+            QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label;
