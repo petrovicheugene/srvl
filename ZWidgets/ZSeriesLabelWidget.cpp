@@ -14,7 +14,7 @@ ZSeriesLabelWidget::ZSeriesLabelWidget(Qt::Orientation orientation,
 //====================================================
 void ZSeriesLabelWidget::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     setLayout(mainLayout);
 

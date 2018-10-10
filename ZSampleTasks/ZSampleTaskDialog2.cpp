@@ -61,7 +61,7 @@ void ZSampleTaskDialog2::zh_createComponents()
     zv_sampleTaskTreeModel = new ZSampleTaskTreeModel(this);
 
     // Controls & widgets
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // name lineEdit
@@ -69,7 +69,7 @@ void ZSampleTaskDialog2::zh_createComponents()
     label->setText(glCreateCaption(tr("Task name:")));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* levelLayout = new QHBoxLayout(this);
+    QHBoxLayout* levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_sampleTaskNameLineEdit = new QLineEdit(this);
     levelLayout->addWidget(zv_sampleTaskNameLineEdit);
@@ -80,7 +80,7 @@ void ZSampleTaskDialog2::zh_createComponents()
     label->setText(glCreateCaption(tr("Sample name template:")));
     mainLayout->addWidget(label);
 
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_sampleNameTemplateLineEdit = new QLineEdit(this);
     levelLayout->addWidget(zv_sampleNameTemplateLineEdit);

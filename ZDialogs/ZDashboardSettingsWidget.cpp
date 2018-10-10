@@ -62,9 +62,9 @@ void ZDashboardSettingsWidget::zp_appSettings(ZDashboardSettings& appSettings)
 //============================================================
 void ZDashboardSettingsWidget::zh_createComponents()
 {
-    QHBoxLayout* baseLayout = new QHBoxLayout(this);
+    QHBoxLayout* baseLayout = new QHBoxLayout;
     setLayout(baseLayout);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     baseLayout->addLayout(mainLayout);
     baseLayout->addStretch();
 
@@ -105,7 +105,7 @@ void ZDashboardSettingsWidget::zh_createComponents()
     label->setText(QString("<b><font color=darkgreen>%1</font></b>").arg(tr("Progress bar line color:")));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* progressBarColorLayout = new QHBoxLayout(this);
+    QHBoxLayout* progressBarColorLayout = new QHBoxLayout;
     mainLayout->addLayout(progressBarColorLayout);
 
     zv_progressBarColorLabel = new ZColorButton(this);
@@ -119,7 +119,7 @@ void ZDashboardSettingsWidget::zh_createComponents()
     label->setText(QString("<b><font color=darkgreen>%1</font></b>").arg(tr("Text color:")));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* textColorLayout = new QHBoxLayout(this);
+    QHBoxLayout* textColorLayout = new QHBoxLayout;
     mainLayout->addLayout(textColorLayout);
 
     zv_textColorLabel = new ZColorButton(this);

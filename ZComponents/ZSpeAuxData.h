@@ -65,6 +65,8 @@ public:
     qreal zp_peakWidthK1() const;
     qreal zp_peakWidthK2() const;
 
+    void zp_setEnergyCalibrationFactors(QList<double> energyCalibrationFactors );
+
 private:
 
     // VARS

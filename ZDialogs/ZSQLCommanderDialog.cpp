@@ -65,7 +65,7 @@ void ZSQLCommanderDialog::zh_createComponents()
     zv_dataModel = new QSqlTableModel(this);
     zv_dataModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     zv_mainSplitter = new QSplitter(Qt::Vertical, this);
@@ -171,7 +171,7 @@ void ZSQLCommanderDialog::zh_setSortingSelectedDataWidget(bool sort)
 QWidget* ZSQLCommanderDialog::zh_createTableListWidget()
 {
     QWidget* w = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     w->setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
@@ -193,7 +193,7 @@ QWidget* ZSQLCommanderDialog::zh_createTableListWidget()
 QWidget* ZSQLCommanderDialog::zh_createDataTableWidget()
 {
     QWidget* w = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     w->setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
@@ -233,7 +233,7 @@ QWidget* ZSQLCommanderDialog::zh_createDataTableWidget()
 QWidget* ZSQLCommanderDialog::zh_createQueryWidget()
 {
     QWidget* w = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     w->setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
@@ -259,7 +259,7 @@ QWidget* ZSQLCommanderDialog::zh_createQueryWidget()
 QWidget* ZSQLCommanderDialog::zh_createSelectedDataWidget()
 {
     QWidget* w = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     w->setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
@@ -288,7 +288,7 @@ QWidget* ZSQLCommanderDialog::zh_createSelectedDataWidget()
 QWidget* ZSQLCommanderDialog::zh_createMessageWidget()
 {
     QWidget* w = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     w->setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);

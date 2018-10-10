@@ -557,6 +557,11 @@ QSize ZPlotter::zp_viewportPixelSize() const
     return zv_plotView->viewport()->size();
 }
 //====================================================
+void ZPlotter::zp_setInfoLabelVisible(bool visible)
+{
+    zv_rulerWidget->zp_setInfoLabelVisible(visible);
+}
+//====================================================
 void ZPlotter::zp_setLeftRuleVisible(bool visible)
 {
     if(!zv_rulerWidget)

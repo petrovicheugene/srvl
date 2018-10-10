@@ -84,7 +84,7 @@ void ZChemicalTaskListDialog::zh_createComponents()
     zv_calibrationStackTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     // controls
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     zv_mainSplitter = new QSplitter(this);

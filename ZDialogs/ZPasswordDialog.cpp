@@ -20,7 +20,7 @@ ZPasswordDialog::ZPasswordDialog(const QString &password, QWidget *parent) :
 
     mv_passwordString = password;
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);

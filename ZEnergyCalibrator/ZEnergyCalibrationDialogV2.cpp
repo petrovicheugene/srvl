@@ -146,7 +146,7 @@ QWidget* ZEnergyCalibrationDialogV2::zh_createElementLinesWidgetAndComponents()
     // mainLayout->setMargin(0);
     mainControlWidget->setLayout(mainLayout);
 
-    QHBoxLayout* peakCountLayout = new QHBoxLayout(this);
+    QHBoxLayout* peakCountLayout = new QHBoxLayout;
     mainLayout->addLayout(peakCountLayout);
 
     QLabel* label = new QLabel(this);

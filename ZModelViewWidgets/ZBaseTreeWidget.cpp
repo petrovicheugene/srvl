@@ -115,7 +115,8 @@ QTreeView* ZBaseTreeWidget::zp_treeView() const
 //============================================================
 void ZBaseTreeWidget::zh_createComponents()
 {
-    zv_mainLayout = new QVBoxLayout(this);
+    zv_mainLayout = new QVBoxLayout;
+    setLayout(zv_mainLayout);
     zv_mainLayout->setMargin(0);
 
     setLayout(zv_mainLayout);
@@ -125,7 +126,7 @@ void ZBaseTreeWidget::zh_createComponents()
 
     zv_mainLayout->addWidget(zv_table, INT_MAX);
 
-    zv_buttonLayout = new QHBoxLayout(this);
+    zv_buttonLayout = new QHBoxLayout;
     zv_mainLayout->addLayout(zv_buttonLayout);
 }
 //============================================================

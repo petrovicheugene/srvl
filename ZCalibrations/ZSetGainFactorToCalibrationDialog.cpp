@@ -21,7 +21,7 @@ ZSetGainFactorToCalibrationDialog::ZSetGainFactorToCalibrationDialog(QString cal
 //=========================================================
 void ZSetGainFactorToCalibrationDialog::zh_createComponents(const QString& calibrationName)
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label = new QLabel(this);
@@ -37,7 +37,7 @@ void ZSetGainFactorToCalibrationDialog::zh_createComponents(const QString& calib
     label->setText(msg);
     mainLayout->addWidget(label);
 
-    QHBoxLayout* levelLayout = new QHBoxLayout(this);
+    QHBoxLayout* levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_gainFactorSpinBox = new QSpinBox(this);
     zv_gainFactorSpinBox->setRange(1, glMaxGainFactor);

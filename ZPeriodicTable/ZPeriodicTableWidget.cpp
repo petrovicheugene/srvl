@@ -22,7 +22,8 @@ ZPeriodicTableWidget::ZPeriodicTableWidget(QWidget *parent)
 //======================================================
 void ZPeriodicTableWidget::zh_createComponents()
 {
-    zv_mainLayout = new QVBoxLayout(this);
+    zv_mainLayout = new QVBoxLayout;
+    setLayout(zv_mainLayout);
     // main button layout
     QGridLayout* buttonGridLayout = new QGridLayout;
     buttonGridLayout->setSpacing(0);

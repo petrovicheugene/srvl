@@ -42,7 +42,7 @@ ZPasswordChangeDialog::ZPasswordChangeDialog(QWidget *parent) :
     }
 
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
     QLabel* label = 0;
 

@@ -312,3 +312,11 @@ qreal ZSpeAuxData::zp_peakWidthK2() const
     return zv_peakWidthK2;
 }
 //=================================================
+void ZSpeAuxData::zp_setEnergyCalibrationFactors(QList<double> energyCalibrationFactors )
+{
+    zv_energyK0 = energyCalibrationFactors.value(0, 0.0);
+    zv_energyK1 = energyCalibrationFactors.value(1, 0.0);
+    zv_energyK2 = energyCalibrationFactors.value(2, 0.0);
+
+}
+//=================================================

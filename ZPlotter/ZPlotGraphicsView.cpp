@@ -568,7 +568,6 @@ void ZPlotGraphicsView::mouseMoveEvent(QMouseEvent* event)
         {
             zv_plotMode = PM_REGULAR;
             emit zg_rulerToolChanged(QPointF(), QPointF(), false);
-            qDebug() << "REG";
         }
     }
     QGraphicsView::mouseMoveEvent(event);

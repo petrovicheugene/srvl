@@ -66,7 +66,7 @@ int ZMeasuringConditionsDialog::zp_exposition() const
 //=======================================================
 void ZMeasuringConditionsDialog::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // gain factor

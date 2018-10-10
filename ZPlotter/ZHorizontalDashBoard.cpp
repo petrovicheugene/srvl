@@ -22,7 +22,7 @@ ZHorizontalDashBoard::ZHorizontalDashBoard(QWidget *parent) : QFrame(parent)
 //===========================================================
 void ZHorizontalDashBoard::zh_createComponents()
 {
-    zv_mainLayout = new QHBoxLayout(this);
+    zv_mainLayout = new QHBoxLayout;
     zv_mainLayout->setMargin(0);
     zv_mainLayout->setSpacing(3);
     setLayout(zv_mainLayout);

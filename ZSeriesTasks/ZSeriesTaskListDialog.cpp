@@ -40,7 +40,7 @@ ZSeriesTaskListDialog::~ZSeriesTaskListDialog()
 //=====================================================
 void ZSeriesTaskListDialog::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     zv_seriesTaskTableWidget = new ZSeriesTaskTableWidget();

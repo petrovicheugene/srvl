@@ -60,7 +60,7 @@ void ZSampleTaskListDialog::zh_createComponents()
     zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_sampleTaskTableModel->select();
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // name

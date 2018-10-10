@@ -44,7 +44,7 @@ void ZSettingsDialog::zh_setAppSettings(const ZAppSettings& appSettings)
 void ZSettingsDialog::zh_createComponents()
 {
     // layout
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // tabs

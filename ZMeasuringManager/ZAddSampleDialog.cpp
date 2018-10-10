@@ -69,7 +69,7 @@ void ZAddSampleDialog::zh_createComponents()
     zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_sampleTaskTableModel->select();
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label;
@@ -84,7 +84,7 @@ void ZAddSampleDialog::zh_createComponents()
     label->setText(glCreateCaption(tr("Sample name template:")));
     mainLayout->addWidget(label);
 
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
 
     zv_sampleNameLineEdit = new QLineEdit(this);
@@ -97,7 +97,7 @@ void ZAddSampleDialog::zh_createComponents()
     label->setText(glCreateCaption(tr("Sample quantity:")));
     mainLayout->addWidget(label);
 
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_quantitySpinBox = new QSpinBox(this);
     zv_quantitySpinBox->setRange(1, 999);

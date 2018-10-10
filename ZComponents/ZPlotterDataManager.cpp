@@ -407,8 +407,8 @@ void ZPlotterDataManager::zh_switchRuleMetrix(bool toggled)
 void ZPlotterDataManager::zh_updateRuleMetrix()
 {
     if(!zv_energyRuleMetrixFlag || zv_calibrationFactors.isEmpty() ||
-            (!(zv_calibrationFactors.value(1, 0.0) ||
-               zv_calibrationFactors.value(2, 0.0))))
+            (!(zv_calibrationFactors.value(1, 0.0) == 0.0 ||
+               zv_calibrationFactors.value(2, 0.0) == 0.0 )))
     {
         zv_plotter->zp_setBottomMarkRecalcFlag(false);
         zv_plotter->zp_setTopMarkRecalcFlag(false);

@@ -55,7 +55,7 @@ void ZDeviceSettingsWidget::zp_appSettings(ZDeviceSettings& settings)
 //=======================================================
 void ZDeviceSettingsWidget::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // Serial number
@@ -63,7 +63,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Device serial number:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* serialNumberLayout = new  QHBoxLayout(this);
+    QHBoxLayout* serialNumberLayout = new  QHBoxLayout;
     mainLayout->addLayout(serialNumberLayout);
 
     zv_deviceSerialLineEdit = new QLineEdit(this);
@@ -75,7 +75,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Device sample quantity:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* sampleNumberLayout = new  QHBoxLayout(this);
+    QHBoxLayout* sampleNumberLayout = new  QHBoxLayout;
     mainLayout->addLayout(sampleNumberLayout);
 
     zv_deviceSampleQuantitySpinBox = new QSpinBox(this);
@@ -89,7 +89,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Device channel quantity:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* channelQuantityLayout = new  QHBoxLayout(this);
+    QHBoxLayout* channelQuantityLayout = new  QHBoxLayout;
     mainLayout->addLayout(channelQuantityLayout);
 
     zv_deviceChannelQuantitySpinBox = new QSpinBox(this);
@@ -103,7 +103,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("ADC library file:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* deviceLibraryLayout = new  QHBoxLayout(this);
+    QHBoxLayout* deviceLibraryLayout = new  QHBoxLayout;
     mainLayout->addLayout(deviceLibraryLayout);
 
     zv_deviceLibraryFilePathLineEdit = new QLineEdit(this);
@@ -120,7 +120,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Connect to ADC by application start:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* defaultADCTypeLayout = new  QHBoxLayout(this);
+    QHBoxLayout* defaultADCTypeLayout = new  QHBoxLayout;
     mainLayout->addLayout(defaultADCTypeLayout);
 
     zv_defaultADCType = new QComboBox(this);
@@ -137,7 +137,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Start exposition by:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* expositionStarterLayout = new  QHBoxLayout(this);
+    QHBoxLayout* expositionStarterLayout = new  QHBoxLayout;
     mainLayout->addLayout(expositionStarterLayout);
 
     zv_expositionStarterComboBox = new QComboBox(this);
@@ -156,7 +156,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Sample shift impulse duration (ms):")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* sampleShiftImpulseDurationLayout = new  QHBoxLayout(this);
+    QHBoxLayout* sampleShiftImpulseDurationLayout = new  QHBoxLayout;
     mainLayout->addLayout(sampleShiftImpulseDurationLayout);
 
     zv_sampleShiftImpulseDurationSpinBox = new QSpinBox(this);
@@ -171,7 +171,7 @@ void ZDeviceSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Exposition start delay time (s):")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* expositionStartDelayTimeLayout = new  QHBoxLayout(this);
+    QHBoxLayout* expositionStartDelayTimeLayout = new  QHBoxLayout;
     mainLayout->addLayout(expositionStartDelayTimeLayout);
 
     zv_expositionDelayTimeSpinBox = new QSpinBox(this);

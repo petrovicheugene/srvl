@@ -225,7 +225,7 @@ QLayout* ZDashboard::zh_createVerticalClassic()
     //    mainLayout->addLayout(indicatorLayout);
 
     // placing
-    QVBoxLayout* mainLayout = new QVBoxLayout();
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     // mainLayout->addWidget(zv_seriesLabelWidget);
     mainLayout->addWidget(zv_seriesTimeIndicator);
     mainLayout->addWidget(zv_sampleTimeIndicator);
@@ -263,9 +263,9 @@ QLayout* ZDashboard::zh_createHorizontalClassic()
     zv_seriesTimeIndicator->zp_applyProgressBarOptions(options);
 
     // placing
-    QVBoxLayout* vMainLayout = new QVBoxLayout();
-    QHBoxLayout* mainLayout = new QHBoxLayout();
-    QVBoxLayout* indicatorLayout = new QVBoxLayout();
+    QVBoxLayout* vMainLayout = new QVBoxLayout;
+    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QVBoxLayout* indicatorLayout = new QVBoxLayout;
 
     // vMainLayout->addWidget(zv_seriesLabelWidget);
     vMainLayout->addLayout(mainLayout);
@@ -299,7 +299,7 @@ QLayout* ZDashboard::zh_createVerticalRound()
 
 
     // placing
-    QVBoxLayout* mainLayout = new QVBoxLayout();
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setObjectName("VERTICAL ROUND LAYOUT");
     //mainLayout->addWidget(zv_seriesLabelWidget);
     mainLayout->addWidget(zv_seriesTimeIndicator);
@@ -328,8 +328,8 @@ QLayout* ZDashboard::zh_createHorizontalRound()
 
 
     // placing
-    QVBoxLayout* vMainLayout = new QVBoxLayout();
-    QHBoxLayout* mainLayout = new QHBoxLayout();
+    QVBoxLayout* vMainLayout = new QVBoxLayout;
+    QHBoxLayout* mainLayout = new QHBoxLayout;
     //vMainLayout->addWidget(zv_seriesLabelWidget);
     vMainLayout->addLayout(mainLayout);
 

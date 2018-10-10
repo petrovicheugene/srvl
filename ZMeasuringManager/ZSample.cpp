@@ -97,9 +97,7 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
                 QList<double> energyCalibrationFactorList =
                         zv_sampleTask->zp_energyCalibrationForGainFactor(measuringConditionsList.at(i).first);
 
-
                 speAuxdata.zp_setEnergyCalibrationFactors(energyCalibrationFactorList);
-
 
                 emit zg_inquirySpectrumColor(color);
                 spectrum = new ZSpeSpectrum(intensityList, speAuxdata,

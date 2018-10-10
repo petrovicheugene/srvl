@@ -38,7 +38,7 @@ void ZEnergyCalibrationDialog::zh_createComponents()
     zv_peakWindowTableModel = new ZPeakWindowTableModel(this);
 
     // layouts
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // control widget
@@ -69,12 +69,12 @@ QWidget* ZEnergyCalibrationDialog::zh_createControlWidget()
 {
     QWidget* controlWidget = new QWidget();
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     controlWidget->setLayout(mainLayout);
 
     // gain factor spinbox
-    QHBoxLayout* spinBoxLayout = new QHBoxLayout(controlWidget);
+    QHBoxLayout* spinBoxLayout = new QHBoxLayout;
     QLabel* label = new QLabel(this);
     label->setText(glCreateCaption(tr("Gain factor:")));
     spinBoxLayout->addWidget(label);

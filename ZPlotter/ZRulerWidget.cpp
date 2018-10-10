@@ -460,6 +460,11 @@ void ZRulerWidget::zp_setInfoLabelText(const QString& text)
     zv_infoLabel->setText(text);
 }
 //=========================================================
+void ZRulerWidget::zp_setInfoLabelVisible(bool visible)
+{
+    zv_infoLabel->setVisible(visible);
+}
+//=========================================================
 void ZRulerWidget::resizeEvent(QResizeEvent* event)
 {
     if(zv_plot != 0)

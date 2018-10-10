@@ -24,7 +24,7 @@ ZCommonSettingsWidget::ZCommonSettingsWidget(QWidget *parent) : QWidget(parent)
 //========================================================
 void ZCommonSettingsWidget::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // app password
@@ -32,7 +32,7 @@ void ZCommonSettingsWidget::zh_createComponents()
     captionLabel->setText(glCreateCaption(tr("Application password settings:")));
     mainLayout->addWidget(captionLabel);
 
-    QHBoxLayout* passwordLayout = new  QHBoxLayout(this);
+    QHBoxLayout* passwordLayout = new  QHBoxLayout;
     mainLayout->addLayout(passwordLayout);
     zv_passwordSettingsButton = new QPushButton(this);
     zv_passwordSettingsButton->setText(tr("Password"));

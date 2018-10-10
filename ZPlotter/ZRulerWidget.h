@@ -134,6 +134,7 @@ public:
     int zp_maxMarkHeight();
 
     void zp_setInfoLabelText(const QString& text);
+    void zp_setInfoLabelVisible(bool visible);
 
 signals:
 

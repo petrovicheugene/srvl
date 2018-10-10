@@ -57,7 +57,7 @@ void ZOperatorDialog::zh_createComponents(const QString& operatorLogin,
         zv_oldPasswordString = QString();
     }
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
     QLabel* label = new QLabel(this);
     label->setText(tr("Login:"));

@@ -106,6 +106,8 @@ public:
     QRectF zp_viewportSceneRect() const;
     QSize zp_viewportPixelSize() const;
 
+    void zp_setInfoLabelVisible(bool visible);
+
 signals:
 
     void zg_cursorAreaImage(QImage);
@@ -148,7 +150,6 @@ private slots:
 
     void zh_mouseScenePositionChanged(QPointF scenePos) const;
     void zh_mouseLeaved() const;
-
 
 private:
 

@@ -250,7 +250,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
     zv_measuringConditionsModel->setHorizontalHeaderLabels(horizontalHeaderLabelList);
 
     // Controls
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // filter info label
@@ -277,7 +277,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
 
 
     // load and remove calibration button
-    QHBoxLayout* levelLayout = new QHBoxLayout(this);
+    QHBoxLayout* levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     levelLayout->addStretch();
 

@@ -556,7 +556,7 @@ void MainWindow::zh_saveSettings()
 QFrame* MainWindow::zh_setWidgetToFrame(QWidget* widget)
 {
     QFrame* frame = new QFrame();
-    QVBoxLayout* frameLayout = new QVBoxLayout(frame);
+    QVBoxLayout* frameLayout = new QVBoxLayout;
     frame->setLayout(frameLayout);
     frame->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
     frame->setLineWidth(1);

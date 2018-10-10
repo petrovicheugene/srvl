@@ -42,7 +42,7 @@ void ZChemicalDialog::zp_setChemical(int id, const QString& chemical)
 //===============================================================
 void ZChemicalDialog::zv_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // chemical line edit

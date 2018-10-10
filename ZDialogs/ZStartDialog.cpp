@@ -39,10 +39,10 @@ ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 void ZStartDialog::zh_createComponents()
 {
     // layouts
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
-    QHBoxLayout* topLayout = new QHBoxLayout(this);
+    QHBoxLayout* topLayout = new QHBoxLayout;
     mainLayout->addLayout(topLayout);
 
     // sparator line

@@ -63,7 +63,7 @@ qreal ZAddCalibrationDialog::zp_rangeMaxMargin() const
 void ZAddCalibrationDialog::zh_createComponents()
 {
     // main layout
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // file path
@@ -71,7 +71,7 @@ void ZAddCalibrationDialog::zh_createComponents()
     label->setText(tr("Calibration file:"));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* pathLayout = new QHBoxLayout(this);
+    QHBoxLayout* pathLayout = new QHBoxLayout;
     mainLayout->addLayout(pathLayout);
     zv_filePathLineEdit = new QLineEdit(this);
     zv_filePathLineEdit->setReadOnly(true);
@@ -80,14 +80,14 @@ void ZAddCalibrationDialog::zh_createComponents()
     pathLayout->addWidget(zv_browseButton);
 
     // central layout
-    QHBoxLayout* centralLayout = new QHBoxLayout(this);
+    QHBoxLayout* centralLayout = new QHBoxLayout;
     mainLayout->addLayout(centralLayout);
     // left layout
-    QVBoxLayout* leftLayout = new QVBoxLayout(this);
+    QVBoxLayout* leftLayout = new QVBoxLayout;
     centralLayout->addLayout(leftLayout);
     centralLayout->addSpacing(20);
     // right layout
-    QVBoxLayout* rightLayout = new QVBoxLayout(this);
+    QVBoxLayout* rightLayout = new QVBoxLayout;
     centralLayout->addLayout(rightLayout);
 
     // name
@@ -112,7 +112,7 @@ void ZAddCalibrationDialog::zh_createComponents()
     rightLayout->addWidget(label);
 
     // max
-    QHBoxLayout* rangeMaxLayout = new QHBoxLayout(this);
+    QHBoxLayout* rangeMaxLayout = new QHBoxLayout;
     rightLayout->addLayout(rangeMaxLayout);
 
     label = new QLabel(this);
@@ -127,7 +127,7 @@ void ZAddCalibrationDialog::zh_createComponents()
     rightLayout->addSpacing(label->sizeHint().width());
 
     // min
-    QHBoxLayout* rangeMinLayout = new QHBoxLayout(this);
+    QHBoxLayout* rangeMinLayout = new QHBoxLayout;
     rightLayout->addLayout(rangeMinLayout);
 
     label = new QLabel(this);

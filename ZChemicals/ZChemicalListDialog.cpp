@@ -62,7 +62,7 @@ void ZChemicalListDialog::zh_createActions()
 //===============================================================
 void ZChemicalListDialog::zh_createComponents()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // chemical table

@@ -51,7 +51,7 @@ QString ZDatabasePropertiesDialog::zp_path() const
 void ZDatabasePropertiesDialog::zh_createComponents()
 {
     // main layout
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QGridLayout* controlLayout = new QGridLayout(this);

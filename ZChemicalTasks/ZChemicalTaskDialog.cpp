@@ -92,7 +92,7 @@ void ZChemicalTaskDialog::zh_createComponents()
     zv_chemicalTaskCalibrationModel = new ZChemicalTaskCalibrationModel(this);
     zv_chemicalTaskCalibrationModel->zp_connectToCalibrationSQLTableModel(zv_calibrationSQLTableModel);
     // widgets
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     // chemical
@@ -100,7 +100,7 @@ void ZChemicalTaskDialog::zh_createComponents()
     label->setText(glCreateCaption(tr("Chemical:")));
     mainLayout->addWidget(label);
 
-    QHBoxLayout* levelLayout = new QHBoxLayout(this);
+    QHBoxLayout* levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_chemicalLineEdfit = new QLineEdit(this);
     zv_chemicalLineEdfit->setReadOnly(true);
@@ -111,7 +111,7 @@ void ZChemicalTaskDialog::zh_createComponents()
     label = new QLabel(this);
     label->setText(glCreateCaption(tr("Task name:")));
     mainLayout->addWidget(label);
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_chemicalTaskNameLineEdit = new QLineEdit(this);
     levelLayout->addWidget(zv_chemicalTaskNameLineEdit);
@@ -122,7 +122,7 @@ void ZChemicalTaskDialog::zh_createComponents()
     label->setText(glCreateCaption(tr("Measuring conditions:")));
     mainLayout->addWidget(label);
 
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_measuringConditionsLineEdit = new QLineEdit(this);
     zv_measuringConditionsLineEdit->setReadOnly(true);

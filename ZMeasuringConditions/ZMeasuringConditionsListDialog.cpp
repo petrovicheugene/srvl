@@ -115,7 +115,7 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     zv_gainFactorModel->select();
 
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label;
@@ -182,7 +182,7 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     mainLayout->addWidget(zv_measuringConditionsTable);
 
     // new button
-    levelLayout = new QHBoxLayout(this);
+    levelLayout = new QHBoxLayout;
     mainLayout->addLayout(levelLayout);
     zv_newConditionsButton = new QPushButton(this);
     zv_newConditionsButton->setText(tr("New"));
@@ -195,7 +195,7 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
         label = new QLabel(this);
         label->setText(glCreateCaption(tr("Quantity:")));
         mainLayout->addWidget(label);
-        levelLayout = new QHBoxLayout(this);
+        levelLayout = new QHBoxLayout;
         mainLayout->addLayout(levelLayout);
         zv_quantitySpinBox = new QSpinBox(this);
         zv_quantitySpinBox->setRange(1, zv_maxQuantity);
