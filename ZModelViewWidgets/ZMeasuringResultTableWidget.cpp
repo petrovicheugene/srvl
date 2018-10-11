@@ -4,6 +4,7 @@
 #include "ZSampleTaskDelegate.h"
 
 
+#include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMetaObject>
 #include <QTableView>
@@ -40,6 +41,8 @@ void ZMeasuringResultTableWidget::zh_onCurrentIndexChanged(const QModelIndex& cu
 //=============================================================
 void ZMeasuringResultTableWidget::zh_onModelReset()
 {
+    zh_manageColumnWidth();
+
 //    QMetaObject::invokeMethod(zv_table->selectionModel(),
 //                              "select",
 //                              Qt::QueuedConnection,
@@ -59,5 +62,16 @@ void ZMeasuringResultTableWidget::zh_onModelReset()
 void ZMeasuringResultTableWidget::zh_onModelAboutToBeReset()
 {
     // zv_itemSelection = zv_table->selectionModel()->selection();
+}
+//=============================================================
+void ZMeasuringResultTableWidget::zh_manageColumnWidth()
+{
+    for(int column = 0; column < zv_table->model()->columnCount(); column++)
+    {
+        if(zv_table->columnWidth(column) < zv_table->horizontalHeader()->sectionSizeHint(column))
+        {
+            zv_table->resizeColumnToContents(column);
+        }
+    }
 }
 //=============================================================

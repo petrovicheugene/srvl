@@ -47,6 +47,7 @@ private:
     QItemSelection zv_itemSelection;
 
     // FUNCS
+    void zh_manageColumnWidth();
 
 };
 //============================================================
