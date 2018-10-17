@@ -54,10 +54,15 @@ void ZChemicalListDialog::zh_createActions()
 {
     zv_newChemicalAction = new ZControlAction(this);
     zv_newChemicalAction->setText(tr("New"));
+    zv_newChemicalAction->setIcon(QIcon(":/images/ZImages/new-8"));
+    zv_newChemicalAction->setToolTip(tr("Create new chemical"));
 
-    zv_editChemicalAction = new ZControlAction(this);
-    zv_editChemicalAction->setEnabled(false);
-    zv_editChemicalAction->setText(tr("Edit"));
+    zv_copyChemicalAction = new ZControlAction(this);
+    zv_copyChemicalAction->setEnabled(false);
+    zv_copyChemicalAction->setText(tr("Copy"));
+    zv_copyChemicalAction->setIcon(QIcon(":/images/ZImages/copy-8"));
+    zv_copyChemicalAction->setToolTip(tr("Copy current chemical"));
+
 }
 //===============================================================
 void ZChemicalListDialog::zh_createComponents()
@@ -116,7 +121,7 @@ void ZChemicalListDialog::zh_createConnections()
     // add actions to widgets
     QList<ZControlAction*> actionList;
     actionList.append(zv_newChemicalAction);
-    actionList.append(zv_editChemicalAction);
+    actionList.append(zv_copyChemicalAction);
     zv_chemicalTableWidget->zp_appendButtonActions(actionList);
     zv_chemicalTableWidget->zp_tableView()->viewport()->installEventFilter(this);
 
@@ -131,7 +136,7 @@ void ZChemicalListDialog::zh_createConnections()
 
     connect(zv_newChemicalAction, &ZControlAction::triggered,
             this, &ZChemicalListDialog::zh_onNewChemicalAction);
-    connect(zv_editChemicalAction, &ZControlAction::triggered,
+    connect(zv_copyChemicalAction, &ZControlAction::triggered,
             this, &ZChemicalListDialog::zh_onEditChemicalAction);
 
 }
@@ -485,7 +490,7 @@ void ZChemicalListDialog::zh_onChemicalChange(const QModelIndex& current, const 
         }
     }
 
-    zv_editChemicalAction->setEnabled(currentChemicalId > 0);
+    zv_copyChemicalAction->setEnabled(currentChemicalId > 0);
 }
 //===============================================================
 bool ZChemicalListDialog::zh_checkData()

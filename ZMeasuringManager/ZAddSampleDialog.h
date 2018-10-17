@@ -53,7 +53,7 @@ private:
 
     // VARS
     ZControlAction* zv_newSampleTaskAction;
-    ZControlAction* zv_editSampleTaskAction;
+    ZControlAction* zv_copySampleTaskAction;
     ZControlAction* zv_reviewSampleTaskAction;
 
     QPushButton* zv_okButton;

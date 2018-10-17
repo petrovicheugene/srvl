@@ -35,6 +35,20 @@ QList<ZControlAction*> ZSampleTaskTreeModel::zp_buttonTreeActions() const
     return actionList;
 }
 //===================================================
+//QMap<QString, QList<ZControlAction*> > ZSampleTaskTreeModel::zp_buttonTreeActions() const
+//{
+//    QMap<QString, QList<ZControlAction*> > map;
+//    QList<ZControlAction*> actionList;
+//    actionList.append(zv_appendMeasuringConditionsAction);
+//    actionList.append(zv_appendChemicalTaskAction);
+//    map.insert(tr("Add"), actionList);
+//    actionList.clear();
+
+//    actionList.append(zv_removeCurrentTaskElementAction);
+//    map.insert(tr("Clear"), actionList);
+//    return map;
+//}
+//===================================================
 QList<ZControlAction*> ZSampleTaskTreeModel::zp_contextTreeActions() const
 {
     QList<ZControlAction*> actionList;
@@ -229,16 +243,19 @@ int ZSampleTaskTreeModel::zp_childCount(QModelIndex parent) const
 void ZSampleTaskTreeModel::zh_createActions()
 {
     zv_appendMeasuringConditionsAction = new ZControlAction(this);
-    zv_appendMeasuringConditionsAction->setText("Add M.C.");
-    zv_appendMeasuringConditionsAction->setToolTip(tr("Append measuring conditions"));
+    zv_appendMeasuringConditionsAction->setText("Measurement task");
+    zv_appendMeasuringConditionsAction->setToolTip(tr("Append measurement task"));
+    zv_appendMeasuringConditionsAction->setIcon(QIcon(":/images/ZImages/measurement-8"));
 
     zv_appendChemicalTaskAction = new ZControlAction(this);
-    zv_appendChemicalTaskAction->setText("Add Ch.T.");
+    zv_appendChemicalTaskAction->setText("Chemical task");
     zv_appendChemicalTaskAction->setToolTip(tr("Append chemical task"));
+    zv_appendChemicalTaskAction->setIcon(QIcon(":/images/ZImages/chemical-8"));
 
     zv_removeCurrentTaskElementAction = new ZControlAction(this);
     zv_removeCurrentTaskElementAction->setText("Clear");
-    zv_removeCurrentTaskElementAction->setToolTip(tr("Clear chemical tasks"));
+    zv_removeCurrentTaskElementAction->setToolTip(tr("Clear task list"));
+    zv_removeCurrentTaskElementAction->setIcon(QIcon(":/images/ZImages/clear-8"));
 
 }
 //===================================================

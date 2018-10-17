@@ -4,6 +4,7 @@
 //===================================================
 #include <QAbstractItemModel>
 #include <QList>
+#include <QMap>
 #include "ZSampleTaskTreeItem.h"
 //===================================================
 class ZControlAction;
@@ -26,6 +27,9 @@ public:
 
     int zp_childCount(QModelIndex parent) const;
     QList<ZControlAction*> zp_buttonTreeActions() const;
+
+
+    //QMap<QString, QList<ZControlAction*> > zp_buttonTreeActions() const;
     QList<ZControlAction*> zp_contextTreeActions() const;
 
     ZSampleTaskTreeBaseItem* zp_itemForIndex(const QModelIndex& index) const;

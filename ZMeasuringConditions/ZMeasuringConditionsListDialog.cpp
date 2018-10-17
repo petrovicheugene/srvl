@@ -117,10 +117,10 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     zv_gainFactorModel->setTable("gain_factors");
     zv_gainFactorModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_gainFactorModel->select();
-    zv_measuringConditionsModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Gain Factor")));
-    zv_measuringConditionsModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("En K0")));
-    zv_measuringConditionsModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("En K1")));
-    zv_measuringConditionsModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("En K2")));
+    zv_gainFactorModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Gain Factor")));
+    zv_gainFactorModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("En K0")));
+    zv_gainFactorModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("En K1")));
+    zv_gainFactorModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("En K2")));
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -194,6 +194,11 @@ void ZMeasuringConditionsListDialog::zh_createComponents(bool forSelection)
     mainLayout->addLayout(levelLayout);
     zv_newConditionsButton = new QPushButton(this);
     zv_newConditionsButton->setText(tr("New"));
+    zv_newConditionsButton->setFlat(true);
+    zv_newConditionsButton->setIcon(QIcon(":/images/ZImages/new-8"));
+    zv_newConditionsButton->setToolTip(tr("Create new measurement conditions"));
+
+
     levelLayout->addStretch();
     levelLayout->addWidget(zv_newConditionsButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 

@@ -103,8 +103,14 @@ void ZBaseTableWidget::zp_appendButtonActions(const QList<ZControlAction*>& acti
         }
         QPushButton* button = new QPushButton(this);
         button->setFlat(true);
-        button->setIcon(actionList.at(a)->icon());
-        button->setText(actionList.at(a)->text());
+        if(actionList.at(a)->icon().isNull())
+        {
+            button->setText(actionList.at(a)->text());
+        }
+        else
+        {
+            button->setIcon(actionList.at(a)->icon());
+        }
         button->setToolTip(actionList.at(a)->toolTip());
         button->setEnabled(actionList[a]->isEnabled());
         connect(button, &QPushButton::clicked,

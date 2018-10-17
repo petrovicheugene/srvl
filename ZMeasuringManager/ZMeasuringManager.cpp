@@ -116,30 +116,43 @@ bool ZMeasuringManager::zh_checkColor(QColor color)
 void ZMeasuringManager::zh_createActions()
 {
     zv_saveSeriesAction = new ZControlAction(this);
+    zv_saveSeriesAction->setIcon(QIcon(":images/ZImages/save-8.png"));
     zv_saveSeriesAction->setText(tr("Save series"));
+    zv_saveSeriesAction->setToolTip(tr("Save current series"));
     zv_saveSeriesAction->setEnabled(false);
 
     zv_loadSeriesAction = new ZControlAction(this);
+    zv_loadSeriesAction->setIcon(QIcon(":images/ZImages/load-8.png"));
     zv_loadSeriesAction->setText(tr("Load series"));
+    zv_loadSeriesAction->setToolTip(tr("Load series"));
 
     zv_addSamplesToSeriesAction = new ZControlAction(this);
+    zv_addSamplesToSeriesAction->setIcon(QIcon(":images/ZImages/add-8.png"));
     zv_addSamplesToSeriesAction->setText(tr("Add samples"));
+    zv_addSamplesToSeriesAction->setToolTip(tr("Add sample to series"));
 
     zv_removeSamplesFromSeriesAction = new ZControlAction(this);
+    zv_removeSamplesFromSeriesAction->setIcon(QIcon(":images/ZImages/remove-8.png"));
     zv_removeSamplesFromSeriesAction->setText(tr("Remove samples"));
     zv_removeSamplesFromSeriesAction->setEnabled(false);
+    zv_removeSamplesFromSeriesAction->setToolTip(tr("Remove sample from series"));
 
     zv_loadSpectraFromFilesAction = new ZControlAction(this);
     zv_loadSpectraFromFilesAction->setText(tr("Load spectra from files"));
 
     zv_saveSpectraToFilesAction = new ZControlAction(this);
+    zv_saveSpectraToFilesAction->setIcon(QIcon(":images/ZImages/saveToFile-8.png"));
     zv_saveSpectraToFilesAction->setText(tr("Save spectra to files"));
     zv_saveSpectraToFilesAction->setEnabled(false);
+    zv_saveSpectraToFilesAction->setToolTip(tr("Save selected spectra to files"));
 
     zv_printAction = new ZControlAction(this);
+    zv_printAction->setIcon(QIcon(":images/ZImages/print-8.png"));
     zv_printAction->setText(tr("Print"));
+    zv_printAction->setToolTip(tr("Print measurement results"));
 
     zv_previewAndPrintAction = new ZControlAction(this);
+    //zv_previewAndPrintAction->setIcon(QIcon(":images/ZImages/print-preview-2.png"));
     zv_previewAndPrintAction->setText(tr("Preview and print"));
 
     // connection actions
@@ -545,7 +558,7 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleActions() const
 //    actionList.append(nullptr);
 //    actionList.append(zv_saveSpectraToFilesAction);
     actionList.append(nullptr);
-    actionList.append(zv_previewAndPrintAction);
+//    actionList.append(zv_previewAndPrintAction);
     actionList.append(zv_printAction);
 
     return actionList;

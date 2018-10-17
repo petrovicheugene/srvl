@@ -11,6 +11,7 @@ class ZControlAction;
 class QTreeView;
 class ZSampleTaskTreeModel;
 class QLabel;
+class QPushButton;
 class QHBoxLayout;
 class QVBoxLayout;
 //============================================================
@@ -24,6 +25,7 @@ public:
     virtual void zp_setModel(ZSampleTaskTreeModel *model);
     void zp_setCaption(const QString& caption);
     void zp_appendButtonActions(const QList<ZControlAction*>& actionList);
+    void zp_appendButton(QPushButton* button);
     void zp_appendContextActions(const QList<ZControlAction*>& actionList);
     void zp_setSectionResizeMode(int section, QHeaderView::ResizeMode);
     void zp_setStretchLastSection(bool stretch);

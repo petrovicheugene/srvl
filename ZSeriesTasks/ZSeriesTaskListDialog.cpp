@@ -10,6 +10,7 @@
 
 #include <QAbstractItemView>
 #include <QFrame>
+#include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -85,12 +86,25 @@ void ZSeriesTaskListDialog::zh_createComponents()
     //    zv_newTaskButton = new QPushButton(NS_Buttons::glButtonNew, this);
     //    buttonBox->addButton(zv_newTaskButton, QDialogButtonBox::ActionRole);
 
-    QString okButtonCaption = zv_forLoad ? tr("Load") : tr("Save");
+    QString okButtonCaption;
+    QString okToolTip;
+    if(zv_forLoad)
+    {
+        okButtonCaption = tr("Load");
+        okToolTip = tr("Load series task");
+    }
+    else
+    {
+        okButtonCaption = zv_forLoad ? tr("Load") : tr("Save");
+        okToolTip = tr("Save series task");
+    }
 
     zv_okButton = new QPushButton(okButtonCaption, this);
+    zv_okButton->setToolTip(okToolTip);
     buttonBox->addButton(zv_okButton, QDialogButtonBox::ActionRole);
 
-    zv_cancelButton = new QPushButton(NS_Buttons::glButtonCancel, this);
+    zv_cancelButton = new QPushButton(tr("Cancel"), this);
+    zv_cancelButton->setToolTip(tr("Cancel and close dialog"));
     buttonBox->addButton(zv_cancelButton, QDialogButtonBox::ActionRole);
 
 }
@@ -147,6 +161,7 @@ void ZSeriesTaskListDialog::zp_connectToManager(ZSeriesTaskListManager* manager)
     zv_seriesTaskTableWidget->zp_setModel(zv_manager->zp_model());
 
     zv_seriesTaskTableWidget->zp_tableView()->setColumnHidden(0, true);
+    zv_seriesTaskTableWidget->zp_tableView()->horizontalHeader()->stretchLastSection();
 
     connect(zv_seriesTaskTableWidget, &ZSeriesTaskTableWidget::zg_currentChanged,
             zv_manager, &ZSeriesTaskListManager::zp_onCurrentChange);

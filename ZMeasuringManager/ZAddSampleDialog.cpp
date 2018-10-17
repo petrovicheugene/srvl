@@ -50,10 +50,15 @@ void ZAddSampleDialog::zh_createActions()
 {
     zv_newSampleTaskAction = new ZControlAction(this);
     zv_newSampleTaskAction->setText(tr("New"));
+    zv_newSampleTaskAction->setIcon(QIcon(":/images/ZImages/new-8"));
+    zv_newSampleTaskAction->setToolTip(tr("Create new sample task"));
 
-    zv_editSampleTaskAction = new ZControlAction(this);
-    zv_editSampleTaskAction->setEnabled(false);
-    zv_editSampleTaskAction->setText(tr("Edit"));
+    zv_copySampleTaskAction = new ZControlAction(this);
+    zv_copySampleTaskAction->setEnabled(false);
+    zv_copySampleTaskAction->setText(tr("Copy"));
+    zv_copySampleTaskAction->setIcon(QIcon(":/images/ZImages/copy-8"));
+    zv_copySampleTaskAction->setToolTip(tr("Copy current sample task"));
+
 
     zv_reviewSampleTaskAction = new ZControlAction(this);
     zv_reviewSampleTaskAction->setEnabled(false);
@@ -152,7 +157,7 @@ void ZAddSampleDialog::zh_createConnections()
     // add button actions
     QList<ZControlAction*> actionList;
     actionList.append(zv_newSampleTaskAction);
-    actionList.append(zv_editSampleTaskAction);
+    actionList.append(zv_copySampleTaskAction);
     // actionList.append(zv_reviewSampleTaskAction);
     zv_sampleTaskTableWidget->zp_appendButtonActions(actionList);
 
@@ -164,7 +169,7 @@ void ZAddSampleDialog::zh_createConnections()
             this, &ZAddSampleDialog::reject);
     connect(zv_newSampleTaskAction, &ZControlAction::triggered,
             this, &ZAddSampleDialog::zh_onNewSampleTaskButtonClick);
-    connect(zv_editSampleTaskAction, &ZControlAction::triggered,
+    connect(zv_copySampleTaskAction, &ZControlAction::triggered,
             this, &ZAddSampleDialog::zh_onEditSampleTaskButtonClick);
     connect(zv_reviewSampleTaskAction, &ZControlAction::triggered,
             this, &ZAddSampleDialog::zh_onReviewSampleTaskButtonClick);
@@ -438,7 +443,7 @@ bool ZAddSampleDialog::zh_checkData()
 void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 {
     // previously set edit and review button disabled
-    zv_editSampleTaskAction->setEnabled(false);
+    zv_copySampleTaskAction->setEnabled(false);
     zv_reviewSampleTaskAction->setEnabled(false);
 
     QModelIndex currentIndex = zv_sampleTaskTableWidget->zp_tableView()->currentIndex();
@@ -510,7 +515,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
     }
 
     zv_sampleNameLineEdit->setText(vData.toString());
-    zv_editSampleTaskAction->setEnabled(true);
+    zv_copySampleTaskAction->setEnabled(true);
     zv_reviewSampleTaskAction->setEnabled(true);
 
 }

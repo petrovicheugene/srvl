@@ -49,10 +49,10 @@ private:
 
     // VARS
     ZControlAction* zv_newChemicalAction;
-    ZControlAction* zv_editChemicalAction;
+    ZControlAction* zv_copyChemicalAction;
 
     ZControlAction* zv_newChemicalTaskAction;
-    ZControlAction* zv_editChemicalTaskAction;
+    ZControlAction* zv_copyChemicalTaskAction;
     ZControlAction* zv_reviewChemicalTaskAction;
 
     QSqlTableModel* zv_chemicalTableModel;

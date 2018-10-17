@@ -100,12 +100,12 @@ void ZChemicalElementProprtyEditor::zh_createComponents()
     zv_mainSplitter->addWidget(zh_createPropertySectionTreeWidget());
     zv_mainSplitter->addWidget(zh_createPropertyTableWidget());
 
-    zv_loadButton = zh_createBasementButton(tr("Load"),
+    zv_loadButton = zh_createBasementButton(tr(""),
                                             tr("Load chemical element properties from file"),
-                                            QIcon());
-    zv_saveButton = zh_createBasementButton(tr("Save"),
+                                            QIcon(":/images/ZImages/add-8"));
+    zv_saveButton = zh_createBasementButton(tr(""),
                                             tr("Save chemical element properties to file"),
-                                            QIcon());
+                                            QIcon(":/images/ZImages/save-8"));
     zv_closeButton = zh_createBasementButton(tr("Close"),
                                              tr("Close editor"),
                                              QIcon());

@@ -283,14 +283,18 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
     levelLayout->addStretch();
 
     zv_loadCalibrationButton = new QPushButton(this);
-    zv_loadCalibrationButton->setText(tr("Load"));
+    zv_loadCalibrationButton->setIcon(QIcon(":/images/ZImages/load-8"));
+    zv_loadCalibrationButton->setToolTip(tr("Load calibration from file"));
+    // zv_loadCalibrationButton->setText(tr("Load"));
     zv_loadCalibrationButton->setFlat(true);
     levelLayout->addWidget(zv_loadCalibrationButton);
 
-    zv_removeCalibrationButton = new QPushButton(this);
-    zv_removeCalibrationButton->setText(tr("Remove"));
-    zv_removeCalibrationButton->setFlat(true);
-    levelLayout->addWidget(zv_removeCalibrationButton);
+//    zv_removeCalibrationButton = new QPushButton(this);
+//    zv_removeCalibrationButton->setIcon(QIcon(":/images/ZImages/remove-8"));
+//   //zv_removeCalibrationButton->setText(tr("Remove"));
+//    zv_removeCalibrationButton->setToolTip(tr("Remove calibration from file"));
+//    zv_removeCalibrationButton->setFlat(true);
+//    levelLayout->addWidget(zv_removeCalibrationButton);
 
     // message
     zv_messageLabel = new QLabel(this);
@@ -364,8 +368,8 @@ void ZCalibrationListDialog::zh_createConnections()
 
     connect(zv_loadCalibrationButton, &QPushButton::clicked,
             this, &ZCalibrationListDialog::zh_loadCalibrationsFromFile);
-    connect(zv_removeCalibrationButton, &QPushButton::clicked,
-            this, &ZCalibrationListDialog::zh_removeSelectedCalibration);
+//    connect(zv_removeCalibrationButton, &QPushButton::clicked,
+//            this, &ZCalibrationListDialog::zh_removeSelectedCalibration);
 
 }
 //===============================================================

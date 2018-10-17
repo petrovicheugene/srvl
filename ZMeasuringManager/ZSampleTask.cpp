@@ -152,6 +152,13 @@ void ZSampleTask::zp_removeClient(QObject* client )
         return;
     }
 
+    if(zv_currentSample == client)
+    {
+        // zp_measuringFinished();
+        zp_stopMeasuring(zv_currentSample);
+        //zv_currentSample = nullptr;
+    }
+
     zv_clientList.removeAt(zv_clientList.indexOf(client));
 
     if(zv_clientList.count() < 1)
@@ -227,6 +234,8 @@ bool ZSampleTask::zp_stopMeasuring(ZSample* sample)
         return false;
     }
 
+    zv_measuringController->zp_stopMeasuring();
+    zv_currentSample = nullptr;
     return false;
 }
 //=================================================

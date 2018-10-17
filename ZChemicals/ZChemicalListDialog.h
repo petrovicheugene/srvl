@@ -41,7 +41,7 @@ private:
 
     // VARS
     ZControlAction* zv_newChemicalAction;
-    ZControlAction* zv_editChemicalAction;
+    ZControlAction* zv_copyChemicalAction;
 
     QSqlTableModel* zv_chemicalTableModel;
     ZChemicalTableWidget* zv_chemicalTableWidget;

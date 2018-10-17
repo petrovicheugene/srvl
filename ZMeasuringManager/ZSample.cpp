@@ -274,6 +274,8 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
                                  quint32 deadTime,
                                  bool finished)
 {
+    qDebug() << "IN SAMPLE";
+
     for(int s = 0; s < zv_spectrumList.count(); s++)
     {
         if(zv_spectrumList.at(s).first.first == gainFactor && zv_spectrumList.at(s).first.second == exposition)

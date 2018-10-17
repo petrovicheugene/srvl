@@ -1,6 +1,7 @@
 //===============================================================
 #include "ZSampleTaskDialog2.h"
 #include "ZGeneral.h"
+#include "ZControlAction.h"
 #include "ZSampleTaskTreeWidget.h"
 #include "ZSampleTaskTreeModel.h"
 
@@ -12,6 +13,7 @@
 #include <QFrame>
 #include <QLineEdit>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
@@ -147,7 +149,22 @@ void ZSampleTaskDialog2::zh_createConnections()
     zv_sampleTaskTreeWidget->zp_setSelectionBehavior(QAbstractItemView::SelectRows);
     zv_sampleTaskTreeWidget->zp_setSelectionMode(QAbstractItemView::SingleSelection);
 
-    zv_sampleTaskTreeWidget->zp_appendButtonActions(zv_sampleTaskTreeModel->zp_buttonTreeActions());
+    QList<ZControlAction*>actionList = zv_sampleTaskTreeModel->zp_buttonTreeActions();
+
+//    // first two actions hang on button menu
+//    QMenu* addMenu = new QMenu;
+//    addMenu->addAction(actionList.takeFirst());
+//    addMenu->addAction(actionList.takeFirst());
+//    QPushButton* button = new QPushButton;
+//    button->setToolTip(tr("Add task"));
+//    button->setIcon(QIcon(":/images/ZImages/add-8.png"));
+//    button->setMenu(addMenu);
+//    zv_sampleTaskTreeWidget->zp_appendButton(button);
+
+    // the rest actions append as buttons
+    zv_sampleTaskTreeWidget->zp_appendButtonActions(actionList);
+
+
     zv_sampleTaskTreeWidget->zp_appendContextActions(zv_sampleTaskTreeModel->zp_contextTreeActions());
 
     connect(zv_okButton, &QPushButton::clicked,

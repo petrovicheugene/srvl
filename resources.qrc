@@ -24,6 +24,53 @@
         <file>ZImages/blue_home.ico</file>
         <file>ZImages/blue_left.ico</file>
         <file>ZImages/blue_right.ico</file>
+        <file>ZImages/print-2.png</file>
+        <file>ZImages/print-preview-2.png</file>
+        <file>ZImages/sample-1.png</file>
+        <file>ZImages/sample-2.png</file>
+        <file>ZImages/sample-3.png</file>
+        <file>ZImages/sample-rem-1.png</file>
+        <file>ZImages/sample-rem-2.png</file>
+        <file>ZImages/saveSeries-2.png</file>
+        <file>ZImages/series-1.png</file>
+        <file>ZImages/series-2.png</file>
+        <file>ZImages/series-3.png</file>
+        <file>ZImages/table.png</file>
+        <file>ZImages/table-1.png</file>
+        <file>ZImages/table-2.png</file>
+        <file>ZImages/load-6.png</file>
+        <file>ZImages/remove-6.png</file>
+        <file>ZImages/add-6.png</file>
+        <file>ZImages/save-6.png</file>
+        <file>ZImages/add-8.png</file>
+        <file>ZImages/add-9.png</file>
+        <file>ZImages/clear-8.png</file>
+        <file>ZImages/clear-9.png</file>
+        <file>ZImages/delete-8.png</file>
+        <file>ZImages/delete-9.png</file>
+        <file>ZImages/load-8.png</file>
+        <file>ZImages/load-9.png</file>
+        <file>ZImages/print-8.png</file>
+        <file>ZImages/print-9.png</file>
+        <file>ZImages/remove-9.png</file>
+        <file>ZImages/save-8.png</file>
+        <file>ZImages/save-9.png</file>
+        <file>ZImages/saveToFile-8.png</file>
+        <file>ZImages/saveToFile-9.png</file>
+        <file>ZImages/settings-8.png</file>
+        <file>ZImages/settings-9.png</file>
+        <file>ZImages/delete-10.png</file>
+        <file>ZImages/remove-10.png</file>
+        <file>ZImages/copy-8.png</file>
+        <file>ZImages/copy-9.png</file>
+        <file>ZImages/measurement-8.png</file>
+        <file>ZImages/chemical-8.png</file>
+        <file>ZImages/remove-8.png</file>
+        <file>ZImages/new-8.png</file>
+        <file>ZImages/new-9.png</file>
+        <file>ZImages/start-8.png</file>
+        <file>ZImages/stop-8.png</file>
+        <file>ZImages/stop-10.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>

@@ -6,6 +6,7 @@
 #include <QButtonGroup>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QToolButton>
 //===========================================================
 ZStartStopButtonWidget::ZStartStopButtonWidget(Qt::Orientation orientation, QWidget *parent)
     : QWidget(parent)
@@ -89,16 +90,20 @@ void ZStartStopButtonWidget::zh_createComponents()
 
     zv_startButton = new QPushButton(this);
     zv_startButton->setMinimumHeight(30);
+    // zv_startButton->setFlat(true);
     zv_startButton->setText(tr("Start"));
     zv_startButton->setToolTip(tr("Start measuring"));
+    zv_startButton->setIcon(QIcon(":/images/ZImages/start-8"));
     zv_startButton->setCheckable(true);
     mainLayout->addWidget(zv_startButton);
     //zv_buttonGroup->addButton(zv_startButton);
 
     zv_stopButton = new QPushButton(this);
     zv_stopButton->setMinimumHeight(30);
+    // zv_stopButton->setFlat(true);
     zv_stopButton->setText(tr("Stop"));
     zv_stopButton->setToolTip(tr("Stop measuring"));
+    zv_stopButton->setIcon(QIcon(":/images/ZImages/stop-10"));
     zv_stopButton->setCheckable(true);
     mainLayout->addWidget(zv_stopButton);
     //zv_buttonGroup->addButton(zv_stopButton);

@@ -80,7 +80,7 @@ signals:
     void zg_measuringFinished() const;
     void zg_spectrumDataChanged(quint8 gainfactor, int exposition);
     void zg_concentrationChanged();
-
+    void zg_terminateMeasuring() const;
 
 public slots:
 

@@ -11,7 +11,7 @@ extern const QString glAppStateKeyName = "AppState";
 // Icons
 namespace NS_Icons
 {
-extern const QString glIconSettings = "";
+extern const QString glIconSettings = ":/images/ZImages/settings-8.png";
 extern const QString glIconExitApp = "";
 extern const QString glIconAbout = "";
 extern const QString glIconHelp = "";

@@ -52,17 +52,26 @@ void ZChemicalTaskListDialog::zh_createActions()
 {
     zv_newChemicalAction = new ZControlAction(this);
     zv_newChemicalAction->setText(tr("New"));
+    zv_newChemicalAction->setIcon(QIcon(":/images/ZImages/new-8"));
+    zv_newChemicalAction->setToolTip(tr("Create new chemical"));
 
-    zv_editChemicalAction = new ZControlAction(this);
-    zv_editChemicalAction->setEnabled(false);
-    zv_editChemicalAction->setText(tr("Edit"));
+    zv_copyChemicalAction = new ZControlAction(this);
+    zv_copyChemicalAction->setEnabled(false);
+    zv_copyChemicalAction->setText(tr("Copy"));
+    zv_copyChemicalAction->setIcon(QIcon(":/images/ZImages/copy-8"));
+    zv_copyChemicalAction->setToolTip(tr("Copy current chemical"));
 
     zv_newChemicalTaskAction = new ZControlAction(this);
     zv_newChemicalTaskAction->setText(tr("New"));
+    zv_newChemicalTaskAction->setIcon(QIcon(":/images/ZImages/new-8"));
+    zv_newChemicalTaskAction->setToolTip(tr("Create new chemical task"));
 
-    zv_editChemicalTaskAction = new ZControlAction(this);
-    zv_editChemicalTaskAction->setEnabled(false);
-    zv_editChemicalTaskAction->setText(tr("Edit"));
+    zv_copyChemicalTaskAction = new ZControlAction(this);
+    zv_copyChemicalTaskAction->setEnabled(false);
+    zv_copyChemicalTaskAction->setText(tr("Copy"));
+    zv_copyChemicalTaskAction->setIcon(QIcon(":/images/ZImages/copy-8"));
+    zv_copyChemicalTaskAction->setToolTip(tr("Copy current chemical task"));
+
 
     zv_reviewChemicalTaskAction = new ZControlAction(this);
     zv_reviewChemicalTaskAction->setEnabled(false);
@@ -156,12 +165,12 @@ void ZChemicalTaskListDialog::zh_createConnections()
     // add actions to widgets
     QList<ZControlAction*> actionList;
     actionList.append(zv_newChemicalAction);
-    actionList.append(zv_editChemicalAction);
+    actionList.append(zv_copyChemicalAction);
     zv_chemicalTableWidget->zp_appendButtonActions(actionList);
 
     actionList.clear();
     actionList.append(zv_newChemicalTaskAction);
-    actionList.append(zv_editChemicalTaskAction);
+    actionList.append(zv_copyChemicalTaskAction);
     //actionList.append(zv_reviewChemicalTaskAction);
     zv_chemicalTaskTableWidget->zp_appendButtonActions(actionList);
 
@@ -177,12 +186,12 @@ void ZChemicalTaskListDialog::zh_createConnections()
 
     connect(zv_newChemicalAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onNewChemicalAction);
-    connect(zv_editChemicalAction, &ZControlAction::triggered,
+    connect(zv_copyChemicalAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onEditChemicalAction);
 
     connect(zv_newChemicalTaskAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onNewChemicalTaskAction);
-    connect(zv_editChemicalTaskAction, &ZControlAction::triggered,
+    connect(zv_copyChemicalTaskAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onEditChemicalTaskAction);
     connect(zv_reviewChemicalTaskAction, &ZControlAction::triggered,
             this, &ZChemicalTaskListDialog::zh_onReviewChemicalTaskAction);
@@ -254,7 +263,7 @@ int ZChemicalTaskListDialog::zp_currentChemicalTaskId() const
 void ZChemicalTaskListDialog::zh_onChemicalChange(const QModelIndex& current, const QModelIndex& previous)
 {
     // reset edit review task actions
-    zv_editChemicalTaskAction->setEnabled(false);
+    zv_copyChemicalTaskAction->setEnabled(false);
     zv_reviewChemicalTaskAction->setEnabled(false);
 
     // get current chemical Id
@@ -275,7 +284,7 @@ void ZChemicalTaskListDialog::zh_onChemicalChange(const QModelIndex& current, co
 
     QString filterString = QString("chemicals_id=%1").arg(QString::number(currentChemicalId));
     zv_calibrationStackTableModel->setFilter(filterString);
-    zv_editChemicalAction->setEnabled(currentChemicalId > 0);
+    zv_copyChemicalAction->setEnabled(currentChemicalId > 0);
 
     zv_chemicalTaskTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 }
@@ -284,7 +293,7 @@ void ZChemicalTaskListDialog::zh_onChemicalTaskChange(const QModelIndex& current
 {
     bool actionsEnable = current.isValid();
 
-    zv_editChemicalTaskAction->setEnabled(actionsEnable);
+    zv_copyChemicalTaskAction->setEnabled(actionsEnable);
     zv_reviewChemicalTaskAction->setEnabled(actionsEnable);
 
 }

@@ -53,7 +53,6 @@ void ZBaseTreeWidget::zp_setCaption(const QString& caption)
 //============================================================
 void ZBaseTreeWidget::zp_appendButtonActions(const QList<ZControlAction*>& actionList)
 {
-    zv_buttonLayout->addStretch();
     // zv_table->addActions(actionList);
 
     for(int a = 0; a < actionList.count(); a++)
@@ -65,8 +64,14 @@ void ZBaseTreeWidget::zp_appendButtonActions(const QList<ZControlAction*>& actio
         }
         QPushButton* button = new QPushButton(this);
         button->setFlat(true);
-        button->setIcon(actionList.at(a)->icon());
-        button->setText(actionList.at(a)->text());
+        if(actionList.at(a)->icon().isNull())
+        {
+            button->setText(actionList.at(a)->text());
+        }
+        else
+        {
+            button->setIcon(actionList.at(a)->icon());
+        }
         button->setToolTip(actionList.at(a)->toolTip());
         button->setEnabled(actionList[a]->isEnabled());
         connect(button, &QPushButton::clicked,
@@ -76,6 +81,17 @@ void ZBaseTreeWidget::zp_appendButtonActions(const QList<ZControlAction*>& actio
 
         zv_buttonLayout->addWidget(button, 0, Qt::AlignRight);
     }
+}
+//============================================================
+void ZBaseTreeWidget::zp_appendButton(QPushButton* button)
+{
+    if(!button)
+    {
+        return;
+    }
+
+    button->setParent(this);
+    zv_buttonLayout->addWidget(button, 0, Qt::AlignRight);
 }
 //============================================================
 void ZBaseTreeWidget::zp_appendContextActions(const QList<ZControlAction*>& actionList)
@@ -128,6 +144,7 @@ void ZBaseTreeWidget::zh_createComponents()
 
     zv_buttonLayout = new QHBoxLayout;
     zv_mainLayout->addLayout(zv_buttonLayout);
+    zv_buttonLayout->addStretch();
 }
 //============================================================
 void ZBaseTreeWidget::zh_createConnections()

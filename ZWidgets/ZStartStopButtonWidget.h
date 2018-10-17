@@ -9,6 +9,7 @@ class QButtonGroup;
 class QPushButton;
 class QLayout;
 class QAbstractButton;
+class QToolButton;
 //===========================================================
 class ZStartStopButtonWidget : public QWidget
 {
