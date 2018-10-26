@@ -12,9 +12,10 @@ extern const QString glAppStateKeyName = "AppState";
 namespace NS_Icons
 {
 extern const QString glIconSettings = ":/images/ZImages/settings-8.png";
-extern const QString glIconExitApp = "";
-extern const QString glIconAbout = "";
-extern const QString glIconHelp = "";
+extern const QString glIconExitApp = ":/images/ZImages/exit-1.png";
+extern const QString glIconAbout = ":/images/ZImages/info-1.png";
+extern const QString glIconHelp = ":/images/ZImages/help-1.png";
+extern const QString glIconQt = ":/images/ZImages/Qt-logo.png";
 
 extern const QString glIconSidebarLeftOpen = ":/images/ZWidgets/sidebarLeftOpen-1.png";
 extern const QString glIconSidebarLeftClose = ":/images/ZWidgets/sidebarLeftClose-1.png";

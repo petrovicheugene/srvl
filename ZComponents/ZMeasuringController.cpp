@@ -4,6 +4,7 @@
 #include "ZUralAdcDeviceConnector.h"
 #include "ZSampleTask.h"
 
+#include <QDebug>
 #include <QTimerEvent>
 
 //=================================================
@@ -16,6 +17,7 @@ ZMeasuringController::ZMeasuringController(QObject *parent) : QObject(parent)
     zv_controllerState = CS_DISCONNECTED;
     zv_currentSampleTask = 0;
     zv_bufferChannelSize = 16384 / sizeof(CHANNEL); // doc for ComDV.dll
+    zv_currentMeasuringIndex = -1;
 
     zv_Load = 0;
     zv_DeadTime = 0;
@@ -209,6 +211,29 @@ bool ZMeasuringController::zp_stopMeasuring()
 
     zv_passedExpositionsSummMS = 0;
     return true;
+}
+//=================================================
+void ZMeasuringController::zp_finishCurrentMeasuring()
+{
+    if(zv_measuringTimer != 0)
+    {
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+    }
+
+    ZUralAdcDeviceConnector::SlotResult res;
+
+    for(int i = 0; i < 10; i++)
+    {
+        zv_connector->zp_stopExposition(res, 0);
+        if(res != ZUralAdcDeviceConnector::SR_TRUE)
+        {
+            continue;
+        }
+    }
+
+    zv_currentMeasuringIndex = -1;
+    zv_currentSampleTask->zp_measuringFinished();
 }
 //=================================================
 bool ZMeasuringController::zh_startSingleMeasuring()
@@ -557,11 +582,13 @@ void ZMeasuringController::zh_processMeasurementResults()
         // measuring finished
         if(zv_measuringTimer)
         {
+            killTimer(zv_measuringTimer);
             zv_measuringTimer = 0;
         }
-        zv_currentSampleTask->zp_measuringFinished();
+
         zv_currentMeasuringIndex = -1;
-        //        emit zg_spectrumIsMeasuring(-1);
+        zv_currentSampleTask->zp_measuringFinished();
+        // emit zg_spectrumIsMeasuring(-1);
 
         // zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
         return;

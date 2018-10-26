@@ -71,11 +71,24 @@
         <file>ZImages/start-8.png</file>
         <file>ZImages/stop-8.png</file>
         <file>ZImages/stop-10.png</file>
+        <file>ZImages/SRVLab-8.ico</file>
+        <file>ZImages/SRVLab-8.png</file>
+        <file>appIcon.png</file>
+        <file>ZImages/help-1.png</file>
+        <file>ZImages/info-1.png</file>
+        <file>ZImages/Qt-logo.png</file>
+        <file>ZImages/exit-1.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/sdanalyzer.sql</file>
     </qresource>
     <qresource prefix="/library">
         <file>ComDV.dll</file>
+    </qresource>
+    <qresource prefix="/translators">
+        <file>qtbase_en.qm</file>
+        <file>qtbase_ru.qm</file>
+        <file>SRVLab_ru.qm</file>
+        <file>SRVLab_ru.ts</file>
     </qresource>
 </RCC>

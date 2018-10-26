@@ -28,6 +28,7 @@ public:
     bool zp_measureSample(QList<QPair<quint8, int> > measuringConditions,
                           ZSampleTask* sampleTask);
     bool zp_stopMeasuring();
+    void zp_finishCurrentMeasuring();
 
 signals:
 

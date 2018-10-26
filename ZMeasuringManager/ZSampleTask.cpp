@@ -154,9 +154,8 @@ void ZSampleTask::zp_removeClient(QObject* client )
 
     if(zv_currentSample == client)
     {
-        // zp_measuringFinished();
-        zp_stopMeasuring(zv_currentSample);
-        //zv_currentSample = nullptr;
+        // zp_stopMeasuring(zv_currentSample);
+        emit zg_invokeToStopMeasurenent();
     }
 
     zv_clientList.removeAt(zv_clientList.indexOf(client));

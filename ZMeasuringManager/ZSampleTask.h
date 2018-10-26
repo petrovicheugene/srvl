@@ -130,6 +130,7 @@ public:
 signals:
 
     void zg_inquiryToDelete();
+    void zg_invokeToStopMeasurenent() const;
 
 public slots:
 

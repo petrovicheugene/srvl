@@ -182,7 +182,7 @@ bool ZChemicalElementPropertyIOManager::zp_extractFromCSV(ZAbstractChemicalEleme
     if(!textStream.readLineInto(&line))
     {
         file.close();
-        zv_errorStringList.append(tr("Cannot read header line from file \"&1\"!").arg(filePath));
+        zv_errorStringList.append(tr("Cannot read header line from file \"%1\"!").arg(filePath));
         return false;
     }
     // create property name list
@@ -190,7 +190,7 @@ bool ZChemicalElementPropertyIOManager::zp_extractFromCSV(ZAbstractChemicalEleme
     if(propertyNameList.isEmpty())
     {
         file.close();
-        zv_errorStringList.append(tr("Property name list in file \"&1\" is empty!").arg(filePath));
+        zv_errorStringList.append(tr("Property name list in file \"%1\" is empty!").arg(filePath));
         return false;
     }
 

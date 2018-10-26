@@ -28,6 +28,7 @@ extern const QString glIconSettings; /*!< TODO: describe */
 extern const QString glIconExitApp; /*!< TODO: describe */
 extern const QString glIconAbout; /*!< TODO: describe */
 extern const QString glIconHelp; /*!< TODO: describe */
+extern const QString glIconQt ;
 
 extern const QString glIconSidebarLeftOpen;
 extern const QString glIconSidebarLeftClose;

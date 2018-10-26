@@ -12,7 +12,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #PRO VARS
 #Application version
-RC_ICONS = "ZImages\gnome4.ico"
+RC_ICONS = "ZImages/SRVLab-8.ico"
 
 VER_MAJ=0
 VER_MIN=0

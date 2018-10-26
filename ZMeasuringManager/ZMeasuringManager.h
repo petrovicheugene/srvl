@@ -28,7 +28,6 @@ public:
     int exposition;
     int channelCount;
     int maxValue;
-
 };
 //======================================================
 class ZMeasuringState

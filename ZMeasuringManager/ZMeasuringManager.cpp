@@ -51,6 +51,8 @@ ZMeasuringManager::ZMeasuringManager(QObject *parent)
     zh_restoreSettings();
 
     zh_manageControlEnable();
+
+
 }
 //======================================================
 ZMeasuringManager::~ZMeasuringManager()
@@ -1033,11 +1035,11 @@ void ZMeasuringManager::zp_stopSeries()
         zv_expositionDelayTimer = 0;
     }
 
-    if(zv_currentMeasuringState.zp_currentSampleRow() >= 0
-            && zv_currentMeasuringState.zp_currentSampleRow() < zv_sampleList.count() )
-    {
-        zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_stopMeasuring();
-    }
+//    if(zv_currentMeasuringState.zp_currentSampleRow() >= 0
+//            && zv_currentMeasuringState.zp_currentSampleRow() < zv_sampleList.count() )
+//    {
+//        zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_stopMeasuring();
+//    }
 
     zv_measuringController->zp_stopMeasuring();
     zv_currentMeasuringState.zp_setMeasuringAction(ZMeasuringState::MA_STOPPED);
@@ -1045,13 +1047,12 @@ void ZMeasuringManager::zp_stopSeries()
 
     emit zg_invokeNotifyCurrent();
 
-
     // QMessageBox::information(0, "MM", "STOP SERIES", QMessageBox::Ok);
 }
 //======================================================
 void ZMeasuringManager::zh_onSampleMeasuringFinish()
 {
-    if(zv_deviceSampleQuantity <= 1)
+    if(zv_deviceSampleQuantity < 1)
     {
         zp_stopSeries();
         return;
@@ -1080,8 +1081,11 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
         zv_currentMeasuringState.zp_setMeasuringAction(ZMeasuringState::MA_SUSPENDED);
         zh_notifyMeasuringStateChanged();
 
-        QString msg = tr("Replace sample set and press the \"Start\" button for continue measuring.");
-        QMessageBox::information(0, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+        if(zv_deviceSampleQuantity > 1)
+        {
+            QString msg = tr("Replace sample set and press the \"Start\" button for continue measuring.");
+            QMessageBox::information(0, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+        }
         return;
     }
 
@@ -1101,7 +1105,12 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
     if(zv_expositionDelayDuration <= 0)
     {
         zh_notifyMeasuringStateChanged();
+        qDebug() << "STARTING SAMPLE" << zv_currentMeasuringState.zp_currentSampleRow();
+
         zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_startMeasuring();
+
+        qDebug() << "SAMPLE LIST COUNT" << zv_sampleList.count();
+        qDebug() << "CUR SAMPLE ROW" << zv_currentMeasuringState.zp_currentSampleRow();
     }
     else
     {
@@ -1118,6 +1127,7 @@ void ZMeasuringManager::timerEvent(QTimerEvent* event)
 
         zv_seriesTimePassed += zv_expositionDelayDuration;
         zh_notifyMeasuringStateChanged();
+        qDebug() << "STARTING SAMPLE (TIMER EVENT)" << zv_currentMeasuringState.zp_currentSampleRow();
 
         zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_startMeasuring();
     }
@@ -1858,8 +1868,12 @@ ZSampleTask* ZMeasuringManager::zh_instanceSampleTask(int sampleTaskId)
                                                 this))
     {
         zv_sampleTaskList.append(task);
+
         connect(task, &ZSampleTask::zg_inquiryToDelete,
                 this, &ZMeasuringManager::zh_deleteSampleTask);
+        connect(task, &ZSampleTask::zg_invokeToStopMeasurenent,
+                this, &ZMeasuringManager::zp_stopSeries);
+
 
         return task;
     }

@@ -111,8 +111,10 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     {
         QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
                                   Qt::QueuedConnection);
+
     }
 
+    zv_measuringManager->zp_stopSeries();
     //    ZAddCalibrationDialog dialog;
     //    dialog.exec();
 }
@@ -145,15 +147,13 @@ void MainWindow::zh_createActions()
 {
     zv_settingsAction = new QAction(this);
     zv_settingsAction->setIcon(QIcon(NS_Icons::glIconSettings));
-    zv_settingsAction->setText(NS_CommonStrings::glSettings);
-    zv_settingsAction->setToolTip(NS_CommonStrings::glSettingsToolTip);
+    zv_settingsAction->setText(tr("Settings"));
+    zv_settingsAction->setToolTip(tr("Run settings of the application"));
 
     zv_exitAction = new QAction(this);
     zv_exitAction->setIcon(QIcon(NS_Icons::glIconExitApp));
-    zv_exitAction->setText(NS_CommonStrings::glExit);
-    zv_exitAction->setToolTip(NS_CommonStrings::glExitToolTip);
-
-
+    zv_exitAction->setText(tr("Exit"));
+    zv_exitAction->setToolTip(tr("Exit the application"));
 
     zv_calibrationsAction = new QAction(this);
     zv_calibrationsAction->setIcon(QIcon());
@@ -183,18 +183,18 @@ void MainWindow::zh_createActions()
 
     zv_aboutAction = new QAction(this);
     zv_aboutAction->setIcon(QIcon(NS_Icons::glIconAbout));
-    zv_aboutAction->setText(NS_CommonStrings::glAbout);
-    zv_aboutAction->setToolTip(NS_CommonStrings::glAboutToolTip);
+    zv_aboutAction->setText(tr("About"));
+    zv_aboutAction->setToolTip(tr("About the application"));
 
     zv_aboutQtAction = new QAction(this);
-    zv_aboutQtAction->setIcon(QIcon(NS_Icons::glIconAbout));
+    zv_aboutQtAction->setIcon(QIcon(NS_Icons::glIconQt));
     zv_aboutQtAction->setText(tr("About Qt"));
     zv_aboutQtAction->setToolTip(tr("About Qt framework"));
 
     zv_helpAction = new QAction(this);
     zv_helpAction->setIcon(QIcon(NS_Icons::glIconHelp));
-    zv_helpAction->setText(NS_CommonStrings::glHelp);
-    zv_helpAction->setToolTip(NS_CommonStrings::glHelpToolTip);
+    zv_helpAction->setText(tr("Help"));
+    zv_helpAction->setToolTip(tr("Show user guide"));
 
     zv_runSQLCommandAction = new QAction(this);
     zv_runSQLCommandAction->setIcon(QIcon());
@@ -268,7 +268,7 @@ void MainWindow::zh_createMenu()
     QMenuBar* menubar = menuBar();
     menubar->setCursor(Qt::PointingHandCursor);
     // File
-    QMenu* menu = menubar->addMenu(NS_Menus::glMenuFile);
+    QMenu* menu = menubar->addMenu(tr("File"));
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuFile);
     zv_measuringManager->zp_appendActionsToMenu(menu);
@@ -281,20 +281,20 @@ void MainWindow::zh_createMenu()
     //    zh_appendActionsToMenu(menu);
 
     // View
-    menu = menubar->addMenu(NS_Menus::glMenuView);
+    menu = menubar->addMenu(tr("View"));
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuView);
     zh_appendActionsToMenu(menu);
 
     // Actions
-    menu = menubar->addMenu(NS_Menus::glMenuActions);
+    menu = menubar->addMenu(tr("Actions"));
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuActions);
     zv_measuringManager->zp_appendActionsToMenu(menu);
     zh_appendActionsToMenu(menu);
 
     // Help
-    menu = menubar->addMenu(NS_Menus::glMenuHelp);
+    menu = menubar->addMenu(tr("Help"));
     menu->setCursor(Qt::PointingHandCursor);
     menu->setObjectName(NS_ObjectNames::glObjectNameMenuHelp);
     zh_appendActionsToMenu(menu);
@@ -667,7 +667,7 @@ void MainWindow::zh_onAboutAction() const
     QString htmlText = QString(
                 "<table border=0 cellspacing = 15>"
                 "<tr>"
-                "<td align = left><img src=:/images/ZImages/SDC2.png></td>"
+                "<td align = left><img src=:/images/appIcon.png></td>"
                 "<td align = left><h1 align = center>%1</h1>"
                 "</td>"
                 "</tr>"
