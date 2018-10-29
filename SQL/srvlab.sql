@@ -6,8 +6,8 @@
 -- Created:       2016-09-04 14:47
 PRAGMA foreign_keys = OFF;
 
--- Schema: sdAnalyzer
-ATTACH "sdAnalyzer.sdb" AS "sdAnalyzer";
+-- Schema: srvlab
+ATTACH "srvlab.sdb" AS "srvlab";
 BEGIN;
 CREATE TABLE "gain_factors"(
   "gain_factor" INTEGER PRIMARY KEY NOT NULL,

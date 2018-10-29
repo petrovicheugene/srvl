@@ -14,11 +14,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #Application version
 RC_ICONS = "ZImages/SRVLab-8.ico"
 
-VER_MAJ=0
+VER_MAJ=1
 VER_MIN=0
-VER_PAT=1
+VER_PAT=0
 
 VER_RELEASE=b
+
+#DEBUG SETTINGS
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+#by default defined: in Debug mode QT_DEBUG, in Release mode QT_NO_DEBUG
 
 EXE_BASE_NAME=SRVLab
 QMAKE_TARGET_PRODUCT="SRV Lab"
@@ -33,7 +37,7 @@ CONFIG += c++11
 VERSION=$${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 
 #Target version
-r{
+CONFIG(debug, debug|release):{
 TARGET=$${EXE_BASE_NAME}-$${VERSION}
 }else{
 TARGET=$${EXE_BASE_NAME}-$${VERSION}.$${VER_RELEASE}
