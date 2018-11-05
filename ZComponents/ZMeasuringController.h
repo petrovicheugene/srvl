@@ -61,7 +61,7 @@ private:
     int zv_measuringTimer;
     quint32 zv_currentExpositionMS;
     const int zv_measuringInquiryPeriod = 200;
-    const int zv_inquiryPeriod = 500;
+    const int zv_inquiryPeriod = 1000;
     int zv_sampleShiftImpulseDuration;
 
     qint64 zv_currentExpositionStartUnixTime;

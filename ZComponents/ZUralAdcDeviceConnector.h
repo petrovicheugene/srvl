@@ -13,7 +13,36 @@
 #include <QMessageBox>
 #include <QStringList>
 //===========================================================
-class ZControlAction;
+// TYPEDEFS of library func pointers
+// service
+typedef Qt::HANDLE (*HOpenUSBDriver)(quint16, quint16); // (WORD ucPID, WORD ucVID)
+typedef bool (*CloseUSBDriver)(Qt::HANDLE);
+typedef bool (*ReadDeviceUIN)(Qt::HANDLE, quint16*); // (HANDLE hDevObj, WORD* pdata)
+typedef bool (*CheckQConnect)(Qt::HANDLE, quint16*); //(HANDLE hDevObj, WORD* pdata)
+// spectrometry
+typedef quint8 (*ButtonInquiry)(Qt::HANDLE); // (HANDLE hDevice)
+typedef bool (*WriteSerialRegister)(Qt::HANDLE, quint8); // (HANDLE hDevice, BYTE data)
+typedef bool (*StartExposition)(Qt::HANDLE); // (HANDLE hDevice)
+typedef bool (*StopIsoStream)(Qt::HANDLE, quint32); // (HANDLE hDevice, DWORD x)
+typedef bool (*ClearBufferUSB)(Qt::HANDLE, quint32*, quint32*); // (HANDLE hDevice, DWORD * appbuffer, DWORD * amountcodes)
+typedef quint8 (*ReadIsoBuffer)(Qt::HANDLE, quint32*, quint32*, // (HANDLE hDevice, DWORD * pAppbuffer, DWORD * pLoad,
+                                quint32*, quint32*, quint32*);                    // DWORD * pDeadTime, DWORD * pCountEvent, DWORD * pTime)
+
+// extra port funcs
+typedef bool (*ConfExtPort1)(Qt::HANDLE, qint16); // (HANDLE hDevice, WORD data)
+typedef bool (*WriteExtPort1)(Qt::HANDLE, quint8*, quint8); // (HANDLE hDevice, BYTE *pOutBuffer, BYTE ByteCount)
+typedef bool (*ReadExtPort1)(Qt::HANDLE, quint8*, quint8*); //(HANDLE hDevice, BYTE *pInBuffer, BYTE *pByteCount)
+typedef bool (*SetVoltageOut)(Qt::HANDLE, quint16); // (HANDLE hDevice, WORD data)
+typedef bool (*SetCurrentOut)(Qt::HANDLE, quint16); // (HANDLE hDevice, WORD data)
+typedef bool (*StartXRay)(Qt::HANDLE); // (HANDLE hDevice)
+typedef bool (*StopXRay)(Qt::HANDLE); // (HANDLE hDevice)
+typedef bool (*ReadStatus)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
+typedef bool (*ReadVoltageOut)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
+typedef bool (*ReadCurrentOut)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
+typedef bool (*ReadVoltageIn)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
+typedef bool (*ReadCurrentIn)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
+typedef bool (*ReadOperationTimes)(Qt::HANDLE, quint32*); // (HANDLE hDevice, DWORD* pdata)
+
 //===========================================================
 class ZUralAdcDeviceConnector : public QObject
 {
@@ -53,7 +82,7 @@ public:
     explicit ZUralAdcDeviceConnector(const QString& libraryFileName,
                                      bool& ok,
                                      QString& errorMsg,
-                                     QObject *parent = 0);
+                                     QObject *parent = nullptr);
 
     ~ZUralAdcDeviceConnector();
 
@@ -62,18 +91,17 @@ public:
 
 signals:
 
-    void zg_message(QMessageBox::Icon, QString sender, QString msg) const;
 
 public slots:
 
     void zp_connectToDevice(SlotResult& res, quint16 pid , quint16 vid = VID::VID_CYPRESS);
-    void zp_isDeviceConnected(SlotResult& res) const;
+    void zp_isDeviceConnected(SlotResult& res);
     void zp_disconnectFromDevice(SlotResult& res);
     void zp_checkConnectionQuality(SlotResult& res, quint16 *qualityRes);
-    void zp_isDeviceUINValid(SlotResult &res) const;
+    void zp_isDeviceUINValid(SlotResult &res);
 
     // spectrometry
-    void zp_isHardwareButtonDown(SlotResult &res) const;
+    void zp_isHardwareButtonDown(SlotResult &res);
     void zp_writeGainFactor(quint8 gainFactor, SlotResult &res);
     void zp_startExposition(SlotResult &res);
     void zp_stopExposition(SlotResult &res, quint32 x);
@@ -82,45 +110,16 @@ public slots:
                              quint32* pDeadTime, // dead time tics increament (1tic = 100392 mcs)
                              quint32* pCountEvent, // new event increment
                              quint32* pTime, // new event time increment
-                             SlotResult &res) const;
+                             SlotResult &res);
 
     void zp_clearResultBuffer(quint32* pBuffer,
                               quint32 *bufferSize,
-                              SlotResult &res) const;
+                              SlotResult &res);
 
     // extra port
 
 private:
 
-    // TYPEDEFS of library func pointers
-    // service
-    typedef Qt::HANDLE (*HOpenUSBDriver)(quint16, quint16); // (WORD ucPID, WORD ucVID)
-    typedef bool (*CloseUSBDriver)(Qt::HANDLE);
-    typedef bool (*ReadDeviceUIN)(Qt::HANDLE, quint16*); // (HANDLE hDevObj, WORD* pdata)
-    typedef bool (*CheckQConnect)(Qt::HANDLE, quint16*); //(HANDLE hDevObj, WORD* pdata)
-    // spectrometry
-    typedef quint8 (*ButtonInquiry)(Qt::HANDLE); // (HANDLE hDevice)
-    typedef bool (*WriteSerialRegister)(Qt::HANDLE, quint8); // (HANDLE hDevice, BYTE data)
-    typedef bool (*StartExposition)(Qt::HANDLE); // (HANDLE hDevice)
-    typedef bool (*StopIsoStream)(Qt::HANDLE, quint32); // (HANDLE hDevice, DWORD x)
-    typedef bool (*ClearBufferUSB)(Qt::HANDLE, quint32*, quint32*); // (HANDLE hDevice, DWORD * appbuffer, DWORD * amountcodes)
-    typedef quint8 (*ReadIsoBuffer)(Qt::HANDLE, quint32*, quint32*, // (HANDLE hDevice, DWORD * pAppbuffer, DWORD * pLoad,
-                                    quint32*, quint32*, quint32*);                    // DWORD * pDeadTime, DWORD * pCountEvent, DWORD * pTime)
-
-    // extra port funcs
-    typedef bool (*ConfExtPort1)(Qt::HANDLE, qint16); // (HANDLE hDevice, WORD data)
-    typedef bool (*WriteExtPort1)(Qt::HANDLE, quint8*, quint8); // (HANDLE hDevice, BYTE *pOutBuffer, BYTE ByteCount)
-    typedef bool (*ReadExtPort1)(Qt::HANDLE, quint8*, quint8*); //(HANDLE hDevice, BYTE *pInBuffer, BYTE *pByteCount)
-    typedef bool (*SetVoltageOut)(Qt::HANDLE, quint16); // (HANDLE hDevice, WORD data)
-    typedef bool (*SetCurrentOut)(Qt::HANDLE, quint16); // (HANDLE hDevice, WORD data)
-    typedef bool (*StartXRay)(Qt::HANDLE); // (HANDLE hDevice)
-    typedef bool (*StopXRay)(Qt::HANDLE); // (HANDLE hDevice)
-    typedef bool (*ReadStatus)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
-    typedef bool (*ReadVoltageOut)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
-    typedef bool (*ReadCurrentOut)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
-    typedef bool (*ReadVoltageIn)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
-    typedef bool (*ReadCurrentIn)(Qt::HANDLE, quint16*); // (HANDLE hDevice, WORD* pdata)
-    typedef bool (*ReadOperationTimes)(Qt::HANDLE, quint32*); // (HANDLE hDevice, DWORD* pdata)
 
 
     // FUNC POINTERS
@@ -177,7 +176,7 @@ private:
 
     //    bool zh_checkDll(const QString& libraryFileAbsName, QString &errorMsg);
     //    bool zh_createLibraryFile(const QString& libraryFileAbsName, QString &errorMsg);
-    bool zh_initializeLibrary(const QString& libraryFileName, QString &errorMsg);
+    bool zh_initializeLibrary(const QString &libraryFileName, QString &errorMsg);
     void zh_resetConnectionProperties();
 
 

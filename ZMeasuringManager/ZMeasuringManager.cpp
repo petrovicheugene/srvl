@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <QColor>
+#include <QDebug>
 #include <QDir>
 #include <QDateTime>
 #include <QFile>
@@ -35,8 +36,8 @@
 ZMeasuringManager::ZMeasuringManager(QObject *parent)
     : QObject(parent)
 {
-    zv_UralAdcDeviceConnector = 0;
-    zv_measuringController = 0;
+    zv_UralAdcDeviceConnector = nullptr;
+    zv_measuringController = nullptr;
     zv_lastColorIndex = 0;
     zv_deviceSampleQuantity = 1;
     zv_expositionDelayDuration = 0;
@@ -277,7 +278,7 @@ void ZMeasuringManager::zp_applyAppSettings(const ZAppSettings& appSettings)
         {
             if(!zh_createLibraryFromResources(libraryFileName, errorMsg))
             {
-                QMessageBox::critical(0, tr("Library error"), errorMsg, QMessageBox::Ok);
+                QMessageBox::critical(nullptr, tr("Library error"), errorMsg, QMessageBox::Ok);
                 emit zg_message(errorMsg, QMessageBox::Critical);
                 QString connectionState = tr("ADC library absent.");
                 emit zg_connectionState(connectionState, QMessageBox::Critical );
@@ -297,15 +298,15 @@ void ZMeasuringManager::zp_applyAppSettings(const ZAppSettings& appSettings)
         if(!ok)
         {
             // roll out error message
-            QMessageBox::critical(0, tr("Library load error"), errorMsg, QMessageBox::Ok);
+            QMessageBox::critical(nullptr, tr("Library load error"), errorMsg, QMessageBox::Ok);
             emit zg_message(errorMsg, QMessageBox::Critical);
 
             QString connectionState = tr("ADC library loading error.");
             emit zg_connectionState(connectionState, QMessageBox::Critical );
 
             delete zv_UralAdcDeviceConnector;
-            zv_measuringController->zp_setConnector(0);
-            zv_UralAdcDeviceConnector = 0;
+            zv_measuringController->zp_setConnector(nullptr);
+            zv_UralAdcDeviceConnector = nullptr;
             zh_setConnectionActionsEnable(false);
             return;
         }
@@ -321,8 +322,6 @@ void ZMeasuringManager::zp_applyAppSettings(const ZAppSettings& appSettings)
             zh_connectToDevice(defaultConnectionADC);
         }
     }
-
-
 }
 //======================================================
 void ZMeasuringManager::zh_onConnectToDeviceAction()
@@ -376,12 +375,18 @@ void ZMeasuringManager::zh_onExpositionPassedMSec(qint64 expoPassedMs)
 
 }
 //======================================================
-bool ZMeasuringManager::zh_connectToDevice(const QString& deviceName )
+bool ZMeasuringManager::zh_connectToDevice(QString deviceName )
 {
+    if(!zv_UralAdcDeviceConnector)
+    {
+        return false;
+    }
+
     ZUralAdcDeviceConnector::PID pid;
     ZUralAdcDeviceConnector::VID vid;
     ZUralAdcDeviceConnector::zp_pidVidForDeviceName(deviceName, pid, vid);
-    ZUralAdcDeviceConnector::SlotResult res;
+    ZUralAdcDeviceConnector::SlotResult res = ZUralAdcDeviceConnector::SR_FALSE;
+
     zv_UralAdcDeviceConnector->zp_connectToDevice(res, pid, vid);
 
     if(res == ZUralAdcDeviceConnector::SR_TRUE)
@@ -416,6 +421,7 @@ bool ZMeasuringManager::zh_connectToDevice(const QString& deviceName )
     }
 
     return res == ZUralAdcDeviceConnector::SR_TRUE;
+
 }
 //======================================================
 void ZMeasuringManager::zh_setConnectionActionsEnable(bool enabling)
@@ -453,7 +459,7 @@ void ZMeasuringManager::zh_recalcSeriesMeasuringTotalDuration()
 //======================================================
 bool ZMeasuringManager::zp_libraryState() const
 {
-    return zv_UralAdcDeviceConnector != 0;
+    return zv_UralAdcDeviceConnector != nullptr;
 }
 //======================================================
 bool ZMeasuringManager::zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const
@@ -469,23 +475,23 @@ bool ZMeasuringManager::zp_spectrumVisibility(qint64 spectrumId, bool& visibilit
     return false;
 }
 //======================================================
-bool ZMeasuringManager::zp_connectionState() const
-{
-    if(zv_UralAdcDeviceConnector == 0)
-    {
-        return false;
-    }
+//bool ZMeasuringManager::zp_connectionState() const
+//{
+//    if(zv_UralAdcDeviceConnector == nullptr)
+//    {
+//        return false;
+//    }
 
-    ZUralAdcDeviceConnector::SlotResult res;
-    zv_UralAdcDeviceConnector->zp_isDeviceConnected(res);
+//    ZUralAdcDeviceConnector::SlotResult res;
+//    zv_UralAdcDeviceConnector->zp_isDeviceConnected(res);
 
-    if(res == ZUralAdcDeviceConnector::SR_TRUE)
-    {
-        return true;
-    }
+//    if(res == ZUralAdcDeviceConnector::SR_TRUE)
+//    {
+//        return true;
+//    }
 
-    return false;
-}
+//    return false;
+//}
 //======================================================
 ZSpeSpectrum* ZMeasuringManager::zp_spectrumForId(qint64 id) const
 {
@@ -557,10 +563,10 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleActions() const
     actionList.append(nullptr);
     actionList.append(zv_addSamplesToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
-//    actionList.append(nullptr);
-//    actionList.append(zv_saveSpectraToFilesAction);
+    //    actionList.append(nullptr);
+    //    actionList.append(zv_saveSpectraToFilesAction);
     actionList.append(nullptr);
-//    actionList.append(zv_previewAndPrintAction);
+    //    actionList.append(zv_previewAndPrintAction);
     actionList.append(zv_printAction);
 
     return actionList;
@@ -756,7 +762,7 @@ bool  ZMeasuringManager::zp_concentration(int row,
 //======================================================
 QList<quint32> ZMeasuringManager::zp_spectrumData(int row, int gainFactor, int exposition)
 {
-    ZSpeSpectrum* spectrum = zv_sampleList.at(row)->zp_spectrumForMeasuringConditions(gainFactor, exposition);
+    ZSpeSpectrum* spectrum = zv_sampleList.at(row)->zp_spectrumForMeasuringConditions(static_cast<quint8>(gainFactor), exposition);
     if(!spectrum)
     {
         return QList<quint32>();
@@ -805,7 +811,7 @@ QColor ZMeasuringManager::zp_spectrumColor(int sampleRow, int gainFactor, int ex
         return QColor();
     }
 
-    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(gainFactor, exposition);
+    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(static_cast<quint8>(gainFactor), exposition);
     if(!spectrum)
     {
         return QColor();
@@ -821,7 +827,7 @@ bool ZMeasuringManager::zp_spectrumVisibility(int sampleRow, int gainFactor, int
         return false;
     }
 
-    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(gainFactor, exposition);
+    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(static_cast<quint8>(gainFactor), exposition);
     if(!spectrum)
     {
         return false;
@@ -838,7 +844,7 @@ bool ZMeasuringManager::zp_setSpectrumVisibility(int sampleRow, int gainFactor, 
         return false;
     }
 
-    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(gainFactor, exposition);
+    ZSpeSpectrum* spectrum = zv_sampleList.at(sampleRow)->zp_spectrumForMeasuringConditions(static_cast<quint8>(gainFactor), exposition);
     if(!spectrum)
     {
         return false;
@@ -1035,11 +1041,11 @@ void ZMeasuringManager::zp_stopSeries()
         zv_expositionDelayTimer = 0;
     }
 
-//    if(zv_currentMeasuringState.zp_currentSampleRow() >= 0
-//            && zv_currentMeasuringState.zp_currentSampleRow() < zv_sampleList.count() )
-//    {
-//        zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_stopMeasuring();
-//    }
+    //    if(zv_currentMeasuringState.zp_currentSampleRow() >= 0
+    //            && zv_currentMeasuringState.zp_currentSampleRow() < zv_sampleList.count() )
+    //    {
+    //        zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_stopMeasuring();
+    //    }
 
     zv_measuringController->zp_stopMeasuring();
     zv_currentMeasuringState.zp_setMeasuringAction(ZMeasuringState::MA_STOPPED);
@@ -1084,7 +1090,7 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
         if(zv_deviceSampleQuantity > 1)
         {
             QString msg = tr("Replace sample set and press the \"Start\" button for continue measuring.");
-            QMessageBox::information(0, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+            QMessageBox::information(nullptr, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
         }
         return;
     }
@@ -1105,12 +1111,12 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
     if(zv_expositionDelayDuration <= 0)
     {
         zh_notifyMeasuringStateChanged();
-        qDebug() << "STARTING SAMPLE" << zv_currentMeasuringState.zp_currentSampleRow();
+        //        qDebug() << "STARTING SAMPLE" << zv_currentMeasuringState.zp_currentSampleRow();
 
         zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_startMeasuring();
 
-        qDebug() << "SAMPLE LIST COUNT" << zv_sampleList.count();
-        qDebug() << "CUR SAMPLE ROW" << zv_currentMeasuringState.zp_currentSampleRow();
+        //        qDebug() << "SAMPLE LIST COUNT" << zv_sampleList.count();
+        //        qDebug() << "CUR SAMPLE ROW" << zv_currentMeasuringState.zp_currentSampleRow();
     }
     else
     {
@@ -1127,7 +1133,7 @@ void ZMeasuringManager::timerEvent(QTimerEvent* event)
 
         zv_seriesTimePassed += zv_expositionDelayDuration;
         zh_notifyMeasuringStateChanged();
-        qDebug() << "STARTING SAMPLE (TIMER EVENT)" << zv_currentMeasuringState.zp_currentSampleRow();
+        //        qDebug() << "STARTING SAMPLE (TIMER EVENT)" << zv_currentMeasuringState.zp_currentSampleRow();
 
         zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_startMeasuring();
     }
@@ -1240,7 +1246,7 @@ void ZMeasuringManager::zh_onLoadSeriesAction()
     {
         QString questionString = tr("Current series task has been changed. "
                                     "Do you want to save it?");
-        if(QMessageBox::question(0, tr("Series task loading"), questionString,
+        if(QMessageBox::question(nullptr, tr("Series task loading"), questionString,
                                  QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
         {
             zh_onSaveSeriesAction();
@@ -1423,7 +1429,7 @@ bool ZMeasuringManager::zh_addSamplesToSeries(int sampleTaskId,
     // get sample task
     ZSampleTask* task = zh_instanceSampleTask(sampleTaskId);
 
-    if(task == 0)
+    if(task == nullptr)
     {
         return false;
     }
@@ -1503,7 +1509,7 @@ void ZMeasuringManager::zh_onRemoveSamplesFromSeriesAction()
 void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
 {
     // get spe file list
-    QStringList fileNameList = QFileDialog::getOpenFileNames(0, tr("Select spectrum file"),
+    QStringList fileNameList = QFileDialog::getOpenFileNames(nullptr, tr("Select spectrum file"),
                                                              zv_spectrumFolderPath,
                                                              tr("SRV spectrum files(*.spe);;All files(*.*)"));
     if(fileNameList.isEmpty())
@@ -1528,7 +1534,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
         if(!speHandler->zp_getSpectrumFromFile(fileName, color, abstractSpectrum))
         {
             QString msg = tr("Cannot load spectrum from file \"%1\"!").arg(fileName);
-            QMessageBox::critical(0, tr("Spectra loading"), msg, QMessageBox::Ok);
+            QMessageBox::critical(nullptr, tr("Spectra loading"), msg, QMessageBox::Ok);
             return;
         }
 
@@ -1543,7 +1549,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
     {
         return;
     }
-    quint8 gainFactor = dialog.zp_gainFactor();
+    quint8 gainFactor = static_cast<quint8>(dialog.zp_gainFactor());
 
     // define starting sample and column for insertion
     int startSampleIndex = 0;
@@ -1558,7 +1564,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
     if(!zv_sampleList.isEmpty())
     {
         QString msg = tr("Do you want to clear current sample list?");
-        int res = QMessageBox::question(0, tr("Spectra loading"), msg,
+        int res = QMessageBox::question(nullptr, tr("Spectra loading"), msg,
                                         QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(res == QMessageBox::Cancel)
         {
@@ -1579,7 +1585,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
         for(int i = 0; i < fileNameList.count(); i++)
         {
             sampleName = tr("Sample - %1").arg(QString::number(i + 1));
-            zh_createSample(sampleName, 0);
+            zh_createSample(sampleName, nullptr);
 
         }
     }
@@ -1589,7 +1595,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
     {
         QString msg = tr("The loading spectrum count is not equal to the sample count.\n"
                          "Do you want to load them anyway?");
-        if(QMessageBox::warning(0, tr("Spectra loading"), msg,
+        if(QMessageBox::warning(nullptr, tr("Spectra loading"), msg,
                                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
         {
             return;
@@ -1610,7 +1616,7 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
         {
             QString msg = tr("Some of the loaded spectra have different exposition.\n"
                              "Do you want to load them anyway?");
-            if(QMessageBox::warning(0, tr("Spectra loading"), msg,
+            if(QMessageBox::warning(nullptr, tr("Spectra loading"), msg,
                                     QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
             {
                 return;
@@ -1625,11 +1631,11 @@ void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
     // if spectra for defined measuring conditions exist, ask for further action
     for(int sm = startSampleIndex; sm < zv_sampleList.count(); sm++)
     {
-        if(zv_sampleList.at(sm)->zp_spectrumForMeasuringConditions(gainFactor, exposition) != 0)
+        if(zv_sampleList.at(sm)->zp_spectrumForMeasuringConditions(gainFactor, exposition) != nullptr)
         {
             QString msg = tr("The samples already have spectra with such measuring conditions.\n"
                              "Do you want to replace them?");
-            if(QMessageBox::warning(0, tr("Spectra loading"), msg,
+            if(QMessageBox::warning(nullptr, tr("Spectra loading"), msg,
                                     QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
             {
                 return;
@@ -1724,7 +1730,7 @@ void ZMeasuringManager::zh_onEnergyCalibrationAction()
     if(selectedSpectrumMap.isEmpty())
     {
         QString msg = tr("Select spectra for wich energy calibration is calculated!");
-        QMessageBox::critical(0, tr("Error"), msg, QMessageBox::Ok);
+        QMessageBox::critical(nullptr, tr("Error"), msg, QMessageBox::Ok);
         return;
     }
 
@@ -1846,7 +1852,7 @@ ZSampleTask* ZMeasuringManager::zh_instanceSampleTask(int sampleTaskId)
 {
     if(sampleTaskId < 0)
     {
-        return 0;
+        return nullptr;
     }
 
     // search in already created
@@ -1878,12 +1884,12 @@ ZSampleTask* ZMeasuringManager::zh_instanceSampleTask(int sampleTaskId)
         return task;
     }
 
-    return 0;
+    return nullptr;
 }
 //======================================================
 int ZMeasuringManager::zh_createSample(const QString& sampleName, ZSampleTask* sampleTask)
 {
-    ZSample* sample = new ZSample(sampleName, 0, this);
+    ZSample* sample = new ZSample(sampleName, nullptr, this);
     connect(sample, &ZSample::zg_inquirySpectrumColor,
             this, &ZMeasuringManager::zh_nextSpectrumColor);
     connect(sample, &ZSample::zg_measuringFinished,

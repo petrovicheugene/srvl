@@ -16,9 +16,12 @@ RC_ICONS = "ZImages/SRVLab-8.ico"
 
 VER_MAJ=1
 VER_MIN=0
-VER_PAT=0
+VER_PAT=2
 
 VER_RELEASE=b
+
+CONFIG += $$VER_RELEASE
+CONFIG += c++11
 
 #DEBUG SETTINGS
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
@@ -30,9 +33,6 @@ QMAKE_TARGET_DESCRIPTION="Chemical analysis of X-ray spectra"
 QMAKE_TARGET_COMPANY="TechnoAnalyt"
 QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} Ltd. 2017, 2018.  All rights reserved."
 COMPANY_URL=tehnoanalit.com
-
-CONFIG += $$VER_RELEASE
-CONFIG += c++11
 
 VERSION=$${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 
