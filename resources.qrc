@@ -80,7 +80,7 @@
         <file>ZImages/exit-1.png</file>
     </qresource>
     <qresource prefix="/sql">
-        <file>SQL/sdanalyzer.sql</file>
+        <file>SQL/srvlab.sql</file>
     </qresource>
     <qresource prefix="/library">
         <file>ComDV.dll</file>

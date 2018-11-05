@@ -16,6 +16,7 @@
 #include <QTextStream>
 //=========================================================
 const int ZDatabaseInspector::zv_userVersion = 41086;
+bool ZDatabaseInspector::zv_internalSqlFileOnly = true;
 //=========================================================
 ZDatabaseInspector::ZDatabaseInspector(QObject *parent) : QObject(parent)
 {
@@ -157,29 +158,29 @@ bool ZDatabaseInspector::zp_createDatabase(const QString& name, const QString& p
 bool ZDatabaseInspector::zp_createTables(QSqlDatabase& db, QString& msg)
 {
     // ask for SQL file source
-    QString sqlFilePath;
+    QString sqlFilePath = zh_sqlFilePath();
 
-    QMessageBox msgBox;
-    msgBox.setText("The database can be initalized by a script from an external SQL file as well as from an internal SQL script.");
-    msgBox.setInformativeText("Do you want to initialize database from an external SQL file?");
-    // msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.addButton(QMessageBox::Yes);
-    msgBox.addButton(QMessageBox::No);
+    //    QMessageBox msgBox;
+    //    msgBox.setText(tr("The database can be initalized by a script from an external SQL file as well as from an internal SQL script."));
+    //    msgBox.setInformativeText(tr("Do you want to initialize database from an external SQL file?"));
+    //    // msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
+    //    msgBox.setIcon(QMessageBox::Question);
+    //    msgBox.addButton(QMessageBox::Yes);
+    //    msgBox.addButton(QMessageBox::No);
 
-    int res = msgBox.exec();
+    //    int res = msgBox.exec();
 
-    if(res == QMessageBox::Yes)
-    {
-        QString standardLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
-        sqlFilePath = QFileDialog::getOpenFileName(0, tr("Select SQL file"), standardLocation,
-                                                   tr("SQL files(*.sql);;All files(*.*)"));
-    }
+    //    if(res == QMessageBox::Yes)
+    //    {
+    //        QString standardLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
+    //        sqlFilePath = QFileDialog::getOpenFileName(0, tr("Select SQL file"), standardLocation,
+    //                                                   tr("SQL files(*.sql);;All files(*.*)"));
+    //    }
 
-    if(sqlFilePath.isEmpty())
-    {
-        sqlFilePath = ":/sql/SQL/sdanalyzer.sql";
-    }
+    //    if(sqlFilePath.isEmpty())
+    //    {
+    //        sqlFilePath = ":/sql/SQL/srvlab.sql";
+    //    }
 
     // get SQL file
     QFile file(sqlFilePath);
@@ -225,6 +226,44 @@ bool ZDatabaseInspector::zp_createTables(QSqlDatabase& db, QString& msg)
 
     file.close();
     return true;
+}
+//=========================================================
+void ZDatabaseInspector::zp_setInternalSqlFileOnlyFlag(bool internalSqlFileOnly)
+{
+    zv_internalSqlFileOnly = internalSqlFileOnly;
+}
+//=========================================================
+QString ZDatabaseInspector::zh_sqlFilePath()
+{
+    if( !zv_internalSqlFileOnly)
+    {
+        return ":/sql/SQL/srvlab.sql";
+    }
+
+    QString sqlFilePath;
+    QMessageBox msgBox;
+    msgBox.setText(tr("The database can be initalized by a script from an external SQL file as well as from an internal SQL script."));
+    msgBox.setInformativeText(tr("Do you want to initialize database from an external SQL file?"));
+    // msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.addButton(QMessageBox::Yes);
+    msgBox.addButton(QMessageBox::No);
+
+    int res = msgBox.exec();
+
+    if(res == QMessageBox::Yes)
+    {
+        QString standardLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
+        sqlFilePath = QFileDialog::getOpenFileName(0, tr("Select SQL file"), standardLocation,
+                                                   tr("SQL files(*.sql);;All files(*.*)"));
+    }
+
+    if(sqlFilePath.isEmpty())
+    {
+        sqlFilePath = ":/sql/SQL/srvlab.sql";
+    }
+
+    return sqlFilePath;
 }
 //=========================================================
 bool ZDatabaseInspector::zp_checkFileEmptyness(const QString& name, const QString& path, QString& msg)

@@ -199,7 +199,7 @@ public:
     bool zp_setSpectrumVisibility(int sampleRow, int gainFactor, int exposition, bool visibility);
     bool zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const;
     bool zp_libraryState() const;
-    bool zp_connectionState() const;
+    //bool zp_connectionState() const;
 
     ZSpeSpectrum* zp_spectrumForId(qint64 id) const;
     QDateTime zp_currentMeasuringStartDateTime() const;
@@ -358,7 +358,7 @@ private:
 
     void zh_calcSpectrumCommonProperties(quint8 gainFactor, int exposition);
 
-    bool zh_connectToDevice(const QString& deviceName );
+    bool zh_connectToDevice(QString deviceName );
     void zh_setConnectionActionsEnable(bool enabling);
     void zh_recalcSeriesMeasuringTotalDuration();
 

@@ -120,8 +120,18 @@ public:
     */
     static void zp_disconnectFromDatabase(const QString& connectionName);
 
+    static void zp_setInternalSqlFileOnlyFlag(bool internalSqlFileOnly);
+
     // VARS
     static const int zv_userVersion; /*!< TODO: describe */
+
+
+private:
+
+    static QString zh_sqlFilePath();
+
+    // VARS
+    static bool zv_internalSqlFileOnly;
 
 };
 //=========================================================
