@@ -1,0 +1,45 @@
+//===========================================================
+#ifndef ZMEASUREMENTCONDITIONSLISTDIALOG_H
+#define ZMEASUREMENTCONDITIONSLISTDIALOG_H
+//===========================================================
+#include <QDialog>
+//===========================================================
+class QPushButton;
+class QSqlTableModel;
+class QTableView;
+//===========================================================
+class ZMeasurementConditionsListDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    explicit ZMeasurementConditionsListDialog(QWidget *parent = 0);
+
+signals:
+
+public slots:
+    
+ 
+private slots:
+
+    void zh_onOkButtonClick() const;
+    void zh_newTask() const;
+
+private:
+    
+    // VARS
+    QSqlTableModel* zv_model;
+    QTableView* zv_table;
+
+    QPushButton* zv_newTaskButton;
+    QPushButton* zv_okButton;
+    QPushButton* zv_cancelButton;
+
+
+    // FUNCS
+    void zh_createComponents();
+    void zh_createConnections();
+    
+    
+};
+//===========================================================
+#endif // ZMEASUREMENTCONDITIONSLISTDIALOG_H

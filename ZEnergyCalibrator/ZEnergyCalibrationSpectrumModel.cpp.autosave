@@ -1,0 +1,45 @@
+//=========================================================
+#include "ZEnergyCalibrationSpectrumModel.h"
+//=========================================================
+ZEnergyCalibrationSpectrumTableModel::ZEnergyCalibrationSpectrumTableModel(QObject *parent)
+    : QAbstractTableModel(parent)
+{
+
+}
+//=========================================================
+Qt::ItemFlags	ZEnergyCalibrationSpectrumTableModel::flags(const QModelIndex & index) const
+{
+    Qt::ItemFlags flags;
+    return flags;
+}
+//=========================================================
+QModelIndex ZEnergyCalibrationSpectrumTableModel::index(int row, int column, const QModelIndex &parent) const
+{
+    return QModelIndex();
+}
+//=========================================================
+int ZEnergyCalibrationSpectrumTableModel::columnCount(const QModelIndex & parent) const
+{
+    return 2;
+}
+//=========================================================
+int ZEnergyCalibrationSpectrumTableModel::rowCount(const QModelIndex & parent) const
+{
+    return 5;
+}
+//=========================================================
+QVariant ZEnergyCalibrationSpectrumTableModel::data(const QModelIndex & index, int role) const
+{
+    return QVariant();
+}
+//=========================================================
+bool ZEnergyCalibrationSpectrumTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
+{
+    return false;
+}
+//=========================================================
+QVariant ZEnergyCalibrationSpectrumTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    return QVariant();
+}
+//=========================================================

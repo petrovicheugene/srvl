@@ -8,6 +8,9 @@ var _z_constants_8h =
     [ "glAppExeBaseName", "_z_constants_8h.html#a065a68c2494c4473437c3f2e76e2d21a", null ],
     [ "glAppProduct", "_z_constants_8h.html#a7c8a3384126d7345b704001d1f34093d", null ],
     [ "glAppVersion", "_z_constants_8h.html#a26b8de2aeddd9bd900d56b22e57f4c63", null ],
+    [ "glDefaultDBSuffixString", "_z_constants_8h.html#aa3940dfd6aaffa3d7fb7510e7a628c5a", null ],
+    [ "glErrorString", "_z_constants_8h.html#a96eb46b4ef26c1389c9bd4ef934f1c0c", null ],
     [ "glExitAppIconString", "_z_constants_8h.html#a8f08dd36c509a2ce846602dcd6751c0d", null ],
-    [ "glHelpIconString", "_z_constants_8h.html#a7e50252ca5c6846120f9f4f8e2ade812", null ]
+    [ "glHelpIconString", "_z_constants_8h.html#a7e50252ca5c6846120f9f4f8e2ade812", null ],
+    [ "glWarningString", "_z_constants_8h.html#ae33c3c38f788499db0f5856ea9012b7a", null ]
 ];

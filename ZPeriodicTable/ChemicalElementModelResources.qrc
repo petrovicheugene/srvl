@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/files">
+        <file>chemicalElementBasicProperties.csv</file>
+        <file>chemicalElementBasicProperties.xml</file>
+    </qresource>
+</RCC>

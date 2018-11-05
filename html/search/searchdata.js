@@ -1,7 +1,7 @@
 var indexSectionsWithContent =
 {
   0: "cdgmz~",
-  1: "m",
+  1: "mz",
   2: "mz",
   3: "cmz~",
   4: "gz",
