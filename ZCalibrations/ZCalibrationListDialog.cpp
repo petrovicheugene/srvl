@@ -331,9 +331,10 @@ void ZCalibrationListDialog::zh_createConnections()
     zv_chemicalTableWidget->zp_tableView()->setSelectionMode(QAbstractItemView::SingleSelection);
     zv_chemicalTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    zv_chemicalTableWidget->zp_setColumnHidden(0, true);
-    zv_chemicalTableWidget->zp_tableView()->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
+    zv_chemicalTableWidget->zp_setColumnHidden(0, true);
+    //zv_chemicalTableWidget->zp_tableView()->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    zv_chemicalTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
     zv_calibrationTableWidget->zp_setModel(zv_calibrationProxyModel);
     zv_calibrationTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -345,9 +346,13 @@ void ZCalibrationListDialog::zh_createConnections()
     zv_calibrationTableWidget->zp_tableView()->setColumnHidden(7, true);
     zv_calibrationTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
+    //zv_calibrationTableWidget->zp_tableView()->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    zv_calibrationTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
+
     zv_measuringConditionsTableWidget->zp_setModel(zv_measuringConditionsModel);
 
     zv_measuringConditionsTableWidget->zp_tableView()->setSelectionBehavior(QAbstractItemView::SelectRows);
+    //zv_measuringConditionsTableWidget->zp_tableView()->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     zv_measuringConditionsTableWidget->zp_tableView()->horizontalHeader()->setStretchLastSection(true);
 
     // connect dependent tables filtering

@@ -11,7 +11,7 @@
 //============================================================
 ZBaseTreeWidget::ZBaseTreeWidget(QWidget *parent) : QWidget(parent)
 {
-    zv_captionLabel = 0;
+    zv_captionLabel = nullptr;
     zh_createComponents();
     zh_createConnections();
 }
@@ -21,6 +21,8 @@ void ZBaseTreeWidget::zp_setModel(ZSampleTaskTreeModel* model)
     zv_table->setModel(model);
     connect(model, &ZSampleTaskTreeModel::zg_setCurrentIndex,
             zv_table, &QTreeView::setCurrentIndex);
+    zv_table->setAlternatingRowColors(true);
+
 }
 //============================================================
 void ZBaseTreeWidget::zp_setCaption(const QString& caption)

@@ -17,10 +17,12 @@ class ZSQLCommanderDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZSQLCommanderDialog(QWidget *parent = 0);
+
+    explicit ZSQLCommanderDialog(QWidget *parent = nullptr);
     ~ZSQLCommanderDialog();
 
 signals:
+
 
 public slots:
 

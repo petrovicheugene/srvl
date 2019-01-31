@@ -11,7 +11,11 @@ class ZSpeSpectrum : public ZAbstractSpectrum
     Q_OBJECT
 public:
 
-    // explicit ZSpeSpectrum(QObject* parent);
+    friend QDataStream &operator<<(QDataStream &out, const ZSpeSpectrum &s);
+    friend QDataStream &operator>>(QDataStream &in, ZSpeSpectrum &s);
+
+
+    //explicit ZSpeSpectrum(QObject* parent = nullptr);
     explicit ZSpeSpectrum(const QList<quint32> &intensityList, const ZSpeAuxData& speAuxdata,
                           const QString& path, QColor color, bool completed, QObject* parent);
 
@@ -54,5 +58,6 @@ private:
     // int zv_peakWidht;
 
 };
+Q_DECLARE_METATYPE(ZSpeSpectrum*)
 //===================================================
 #endif // ZSPESPECTRUM_H

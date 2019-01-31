@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <QColor>
+#include <QDataStream>
 #include <QDebug>
 #include <QDir>
 #include <QDateTime>
@@ -30,12 +31,16 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QSettings>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QTimer>
 #include <QTimerEvent>
 //======================================================
 ZMeasuringManager::ZMeasuringManager(QObject *parent)
     : QObject(parent)
 {
+    //qRegisterMetaTypeStreamOperators<ZSpeSpectrum>("ZSpeSpectrum");
+
     zv_UralAdcDeviceConnector = nullptr;
     zv_measuringController = nullptr;
     zv_lastColorIndex = 0;
@@ -43,6 +48,8 @@ ZMeasuringManager::ZMeasuringManager(QObject *parent)
     zv_expositionDelayDuration = 0;
     zv_seriesTimePassed = 0;
     zv_expositionDelayTimer = 0;
+    zv_seriesId = -1;
+    zv_startDateTime = QDateTime();
 
     zh_createColorList();
 
@@ -108,7 +115,7 @@ bool ZMeasuringManager::zh_checkColor(QColor color)
         return false;
     }
 
-    if(abs(averageVol - color.red()) + abs(averageVol - color.green()) + abs(averageVol - color.blue()) < 90)
+    if(qAbs(averageVol - color.red()) + qAbs(averageVol - color.green()) + qAbs(averageVol - color.blue()) < 90)
     {
         return false;
     }
@@ -741,13 +748,6 @@ QString ZMeasuringManager::zp_seriesTaskName() const
     return zv_currentMeasuringState.zp_currentSeriesName();
 }
 //======================================================
-ZMeasuringState ZMeasuringManager::zp_currentMeasuringState() const
-{
-    ZMeasuringState measuringState;
-    zh_createCurrentMeasuringState(measuringState);
-    return measuringState;
-}
-//======================================================
 bool  ZMeasuringManager::zp_concentration(int row,
                                           const QString& chemical,
                                           double& concentration)
@@ -909,13 +909,6 @@ void ZMeasuringManager::zh_calcSpectrumCommonProperties(quint8 gainFactor, int e
     emit zg_sampleOperation(SOT_SPECTRUM_PROPERTIES_CHANGED, -1, -1);
 }
 //======================================================
-void ZMeasuringManager::zh_createCurrentMeasuringState(ZMeasuringState& measuringState) const
-{
-    //    measuringState.zp_setCurrentSeriesName = zv_currentSeriesTaskName;
-    //    measuringState.currentSampleName = "Nothing yet";
-    //    measuringState.seriesDirty = zv_currentSeriesTaskDirty;
-}
-//======================================================
 void ZMeasuringManager::zh_notifyMeasuringStateChanged()
 {
     emit zg_measuringStateChanged(zv_currentMeasuringState);
@@ -1009,7 +1002,6 @@ void ZMeasuringManager::zp_startSeries()
 
         // reset first
         // zv_currentMeasuringState.zp_setSeriesName(zv_currentSeriesTaskName);
-        zv_finishDateTime = QDateTime();
         zv_startDateTime = QDateTime::currentDateTime();
         zv_currentMeasuringState.zp_setCurrentSampleName(zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_sampleName());
         int sampleDuration = zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow())->zp_totalMeasuringDuration();
@@ -1023,11 +1015,214 @@ void ZMeasuringManager::zp_startSeries()
             zp_stopSeries();
             return;
         }
+
+        zh_assignNewSeriesId();
         zv_currentMeasuringState.zp_setMeasuringAction(ZMeasuringState::MA_RUNNING);
         zh_notifyMeasuringStateChanged();
     }
 
     // QMessageBox::information(0, "MM", "START SERIES", QMessageBox::Ok);
+}
+//======================================================
+void ZMeasuringManager::zh_assignNewSeriesId()
+{
+
+    int newId = 0;
+    zv_seriesId = 0;
+    if(zh_findNewIdInTable("series", newId))
+    {
+        zv_seriesId = newId;
+    }
+
+
+//    QSqlQuery query;
+//    QString queryString = "SELECT MAX(id) FROM series";
+
+//    if(!query.prepare(queryString))
+//    {
+//        zv_seriesId = 0;
+//    }
+
+//    if(!query.exec())
+//    {
+//        zv_seriesId = 0;
+//    }
+
+//    if(!query.next())
+//    {
+//        zv_seriesId = 0;
+//    }
+//    else
+//    {
+//        QVariant vData = query.value(0);
+//        if(vData.isValid() && !vData.isNull()  && vData.canConvert<int>())
+//        {
+//            zv_seriesId = vData.toInt() + 1;
+//        }
+//        else
+//        {
+//            zv_seriesId = 1;
+//        }
+//    }
+
+//    int newId = 0;
+//    zh_findNewIdInTable("series", newId);
+
+
+    qDebug() << "ASSIGN SERIES ID" <<  zv_seriesId;
+}
+//======================================================
+void ZMeasuringManager::zh_saveSampleMeasurementResult()
+{
+
+    if(!zh_recordSeriesId())
+    {
+        // id record error
+        return;
+    }
+
+    int newSampleId = 0;
+    if(!zh_findNewIdInTable("measured_samples", newSampleId))
+    {
+        // cannot obtain new sample id
+        return;
+    }
+
+    // record sample
+    QSqlQuery query;
+    QString queryString = QString("INSERT INTO measured_samples (id, name, series_id, sample_tasks_id) "
+                                  "VALUES (:id, :name, :series_id, :sample_tasks_id)");
+
+    if(!query.prepare(queryString))
+    {
+        qDebug() << query.lastError().text();
+        return;
+    }
+
+    query.bindValue(":id", newSampleId);
+    query.bindValue(":name", zv_currentMeasuringState.zp_currentSampleName());
+    query.bindValue(":series_id", zv_seriesId);
+    query.bindValue(":sample_tasks_id", zv_measuringController->zp_currentSampleTaskId());
+
+    if(!query.exec())
+    {
+        return ;
+    }
+
+
+    qDebug() << "SAVE SAMPLE ID" << newSampleId <<  "SERIES ID " <<  zv_seriesId
+             << "SAMPLE NAME" << zv_currentMeasuringState.zp_currentSampleName()
+             << "Sample Task" << zv_measuringController->zp_currentSampleTaskId();
+
+    // record spectra
+    // current sample
+    ZSample* currentSample = zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow());
+
+    // zv_measuring conditions map
+    QMap<int, QPair<quint8,int> > measuringConditionsMap
+    = zv_measuringController->zp_currentSampleTaskMeasuringConditions();
+    QMap<int, QPair<quint8,int> >::const_iterator it;
+    for(it = measuringConditionsMap.begin(); it != measuringConditionsMap.end(); it++)
+    {
+        int newSpectrumId = 0;
+        if(!zh_findNewIdInTable("measured_spectra", newSpectrumId))
+        {
+            // cannot obtain new spectrum id
+            continue;
+        }
+
+        ZSpeSpectrum* spectrum = currentSample->zp_spectrumForMeasuringConditions(it.value().first, it.value().second);
+        QByteArray spectrumByteArray;
+        QDataStream dataStream(&spectrumByteArray, QIODevice::ReadWrite);
+
+        dataStream << *spectrum;
+
+        query.clear();
+        queryString = QString("INSERT INTO measured_spectra (id, spectrum_data, measured_samples_id, measuring_conditions_id) "
+                                          "VALUES (:id, :spectrum_data, :measured_samples_id, :measuring_conditions_id)");
+
+            if(!query.prepare(queryString))
+            {
+                qDebug() << query.lastError().text();
+                return;
+            }
+
+            query.bindValue(":id", newSpectrumId);
+            query.bindValue(":spectrum_data", spectrumByteArray);
+            query.bindValue(":measured_samples_id", newSampleId);
+            query.bindValue(":measuring_conditions_id", it.key());
+
+            if(!query.exec())
+            {
+                qDebug() << query.lastError().text();
+                return ;
+            }
+
+            qDebug() << "RECORD SPE. ID" << newSpectrumId <<  "SERIES ID " <<  zv_seriesId
+                     << "SAMPLE ID" << newSampleId
+                     << "MEAS COND" << it.key();
+
+    }
+
+//    query.clear();
+//    queryString = QString("INSERT INTO measured_samples (id, name, series_id, sample_tasks_id) "
+//                                     "VALUES (:id, :name, :series_id, :sample_tasks_id)");
+}
+//======================================================
+bool ZMeasuringManager::zh_recordSeriesId()
+{
+    // check series id
+    QSqlQuery query;
+    QString queryString = QString("SELECT id FROM series "
+                                  "WHERE id=%1").arg(QString::number(zv_seriesId));
+
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    if(query.next())
+    {
+        QVariant vData = query.value(0);
+        if(vData.isValid() && vData.canConvert<int>() && vData.toInt() == zv_seriesId)
+        {
+            qDebug() << "Series Id is already recorded: " << zv_seriesId;
+            return true;
+        }
+    }
+
+    // record series id
+    query.clear();
+    queryString = QString("INSERT INTO series (id, date, time, operators_id, series_tasks_id) "
+                          "VALUES (:id, :date, :time, :operators_id, :series_tasks_id)");
+
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+
+    query.bindValue(":id", zv_seriesId);
+    query.bindValue(":date", zv_startDateTime.date());
+    query.bindValue(":time", zv_startDateTime.time());
+
+    int operatorId = 0;
+    emit zg_inquiryCurrentOperatorId(operatorId);
+    query.bindValue(":operators_id", operatorId);
+    query.bindValue(":series_tasks_id", zv_currentMeasuringState.zp_currentSeriesTaskId());
+
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    qDebug() << "New Series Id: " << zv_seriesId ;
+
+    return true;
 }
 //======================================================
 void ZMeasuringManager::zp_stopSeries()
@@ -1058,6 +1253,8 @@ void ZMeasuringManager::zp_stopSeries()
 //======================================================
 void ZMeasuringManager::zh_onSampleMeasuringFinish()
 {
+    zh_saveSampleMeasurementResult();
+
     if(zv_deviceSampleQuantity < 1)
     {
         zp_stopSeries();
@@ -1193,6 +1390,7 @@ void ZMeasuringManager::zh_onConcentrationChange()
     }
 
     emit zg_sampleOperation(SOT_CONCENTRATIONS_CHANGED, row, row);
+
 }
 //======================================================
 void ZMeasuringManager::zh_onCurrentSpectrumChange(qint64 spectrumId)
@@ -1236,8 +1434,14 @@ void ZMeasuringManager::zh_onSaveSeriesAction()
     // emit zg_seriesTaskNameChanged(zv_currentSeriesTaskName);
 
     zv_currentMeasuringState.zp_setSeriesTaskDirty(false);
+
+    qint64 seriesTaskId = dialog.zp_newSeriesTaskId();
+    zv_currentMeasuringState.zp_setSeriesTaskId(seriesTaskId);
+
     //emit zg_seriesTaskNameDirtyChanged(zv_currentSeriesTaskDirty);
     zh_notifyMeasuringStateChanged();
+
+
 }
 //======================================================
 void ZMeasuringManager::zh_onLoadSeriesAction()
@@ -1290,6 +1494,7 @@ void ZMeasuringManager::zh_clearSeriesTask()
         delete sample;
         emit zg_sampleOperation(SOT_SAMPLE_REMOVED, sampleIndex, sampleIndex);
     }
+
 }
 //======================================================
 bool ZMeasuringManager::zh_loadSeriesTask(int seriesTaskId)
@@ -1360,6 +1565,7 @@ bool ZMeasuringManager::zh_loadSeriesTask(int seriesTaskId)
     }
 
     zv_currentMeasuringState.zp_setSeriesName(seriesTaskName);
+    zv_currentMeasuringState.zp_setSeriesTaskId(seriesTaskId);
     // emit zg_seriesTaskNameChanged(zv_currentSeriesTaskName);
 
     return true;
@@ -1382,6 +1588,7 @@ void ZMeasuringManager::zh_onAddSamplesToSeriesAction()
 
     zh_manageControlEnable();
     zv_currentMeasuringState.zp_setSeriesTaskDirty(true);
+    zv_currentMeasuringState.zp_setSeriesTaskId(0);
     zh_recalcSeriesMeasuringTotalDuration();
     zh_notifyMeasuringStateChanged();
 
@@ -1500,10 +1707,12 @@ void ZMeasuringManager::zh_onRemoveSamplesFromSeriesAction()
     }
 
     zv_currentMeasuringState.zp_setSeriesTaskDirty(!zv_sampleList.isEmpty());
+    zv_currentMeasuringState.zp_setSeriesTaskId(0);
 
     zh_recalcSeriesMeasuringTotalDuration();
     zh_manageControlEnable();
     zh_notifyMeasuringStateChanged();
+
 }
 //======================================================
 void ZMeasuringManager::zh_onLoadSpectraFromFilesAction()
@@ -1709,17 +1918,17 @@ void ZMeasuringManager::zh_onPreviewAndPrintAction() const
     emit zg_inquiryResultsPreviewAndPrinting();
 }
 //======================================================
-void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
-                                                 QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const
-{
-    foreach(QModelIndex index, selectedIndexes)
-    {
-        if(!index.isValid() || index.column() )
-        {
-            continue;
-        }
-    }
-}
+//void ZMeasuringManager::zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
+//                                                 QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const
+//{
+//    foreach(QModelIndex index, selectedIndexes)
+//    {
+//        if(!index.isValid() || index.column() )
+//        {
+//            continue;
+//        }
+//    }
+//}
 //======================================================
 void ZMeasuringManager::zh_onEnergyCalibrationAction()
 {
@@ -1818,6 +2027,11 @@ void ZMeasuringManager::zh_resetMeasuringResults()
     {
         zv_sampleList.at(s)->zp_resetMeasuringResults();
     }
+
+    zv_finishDateTime = QDateTime();
+    zv_startDateTime = QDateTime();
+
+    zv_seriesId = -1;
 
     emit zg_sampleOperation(SOT_CONCENTRATIONS_CHANGED, 0, zv_sampleList.count());
     emit zg_sampleOperation(SOT_SPECTRUM_CHANGED, 0, zv_sampleList.count());
@@ -1985,5 +2199,35 @@ void ZMeasuringManager::zh_manageControlEnable()
     QList<int> selectedSampleList;
     emit zg_inquirySelectedSampleList(selectedSampleList);
     zv_removeSamplesFromSeriesAction->setEnabled(!selectedSampleList.isEmpty());
+}
+//======================================================
+bool ZMeasuringManager::zh_findNewIdInTable(const QString& tableName, int& newId)
+{
+    QSqlQuery query;
+    QString queryString = QString("SELECT MAX(id) FROM %1").arg(tableName);
+    if(!query.prepare(queryString))
+    {
+        return false;
+    }
+    if(!query.exec())
+    {
+        return false;
+    }
+
+    if(!query.next())
+    {
+        newId = 1;
+        return true;
+    }
+
+    QVariant vData = query.value(0);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return false;
+    }
+
+    newId = vData.toInt() + 1;
+
+    return true;
 }
 //======================================================

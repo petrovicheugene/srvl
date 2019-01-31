@@ -4,6 +4,7 @@
 //=================================================
 #include <QObject>
 #include <QList>
+#include <QMap>
 #include <QSqlQuery>
 #include "ZCalibration.h"
 #include "ZSpeSpectrum.h"
@@ -100,6 +101,8 @@ public:
     QStringList zp_measuringConditionsStringlist() const;
 
     QList<QPair<quint8,int> > zp_measuringConditionsList() const;
+    QMap<int, QPair<quint8,int> > zp_measuringConditionsMap() const;
+
 
     int zp_totalMeasuringDuration() const;
 
@@ -119,6 +122,7 @@ public:
 
     qint64 zp_spectrumIdForConditions(quint8 gainFactor,
                              int exposition) const;
+
 
     QList<double> zp_spectrumEnergyCalibrationForConditions(quint8 gainFactor,
     int exposition) const;
@@ -165,6 +169,7 @@ public:
     QStringList zp_chemicalList() const;
     QString zp_measuringConditionsString() const;
     QPair<quint8,int> zp_measuringConditions() const;
+    int zp_measuringConditionsId() const;
     int zp_exposition() const;
 
     void zp_calcConcentrations(const ZSpeSpectrum *spectrum,

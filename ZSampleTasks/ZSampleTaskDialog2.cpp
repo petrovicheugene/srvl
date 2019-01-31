@@ -146,7 +146,7 @@ void ZSampleTaskDialog2::zh_createConnections()
     zv_sampleTaskTreeWidget->zp_setModel(zv_sampleTaskTreeModel);
     zv_sampleTaskTreeWidget->zp_setSectionResizeMode(0, QHeaderView::ResizeToContents);
     zv_sampleTaskTreeWidget->zp_setStretchLastSection(false);
-    zv_sampleTaskTreeWidget->zp_setSelectionBehavior(QAbstractItemView::SelectRows);
+    zv_sampleTaskTreeWidget->zp_setSelectionBehavior(QAbstractItemView::SelectItems);
     zv_sampleTaskTreeWidget->zp_setSelectionMode(QAbstractItemView::SingleSelection);
 
     QList<ZControlAction*>actionList = zv_sampleTaskTreeModel->zp_buttonTreeActions();
@@ -163,7 +163,6 @@ void ZSampleTaskDialog2::zh_createConnections()
 
     // the rest actions append as buttons
     zv_sampleTaskTreeWidget->zp_appendButtonActions(actionList);
-
 
     zv_sampleTaskTreeWidget->zp_appendContextActions(zv_sampleTaskTreeModel->zp_contextTreeActions());
 

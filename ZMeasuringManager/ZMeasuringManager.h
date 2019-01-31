@@ -39,6 +39,7 @@ public:
     {
         zv_measuringAction = MA_STOPPED;
         zv_currentSeriesName = QString();
+        zv_currentSeriesTaskId = 0;
         zv_currentSampleName = QString();
         zv_seriesResultsDirty = false;
         zv_seriesTaskDirty = false;
@@ -69,6 +70,12 @@ public:
     void zp_setSeriesName(const QString& name)
     {
         zv_currentSeriesName = name;
+    }
+
+    qint64 zp_currentSeriesTaskId() const {return zv_currentSeriesTaskId;}
+    void zp_setSeriesTaskId(qint64 id)
+    {
+        zv_currentSeriesTaskId = id;
     }
 
     QString zp_currentSampleName() {return zv_currentSampleName;}
@@ -128,6 +135,7 @@ private:
     MeasuringAction zv_measuringAction;
 
     QString zv_currentSeriesName;
+    qint64 zv_currentSeriesTaskId;
     QString zv_currentSampleName;
     bool zv_seriesResultsDirty;
     bool zv_seriesTaskDirty;
@@ -146,8 +154,8 @@ class ZMeasuringManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ZMeasuringManager(QObject *parent = 0);
-    ~ZMeasuringManager();
+    explicit ZMeasuringManager(QObject *parent = nullptr);
+    ~ZMeasuringManager() override;
 
     //    enum MeasuringState {MS_STOPPED,
     //                         MS_SUSPENDED,
@@ -238,6 +246,7 @@ signals:
 
     void zg_inquiryResultsPrinting() const;
     void zg_inquiryResultsPreviewAndPrinting() const;
+    void zg_inquiryCurrentOperatorId(int& opratorId) const;
 
 public slots:
 
@@ -310,6 +319,7 @@ private:
     QList<ZSampleTask*> zv_sampleTaskList;
     QList<SpectrumCommonProperties> zv_spectrumCommonPropertiesList;
 
+
     // bool zv_currentSeriesTaskDirty;
     // QString zv_currentSeriesTaskName;
     QString zv_spectrumFolderPath;
@@ -323,6 +333,7 @@ private:
     int zv_seriesTimePassed;
     QDateTime zv_startDateTime;
     QDateTime zv_finishDateTime;
+    qint64 zv_seriesId;
 
     ZMeasuringState zv_currentMeasuringState;
 
@@ -354,7 +365,6 @@ private:
 
     void zh_clearSeriesTask();
     bool zh_loadSeriesTask(int seriesTaskId);
-    void zh_createCurrentMeasuringState(ZMeasuringState& measuringState) const;
 
     void zh_calcSpectrumCommonProperties(quint8 gainFactor, int exposition);
 
@@ -362,8 +372,14 @@ private:
     void zh_setConnectionActionsEnable(bool enabling);
     void zh_recalcSeriesMeasuringTotalDuration();
 
-    void zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
-                                  QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
+//    void zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
+//                                  QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
+
+    void zh_assignNewSeriesId();
+    void zh_saveSampleMeasurementResult();
+    bool zh_recordSeriesId();
+    bool zh_findNewIdInTable(const QString& tableName, int& newId);
+
 };
 //======================================================
 #endif // ZMEASURINGMANAGER_H

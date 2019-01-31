@@ -13,16 +13,16 @@ ZSample::ZSample(const QString &sampleName,
     : QObject(parent)
 {
     timerId = -1;
-    zv_sampleTask = 0;
+    zv_sampleTask = nullptr;
     zv_sampleName = sampleName;
     zp_setSampleTask(sampleTask, STSF_CLEAR_SPE_LIST);
 }
 //=====================================================
 ZSample::~ZSample()
 {
-    if(zv_sampleTask != 0)
+    if(zv_sampleTask != nullptr)
     {
-        zv_sampleTask->zp_removeClient(this);
+        zv_sampleTask->zp_removeClient(dynamic_cast<QObject*>(this));
     }
 }
 //=====================================================
@@ -50,13 +50,13 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
         return;
     }
 
-    if(zv_sampleTask != 0)
+    if(zv_sampleTask != nullptr)
     {
-        zv_sampleTask->zp_removeClient(this);
+        zv_sampleTask->zp_removeClient(dynamic_cast<QObject*>(this));
     }
 
     zv_sampleTask = sampleTask;
-    zv_sampleTask->zp_appendClient(this);
+    zv_sampleTask->zp_appendClient(dynamic_cast<QObject*>(this));
 
     // chemical-concentration list
     QStringList chemicalStringList = zv_sampleTask->zp_chemicalStringList();
@@ -202,7 +202,7 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
                 for(int i = 0; i < insertedMeasuringConditionsQuantity - existingMeasuringConditionsQuantity; i++)
                 {
                     speElement.first = currentMeasuringConditions;
-                    speElement.second = 0;
+                    speElement.second = nullptr;
                     zv_spectrumList.append(speElement);
                 }
             }
@@ -212,7 +212,7 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
 //=====================================================
 QString ZSample::zp_sampleTaskName() const
 {
-    if(zv_sampleTask == 0)
+    if(zv_sampleTask == nullptr)
     {
         return QString();
     }
@@ -233,7 +233,7 @@ bool ZSample::zp_addMeasuringConditions(int gainFactor, int exposition)
     // create new spectrum list element
     QPair<QPair<int, int>, ZSpeSpectrum*>  spectrumElement;
     spectrumElement.first = QPair<int, int>(gainFactor, exposition);
-    spectrumElement.second = 0;
+    spectrumElement.second = nullptr;
     zv_spectrumList.append(spectrumElement);
     return true;
 }
@@ -274,14 +274,12 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
                                  quint32 deadTime,
                                  bool finished)
 {
-    qDebug() << "IN SAMPLE";
-
     for(int s = 0; s < zv_spectrumList.count(); s++)
     {
         if(zv_spectrumList.at(s).first.first == gainFactor && zv_spectrumList.at(s).first.second == exposition)
         {
             // delete the previous spectrum
-            if(zv_spectrumList[s].second == 0)
+            if(zv_spectrumList[s].second == nullptr)
             {
                 // create new SpeSpectrum
                 // spectrum->setParent(this);
@@ -400,7 +398,7 @@ QList<QPair<quint8, int> > ZSample::zp_sampleMeasuringConditionsList() const
 //=====================================================
 QStringList ZSample::zp_sampleTaskChemicalList() const
 {
-    if(zv_sampleTask == 0)
+    if(zv_sampleTask == nullptr)
     {
         return QStringList();
     }
@@ -410,7 +408,7 @@ QStringList ZSample::zp_sampleTaskChemicalList() const
 //=====================================================
 QStringList ZSample::zp_sampleTaskMeasuringConditionsList() const
 {
-    if(zv_sampleTask == 0)
+    if(zv_sampleTask == nullptr)
     {
         return QStringList();
     }
@@ -420,7 +418,7 @@ QStringList ZSample::zp_sampleTaskMeasuringConditionsList() const
 //=====================================================
 int ZSample::zp_sampleTaskId() const
 {
-    if(zv_sampleTask == 0)
+    if(zv_sampleTask == nullptr)
     {
         return -1;
     }
@@ -430,7 +428,7 @@ int ZSample::zp_sampleTaskId() const
 //=====================================================
 int ZSample::zp_totalMeasuringDuration() const
 {
-    if(zv_sampleTask == 0)
+    if(zv_sampleTask == nullptr)
     {
         return 0;
     }

@@ -147,6 +147,7 @@ void ZSampleTask::zp_appendClient(QObject *client)
 //=================================================
 void ZSampleTask::zp_removeClient(QObject* client )
 {
+
     if(!zv_clientList.contains(client))
     {
         return;
@@ -197,6 +198,17 @@ QList<QPair<quint8, int> > ZSampleTask::zp_measuringConditionsList() const
     }
 
     return measuringConditionsList;
+}
+//=================================================
+QMap<int, QPair<quint8,int> > ZSampleTask::zp_measuringConditionsMap() const
+{
+    QMap<int, QPair<quint8,int> > measuringConditionsMap;
+    foreach(ZMeasuringTask* task, zv_measuringTaskList)
+    {
+        measuringConditionsMap.insert(task->zp_measuringConditionsId(), task->zp_measuringConditions());
+    }
+
+    return measuringConditionsMap;
 }
 //=================================================
 int ZSampleTask::zp_totalMeasuringDuration() const
@@ -340,7 +352,8 @@ ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject
     : QObject(parent)
 {
     QSqlQuery query;
-    QString queryString = QString("SELECT measuring_conditions.gain_factor,"
+    QString queryString = QString("SELECT measuring_conditions.id, "
+                                  "measuring_conditions.gain_factor,"
                                   "measuring_conditions.exposition "
                                   "FROM conditions_has_sample_tasks "
                                   "JOIN measuring_conditions "
@@ -363,16 +376,25 @@ ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject
         return;
     }
 
-    // gain factor
+    // id
     QVariant vData = query.value(0);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
     }
 
-    zv_gainFactor = vData.toInt();
+    zv_id = vData.toInt();
 
+    // gain factor
     vData = query.value(1);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return;
+    }
+
+    zv_gainFactor = static_cast<quint8>(vData.toInt());
+
+    vData = query.value(2);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
@@ -491,6 +513,11 @@ QPair<quint8, int> ZMeasuringTask::zp_measuringConditions() const
     measuringConditions.first = zv_gainFactor;
     measuringConditions.second = zv_exposition;
     return measuringConditions;
+}
+//=================================================
+int ZMeasuringTask::zp_measuringConditionsId() const
+{
+    return zv_id;
 }
 //=================================================
 int ZMeasuringTask::zp_exposition() const

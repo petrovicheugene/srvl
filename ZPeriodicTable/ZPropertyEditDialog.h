@@ -37,7 +37,6 @@ private:
     QPushButton* zv_cancelButton;
 
 
-
     // FUNCS
     void zh_createComponents();
     void zh_createConnections();

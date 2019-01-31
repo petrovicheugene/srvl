@@ -13,7 +13,7 @@ class ZPasswordDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZPasswordDialog(const QString& password, QWidget *parent = 0);
+    explicit ZPasswordDialog(const QString& password, QWidget *parent = nullptr);
     static bool mf_decryptByteArrayToString(QString& , const QByteArray& );
 
 protected:

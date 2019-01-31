@@ -1,5 +1,6 @@
 //=================================================
 #include "ZSpeAuxData.h"
+#include <QDataStream>
 //=================================================
 ZSpeAuxData::ZSpeAuxData()
     : ZAbstractSpectrumAuxData(DT_SPE)
@@ -318,5 +319,51 @@ void ZSpeAuxData::zp_setEnergyCalibrationFactors(QList<double> energyCalibration
     zv_energyK1 = energyCalibrationFactors.value(1, 0.0);
     zv_energyK2 = energyCalibrationFactors.value(2, 0.0);
 
+}
+//=================================================
+QDataStream &operator<<(QDataStream &out, const ZSpeAuxData &d)
+{
+    out << d.zv_commentMap;
+    out << d.zv_srvN;
+    out << d.zv_date;
+    out << d.zv_time;
+    out << d. zv_exposition;
+    out << d.zv_aliveTime;
+    out << d.zv_gainFactor;
+
+    out << d.zv_energyUnit;
+    out << d.zv_energyK0;
+    out << d.zv_energyK1;
+    out << d.zv_energyK2;
+
+    out << d.zv_peakWidth;
+    out << d.zv_peakWidthK0;
+    out << d.zv_peakWidthK1;
+    out << d.zv_peakWidthK2;
+
+    return out;
+}
+//=================================================
+QDataStream &operator>>(QDataStream &in, ZSpeAuxData &d)
+{
+    in >> d.zv_commentMap;
+    in >> d.zv_srvN;
+    in >> d.zv_date;
+    in >> d.zv_time;
+    in >> d. zv_exposition;
+    in >> d.zv_aliveTime;
+    in >> d.zv_gainFactor;
+
+    in >> d.zv_energyUnit;
+    in >> d.zv_energyK0;
+    in >> d.zv_energyK1;
+    in >> d.zv_energyK2;
+
+    in >> d.zv_peakWidth;
+    in >> d.zv_peakWidthK0;
+    in >> d.zv_peakWidthK1;
+    in >> d.zv_peakWidthK2;
+
+    return in;
 }
 //=================================================

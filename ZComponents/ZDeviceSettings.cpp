@@ -29,6 +29,7 @@ QDataStream& operator << (QDataStream& out, const ZDeviceSettings& settings)
     out << settings.zv_expositionStarter;
     out << settings.zv_sampleShiftImpulseDuration;
     out << settings.zv_expositionDelayTime;
+
     return out;
 }
 //=========================================================

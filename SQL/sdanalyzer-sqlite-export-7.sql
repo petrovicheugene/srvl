@@ -2,11 +2,11 @@
 -- Author:        Progger
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2019-01-30 11:27
+-- Changed:       2018-11-30 16:33
 -- Created:       2016-09-04 14:47
 PRAGMA foreign_keys = OFF;
 
--- Schema: srvlab
+-- Schema: sdAnalyzer
 ATTACH "srvlab.sdb" AS "srvlab";
 BEGIN;
 CREATE TABLE "gain_factors"(
@@ -114,23 +114,17 @@ CREATE TABLE "operators"(
 );
 CREATE TABLE "series"(
   "id" INTEGER PRIMARY KEY NOT NULL,
+  "name" VARCHAR(45) NOT NULL,
   "date" DATE NOT NULL,
   "time" TIME NOT NULL,
   "operators_id" INTEGER,
-  "series_tasks_id" INTEGER,
   CONSTRAINT "fk_series_operators1"
     FOREIGN KEY("operators_id")
     REFERENCES "operators"("id")
     ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT "fk_series_series_tasks1"
-    FOREIGN KEY("series_tasks_id")
-    REFERENCES "series_tasks"("id")
-    ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
 CREATE INDEX "series.fk_series_operators1_idx" ON "series" ("operators_id");
-CREATE INDEX "series.fk_series_series_tasks1_idx" ON "series" ("series_tasks_id");
 CREATE TABLE "calibration_stacks"(
   "id" INTEGER NOT NULL,
   "name" VARCHAR(45),
@@ -211,24 +205,6 @@ CREATE TABLE "samples"(
 );
 CREATE INDEX "samples.fk_samples_series1_idx" ON "samples" ("series_id");
 CREATE INDEX "samples.fk_samples_sample_tasks1_idx" ON "samples" ("sample_tasks_id");
-CREATE TABLE "measured_samples"(
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "name" VARCHAR(45) NOT NULL,
-  "series_id" INTEGER NOT NULL,
-  "sample_tasks_id" INTEGER NOT NULL,
-  CONSTRAINT "fk_measured_samples_series1"
-    FOREIGN KEY("series_id")
-    REFERENCES "series"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT "fk_measured_samples_sample_tasks1"
-    FOREIGN KEY("sample_tasks_id")
-    REFERENCES "sample_tasks"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE
-);
-CREATE INDEX "measured_samples.fk_measured_samples_series1_idx" ON "measured_samples" ("series_id");
-CREATE INDEX "measured_samples.fk_measured_samples_sample_tasks1_idx" ON "measured_samples" ("sample_tasks_id");
 CREATE TABLE "calibrations_has_calibration_stacks"(
   "calibrations_id" INTEGER NOT NULL,
   "calibrations_chemicals_id" INTEGER NOT NULL,
@@ -271,39 +247,4 @@ CREATE TABLE "spectra"(
 );
 CREATE INDEX "spectra.fk_spectra_samples1_idx" ON "spectra" ("samples_id");
 CREATE INDEX "spectra.fk_spectra_measuring_conditions1_idx" ON "spectra" ("measuring_conditions_id");
-CREATE TABLE "measured_chemicals"(
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "chemicals_id" INTEGER NOT NULL,
-  "measured_samples_id" INTEGER NOT NULL,
-  CONSTRAINT "fk_measured_chemicals_chemicals1"
-    FOREIGN KEY("chemicals_id")
-    REFERENCES "chemicals"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT "fk_measured_chemicals_measured_samples1"
-    FOREIGN KEY("measured_samples_id")
-    REFERENCES "measured_samples"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE
-);
-CREATE INDEX "measured_chemicals.fk_measured_chemicals_chemicals1_idx" ON "measured_chemicals" ("chemicals_id");
-CREATE INDEX "measured_chemicals.fk_measured_chemicals_measured_samples1_idx" ON "measured_chemicals" ("measured_samples_id");
-CREATE TABLE "measured_spectra"(
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "spectrum_data" BLOB NOT NULL,
-  "measured_samples_id" INTEGER NOT NULL,
-  "measuring_conditions_id" INTEGER NOT NULL,
-  CONSTRAINT "fk_measured_spectra_measured_samples1"
-    FOREIGN KEY("measured_samples_id")
-    REFERENCES "measured_samples"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT "fk_measured_spectra_measuring_conditions1"
-    FOREIGN KEY("measuring_conditions_id")
-    REFERENCES "measuring_conditions"("id")
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE
-);
-CREATE INDEX "measured_spectra.fk_measured_spectra_measured_samples1_idx" ON "measured_spectra" ("measured_samples_id");
-CREATE INDEX "measured_spectra.fk_measured_spectra_measuring_conditions1_idx" ON "measured_spectra" ("measuring_conditions_id");
 COMMIT;
