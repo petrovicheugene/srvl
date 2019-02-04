@@ -59,14 +59,24 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
     zv_sampleTask->zp_appendClient(dynamic_cast<QObject*>(this));
 
     // chemical-concentration list
-    QStringList chemicalStringList = zv_sampleTask->zp_chemicalStringList();
+    //    QStringList chemicalStringList = zv_sampleTask->zp_chemicalStringList();
+    QMap<int, QString> chemicalMap = zv_sampleTask->zp_chemicalMap();
 
     // replace without cheking
     zv_chemicalConcentrationList.clear();
-    foreach(QString chemical, chemicalStringList)
+    //    foreach(QString chemical, chemicalStringList)
+    //    {
+    //        ZChemicalConcentration chemicalConcentration;
+    //        chemicalConcentration.zv_chemical = chemical;
+    //        chemicalConcentration.zv_chemicalId =
+    //        zv_chemicalConcentrationList.append(chemicalConcentration);
+    //    }
+    QMap<int, QString>::iterator it;
+    for(it = chemicalMap.begin(); it != chemicalMap.end(); it++)
     {
         ZChemicalConcentration chemicalConcentration;
-        chemicalConcentration.zv_chemical = chemical;
+        chemicalConcentration.zv_chemical = it.value();
+        chemicalConcentration.zv_chemicalId = it.key();
         zv_chemicalConcentrationList.append(chemicalConcentration);
     }
 
@@ -92,7 +102,6 @@ void ZSample::zp_setSampleTask(ZSampleTask* sampleTask,
 
                 speAuxdata.zp_setEnergyUnit("kEv");
                 speAuxdata.zp_setGainFactor(measuringConditionsList.at(i).first);
-
 
                 QList<double> energyCalibrationFactorList =
                         zv_sampleTask->zp_energyCalibrationForGainFactor(measuringConditionsList.at(i).first);
@@ -369,6 +378,19 @@ QStringList ZSample::zp_sampleChemicalList() const
     return chemicalList;
 }
 //=====================================================
+QMap<int, QString> ZSample::zp_sampleChemicalMap() const
+{
+    QMap<int, QString> chemicalMap;
+
+    for(int i = 0; i < zv_chemicalConcentrationList.count(); i++)
+    {
+        chemicalMap.insert(zv_chemicalConcentrationList.at(i).zv_chemicalId,
+                           zv_chemicalConcentrationList.at(i).zv_chemical);
+    }
+
+    return chemicalMap;
+}
+//=====================================================
 QStringList ZSample::zp_sampleMeasuringConditionsStringList() const
 {
     QStringList measuringConditionsList;
@@ -461,11 +483,24 @@ void ZSample::zp_measuringFinished()
     emit zg_measuringFinished();
 }
 //=====================================================
-bool ZSample::zp_concentration(const QString& chemical, double& concentration)
+bool ZSample::zp_concentration(const QString& chemical, double& concentration) const
 {
     foreach(ZChemicalConcentration chemicalConcentration, zv_chemicalConcentrationList)
     {
         if(chemicalConcentration.zv_chemical == chemical)
+        {
+            concentration = chemicalConcentration.zv_concentration;
+            return true;
+        }
+    }
+    return false;
+}
+//=====================================================
+bool ZSample::zp_concentration(int chemicalId, double& concentration) const
+{
+    foreach(ZChemicalConcentration chemicalConcentration, zv_chemicalConcentrationList)
+    {
+        if(chemicalConcentration.zv_chemicalId == chemicalId)
         {
             concentration = chemicalConcentration.zv_concentration;
             return true;

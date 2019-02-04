@@ -98,6 +98,7 @@ public:
     void zp_removeClient(QObject *client);
 
     QStringList zp_chemicalStringList() const;
+    QMap<int, QString> zp_chemicalMap() const;
     QStringList zp_measuringConditionsStringlist() const;
 
     QList<QPair<quint8,int> > zp_measuringConditionsList() const;
@@ -167,6 +168,8 @@ public:
     explicit ZMeasuringTask(int id, QObject* parent);
 
     QStringList zp_chemicalList() const;
+    QMap<int, QString> zp_chemicalMap() const;
+
     QString zp_measuringConditionsString() const;
     QPair<quint8,int> zp_measuringConditions() const;
     int zp_measuringConditionsId() const;
@@ -200,6 +203,7 @@ class ZChemicalTask : public QObject
 public:
 
     QString zp_chemical() const;
+    int zp_chemicalId() const;
 
     // STATIC FUNCS
     static bool zp_instanceChemicalTaskObject(int chemicalTaskId,
@@ -218,6 +222,7 @@ private:
     QString zv_taskName;
     QString zv_taskDescription;
     QString zv_chemical;
+    int zv_chemicalId;
     QString zv_errorMsg;
 
     QList<ZZonedCalibration*> zv_calibrationList;

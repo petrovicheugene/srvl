@@ -14,12 +14,14 @@ class ZChemicalConcentration
 public:
     ZChemicalConcentration()
     {
+        zv_chemicalId = 0;
         zv_chemical = QString();
         zv_calibrationId = -1;
         zv_concentration = 0.0;
     }
 
     // VARS
+    int zv_chemicalId;
     QString zv_chemical;
     int zv_calibrationId;
     double zv_concentration;
@@ -52,8 +54,9 @@ public:
     ZSpeSpectrum* zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const;
     bool zp_spectrumVisibilityForSpectrumId(qint64 id, bool& visibility) const;
 
-
     QStringList zp_sampleChemicalList() const;
+    QMap<int, QString> zp_sampleChemicalMap() const;
+
     QStringList zp_sampleMeasuringConditionsStringList() const;
     QList<QPair<quint8, int> > zp_sampleMeasuringConditionsList() const;
     QStringList zp_sampleTaskChemicalList() const;
@@ -66,7 +69,9 @@ public:
     bool zp_stopMeasuring();
     void zp_measuringFinished();
 
-    bool zp_concentration(const QString& chemical, double& concentration);
+    bool zp_concentration(const QString& chemical, double& concentration) const;
+    bool zp_concentration(int chemicalId, double& concentration) const;
+
     void zp_resetMeasuringResults();
 
     void zp_setEnergyCalibration(int gainFactor, const QList<double>& energyCalibrationFactorList);

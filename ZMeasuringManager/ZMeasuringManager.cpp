@@ -27,6 +27,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
+#include <QMap>
 #include <QMenu>
 #include <QMessageBox>
 #include <QFileInfo>
@@ -1026,50 +1027,12 @@ void ZMeasuringManager::zp_startSeries()
 //======================================================
 void ZMeasuringManager::zh_assignNewSeriesId()
 {
-
     int newId = 0;
     zv_seriesId = 0;
     if(zh_findNewIdInTable("series", newId))
     {
         zv_seriesId = newId;
     }
-
-
-//    QSqlQuery query;
-//    QString queryString = "SELECT MAX(id) FROM series";
-
-//    if(!query.prepare(queryString))
-//    {
-//        zv_seriesId = 0;
-//    }
-
-//    if(!query.exec())
-//    {
-//        zv_seriesId = 0;
-//    }
-
-//    if(!query.next())
-//    {
-//        zv_seriesId = 0;
-//    }
-//    else
-//    {
-//        QVariant vData = query.value(0);
-//        if(vData.isValid() && !vData.isNull()  && vData.canConvert<int>())
-//        {
-//            zv_seriesId = vData.toInt() + 1;
-//        }
-//        else
-//        {
-//            zv_seriesId = 1;
-//        }
-//    }
-
-//    int newId = 0;
-//    zh_findNewIdInTable("series", newId);
-
-
-    qDebug() << "ASSIGN SERIES ID" <<  zv_seriesId;
 }
 //======================================================
 void ZMeasuringManager::zh_saveSampleMeasurementResult()
@@ -1109,18 +1072,14 @@ void ZMeasuringManager::zh_saveSampleMeasurementResult()
         return ;
     }
 
-
-    qDebug() << "SAVE SAMPLE ID" << newSampleId <<  "SERIES ID " <<  zv_seriesId
-             << "SAMPLE NAME" << zv_currentMeasuringState.zp_currentSampleName()
-             << "Sample Task" << zv_measuringController->zp_currentSampleTaskId();
-
     // record spectra
     // current sample
     ZSample* currentSample = zv_sampleList.at(zv_currentMeasuringState.zp_currentSampleRow());
 
     // zv_measuring conditions map
     QMap<int, QPair<quint8,int> > measuringConditionsMap
-    = zv_measuringController->zp_currentSampleTaskMeasuringConditions();
+            = zv_measuringController->zp_currentSampleTaskMeasuringConditions();
+
     QMap<int, QPair<quint8,int> >::const_iterator it;
     for(it = measuringConditionsMap.begin(); it != measuringConditionsMap.end(); it++)
     {
@@ -1139,34 +1098,65 @@ void ZMeasuringManager::zh_saveSampleMeasurementResult()
 
         query.clear();
         queryString = QString("INSERT INTO measured_spectra (id, spectrum_data, measured_samples_id, measuring_conditions_id) "
-                                          "VALUES (:id, :spectrum_data, :measured_samples_id, :measuring_conditions_id)");
+                              "VALUES (:id, :spectrum_data, :measured_samples_id, :measuring_conditions_id)");
 
-            if(!query.prepare(queryString))
-            {
-                qDebug() << query.lastError().text();
-                return;
-            }
+        if(!query.prepare(queryString))
+        {
+            qDebug() << query.lastError().text();
+            return;
+        }
 
-            query.bindValue(":id", newSpectrumId);
-            query.bindValue(":spectrum_data", spectrumByteArray);
-            query.bindValue(":measured_samples_id", newSampleId);
-            query.bindValue(":measuring_conditions_id", it.key());
+        query.bindValue(":id", newSpectrumId);
+        query.bindValue(":spectrum_data", spectrumByteArray);
+        query.bindValue(":measured_samples_id", newSampleId);
+        query.bindValue(":measuring_conditions_id", it.key());
 
-            if(!query.exec())
-            {
-                qDebug() << query.lastError().text();
-                return ;
-            }
-
-            qDebug() << "RECORD SPE. ID" << newSpectrumId <<  "SERIES ID " <<  zv_seriesId
-                     << "SAMPLE ID" << newSampleId
-                     << "MEAS COND" << it.key();
-
+        if(!query.exec())
+        {
+            qDebug() << query.lastError().text();
+            return ;
+        }
     }
 
-//    query.clear();
-//    queryString = QString("INSERT INTO measured_samples (id, name, series_id, sample_tasks_id) "
-//                                     "VALUES (:id, :name, :series_id, :sample_tasks_id)");
+    QMap<int, QString> chemicalMap = currentSample->zp_sampleChemicalMap();
+
+    QString testStr = "Chemicals: ";
+    QMap<int, QString>::iterator chemIt;
+    for(chemIt = chemicalMap.begin(); chemIt != chemicalMap.end(); chemIt++)
+    {
+        // test output
+        double concentration = 0;
+        currentSample->zp_concentration(chemIt.key(), concentration);
+
+        // end test output
+        int newChemicalId = 0;
+        if(!zh_findNewIdInTable("measured_chemicals", newChemicalId))
+        {
+            // cannot obtain new spectrum id
+            continue;
+        }
+
+        query.clear();
+        queryString = QString("INSERT INTO measured_chemicals (id, chemicals_id, measured_samples_id, value) "
+                              "VALUES (:id, :chemicals_id, :measured_samples_id, :value)");
+
+        if(!query.prepare(queryString))
+        {
+            qDebug() << query.lastError().text();
+            return;
+        }
+
+        query.bindValue(":id", newChemicalId);
+        query.bindValue(":chemicals_id", chemIt.key());
+        query.bindValue(":measured_samples_id", newSampleId);
+        query.bindValue(":value", concentration);
+
+        if(!query.exec())
+        {
+            qDebug() << query.lastError().text();
+            return ;
+        }
+    }
 }
 //======================================================
 bool ZMeasuringManager::zh_recordSeriesId()

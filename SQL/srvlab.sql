@@ -275,6 +275,7 @@ CREATE TABLE "measured_chemicals"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "chemicals_id" INTEGER NOT NULL,
   "measured_samples_id" INTEGER NOT NULL,
+  "value" DOUBLE,
   CONSTRAINT "fk_measured_chemicals_chemicals1"
     FOREIGN KEY("chemicals_id")
     REFERENCES "chemicals"("id")
