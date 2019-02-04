@@ -24,11 +24,13 @@ class ZAbstractSpectrum : public QObject
 {
     Q_OBJECT
 public:
+
+    //explicit ZAbstractSpectrum( QObject* parent = nullptr);
     explicit ZAbstractSpectrum(const QList<quint32> &intensityList,
                                const QString& path,
                                QColor color,
                                bool completed,
-                               QObject* parent);
+                               QObject* parent = nullptr);
     virtual ~ZAbstractSpectrum();
 
     // VARS

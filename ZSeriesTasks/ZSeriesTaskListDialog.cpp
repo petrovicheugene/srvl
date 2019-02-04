@@ -23,10 +23,10 @@ ZSeriesTaskListDialog::ZSeriesTaskListDialog(bool forLoad, QWidget *parent)
 {
     setWindowFlags(Qt::Tool);
 
-    zv_manager = 0;
+    zv_manager = nullptr;
     zv_forLoad = forLoad;
-    zv_seriesNameLineEdit = 0;
-    zv_descriptionTextEdit = 0;
+    zv_seriesNameLineEdit = nullptr;
+    zv_descriptionTextEdit = nullptr;
 
     zh_createComponents();
     zh_createConnections();
@@ -186,6 +186,11 @@ QString ZSeriesTaskListDialog::zp_newSeriesTaskName() const
     }
 
     return zv_seriesNameLineEdit->text();
+}
+//=====================================================
+qint64 ZSeriesTaskListDialog::zp_newSeriesTaskId() const
+{
+    return zv_manager->zp_newSeriesTaskId();
 }
 //=====================================================
 void ZSeriesTaskListDialog::zh_setCurrentTaskProperties(const QString& name,

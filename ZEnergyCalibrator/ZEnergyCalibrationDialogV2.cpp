@@ -50,7 +50,7 @@ ZEnergyCalibrationDialogV2::ZEnergyCalibrationDialogV2(QMap<quint8, QList<ZSpeSp
     zh_loadSpectrumData(spectrumMap);
 
 
-    if(zv_plotter != 0)
+    if(zv_plotter != nullptr)
     {
         QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
                                   Qt::QueuedConnection);

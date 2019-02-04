@@ -19,6 +19,7 @@ public:
 
     bool zp_loadSeriesTask();
     bool zp_saveSeriesTask(const QString& taskName, const QString& description);
+    qint64 zp_newSeriesTaskId() const;
     int zp_currentSeriesTaskId();
 
     QString zp_lastError() const;
@@ -38,6 +39,7 @@ private:
     QSqlTableModel* zv_seriesSqlTableModel;
     QModelIndex zv_currentIndex;
     QString zv_errorMsg;
+    qint64 zv_newSeriesTaskId;
 
     // FUNCS
     void zh_createComponents();

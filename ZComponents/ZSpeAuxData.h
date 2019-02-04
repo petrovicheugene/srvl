@@ -5,12 +5,16 @@
 #include "ZAbstractSpectrumAuxData.h"
 #include <QDateTime>
 #include <QMap>
+#include <QMetaType>
 #include <QString>
 //=================================================
 class ZSpeAuxData : public ZAbstractSpectrumAuxData
 {
 public:
     ZSpeAuxData();
+
+    friend QDataStream &operator<<(QDataStream &out, const ZSpeAuxData &d);
+    friend QDataStream &operator>>(QDataStream &in, ZSpeAuxData &d);
 
     void zp_setSrvN(const QString&);
     bool zp_setDate(const QString&);
@@ -90,5 +94,6 @@ private:
 
 
 };
+Q_DECLARE_METATYPE(ZSpeAuxData)
 //=================================================
 #endif // ZSPEAUXDATA_H

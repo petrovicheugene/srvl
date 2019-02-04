@@ -17,10 +17,11 @@ class ZSeriesTaskListDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZSeriesTaskListDialog(bool forLoad, QWidget *parent = 0);
+    explicit ZSeriesTaskListDialog(bool forLoad, QWidget *parent = nullptr);
     ~ZSeriesTaskListDialog();
     void zp_connectToManager(ZSeriesTaskListManager* manager);
     QString zp_newSeriesTaskName() const;
+    qint64 zp_newSeriesTaskId() const;
 
 signals:
 

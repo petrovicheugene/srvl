@@ -9,7 +9,7 @@ class ZCalibrationInTaskTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ZCalibrationInTaskTableModel(QObject *parent = 0);
+    explicit ZCalibrationInTaskTableModel(QObject *parent = nullptr);
 
     // override FUNCS
     Qt::ItemFlags	flags(const QModelIndex & index) const;
@@ -31,6 +31,7 @@ private:
     // VARS
 
     // FUNCS
+
 
 };
 //=======================================================

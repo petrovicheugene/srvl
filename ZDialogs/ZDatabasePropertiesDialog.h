@@ -24,7 +24,7 @@ public:
     */
     explicit ZDatabasePropertiesDialog(const QString& name,
                                        const QString& path,
-                                       QWidget *parent = 0);
+                                       QWidget *parent = nullptr);
 
     /*!
      \brief

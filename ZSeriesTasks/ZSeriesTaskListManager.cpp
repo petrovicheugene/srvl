@@ -15,9 +15,12 @@ ZSeriesTaskListManager::ZSeriesTaskListManager(QObject *parent)
     : QObject(parent)
 {
     zv_currentIndex = QModelIndex();
+    zv_newSeriesTaskId = 0;
+
     zh_createComponents();
     zh_createActions();
     zh_createConnections();
+
 }
 //======================================================
 void ZSeriesTaskListManager::zh_createComponents()
@@ -170,7 +173,13 @@ bool ZSeriesTaskListManager::zp_saveSeriesTask(const QString& taskName, const QS
         return false;
     }
 
+    zv_newSeriesTaskId = newSeriesTaskId;
     return true;
+}
+//======================================================
+qint64 ZSeriesTaskListManager::zp_newSeriesTaskId() const
+{
+    return zv_newSeriesTaskId;
 }
 //======================================================
 bool ZSeriesTaskListManager::zh_checkTaskNameAndFindNewId(const QString& name, int& newId)

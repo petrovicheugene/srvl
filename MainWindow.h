@@ -56,7 +56,7 @@ public:
     */
     MainWindow(const QString& dbName,
                const QString& dbPath,
-               QWidget *parent = 0);
+               QWidget *parent = nullptr);
     /*!
      \brief
 
@@ -85,6 +85,7 @@ private slots:
     void zh_onCalibrationsAction();
     void zh_onChemicalElementTasksAction();
     void zh_onSampleTasksAction();
+    void zh_onSeriesMeasurementAction();
 
     void zh_onRunSQLCommandAction() const;
     void zh_onSettingsAction();
@@ -120,6 +121,8 @@ private:
     QAction* zv_calibrationsAction;
     QAction* zv_chemicalElementTasksAction;
     QAction* zv_sampleTasksAction;
+    QAction* zv_seriesMeasurementAction;
+
 
     QAction* zv_exitAction;       /*!< TODO: describe */
 //    QAction* zv_previewAndPrintAction;

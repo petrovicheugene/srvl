@@ -79,7 +79,8 @@ INCLUDEPATH += ZDialogs \
     ZEnergyCalibrator \
     ZPeriodicTableDialog \
     ZPeriodicTable \
-    ZEnergyLineManager
+    ZEnergyLineManager \
+    ZSeriesMeasurementDialog
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -224,7 +225,8 @@ SOURCES += main.cpp\
     ZDialogs/ZPasswordChangeDialog.cpp \
     ZDialogs/ZPasswordDialog.cpp \
     ZComponents/simplecrypt.cpp \
-    ZModelViewWidgets/ZSampleTaskDelegate.cpp
+    ZModelViewWidgets/ZSampleTaskDelegate.cpp \
+    ZSeriesMeasurementDialog/ZSeriesMeasurementDialog.cpp
 
 HEADERS  += MainWindow.h \
     ZDialogs/ZStartDialog.h \
@@ -371,7 +373,8 @@ HEADERS  += MainWindow.h \
     ZDialogs/ZPasswordChangeDialog.h \
     ZDialogs/ZPasswordDialog.h \
     ZComponents/simplecrypt.h \
-    ZModelViewWidgets/ZSampleTaskDelegate.h
+    ZModelViewWidgets/ZSampleTaskDelegate.h \
+    ZSeriesMeasurementDialog/ZSeriesMeasurementDialog.h
 
 RESOURCES += \
     resources.qrc \

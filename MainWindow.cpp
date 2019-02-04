@@ -22,7 +22,7 @@
 #include "ZCalibrationListDialog.h"
 #include "ZSampleTaskListDialog.h"
 #include "ZChemicalTaskListDialog.h"
-
+#include "ZSeriesMeasurementDialog.h"
 // models
 //#include "ZMeasuringResultTableModel.h"
 //#include "ZSeriesTaskTreeModel.h"
@@ -87,9 +87,9 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
 
     setWindowTitle(qApp->property("glAppProduct").toString());
 
-    zv_exitAction = 0;
-    zv_aboutAction = 0;
-    zv_helpAction = 0;
+    zv_exitAction = nullptr;
+    zv_aboutAction = nullptr;
+    zv_helpAction = nullptr;
     zv_helpBrowser = nullptr;
     //    zv_currentMeasuringTaskTreeModel = 0;
     // zv_sqlSeriesModel = 0;
@@ -97,7 +97,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zv_energyLineTableWidget = nullptr;
     zv_measuringResultTableModel = nullptr;
 
-    zv_plotter = 0;
+    zv_plotter = nullptr;
 
     zh_createActions();
     zh_createComponents();
@@ -107,7 +107,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     zh_restoreSettings();
 
     // plotter starting settings
-    if(zv_plotter != 0)
+    if(zv_plotter != nullptr)
     {
         QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
                                   Qt::QueuedConnection);
@@ -170,6 +170,10 @@ void MainWindow::zh_createActions()
     zv_sampleTasksAction->setText(tr("Sample tasks"));
     zv_sampleTasksAction->setToolTip(tr("Manage sample task list"));
 
+    zv_seriesMeasurementAction = new QAction(this);
+    zv_seriesMeasurementAction->setIcon(QIcon());
+    zv_seriesMeasurementAction->setText(tr("Measured series"));
+    zv_seriesMeasurementAction->setToolTip(tr("Show measured series list"));
 
     //    zv_printAction  = new QAction(this);
     //    zv_printAction->setIcon(QIcon(NS_Icons::glIconStringExitApp));
@@ -234,7 +238,7 @@ void MainWindow::zh_createComponents()
     zv_energyLineTableDock->setObjectName("ENERGY_LINE_TABLE_DOCK");
     zv_energyLineTableDock->setWindowTitle(tr("Energy lines"));
     zv_dockList << zv_energyLineTableDock;
-    addDockWidget(Qt::BottomDockWidgetArea, zv_energyLineTableDock);
+    addDockWidget(Qt::RightDockWidgetArea, zv_energyLineTableDock);
 
     // create widget
     zv_energyLineTableWidget = new ZEnergyLineTableWidget(this);
@@ -459,6 +463,9 @@ void MainWindow::zh_createConnections()
     connect(zv_sampleTasksAction, &QAction::triggered,
             this, &MainWindow::zh_onSampleTasksAction);
 
+    connect(zv_seriesMeasurementAction, &QAction::triggered,
+            this, &MainWindow::zh_onSeriesMeasurementAction);
+
 
 
     connect(zv_measuringManager, &ZMeasuringManager::zg_inquiryCurrentIndex,
@@ -605,6 +612,8 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
         menu->addAction(zv_calibrationsAction);
         menu->addAction(zv_chemicalElementTasksAction);
         menu->addAction(zv_sampleTasksAction);
+        menu->addSeparator();
+        menu->addAction(zv_seriesMeasurementAction);
 
         menu->addSeparator();
         menu->addAction(zv_runSQLCommandAction);
@@ -747,7 +756,7 @@ void MainWindow::zh_onCalibrationsAction()
     calibrationSQLTableModel.setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
     calibrationSQLTableModel.setHeaderData(2, Qt::Horizontal, QVariant(tr("Description")));
 
-    ZCalibrationListDialog dialog(&chemicalSQLTableModel, 0, &calibrationSQLTableModel);
+    ZCalibrationListDialog dialog(&chemicalSQLTableModel, nullptr, &calibrationSQLTableModel);
 
     dialog.exec();
 }
@@ -761,6 +770,12 @@ void MainWindow::zh_onChemicalElementTasksAction()
 void MainWindow::zh_onSampleTasksAction()
 {
     ZSampleTaskListDialog dialog;
+    dialog.exec();
+}
+//============================================================
+void MainWindow::zh_onSeriesMeasurementAction()
+{
+    ZSeriesMeasurementDialog dialog;
     dialog.exec();
 }
 //============================================================
