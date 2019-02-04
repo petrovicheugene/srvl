@@ -5,6 +5,24 @@
 //==========================================================
 qint64 ZAbstractSpectrum::zv_lastSpectrumId = 0;
 //==========================================================
+//ZAbstractSpectrum::ZAbstractSpectrum( QObject* parent) : QObject(parent)
+//{
+//    zv_type = ST_NA;
+
+//    zv_name = QString();
+//    zv_path = QString();
+
+//    zv_visible = false;
+//    zv_checked = false;
+//    zv_color = QColor();
+//    zv_spectrumId = -1;
+
+//    zv_channelCount = 0;
+//    zv_maxIntensity = 100;
+//    zv_completed = true;
+
+//}
+//==========================================================
 ZAbstractSpectrum::ZAbstractSpectrum(const QList<quint32> &intensityList,
                                      const QString& path, QColor color, bool completed, QObject *parent)
     : QObject(parent)

@@ -17,9 +17,9 @@ bool ZSampleTask::zp_instanceSampleTaskObject(int sampleTaskId,
                                               QObject* parent)
 {
     msg.clear();
-    if(sampleTaskId < 0 || parent == 0)
+    if(sampleTaskId < 0 || parent == nullptr)
     {
-        task = 0;
+        task = nullptr;
         msg = "Invalid sample task id.";
         return false;
     }
@@ -70,23 +70,23 @@ ZSampleTask::ZSampleTask(int id,
     zv_sampleTaskId = id;
     zv_name = name;
     zv_measuringController = measuringController;
-    zv_currentSample = 0;
+    zv_currentSample = nullptr;
     zh_initMeasuringTasks();
 }
 //=================================================
 void ZSampleTask::zh_initMeasuringTasks()
 {
     QSqlQuery query;
-//    QString queryString = QString("SELECT * FROM conditions_has_sample_tasks "
-//                                  "WHERE sample_tasks_id=%1").arg(QString::number(zv_id));
+    //    QString queryString = QString("SELECT * FROM conditions_has_sample_tasks "
+    //                                  "WHERE sample_tasks_id=%1").arg(QString::number(zv_id));
 
     QString queryString = QString("SELECT id "
-//                                  "measuring_conditions.gain_factor, "
-//                                  "measuring_conditions.exposition "
+                                  //                                  "measuring_conditions.gain_factor, "
+                                  //                                  "measuring_conditions.exposition "
                                   "FROM conditions_has_sample_tasks "
-//                                  "JOIN measuring_conditions "
+                                  //                                  "JOIN measuring_conditions "
                                   // "ON conditions_has_sample_tasks.measuring_conditions_id=conditions_has_sample_tasks.measuring_conditions_id "
-//                                  "ON conditions_has_sample_tasks.measuring_conditions_id=measuring_conditions.id "
+                                  //                                  "ON conditions_has_sample_tasks.measuring_conditions_id=measuring_conditions.id "
                                   "WHERE sample_tasks_id=%1").arg(QString::number(zv_sampleTaskId));
 
     if(!query.prepare(queryString))
@@ -147,6 +147,7 @@ void ZSampleTask::zp_appendClient(QObject *client)
 //=================================================
 void ZSampleTask::zp_removeClient(QObject* client )
 {
+
     if(!zv_clientList.contains(client))
     {
         return;
@@ -177,6 +178,16 @@ QStringList ZSampleTask::zp_chemicalStringList() const
     return chemicalList;
 }
 //=================================================
+QMap<int, QString> ZSampleTask::zp_chemicalMap() const
+{
+    QMap<int, QString> chemicalMap;
+    for(int i = 0; i < zv_measuringTaskList.count(); i++)
+    {
+        chemicalMap.unite(zv_measuringTaskList.at(i)->zp_chemicalMap());
+    }
+    return chemicalMap;
+}
+//=================================================
 QStringList ZSampleTask::zp_measuringConditionsStringlist() const
 {
     QStringList measuringConditionsList;
@@ -197,6 +208,17 @@ QList<QPair<quint8, int> > ZSampleTask::zp_measuringConditionsList() const
     }
 
     return measuringConditionsList;
+}
+//=================================================
+QMap<int, QPair<quint8,int> > ZSampleTask::zp_measuringConditionsMap() const
+{
+    QMap<int, QPair<quint8,int> > measuringConditionsMap;
+    foreach(ZMeasuringTask* task, zv_measuringTaskList)
+    {
+        measuringConditionsMap.insert(task->zp_measuringConditionsId(), task->zp_measuringConditions());
+    }
+
+    return measuringConditionsMap;
 }
 //=================================================
 int ZSampleTask::zp_totalMeasuringDuration() const
@@ -278,7 +300,7 @@ void ZSampleTask::zp_calcConcentrations(quint8 gainFactor, int exposition,
 }
 //=================================================
 qint64 ZSampleTask::zp_spectrumIdForConditions(quint8 gainFactor,
-                         int exposition) const
+                                               int exposition) const
 {
     if(!zv_currentSample)
     {
@@ -340,7 +362,8 @@ ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject
     : QObject(parent)
 {
     QSqlQuery query;
-    QString queryString = QString("SELECT measuring_conditions.gain_factor,"
+    QString queryString = QString("SELECT measuring_conditions.id, "
+                                  "measuring_conditions.gain_factor,"
                                   "measuring_conditions.exposition "
                                   "FROM conditions_has_sample_tasks "
                                   "JOIN measuring_conditions "
@@ -363,16 +386,25 @@ ZMeasuringTask::ZMeasuringTask(int measurementConditionsHasSampleTaskId, QObject
         return;
     }
 
-    // gain factor
+    // id
     QVariant vData = query.value(0);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
     }
 
-    zv_gainFactor = vData.toInt();
+    zv_id = vData.toInt();
 
+    // gain factor
     vData = query.value(1);
+    if(!vData.isValid() || !vData.canConvert<int>())
+    {
+        return;
+    }
+
+    zv_gainFactor = static_cast<quint8>(vData.toInt());
+
+    vData = query.value(2);
     if(!vData.isValid() || !vData.canConvert<int>())
     {
         return;
@@ -469,13 +501,22 @@ void ZMeasuringTask::zh_initCalculationTasks(int measurementConditionsHasSampleT
 QStringList ZMeasuringTask::zp_chemicalList() const
 {
     QStringList chemicalList;
-
     for(int i = 0; i < zv_chemicalTaskList.count(); i++)
     {
         chemicalList.append(zv_chemicalTaskList.at(i)->zp_chemical());
     }
-
     return chemicalList;
+}
+//=================================================
+QMap<int, QString> ZMeasuringTask::zp_chemicalMap() const
+{
+    QMap<int, QString> chemicalMap;
+    for(int i = 0; i < zv_chemicalTaskList.count(); i++)
+    {
+        chemicalMap.insert(zv_chemicalTaskList.at(i)->zp_chemicalId(), zv_chemicalTaskList.at(i)->zp_chemical());
+    }
+
+    return chemicalMap;
 }
 //=================================================
 QString ZMeasuringTask::zp_measuringConditionsString() const
@@ -491,6 +532,11 @@ QPair<quint8, int> ZMeasuringTask::zp_measuringConditions() const
     measuringConditions.first = zv_gainFactor;
     measuringConditions.second = zv_exposition;
     return measuringConditions;
+}
+//=================================================
+int ZMeasuringTask::zp_measuringConditionsId() const
+{
+    return zv_id;
 }
 //=================================================
 int ZMeasuringTask::zp_exposition() const
@@ -584,11 +630,12 @@ bool ZChemicalTask::zp_calculateConcentration(const ZSpeSpectrum* spectrum,
 
         chemicalConcentration.zv_concentration = concentration;
         chemicalConcentration.zv_chemical = zv_chemical;
+        chemicalConcentration.zv_chemicalId = zv_chemicalId;
         chemicalConcentration.zv_calibrationId = zv_calibrationList.at(c)->zp_databaseCalibrationId();
 
         if(zv_calibrationList.at(c)->zp_isConcentrationInBounds(concentration))
         {
-             break;
+            break;
         }
     }
 
@@ -598,6 +645,8 @@ bool ZChemicalTask::zp_calculateConcentration(const ZSpeSpectrum* spectrum,
 ZChemicalTask::ZChemicalTask(QString& msg, int chemicalTaskId, QSqlQuery& query, QObject* parent)
     : QObject(parent)
 {
+    zv_chemicalId = 0;
+    zv_chemical = QString();
     zv_chemicalTaskId = chemicalTaskId;
 
     // task name
@@ -768,6 +817,11 @@ QString ZChemicalTask::zp_chemical() const
     return zv_chemical;
 }
 //=================================================
+int ZChemicalTask::zp_chemicalId() const
+{
+    return zv_chemicalId;
+}
+//=================================================
 void ZChemicalTask::zh_getChemical(int chemicalId)
 {
     QSqlQuery query;
@@ -796,6 +850,7 @@ void ZChemicalTask::zh_getChemical(int chemicalId)
         return;
     }
 
+    zv_chemicalId = chemicalId;
     zv_chemical = vData.toString();
 }
 //=================================================

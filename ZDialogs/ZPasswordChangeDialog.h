@@ -13,7 +13,7 @@ class ZPasswordChangeDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZPasswordChangeDialog(QWidget *parent = 0);
+    explicit ZPasswordChangeDialog(QWidget *parent = nullptr);
 
 
 protected:
@@ -43,7 +43,6 @@ protected slots:
     void mf_showSymbolControl(bool);
 
 public slots:
-
 
 
 };

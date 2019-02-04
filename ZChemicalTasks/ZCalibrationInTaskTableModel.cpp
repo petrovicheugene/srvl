@@ -35,7 +35,6 @@ int ZCalibrationInTaskTableModel::rowCount(const QModelIndex & parent) const
 QVariant ZCalibrationInTaskTableModel::data(const QModelIndex & index, int role) const
 {
     return QVariant();
-
 }
 //=======================================================
 bool ZCalibrationInTaskTableModel::setData(const QModelIndex & index, const QVariant & value, int role)

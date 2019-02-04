@@ -1,9 +1,15 @@
 //===================================================
 #include "ZSpeSpectrum.h"
+#include <QDataStream>
 //===================================================
 //ZSpeSpectrum::ZSpeSpectrum(QObject *parent) : ZAbstractSpectrum(parent)
 //{
 //    zv_type = ST_SPE;
+//}
+////===================================================
+//ZSpeSpectrum::ZSpeSpectrum(const ZSpeSpectrum& src) : ZAbstractSpectrum(parent)
+//{
+//    *this = src;
 //}
 //===================================================
 ZSpeSpectrum::ZSpeSpectrum(const QList<quint32>& intensityList, const ZSpeAuxData& speAuxData,
@@ -107,5 +113,56 @@ QList<double> ZSpeSpectrum::zp_energyCalibration() const
     energyCalibrationFactorList.append(zv_auxData.zp_energyK1());
     energyCalibrationFactorList.append(zv_auxData.zp_energyK2());
     return energyCalibrationFactorList;
+}
+//===================================================
+QDataStream &operator<<(QDataStream &out, const ZSpeSpectrum &s)
+{
+     out << s.zv_auxData;
+
+    out << s.zv_type;
+    out << s.zv_name;
+    out << s.zv_path;
+    out << s.zv_spectrumData;
+
+    out << s.zv_spectrumPaintPath;
+
+    out << s.zv_concentrationMap;
+    out << s.zv_visible;
+    out << s.zv_checked;
+    out << s.zv_color;
+    out << s.zv_spectrumId;
+
+    out << s.zv_channelCount;
+    out << s.zv_maxIntensity;
+    out << s.zv_completed;
+
+
+    return out;
+}
+//===================================================
+QDataStream &operator>>(QDataStream &in, ZSpeSpectrum &s)
+{
+     in >> s.zv_auxData;
+
+    int type;
+    in >> type;
+    s.zv_type = static_cast<ZAbstractSpectrum::SpectrumType>(type);
+    in >> s.zv_name;
+    in >> s.zv_path;
+    in >> s.zv_spectrumData;
+
+    in >> s.zv_spectrumPaintPath;
+
+    in >> s.zv_concentrationMap;
+    in >> s.zv_visible;
+    in >> s.zv_checked;
+    in >> s.zv_color;
+    in >> s.zv_spectrumId;
+
+    in >> s.zv_channelCount;
+    in >> s.zv_maxIntensity;
+    in >> s.zv_completed;
+
+    return in;
 }
 //===================================================

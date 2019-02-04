@@ -20,10 +20,10 @@ class ZCalibrationListDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ZCalibrationListDialog(QSqlTableModel *chemicalTableModel = 0,
-                                    QSqlTableModel* measuringConditionsSQLTableModel = 0,
-                                    QSqlTableModel* calibrationTableSQLModel = 0,
-                                    QWidget *parent = 0);
+    explicit ZCalibrationListDialog(QSqlTableModel *chemicalTableModel = nullptr,
+                                    QSqlTableModel* measuringConditionsSQLTableModel = nullptr,
+                                    QSqlTableModel* calibrationTableSQLModel = nullptr,
+                                    QWidget *parent = nullptr);
     ~ZCalibrationListDialog();
 
     bool zp_setFilter(int chemicalId , int gainFactor, int exposition);

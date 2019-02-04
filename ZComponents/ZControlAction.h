@@ -11,7 +11,7 @@ class ZControlAction : public QAction
 {
     Q_OBJECT
 public:
-    explicit ZControlAction(QObject *parent = 0);
+    explicit ZControlAction(QObject *parent = nullptr);
 
 signals:
     

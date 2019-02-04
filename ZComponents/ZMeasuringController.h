@@ -21,7 +21,7 @@ public:
                           CS_RUNNING,
                          };
 
-    explicit ZMeasuringController(QObject *parent = 0);
+    explicit ZMeasuringController(QObject *parent = nullptr);
     void zp_setConnector(ZUralAdcDeviceConnector* connector);
     bool zp_setSampleShiftImpulseDuration(int duration);
     void zp_setSpectrumChannelCount(int channelCount);
@@ -29,6 +29,9 @@ public:
                           ZSampleTask* sampleTask);
     bool zp_stopMeasuring();
     void zp_finishCurrentMeasuring();
+
+    int zp_currentSampleTaskId() const;
+    QMap<int, QPair<quint8,int> >zp_currentSampleTaskMeasuringConditions() const;
 
 signals:
 
@@ -50,7 +53,6 @@ protected:
     virtual void timerEvent(QTimerEvent *event);
 
 private slots:
-
 
 private:
 

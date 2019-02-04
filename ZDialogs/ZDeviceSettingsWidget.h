@@ -14,7 +14,7 @@ class ZDeviceSettingsWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ZDeviceSettingsWidget(QWidget *parent = 0);
+    explicit ZDeviceSettingsWidget(QWidget *parent = nullptr);
 
     void zp_setAppSettings(const ZDeviceSettings&);
     void zp_appSettings(ZDeviceSettings&);

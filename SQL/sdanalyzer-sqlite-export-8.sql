@@ -2,20 +2,20 @@
 -- Author:        Progger
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2019-01-30 11:27
+-- Changed:       2019-01-29 14:21
 -- Created:       2016-09-04 14:47
 PRAGMA foreign_keys = OFF;
 
--- Schema: srvlab
-ATTACH "srvlab.sdb" AS "srvlab";
+-- Schema: sdAnalyzer
+ATTACH "sdAnalyzer.sdb" AS "sdAnalyzer";
 BEGIN;
-CREATE TABLE "gain_factors"(
+CREATE TABLE "sdAnalyzer"."gain_factors"(
   "gain_factor" INTEGER PRIMARY KEY NOT NULL,
   "energyFactorK0" DOUBLE,
   "energyFactorK1" DOUBLE,
   "energyFactorK2" DOUBLE
 );
-CREATE TABLE "sample_tasks"(
+CREATE TABLE "sdAnalyzer"."sample_tasks"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "sample_name_template" VARCHAR(45) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE "sample_tasks"(
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
 );
-CREATE TABLE "measuring_conditions"(
+CREATE TABLE "sdAnalyzer"."measuring_conditions"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "gain_factor" INTEGER NOT NULL,
   "exposition" INTEGER NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE "measuring_conditions"(
     ON DELETE RESTRICT
     ON UPDATE RESTRICT
 );
-CREATE INDEX "measuring_conditions.fk_calibrations_measuring_conditions1_idx" ON "measuring_conditions" ("gain_factor");
-CREATE TABLE "conditions_has_sample_tasks"(
+CREATE INDEX "sdAnalyzer"."measuring_conditions.fk_calibrations_measuring_conditions1_idx" ON "measuring_conditions" ("gain_factor");
+CREATE TABLE "sdAnalyzer"."conditions_has_sample_tasks"(
   "id" INTEGER NOT NULL,
   "measuring_conditions_id" INTEGER NOT NULL,
   "sample_tasks_id" INTEGER NOT NULL,
@@ -53,28 +53,28 @@ CREATE TABLE "conditions_has_sample_tasks"(
     ON DELETE CASCADE
     ON UPDATE RESTRICT
 );
-CREATE INDEX "conditions_has_sample_tasks.fk_measuring_conditions_has_sample_tasks_sample_tasks1_idx" ON "conditions_has_sample_tasks" ("sample_tasks_id");
-CREATE INDEX "conditions_has_sample_tasks.fk_measuring_conditions_has_sample_tasks_measuring_conditio_idx" ON "conditions_has_sample_tasks" ("measuring_conditions_id");
-CREATE TABLE "chemicals"(
+CREATE INDEX "sdAnalyzer"."conditions_has_sample_tasks.fk_measuring_conditions_has_sample_tasks_sample_tasks1_idx" ON "conditions_has_sample_tasks" ("sample_tasks_id");
+CREATE INDEX "sdAnalyzer"."conditions_has_sample_tasks.fk_measuring_conditions_has_sample_tasks_measuring_conditio_idx" ON "conditions_has_sample_tasks" ("measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."chemicals"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
 );
-CREATE TABLE "series_tasks"(
+CREATE TABLE "sdAnalyzer"."series_tasks"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "description" TEXT,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
 );
-CREATE TABLE "measurement_units"(
+CREATE TABLE "sdAnalyzer"."measurement_units"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
 );
-CREATE TABLE "calibrations"(
+CREATE TABLE "sdAnalyzer"."calibrations"(
   "id" INTEGER NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "description" TEXT,
@@ -104,15 +104,15 @@ CREATE TABLE "calibrations"(
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "calibrations.fk_calibrations_chemicals1_idx" ON "calibrations" ("chemicals_id");
-CREATE INDEX "calibrations.fk_calibrations_measurement_units1_idx" ON "calibrations" ("measurement_units_id");
-CREATE INDEX "calibrations.fk_calibrations_measuring_conditions1_idx" ON "calibrations" ("measuring_conditions_id");
-CREATE TABLE "operators"(
+CREATE INDEX "sdAnalyzer"."calibrations.fk_calibrations_chemicals1_idx" ON "calibrations" ("chemicals_id");
+CREATE INDEX "sdAnalyzer"."calibrations.fk_calibrations_measurement_units1_idx" ON "calibrations" ("measurement_units_id");
+CREATE INDEX "sdAnalyzer"."calibrations.fk_calibrations_measuring_conditions1_idx" ON "calibrations" ("measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."operators"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(80) NOT NULL,
   "password" BLOB
 );
-CREATE TABLE "series"(
+CREATE TABLE "sdAnalyzer"."series"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "date" DATE NOT NULL,
   "time" TIME NOT NULL,
@@ -129,9 +129,9 @@ CREATE TABLE "series"(
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "series.fk_series_operators1_idx" ON "series" ("operators_id");
-CREATE INDEX "series.fk_series_series_tasks1_idx" ON "series" ("series_tasks_id");
-CREATE TABLE "calibration_stacks"(
+CREATE INDEX "sdAnalyzer"."series.fk_series_operators1_idx" ON "series" ("operators_id");
+CREATE INDEX "sdAnalyzer"."series.fk_series_series_tasks1_idx" ON "series" ("series_tasks_id");
+CREATE TABLE "sdAnalyzer"."calibration_stacks"(
   "id" INTEGER NOT NULL,
   "name" VARCHAR(45),
   "description" TEXT,
@@ -152,9 +152,9 @@ CREATE TABLE "calibration_stacks"(
     ON DELETE CASCADE
     ON UPDATE RESTRICT
 );
-CREATE INDEX "calibration_stacks.fk_calibration_stacks_chemicals1_idx" ON "calibration_stacks" ("chemicals_id");
-CREATE INDEX "calibration_stacks.fk_calibration_stacks_measuring_conditions1_idx" ON "calibration_stacks" ("measuring_conditions_id");
-CREATE TABLE "sample_tasks_has_series_tasks"(
+CREATE INDEX "sdAnalyzer"."calibration_stacks.fk_calibration_stacks_chemicals1_idx" ON "calibration_stacks" ("chemicals_id");
+CREATE INDEX "sdAnalyzer"."calibration_stacks.fk_calibration_stacks_measuring_conditions1_idx" ON "calibration_stacks" ("measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."sample_tasks_has_series_tasks"(
   "id" INTEGER NOT NULL,
   "sample_tasks_id" INTEGER NOT NULL,
   "series_tasks_id" INTEGER NOT NULL,
@@ -170,9 +170,9 @@ CREATE TABLE "sample_tasks_has_series_tasks"(
     ON DELETE CASCADE
     ON UPDATE RESTRICT
 );
-CREATE INDEX "sample_tasks_has_series_tasks.fk_sample_tasks_has_series_tasks_series_tasks1_idx" ON "sample_tasks_has_series_tasks" ("series_tasks_id");
-CREATE INDEX "sample_tasks_has_series_tasks.fk_sample_tasks_has_series_tasks_sample_tasks1_idx" ON "sample_tasks_has_series_tasks" ("sample_tasks_id");
-CREATE TABLE "calibration_stacks_has_conditions_has_sample_tasks"(
+CREATE INDEX "sdAnalyzer"."sample_tasks_has_series_tasks.fk_sample_tasks_has_series_tasks_series_tasks1_idx" ON "sample_tasks_has_series_tasks" ("series_tasks_id");
+CREATE INDEX "sdAnalyzer"."sample_tasks_has_series_tasks.fk_sample_tasks_has_series_tasks_sample_tasks1_idx" ON "sample_tasks_has_series_tasks" ("sample_tasks_id");
+CREATE TABLE "sdAnalyzer"."calibration_stacks_has_conditions_has_sample_tasks"(
   "calibration_stacks_id" INTEGER NOT NULL,
   "calibration_stacks_chemicals_id" INTEGER NOT NULL,
   "calibration_stacks_measuring_conditions_id" INTEGER NOT NULL,
@@ -191,9 +191,9 @@ CREATE TABLE "calibration_stacks_has_conditions_has_sample_tasks"(
     ON DELETE CASCADE
     ON UPDATE RESTRICT
 );
-CREATE INDEX "calibration_stacks_has_conditions_has_sample_tasks.fk_calibration_stacks_has_conditions_has_sample_tasks_condi_idx" ON "calibration_stacks_has_conditions_has_sample_tasks" ("conditions_has_sample_tasks_id","conditions_has_sample_tasks_measuring_conditions_id","conditions_has_sample_tasks_sample_tasks_id");
-CREATE INDEX "calibration_stacks_has_conditions_has_sample_tasks.fk_calibration_stacks_has_conditions_has_sample_tasks_calib_idx" ON "calibration_stacks_has_conditions_has_sample_tasks" ("calibration_stacks_id","calibration_stacks_chemicals_id","calibration_stacks_measuring_conditions_id");
-CREATE TABLE "samples"(
+CREATE INDEX "sdAnalyzer"."calibration_stacks_has_conditions_has_sample_tasks.fk_calibration_stacks_has_conditions_has_sample_tasks_condi_idx" ON "calibration_stacks_has_conditions_has_sample_tasks" ("conditions_has_sample_tasks_id","conditions_has_sample_tasks_measuring_conditions_id","conditions_has_sample_tasks_sample_tasks_id");
+CREATE INDEX "sdAnalyzer"."calibration_stacks_has_conditions_has_sample_tasks.fk_calibration_stacks_has_conditions_has_sample_tasks_calib_idx" ON "calibration_stacks_has_conditions_has_sample_tasks" ("calibration_stacks_id","calibration_stacks_chemicals_id","calibration_stacks_measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."samples"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45),
   "series_id" INTEGER NOT NULL,
@@ -209,9 +209,9 @@ CREATE TABLE "samples"(
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "samples.fk_samples_series1_idx" ON "samples" ("series_id");
-CREATE INDEX "samples.fk_samples_sample_tasks1_idx" ON "samples" ("sample_tasks_id");
-CREATE TABLE "measured_samples"(
+CREATE INDEX "sdAnalyzer"."samples.fk_samples_series1_idx" ON "samples" ("series_id");
+CREATE INDEX "sdAnalyzer"."samples.fk_samples_sample_tasks1_idx" ON "samples" ("sample_tasks_id");
+CREATE TABLE "sdAnalyzer"."measured_samples"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "series_id" INTEGER NOT NULL,
@@ -227,9 +227,9 @@ CREATE TABLE "measured_samples"(
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "measured_samples.fk_measured_samples_series1_idx" ON "measured_samples" ("series_id");
-CREATE INDEX "measured_samples.fk_measured_samples_sample_tasks1_idx" ON "measured_samples" ("sample_tasks_id");
-CREATE TABLE "calibrations_has_calibration_stacks"(
+CREATE INDEX "sdAnalyzer"."measured_samples.fk_measured_samples_series1_idx" ON "measured_samples" ("series_id");
+CREATE INDEX "sdAnalyzer"."measured_samples.fk_measured_samples_sample_tasks1_idx" ON "measured_samples" ("sample_tasks_id");
+CREATE TABLE "sdAnalyzer"."calibrations_has_calibration_stacks"(
   "calibrations_id" INTEGER NOT NULL,
   "calibrations_chemicals_id" INTEGER NOT NULL,
   "calibrations_measuring_conditions_id" INTEGER NOT NULL,
@@ -250,9 +250,9 @@ CREATE TABLE "calibrations_has_calibration_stacks"(
     ON DELETE CASCADE
     ON UPDATE RESTRICT
 );
-CREATE INDEX "calibrations_has_calibration_stacks.fk_calibrations_has_calibration_stacks_calibration_stacks1_idx" ON "calibrations_has_calibration_stacks" ("calibration_stacks_id","calibration_stacks_chemicals_id","calibration_stacks_measuring_conditions_id");
-CREATE INDEX "calibrations_has_calibration_stacks.fk_calibrations_has_calibration_stacks_calibrations1_idx" ON "calibrations_has_calibration_stacks" ("calibrations_id","calibrations_chemicals_id","calibrations_measuring_conditions_id");
-CREATE TABLE "spectra"(
+CREATE INDEX "sdAnalyzer"."calibrations_has_calibration_stacks.fk_calibrations_has_calibration_stacks_calibration_stacks1_idx" ON "calibrations_has_calibration_stacks" ("calibration_stacks_id","calibration_stacks_chemicals_id","calibration_stacks_measuring_conditions_id");
+CREATE INDEX "sdAnalyzer"."calibrations_has_calibration_stacks.fk_calibrations_has_calibration_stacks_calibrations1_idx" ON "calibrations_has_calibration_stacks" ("calibrations_id","calibrations_chemicals_id","calibrations_measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."spectra"(
   "id" INTEGER NOT NULL,
   "spectrum" BLOB NOT NULL,
   "samples_id" INTEGER NOT NULL,
@@ -269,42 +269,34 @@ CREATE TABLE "spectra"(
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "spectra.fk_spectra_samples1_idx" ON "spectra" ("samples_id");
-CREATE INDEX "spectra.fk_spectra_measuring_conditions1_idx" ON "spectra" ("measuring_conditions_id");
-CREATE TABLE "measured_chemicals"(
+CREATE INDEX "sdAnalyzer"."spectra.fk_spectra_samples1_idx" ON "spectra" ("samples_id");
+CREATE INDEX "sdAnalyzer"."spectra.fk_spectra_measuring_conditions1_idx" ON "spectra" ("measuring_conditions_id");
+CREATE TABLE "sdAnalyzer"."measured_chemicals"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "chemicals_id" INTEGER NOT NULL,
-  "measured_samples_id" INTEGER NOT NULL,
-  "value" DOUBLE,
+  "measured_spectra_id" INTEGER NOT NULL,
   CONSTRAINT "fk_measured_chemicals_chemicals1"
     FOREIGN KEY("chemicals_id")
     REFERENCES "chemicals"("id")
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT "fk_measured_chemicals_measured_samples1"
-    FOREIGN KEY("measured_samples_id")
-    REFERENCES "measured_samples"("id")
+  CONSTRAINT "fk_measured_chemicals_measured_spectra1"
+    FOREIGN KEY("measured_spectra_id")
+    REFERENCES "measured_spectra"("id")
     ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "measured_chemicals.fk_measured_chemicals_chemicals1_idx" ON "measured_chemicals" ("chemicals_id");
-CREATE INDEX "measured_chemicals.fk_measured_chemicals_measured_samples1_idx" ON "measured_chemicals" ("measured_samples_id");
-CREATE TABLE "measured_spectra"(
+CREATE INDEX "sdAnalyzer"."measured_chemicals.fk_measured_chemicals_chemicals1_idx" ON "measured_chemicals" ("chemicals_id");
+CREATE INDEX "sdAnalyzer"."measured_chemicals.fk_measured_chemicals_measured_spectra1_idx" ON "measured_chemicals" ("measured_spectra_id");
+CREATE TABLE "sdAnalyzer"."measured_spectra"(
   "id" INTEGER PRIMARY KEY NOT NULL,
   "spectrum_data" BLOB NOT NULL,
   "measured_samples_id" INTEGER NOT NULL,
-  "measuring_conditions_id" INTEGER NOT NULL,
   CONSTRAINT "fk_measured_spectra_measured_samples1"
     FOREIGN KEY("measured_samples_id")
     REFERENCES "measured_samples"("id")
     ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT "fk_measured_spectra_measuring_conditions1"
-    FOREIGN KEY("measuring_conditions_id")
-    REFERENCES "measuring_conditions"("id")
-    ON DELETE RESTRICT
     ON UPDATE CASCADE
 );
-CREATE INDEX "measured_spectra.fk_measured_spectra_measured_samples1_idx" ON "measured_spectra" ("measured_samples_id");
-CREATE INDEX "measured_spectra.fk_measured_spectra_measuring_conditions1_idx" ON "measured_spectra" ("measuring_conditions_id");
+CREATE INDEX "sdAnalyzer"."measured_spectra.fk_measured_spectra_measured_samples1_idx" ON "measured_spectra" ("measured_samples_id");
 COMMIT;

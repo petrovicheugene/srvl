@@ -15,7 +15,7 @@ ZMeasuringController::ZMeasuringController(QObject *parent) : QObject(parent)
     zv_measuringTimer = 0;
     zv_startUnixTime = 0;
     zv_controllerState = CS_DISCONNECTED;
-    zv_currentSampleTask = 0;
+    zv_currentSampleTask = nullptr;
     zv_bufferChannelSize = 16384 / sizeof(CHANNEL); // doc for ComDV.dll
     zv_currentMeasuringIndex = -1;
 
@@ -25,7 +25,7 @@ ZMeasuringController::ZMeasuringController(QObject *parent) : QObject(parent)
     zv_Time = 0;
     zv_ticDuration = 100392;
 
-    zv_buffer = 0;
+    zv_buffer = nullptr;
     zh_createDataBuffer();
 }
 //=================================================
@@ -96,13 +96,19 @@ bool ZMeasuringController::zp_measureSample(QList<QPair<quint8, int> > measuring
 {
     if(zv_connector == nullptr)
     {
-        killTimer(zv_deviceButtonInquiryTimer);
-        zv_deviceButtonInquiryTimer = 0;
+        if(zv_deviceButtonInquiryTimer)
+        {
+            killTimer(zv_deviceButtonInquiryTimer);
+            zv_deviceButtonInquiryTimer = 0;
+        }
         zv_controllerState = CS_DISCONNECTED;
 
         // end of measuring
-        killTimer(zv_measuringTimer);
-        zv_measuringTimer = 0;
+        if(zv_measuringTimer)
+        {
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
         zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
 
         return false;
@@ -154,11 +160,11 @@ bool ZMeasuringController::zp_measureSample(QList<QPair<quint8, int> > measuring
 
     // connection present
     // stop inquiry Device Button
-    if(zv_deviceButtonInquiryTimer != 0)
+    if(zv_deviceButtonInquiryTimer)
     {
         killTimer(zv_deviceButtonInquiryTimer);
+        zv_deviceButtonInquiryTimer = 0;
     }
-    zv_deviceButtonInquiryTimer = 0;
 
     // save measuringConditions
     zv_currentMeasuringConditions.clear();
@@ -175,15 +181,21 @@ bool ZMeasuringController::zp_stopMeasuring()
 {
     if(zv_connector == nullptr)
     {
-        killTimer(zv_deviceButtonInquiryTimer);
-        zv_deviceButtonInquiryTimer = 0;
+        if(zv_deviceButtonInquiryTimer)
+        {
+            killTimer(zv_deviceButtonInquiryTimer);
+            zv_deviceButtonInquiryTimer = 0;
+        }
         zv_controllerState = CS_DISCONNECTED;
 
         // end of measuring
-        killTimer(zv_measuringTimer);
-        zv_measuringTimer = 0;
-        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
+        if(zv_measuringTimer)
+        {
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
 
+        zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
         return false;
     }
 
@@ -236,17 +248,38 @@ void ZMeasuringController::zp_finishCurrentMeasuring()
     zv_currentSampleTask->zp_measuringFinished();
 }
 //=================================================
+int ZMeasuringController::zp_currentSampleTaskId() const
+{
+    if(!zv_currentSampleTask)
+    {
+        return -1;
+    }
+
+    return zv_currentSampleTask->zp_id();
+}
+//=================================================
+QMap<int, QPair<quint8,int> > ZMeasuringController::zp_currentSampleTaskMeasuringConditions() const
+{
+    return zv_currentSampleTask->zp_measuringConditionsMap();
+}
+//=================================================
 bool ZMeasuringController::zh_startSingleMeasuring()
 {
     if(zv_connector == nullptr)
     {
-        killTimer(zv_deviceButtonInquiryTimer);
-        zv_deviceButtonInquiryTimer = 0;
+        if(zv_deviceButtonInquiryTimer)
+        {
+            killTimer(zv_deviceButtonInquiryTimer);
+            zv_deviceButtonInquiryTimer = 0;
+        }
         zv_controllerState = CS_DISCONNECTED;
 
         // end of measuring
-        killTimer(zv_measuringTimer);
-        zv_measuringTimer = 0;
+        if(zv_measuringTimer)
+        {
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
         zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
 
         return false;
@@ -412,22 +445,36 @@ void ZMeasuringController::zh_processMeasurementResults()
 {
     if(zv_connector == nullptr)
     {
-        killTimer(zv_deviceButtonInquiryTimer);
-        zv_deviceButtonInquiryTimer = 0;
+        if(zv_deviceButtonInquiryTimer)
+        {
+            qDebug() << "KILL 1";
+            killTimer(zv_deviceButtonInquiryTimer);
+            zv_deviceButtonInquiryTimer = 0;
+        }
         zv_controllerState = CS_DISCONNECTED;
 
         // end of measuring
-        killTimer(zv_measuringTimer);
-        zv_measuringTimer = 0;
+        if(zv_measuringTimer)
+        {
+            qDebug() << "KILL 2";
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
         zv_deviceButtonInquiryTimer = startTimer(zv_inquiryPeriod);
 
         return;
     }
 
     // check buffer
-    if(zv_buffer == 0)
+    if(zv_buffer == nullptr)
     {
-        killTimer(zv_measuringTimer);
+        if(zv_measuringTimer)
+        {
+            qDebug() << "KILL 3";
+
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
         QString errorMsg = tr("The buffer has not been created.");
         emit zg_message(errorMsg, QMessageBox::Critical);
         zh_createDataBuffer();
@@ -445,7 +492,13 @@ void ZMeasuringController::zh_processMeasurementResults()
 
     if(res == ZUralAdcDeviceConnector::SR_FUNCTION_UNRESOLVED)
     {
-        killTimer(zv_measuringTimer);
+        if(zv_measuringTimer)
+        {
+            qDebug() << "KILL 4";
+
+            killTimer(zv_measuringTimer);
+            zv_measuringTimer = 0;
+        }
         QString errorMsg = tr("The function for clear buffer has not been resolved.");
         emit zg_message(errorMsg, QMessageBox::Critical);
         return;
@@ -522,8 +575,12 @@ void ZMeasuringController::zh_processMeasurementResults()
     quint32 x = sampleMeasuringDone ? static_cast<quint32>(zv_sampleShiftImpulseDuration) : 0x00000000;
     zv_connector->zp_stopExposition(res, x);
 
-    killTimer(zv_measuringTimer);
-    //    zv_measuringTimer = 0;
+    if(zv_measuringTimer)
+    {
+
+        killTimer(zv_measuringTimer);
+        zv_measuringTimer = 0;
+    }
 
     // calc sample common measuring duration
     zv_passedExpositionsSummMS += zv_currentExpositionMS;

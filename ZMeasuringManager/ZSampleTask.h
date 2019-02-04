@@ -4,6 +4,7 @@
 //=================================================
 #include <QObject>
 #include <QList>
+#include <QMap>
 #include <QSqlQuery>
 #include "ZCalibration.h"
 #include "ZSpeSpectrum.h"
@@ -97,9 +98,12 @@ public:
     void zp_removeClient(QObject *client);
 
     QStringList zp_chemicalStringList() const;
+    QMap<int, QString> zp_chemicalMap() const;
     QStringList zp_measuringConditionsStringlist() const;
 
     QList<QPair<quint8,int> > zp_measuringConditionsList() const;
+    QMap<int, QPair<quint8,int> > zp_measuringConditionsMap() const;
+
 
     int zp_totalMeasuringDuration() const;
 
@@ -119,6 +123,7 @@ public:
 
     qint64 zp_spectrumIdForConditions(quint8 gainFactor,
                              int exposition) const;
+
 
     QList<double> zp_spectrumEnergyCalibrationForConditions(quint8 gainFactor,
     int exposition) const;
@@ -163,8 +168,11 @@ public:
     explicit ZMeasuringTask(int id, QObject* parent);
 
     QStringList zp_chemicalList() const;
+    QMap<int, QString> zp_chemicalMap() const;
+
     QString zp_measuringConditionsString() const;
     QPair<quint8,int> zp_measuringConditions() const;
+    int zp_measuringConditionsId() const;
     int zp_exposition() const;
 
     void zp_calcConcentrations(const ZSpeSpectrum *spectrum,
@@ -195,6 +203,7 @@ class ZChemicalTask : public QObject
 public:
 
     QString zp_chemical() const;
+    int zp_chemicalId() const;
 
     // STATIC FUNCS
     static bool zp_instanceChemicalTaskObject(int chemicalTaskId,
@@ -213,6 +222,7 @@ private:
     QString zv_taskName;
     QString zv_taskDescription;
     QString zv_chemical;
+    int zv_chemicalId;
     QString zv_errorMsg;
 
     QList<ZZonedCalibration*> zv_calibrationList;
