@@ -21,10 +21,10 @@ public:
 
      \param parent
     */
-    explicit ZProcessTimeRoundIndicator(QWidget *parent = 0);
+    explicit ZProcessTimeRoundIndicator(QWidget *parent = nullptr);
 
-    void zp_setPercentTextOnProgressBar(bool visible);
-    void zp_applyProgressBarOptions(const ZProgressBarOptions& options);
+    void zp_setPercentTextOnProgressBar(bool visible) override;
+    void zp_applyProgressBarOptions(const ZProgressBarOptions& options) override;
     void zp_reset() override;
     void zp_setRange(double min, double max) override;
     void zp_setValue(double value) override;

@@ -23,7 +23,6 @@ public:
     int zv_expositionDelayTime;
 
 
-
 //    // STATIC
 //    static const QString zv_manualConnectionString;
 //    static const QString zv_applicationString;

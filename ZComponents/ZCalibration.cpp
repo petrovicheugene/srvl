@@ -426,7 +426,7 @@ qint64 ZCalibration::zp_calibrationId() const
 bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum, qreal& concentration)
 {
     concentration = 0;
-    if(spectrum == 0 || zv_equationType == ET_NOT_DEFINED)
+    if(spectrum == nullptr || zv_equationType == ET_NOT_DEFINED)
     {
         return false;
     }
@@ -468,7 +468,7 @@ bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum,
     if(zv_equationType == ET_FRACTIONAL)
     {
         // concentration goes to denominator. check out it
-        if(concentration == 0)
+        if(concentration == 0.0)
         {
             return false;
         }
@@ -724,7 +724,7 @@ qreal* ZCalibration::zh_termFactorPointer(int termIndex) const
 {
     if(termIndex < 0 || termIndex >= zv_termList.count() )
     {
-        return 0;
+        return nullptr;
     }
 
     return zv_termList.value(termIndex)->zh_termFactorPointer();
@@ -1048,7 +1048,7 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
 
     // define next term index
     int termIndex = zh_findNextTermIndex(termType);
-    ZAbstractTerm* term = 0;
+    ZAbstractTerm* term = nullptr;
     if(termType == ZAbstractTerm::TT_SIMPLE)
     {
         if(windowIndexList.isEmpty())
@@ -1285,7 +1285,7 @@ qreal ZCalibration::zp_equationIntercept() const
 //=========================================================
 bool ZCalibration::zp_setEquationIntercept(qreal value)
 {
-    if(zv_intercept == value)
+    if(zv_intercept - value == 0.0)
     {
         return false;
     }
@@ -1541,7 +1541,7 @@ void ZCalibration::zp_setDateTime(QDateTime dateTime)
 void ZCalibration::zh_onTermNameChange()
 {
     ZAbstractTerm* term = qobject_cast<ZAbstractTerm*>(sender());
-    if(term == 0)
+    if(term == nullptr)
     {
         return;
     }
@@ -1659,7 +1659,7 @@ const ZCalibrationWindow* ZCalibration::zp_calibrationWindow(int windowIndex) co
 {
     if(windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
-        return 0;
+        return nullptr;
     }
 
     return zv_windowList.at(windowIndex);
@@ -1975,7 +1975,7 @@ void ZCalibration::zp_setNextUsersTermState(int termIndex)
         break;
     case ZAbstractTerm::TS_BASE:
     case ZAbstractTerm::TS_NOT_DEFINED:
-    default:
+//    default:
         return;
     }
 
@@ -2022,7 +2022,7 @@ QList<QColor> ZCalibration::zp_createColorList()
 
     while(colorList.count() < 1500)
     {
-        qsrand(QDateTime::currentMSecsSinceEpoch() + 500);
+        qsrand(static_cast<uint>(QDateTime::currentMSecsSinceEpoch() + 500));
         red = ((qrand() % 24) * 10) + 15;
         green = ((qrand() % 24) * 10) + 15;
         blue = ((qrand() % 24) * 10) +15;
@@ -2036,3 +2036,4 @@ QList<QColor> ZCalibration::zp_createColorList()
     return colorList;
 }
 //======================================================
+

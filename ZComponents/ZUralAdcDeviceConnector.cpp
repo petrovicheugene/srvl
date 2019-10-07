@@ -20,25 +20,33 @@ QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID> 
     QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID> >devicePidVidMap;
     // SU
     devicePidVidMap.insert(QString("SU-1"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU1, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU1,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("SU-2"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU2, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU2,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("SU-6"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU6, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU6,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     // PU
     devicePidVidMap.insert(QString("PU-2"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU2, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU2,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-3"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-3F"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3F, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3F,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-4"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU4, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU4,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-5"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU5, ZUralAdcDeviceConnector::VID_CYPRESS));
-
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU5,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PW-3"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PW3, ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PW3,
+                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
 
     return devicePidVidMap;
 }
@@ -304,7 +312,10 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
     //    HOpenUSBDriver h_HOpenUSBDriver = (HOpenUSBDriver)QLibrary::resolve(zv_library.fileName(), "hOpenUSBDriver");
     zh_HOpenUSBDriver = nullptr;
     zh_HOpenUSBDriver = (HOpenUSBDriver)zv_library.resolve("hOpenUSBDriver");
-    if(!zh_HOpenUSBDriver) zv_unresolvedFunctionList.append("hOpenUSBDriver");
+    if(!zh_HOpenUSBDriver)
+    {
+        zv_unresolvedFunctionList.append("hOpenUSBDriver");
+    }
 
     if(zh_HOpenUSBDriver == nullptr)
     {
@@ -443,8 +454,8 @@ void ZUralAdcDeviceConnector::zp_isHardwareButtonDown(SlotResult &res)
     zh_ButtonInquiry = (ButtonInquiry)zv_library.resolve("ButtonInquiry");
     if(!zh_ButtonInquiry) zv_unresolvedFunctionList.append("ButtonInquiry");
 
-    res = SR_TRUE;
-    return;
+//    res = SR_TRUE;
+//    return;
 
     if(!zh_ButtonInquiry)
     {

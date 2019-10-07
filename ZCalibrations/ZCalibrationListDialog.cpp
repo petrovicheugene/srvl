@@ -198,7 +198,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
 {
     // Models
     // chemicals model
-    if(chemicalTableModel == 0)
+    if(chemicalTableModel == nullptr)
     {
         zv_chemicalTableSQLModel = new QSqlTableModel(this);
         zv_chemicalTableSQLModel->setTable("chemicals");
@@ -212,7 +212,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
     }
 
     // calibrations model
-    if(calibrationTableSQLModel == 0)
+    if(calibrationTableSQLModel == nullptr)
     {
         zv_calibrationTableSQLModel = new QSqlTableModel(this);
         zv_calibrationTableSQLModel->setTable("calibrations");
@@ -228,7 +228,7 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
     zv_calibrationProxyModel->setSourceModel(zv_calibrationTableSQLModel);
 
     // measuring conditions model
-    if(measuringConditionsSQLTableModel == 0)
+    if(measuringConditionsSQLTableModel == nullptr)
     {
         zv_measuringConditionsSQLTableModel = new QSqlTableModel(this);
         zv_measuringConditionsSQLTableModel->setTable("measuring_conditions");
@@ -242,7 +242,6 @@ void ZCalibrationListDialog::zh_createComponents(QSqlTableModel *chemicalTableMo
 
     zv_measuringConditionsSQLTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Gain factor")));
     zv_measuringConditionsSQLTableModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Exposition")));
-
 
     zv_measuringConditionsModel = new QStandardItemModel(this);
     QStringList horizontalHeaderLabelList;
@@ -690,7 +689,6 @@ bool ZCalibrationListDialog::zh_checkCalibrationConformity(const ZCalibration& c
     {
         return true;
     }
-
     else if(loadingPermission == LP_ASK)
     {
         if(zv_chemicalTableSQLModel->rowCount() < 1)

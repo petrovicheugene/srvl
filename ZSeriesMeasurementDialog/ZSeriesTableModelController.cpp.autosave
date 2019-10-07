@@ -1,0 +1,8 @@
+//=========================================================
+#include "ZSeriesTableModelController.h"
+//=========================================================
+ZSeriesTableModelController::ZSeriesTableModelController(QObject *parent) : QObject(parent)
+{
+
+}
+//=========================================================

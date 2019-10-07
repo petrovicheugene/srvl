@@ -13,7 +13,7 @@ class ZMeasuringResultTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ZMeasuringResultTableModel(QObject *parent = 0);
+    explicit ZMeasuringResultTableModel(QObject *parent = nullptr);
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
 
     // override FUNCS

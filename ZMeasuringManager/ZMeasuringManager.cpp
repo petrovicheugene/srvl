@@ -457,12 +457,12 @@ void ZMeasuringManager::zh_recalcSeriesMeasuringTotalDuration()
     int sampleFullSetCount = zv_sampleList.count() / zv_deviceSampleQuantity;
     int sampleLastSetCount = zv_sampleList.count() - sampleFullSetCount * zv_deviceSampleQuantity;
 
-    int dalayTotalDuration = (sampleFullSetCount * (zv_deviceSampleQuantity - 1) + (sampleLastSetCount - 1) )
+    int totalDelayDuration = (sampleFullSetCount * (zv_deviceSampleQuantity - 1) +
+                              (sampleLastSetCount > 0? (sampleLastSetCount - 1) : 0))
             * zv_expositionDelayDuration;
-    totalSeriesDuration += dalayTotalDuration;
 
+    totalSeriesDuration += totalDelayDuration;
     zv_currentMeasuringState.zp_setSeriesDuration(totalSeriesDuration);
-
 }
 //======================================================
 bool ZMeasuringManager::zp_libraryState() const
@@ -1037,10 +1037,10 @@ void ZMeasuringManager::zh_assignNewSeriesId()
 //======================================================
 void ZMeasuringManager::zh_saveSampleMeasurementResult()
 {
-
     if(!zh_recordSeriesId())
     {
         // id record error
+        qDebug() << "id record error";
         return;
     }
 
@@ -1048,6 +1048,7 @@ void ZMeasuringManager::zh_saveSampleMeasurementResult()
     if(!zh_findNewIdInTable("measured_samples", newSampleId))
     {
         // cannot obtain new sample id
+        qDebug() << "cannot obtain new sample id";
         return;
     }
 
@@ -1168,11 +1169,13 @@ bool ZMeasuringManager::zh_recordSeriesId()
 
     if(!query.prepare(queryString))
     {
+        qDebug() << "error: query SELECT prepare";
         return false;
     }
 
     if(!query.exec())
     {
+        qDebug() << "error: query SELECT exec";
         return false;
     }
 
@@ -1193,6 +1196,7 @@ bool ZMeasuringManager::zh_recordSeriesId()
 
     if(!query.prepare(queryString))
     {
+        qDebug() << "error: query INSERT prepare" << query.lastError().text();
         return false;
     }
 
@@ -1207,6 +1211,7 @@ bool ZMeasuringManager::zh_recordSeriesId()
 
     if(!query.exec())
     {
+        qDebug() << "error: query INSERT exec";
         return false;
     }
 

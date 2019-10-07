@@ -1,0 +1,23 @@
+//=========================================================
+#ifndef ZSERIESTABLEMODELCONTROLLER_H
+#define ZSERIESTABLEMODELCONTROLLER_H
+//=========================================================
+#include <QObject>
+//=========================================================
+
+//=========================================================
+class ZSeriesTableModelController : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ZSeriesTableModelController(QObject *parent = nullptr);
+
+    void zp_setView();
+    void zp_setModel();
+    
+signals:
+
+public slots:
+};
+//=========================================================
+#endif // ZSERIESTABLEMODELCONTROLLER_H

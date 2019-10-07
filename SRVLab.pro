@@ -16,7 +16,7 @@ RC_ICONS = "ZImages/SRVLab-8.ico"
 
 VER_MAJ=1
 VER_MIN=0
-VER_PAT=2
+VER_PAT=3
 
 VER_RELEASE=b
 
@@ -84,6 +84,7 @@ INCLUDEPATH += ZDialogs \
 
 SOURCES += main.cpp\
         MainWindow.cpp \
+    ZComponents/ZTranslatorManager.cpp \
     ZDialogs/ZStartDialog.cpp \
     ZDialogs/ZDatabasePropertiesDialog.cpp \
     ZComponents/ZDatabaseInspector.cpp \
@@ -103,6 +104,9 @@ SOURCES += main.cpp\
     ZComponents/ZEquationSettingsData.cpp \
     ZComponents/ZNormaSettingsData.cpp \
     ZComponents/ZQrealToStringConverter.cpp \
+    ZSeriesMeasurementDialog/ZDependentModel.cpp \
+    ZSeriesMeasurementDialog/ZDependentModelController.cpp \
+    ZSeriesMeasurementDialog/ZSeriesTableModel.cpp \
     ZWidgets/ZProcessTimeRoundIndicator.cpp \
     ZWidgets/QRoundProgressBar.cpp \
     ZDialogs/ZSettingsDialog.cpp \
@@ -229,6 +233,7 @@ SOURCES += main.cpp\
     ZSeriesMeasurementDialog/ZSeriesMeasurementDialog.cpp
 
 HEADERS  += MainWindow.h \
+    ZComponents/ZTranslatorManager.h \
     ZDialogs/ZStartDialog.h \
     ZDialogs/ZDatabasePropertiesDialog.h \
     ZComponents/ZDatabaseInspector.h \
@@ -250,6 +255,9 @@ HEADERS  += MainWindow.h \
     ZComponents/ZEquationSettingsData.h \
     ZComponents/ZNormaSettingsData.h \
     ZComponents/ZQrealToStringConverter.h \
+    ZSeriesMeasurementDialog/ZDependentModel.h \
+    ZSeriesMeasurementDialog/ZDependentModelController.h \
+    ZSeriesMeasurementDialog/ZSeriesTableModel.h \
     ZWidgets/ZProcessTimeRoundIndicator.h \
     ZWidgets/QRoundProgressBar.h \
     ZDialogs/ZSettingsDialog.h \

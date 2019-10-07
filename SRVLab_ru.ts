@@ -3066,7 +3066,7 @@ Do you want to replace them?</source>
     <message>
         <location filename="ZEnergyLineManager/ZSelectedEnergyLineTableModel.cpp" line="143"/>
         <source>Element</source>
-        <translation>Химический элемент</translation>
+        <translation>Элемент</translation>
     </message>
 </context>
 <context>

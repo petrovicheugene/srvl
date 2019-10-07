@@ -35,7 +35,7 @@ class ZChemicalTaskCalibrationModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ZChemicalTaskCalibrationModel(QObject *parent = 0);
+    explicit ZChemicalTaskCalibrationModel(QObject *parent = nullptr);
 
     void zp_connectToCalibrationSQLTableModel(QSqlTableModel *model);
 

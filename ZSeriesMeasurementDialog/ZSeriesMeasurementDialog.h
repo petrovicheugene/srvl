@@ -3,13 +3,60 @@
 #define ZSERIESMEASUREMENTDIALOG_H
 //======================================================
 #include "ZBaseDialog.h"
+#include <QApplication>
+#include <QStyledItemDelegate>
+#include <QTime>
 //======================================================
 class QPushButton;
 class QSplitter;
 class QSqlTableModel;
+class QSqlRelationalTableModel;
 class QTableView;
 
 class ZPlotter;
+class ZSeriesTableModel;
+class ZDependentModelController;
+//======================================================
+class ZTimeDelegate : public QStyledItemDelegate // displays time w/o msecs
+{
+    Q_OBJECT
+public:
+
+    explicit ZTimeDelegate(QString format = "hh:mm:ss", QObject* parent = nullptr)
+        : QStyledItemDelegate(parent)
+    {
+        zv_format = format;
+    }
+
+    void zp_setFormat(const QString& format)
+    {
+        zv_format = format;
+    }
+
+protected:
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        QStyleOptionViewItem newOption(option);
+        //newOption.state =  newOption.state | QStyle::State_Active;
+        initStyleOption(&newOption, index);
+        QVariant vData = index.data();
+        if(vData.isValid() && vData.canConvert<QTime>())
+        {
+            newOption.text = vData.toTime().toString(zv_format);
+        }
+
+        const QWidget *widget = option.widget;
+        QStyle *style = widget ? widget->style() : QApplication::style();
+
+        style->drawControl(QStyle::CE_ItemViewItem, &newOption, painter, widget);
+    }
+
+private:
+    //VARS
+    QString zv_format;
+
+};
 //======================================================
 class ZSeriesMeasurementDialog : public ZBaseDialog
 {
@@ -26,6 +73,7 @@ public slots:
 private slots:
 
     void zh_onCloseButtonClick();
+    void zh_onResetSortButtonClick();
 
 protected:
 
@@ -35,9 +83,9 @@ protected:
 private:
 
     // VARS
-    QSqlTableModel* zv_seriesNameTableModel;
-    QSqlTableModel* zv_seriesTableModel;
-
+    QSqlRelationalTableModel* zv_seriesListTableModel;
+    ZSeriesTableModel* zv_seriesTableModel;
+    ZDependentModelController* zv_seriesTableModelController;
 
     QSplitter* zv_mainSplitter;
     QSplitter* zv_tableSplitter;
@@ -49,15 +97,16 @@ private:
     QTableView* zv_seriesResultView;
     ZPlotter* zv_plotter;
 
+    QPushButton* zv_filterButton;
+    QPushButton* zv_sortButton;
+
     QPushButton* zv_closeButton;
 
     // FUNCS
     void zh_createComponents();
     void zh_createConnections();
-
+    QWidget* zh_createSeriesListViewWidget();
     QWidget* zh_createTablesWidget();
-
-
 };
 //======================================================
 #endif // ZSERIESMEASUREMENTDIALOG_H

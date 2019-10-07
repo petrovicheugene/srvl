@@ -9,7 +9,7 @@
 ZMeasuringResultTableModel::ZMeasuringResultTableModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    zv_measuringManager = 0;
+    zv_measuringManager = nullptr;
     zv_concentrationDisplayPrecisioin = 3;
 }
 //=========================================================
@@ -44,7 +44,7 @@ QModelIndex ZMeasuringResultTableModel::index(int row, int column, const QModelI
 //=========================================================
 int ZMeasuringResultTableModel::columnCount(const QModelIndex & parent) const
 {
-    if(zv_measuringManager == 0)
+    if(zv_measuringManager == nullptr)
     {
         return 0;
     }
@@ -61,7 +61,7 @@ ZSpeSpectrum* ZMeasuringResultTableModel::zp_spectrum(int row, quint8 gainFactor
 {
     if(row < 0 || row >= rowCount() || !zv_measuringManager)
     {
-        return 0;
+        return nullptr;
     }
 
     return zv_measuringManager->zp_spectrum(row, gainFactor, exposition);
@@ -69,7 +69,7 @@ ZSpeSpectrum* ZMeasuringResultTableModel::zp_spectrum(int row, quint8 gainFactor
 //=========================================================
 int	 ZMeasuringResultTableModel::rowCount(const QModelIndex & parent) const
 {
-    if(zv_measuringManager == 0)
+    if(zv_measuringManager == nullptr)
     {
         return 0;
     }
@@ -79,7 +79,7 @@ int	 ZMeasuringResultTableModel::rowCount(const QModelIndex & parent) const
 //=========================================================
 QVariant ZMeasuringResultTableModel::data(const QModelIndex & index, int role) const
 {
-    if(!index.isValid() || zv_measuringManager == 0
+    if(!index.isValid() || zv_measuringManager == nullptr
             || index.row() < 0 || index.row() >= rowCount()
             || index.column() < 0 || index.column() >= columnCount())
     {
@@ -207,7 +207,8 @@ void ZMeasuringResultTableModel::zp_setConcentrationDisplayPrecisioin(int precis
     zv_concentrationDisplayPrecisioin = precision;
 }
 //=========================================================
-void ZMeasuringResultTableModel::zp_onCurrentIndexChanged(const QModelIndex& current, const QModelIndex& previous)
+void ZMeasuringResultTableModel::zp_onCurrentIndexChanged(const QModelIndex& current,
+                                                          const QModelIndex& previous)
 {
     quint8 gainFactor;
     int exposition;

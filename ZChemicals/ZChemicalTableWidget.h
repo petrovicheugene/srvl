@@ -10,7 +10,7 @@ class ZChemicalTableWidget : public ZBaseTableWidget
 {
     Q_OBJECT
 public:
-    explicit ZChemicalTableWidget(QWidget *parent = 0);
+    explicit ZChemicalTableWidget(QWidget *parent = nullptr);
 
 signals:
 
