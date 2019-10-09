@@ -11,6 +11,8 @@
 #include <QList>
 #include <QDebug>
 #include "ZAppSettings.h"
+#include "ZSpectrumCommonProperties.h"
+
 //======================================================
 class ZControlAction;
 class ZSample;
@@ -20,15 +22,7 @@ class ZMeasuringController;
 class QTimerEvent;
 class QMenu;
 class ZSpeSpectrum;
-//======================================================
-class SpectrumCommonProperties
-{
-public:
-    quint8 gainFactor;
-    int exposition;
-    int channelCount;
-    int maxValue;
-};
+
 //======================================================
 class ZMeasuringState
 {
@@ -317,8 +311,7 @@ private:
 
     QList<ZSample*> zv_sampleList;
     QList<ZSampleTask*> zv_sampleTaskList;
-    QList<SpectrumCommonProperties> zv_spectrumCommonPropertiesList;
-
+    QList<ZSpectrumCommonProperties> zv_spectrumCommonPropertiesList;
 
     // bool zv_currentSeriesTaskDirty;
     // QString zv_currentSeriesTaskName;

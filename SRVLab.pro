@@ -16,46 +16,69 @@ RC_ICONS = "ZImages/SRVLab-8.ico"
 
 VER_MAJ=1
 VER_MIN=0
-VER_PAT=3
+VER_PAT=4
 
-VER_RELEASE=b
-
-CONFIG += $$VER_RELEASE
-CONFIG += c++11
-
-#DEBUG SETTINGS
-CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
-#by default defined: in Debug mode QT_DEBUG, in Release mode QT_NO_DEBUG
-
-EXE_BASE_NAME=SRVLab
+PRODUCT_SHORT_NAME="SRVLab"
+PRODUCT_FILE_BASE_NAME="SRVLab"
 QMAKE_TARGET_PRODUCT="SRV Lab"
 QMAKE_TARGET_DESCRIPTION="Chemical analysis of X-ray spectra"
 QMAKE_TARGET_COMPANY="TechnoAnalyt"
 QMAKE_TARGET_COPYRIGHT="Copyright © $${QMAKE_TARGET_COMPANY} Ltd. 2017, 2018.  All rights reserved."
 COMPANY_URL=tehnoanalit.com
 
+PROJECT_ROOT_PATH = $${PWD}/
+
+win32: OS_SUFFIX = win32
+linux-g++: OS_SUFFIX = linux
+
+CONFIG += c++11
+CONFIG += c++14
+
+VERSION=$${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
+
+#DEBUG SETTINGS
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+#by default defined: in Debug mode QT_DEBUG, in Release mode QT_NO_DEBUG
+
+
 VERSION=$${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 
 #Target version
-CONFIG(debug, debug|release):{
-TARGET=$${EXE_BASE_NAME}-$${VERSION}
-}else{
-TARGET=$${EXE_BASE_NAME}-$${VERSION}.$${VER_RELEASE}
+CONFIG(debug, debug|release) {
+    BUILD_FLAG = debug
+    LIB_SUFFIX = d
+
+} else {
+    BUILD_FLAG = release
 }
 
 #Define the preprocessor macro to get the application version in the application.
-DEFINES += APP_PRODUCT=\"\\\"$${QMAKE_TARGET_PRODUCT}\\\"\"
-DEFINES += APP_EXE_BASE_NAME=\"\\\"$${EXE_BASE_NAME}\\\"\"
+DEFINES += APP_DISPLAY_NAME=\"\\\"$${QMAKE_TARGET_PRODUCT}\\\"\"
+DEFINES += APP_PRODUCT=\"\\\"$${PRODUCT_SHORT_NAME}\\\"\"
 DEFINES += APP_VERSION=\"\\\"$${VERSION}.$${VER_RELEASE}\\\"\"
 DEFINES += APP_COMPANY=\"\\\"$${QMAKE_TARGET_COMPANY}\\\"\"
 DEFINES += APP_COMPANY_URL=\"\\\"$${COMPANY_URL}\\\"\"
 DEFINES += APP_COPYRIGHT=\"\\\"$${QMAKE_TARGET_COPYRIGHT}\\\"\"
+DEFINES += APP_ICON=\"\\\"$${RC_ICONS}\\\"\"
 
-TRANSLATIONS = $${EXE_BASE_NAME}_ru.ts
+#DEBUG SETTINGS
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+#by default defined: in Debug mode QT_DEBUG, in Release mode QT_NO_DEBUG
+
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
-#END OF CHIEF SETTINGS
+linux-g++: QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/../../lib.$${OS_SUFFIX}/
 
+CONFIG(debug, debug|release) {
+    TARGET=$${PRODUCT_FILE_BASE_NAME}-$${VERSION}.$${BUILD_FLAG}
+} else {
+    TARGET=$${PRODUCT_FILE_BASE_NAME}
+}
+
+
+TRANSLATIONS = $${PRODUCT_FILE_BASE_NAME}_ru.ts \
+$${PRODUCT_FILE_BASE_NAME}_en.ts \
+$${PRODUCT_FILE_BASE_NAME}_kk.ts
 #TARGET = SDAnalyzer
 TEMPLATE = app
 
@@ -233,6 +256,7 @@ SOURCES += main.cpp\
     ZSeriesMeasurementDialog/ZSeriesMeasurementDialog.cpp
 
 HEADERS  += MainWindow.h \
+    ZComponents/ZSpectrumCommonProperties.h \
     ZComponents/ZTranslatorManager.h \
     ZDialogs/ZStartDialog.h \
     ZDialogs/ZDatabasePropertiesDialog.h \

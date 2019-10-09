@@ -145,7 +145,7 @@ void ZUralAdcDeviceConnector::zh_restoreSettings()
 {
     QSettings settings;
     // open version group
-    QString verString = qApp->property("glAppVersion").toString();
+    QString verString = qApp->applicationVersion();
     if(!verString.isEmpty())
     {
         settings.beginGroup(verString);
@@ -162,7 +162,7 @@ void ZUralAdcDeviceConnector::zh_saveSettings()
 {
     QSettings settings;
     // open version group
-    QString verString = qApp->property("glAppVersion").toString();
+    QString verString = qApp->applicationVersion();
     if(!verString.isEmpty())
     {
         settings.beginGroup(verString);

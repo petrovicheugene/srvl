@@ -18,18 +18,20 @@ ZPlotGraphicsView::ZPlotGraphicsView(QWidget* parent) : QGraphicsView(parent)
     zv_sceneCenterPos = QPointF();
     zv_sceneMousePos = QPointF();
     zv_mousePressStartViewPos = QPoint();
-    zv_rubberBand = 0;
+    zv_rubberBand = nullptr;
     zv_scaleViewWhenResizeFlag = false;
     zv_drawGridFlag = true;
-    zv_rulersAndGreedManager = 0;
-    zv_minSideSizeOfVisibleScene = 15;
+    zv_rulersAndGreedManager = nullptr;
+    zv_minSideSizeOfVisibleScene = 15.0;
     zv_rubberBandSideMinSize = 5;
     zv_ruleToolMinSize = 5;
     zv_colorPickUpAuxCoverageSize = 1;
     zv_gridColor = viewport()->palette().color(QPalette::Mid);
 
-    zv_XRuleList = 0;
-    zv_YRuleList = 0;
+    zv_XRuleList = nullptr;
+    zv_YRuleList = nullptr;
+
+    viewport()->setMinimumSize(QSize(100, 100));
 
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     //setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
@@ -619,7 +621,7 @@ bool ZPlotGraphicsView::viewportEvent(QEvent * event)
 //=============================================================
 void ZPlotGraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
 {
-    if(zv_rulersAndGreedManager != 0 && zv_drawGridFlag)
+    if(zv_rulersAndGreedManager != nullptr && zv_drawGridFlag)
     {
         // rect adjusting
         qreal K_width = rect.width() * 1.1/
@@ -633,7 +635,7 @@ void ZPlotGraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
         painter->save();
 
         // X
-        if(zv_XRuleList != 0)
+        if(zv_XRuleList != nullptr)
         {
             for(int i = 0; i < zv_XRuleList->count(); i++)
             {
@@ -656,7 +658,7 @@ void ZPlotGraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
         }
 
         // Y
-        if(zv_YRuleList != 0)
+        if(zv_YRuleList != nullptr)
         {
             for(int i = 0; i < zv_YRuleList->count(); i++)
             {

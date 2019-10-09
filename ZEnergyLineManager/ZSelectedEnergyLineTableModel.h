@@ -15,7 +15,7 @@ class ZSelectedEnergyLineTableModel : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit ZSelectedEnergyLineTableModel(QObject *parent = nullptr);
-    ~ZSelectedEnergyLineTableModel();
+    ~ZSelectedEnergyLineTableModel() override;
     // reimplemented FUNCS
     Qt::ItemFlags	flags(const QModelIndex & index) const override;
     int	columnCount(const QModelIndex & parent = QModelIndex()) const override;

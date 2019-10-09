@@ -244,7 +244,7 @@ void ZMeasuringManager::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("MeasuringManager");
 
     vData = settings.value("spectrumFolderPath");
@@ -260,7 +260,7 @@ void ZMeasuringManager::zh_restoreSettings()
 void ZMeasuringManager::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("MeasuringManager");
 
     settings.setValue("spectrumFolderPath", QVariant(zv_spectrumFolderPath));
@@ -781,7 +781,7 @@ ZSpeSpectrum* ZMeasuringManager::zp_spectrum(int row, quint8 gainFactor, int exp
 //======================================================
 int ZMeasuringManager::zp_arrayChannelCount(int gainFactor, int exposition) const
 {
-    foreach(SpectrumCommonProperties properties,  zv_spectrumCommonPropertiesList)
+    foreach(ZSpectrumCommonProperties properties,  zv_spectrumCommonPropertiesList)
     {
         if(properties.gainFactor == gainFactor && properties.exposition == exposition)
         {
@@ -794,7 +794,7 @@ int ZMeasuringManager::zp_arrayChannelCount(int gainFactor, int exposition) cons
 //======================================================
 int ZMeasuringManager::zp_arrayMaxIntensity(int gainFactor, int exposition) const
 {
-    foreach(SpectrumCommonProperties properties,  zv_spectrumCommonPropertiesList)
+    foreach(ZSpectrumCommonProperties properties,  zv_spectrumCommonPropertiesList)
     {
         if(properties.gainFactor == gainFactor && properties.exposition == exposition)
         {
@@ -887,7 +887,7 @@ void ZMeasuringManager::zh_calcSpectrumCommonProperties(quint8 gainFactor, int e
     }
 
     // find spectrum properties  and  redefine
-    SpectrumCommonProperties properties;
+    ZSpectrumCommonProperties properties;
     for(int i = 0; i < zv_spectrumCommonPropertiesList.count(); i++)
     {
         properties = zv_spectrumCommonPropertiesList.at(i);
@@ -1282,7 +1282,7 @@ void ZMeasuringManager::zh_onSampleMeasuringFinish()
         if(zv_deviceSampleQuantity > 1)
         {
             QString msg = tr("Replace sample set and press the \"Start\" button for continue measuring.");
-            QMessageBox::information(nullptr, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+            QMessageBox::information(nullptr, qApp->applicationDisplayName(), msg, QMessageBox::Ok);
         }
         return;
     }
@@ -2096,7 +2096,8 @@ ZSampleTask* ZMeasuringManager::zh_instanceSampleTask(int sampleTaskId)
     return nullptr;
 }
 //======================================================
-int ZMeasuringManager::zh_createSample(const QString& sampleName, ZSampleTask* sampleTask)
+int ZMeasuringManager::zh_createSample(const QString& sampleName,
+                                       ZSampleTask* sampleTask)
 {
     ZSample* sample = new ZSample(sampleName, nullptr, this);
     connect(sample, &ZSample::zg_inquirySpectrumColor,

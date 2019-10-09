@@ -176,7 +176,7 @@ void ZAddCalibrationDialog::zh_createConnections()
 void ZAddCalibrationDialog::zh_restoreSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
 
     QVariant vData = settings.value(zv_fileLacationDirSectionName);
@@ -212,7 +212,7 @@ void ZAddCalibrationDialog::zh_restoreSettings()
 void ZAddCalibrationDialog::zh_saveSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
     settings.setValue(zv_fileLacationDirSectionName, QVariant(zv_fileLocationDirString));
     settings.setValue(zv_geometrySectionName, QVariant(saveGeometry()));

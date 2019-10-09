@@ -12,6 +12,7 @@
 #include "ZPlotterDataManager.h"
 #include "ZMeasurementParametersHandler.h"
 #include "ZPasswordDialog.h"
+#include "ZTranslatorManager.h"
 
 // views
 #include "ZPlotter.h"
@@ -85,7 +86,7 @@ MainWindow::MainWindow(const QString &dbName, const QString &dbPath, QWidget *pa
     qRegisterMetaType<ZAppSettings>("ZAppSettings");
     qRegisterMetaTypeStreamOperators<ZAppSettings>("ZAppSettings");
 
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zv_exitAction = nullptr;
     zv_aboutAction = nullptr;
@@ -456,6 +457,10 @@ void MainWindow::zh_createConnections()
     connect(zv_exitAction, &QAction::triggered,
             this, &MainWindow::zh_onExitAction);
 
+    connect(zv_languageMenu, &QMenu::aboutToShow,
+            this, &MainWindow::zh_fillLanguageMenu);
+
+
     connect(zv_calibrationsAction, &QAction::triggered,
             this, &MainWindow::zh_onCalibrationsAction);
     connect(zv_chemicalElementTasksAction, &QAction::triggered,
@@ -519,7 +524,7 @@ void MainWindow::zh_createConnections()
 void MainWindow::zh_restoreSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     QVariant vData;
 
     // geometry
@@ -551,7 +556,7 @@ void MainWindow::zh_saveSettings()
     emit zg_saveSettings();
 
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     // geometry
     settings.setValue(glAppGeometryKeyName, QVariant(saveGeometry()));
     // state
@@ -575,7 +580,7 @@ QFrame* MainWindow::zh_setWidgetToFrame(QWidget* widget)
 void MainWindow::zh_saveAppSettingsToSettings(const ZAppSettings& appSettings)
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.setValue(glAppSettingsKeyName, QVariant::fromValue<ZAppSettings>(appSettings));
     settings.endGroup();
 }
@@ -583,7 +588,7 @@ void MainWindow::zh_saveAppSettingsToSettings(const ZAppSettings& appSettings)
 void MainWindow::zh_getAppSettingsFromSettings(ZAppSettings& appSettings) const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
 
     QVariant vData = settings.value(glAppSettingsKeyName);
     if(vData.isValid() && !vData.isNull() && vData.canConvert<ZAppSettings>())
@@ -601,6 +606,24 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
         //        menu->addAction(zv_printAction);
         //        menu->addAction(zv_previewAndPrintAction);
         //        menu->addSeparator();
+        // language
+        zv_languageMenu = new QMenu;
+        zv_languageMenu->setIcon(QIcon(":/images/ZImages/earthGlobe-16.png"));
+        ZTranslatorManager translatorManager;
+        QString currentLanguage;
+        bool ok = false;
+        translatorManager.zp_currentLanguageName(currentLanguage, &ok);
+        if(ok)
+        {
+            zv_languageMenu->setTitle(currentLanguage);
+        }
+
+        zv_languageMenu->setToolTip(tr("Application language"));
+
+        menu->addMenu(zv_languageMenu);
+
+
+
         menu->addAction(zv_exitAction);
         menu->addSeparator();
         return;
@@ -654,10 +677,68 @@ void MainWindow::zh_appendActionsToMenu(QMenu* menu)
         return;
     }
 }
+void MainWindow::zh_appLanguageControl()
+{
+    if(!sender())
+    {
+        return;
+    }
+
+    QAction* action = dynamic_cast<QAction*>(sender());
+    if(!action)
+    {
+        return;
+    }
+
+    ZTranslatorManager translatorManager;
+    QString currentLanguageName;
+    bool ok = false;
+    translatorManager.zp_currentLanguageName(currentLanguageName, &ok);
+
+    qDebug() << "Current lang" << currentLanguageName << "Installied lang" << action->text();
+
+    if(ok && action->text() == currentLanguageName)
+    {
+        return;
+    }
+
+    ok = false;
+    translatorManager.zp_setApplicationLanguage(action->text(), &ok);
+    QString msg;
+    if(ok)
+    {
+        msg = tr("The language of application has been changed.\n"
+                 "In order for the changes to take effect, please restart the application.");
+    }
+    else
+    {
+        msg = translatorManager.zp_lastError().isEmpty() ?
+                    tr("Unknown language settings error.") : translatorManager.zp_lastError();
+
+    }
+
+    QString title = tr("Language settings");
+    QMessageBox::information(this, title, msg, QMessageBox::Ok);
+}
+//==========================================================
+void MainWindow::zh_fillLanguageMenu()
+{
+    zv_languageMenu->clear();
+    ZTranslatorManager translatorManager;
+    QStringList availableLanguageNameList;
+    translatorManager.zp_availableLanguageNameList(availableLanguageNameList);
+
+    foreach(QString languageName, availableLanguageNameList)
+    {
+        QAction* action = zv_languageMenu->addAction(languageName);
+        connect(action, &QAction::triggered,
+                this, &MainWindow::zh_appLanguageControl);
+    }
+}
 //============================================================
 void MainWindow::zh_onAboutAction() const
 {
-    QString title = tr("About %1").arg(qApp->property("glAppProduct").toString());
+    QString title = tr("About %1").arg(qApp->applicationDisplayName());
     //    QString text = tr("The application is a supplement to a SRV spectrometer software. It provides to make extra calculation of chemical concentration that cannot be directly  measured."
     //                      "");
     //    QString htmlText = QString(
@@ -687,14 +768,14 @@ void MainWindow::zh_onAboutAction() const
                 "Company website: <a href=\"http://%8/\">%8</a><br>"
                 "%5: %4.<br>"
                 "Author's email: <a href=mailto:petrovich.eugene@gmail.com?Subject=My%20Subject>petrovich.eugene@gmail.com</a></p>"
-                ).arg(qApp->property("glAppProduct").toString(),
+                ).arg(qApp->applicationDisplayName(),
                       qApp->applicationVersion(),
                       text,
                       tr("Eugene Petrovich"),
                       tr("Author"),
                       tr("Version"),
-                      qApp->property("glAppCopyright").toString(),
-                      qApp->property("glAppCompanyURL").toString()
+                      qApp->property("appCopyright").toString(), /*copyright*/
+                      qApp->organizationDomain()
                       );
 
     QMessageBox::about(centralWidget(), title, htmlText);
@@ -716,7 +797,7 @@ void MainWindow::zh_onHelpAction()
         zv_helpBrowser = ZHelpBrowser::zp_instance(searchList, source, centralWidget());
         zv_helpBrowser->setAttribute(Qt::WA_GroupLeader);
         QSettings settings;
-        settings.beginGroup(qApp->property("glAppVersion").toString());
+        settings.beginGroup(qApp->applicationVersion());
 
         settings.beginGroup("AppState");
         QVariant vData = settings.value("help browser geometry");
@@ -874,15 +955,15 @@ void MainWindow::zh_processMessage(QString msg, QMessageBox::Icon icon)
 {
     if(icon == QMessageBox::Information)
     {
-        QMessageBox::information(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+        QMessageBox::information(this, qApp->applicationDisplayName(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Critical)
     {
-        QMessageBox::critical(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+        QMessageBox::critical(this, qApp->applicationDisplayName(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Warning)
     {
-        QMessageBox::warning(this, qApp->property("glAppProduct").toString(), msg, QMessageBox::Ok);
+        QMessageBox::warning(this, qApp->applicationDisplayName(), msg, QMessageBox::Ok);
     }
     else if(icon == QMessageBox::Question)
     {

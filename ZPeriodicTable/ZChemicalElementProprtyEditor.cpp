@@ -34,7 +34,7 @@ QString ZChemicalElementProprtyEditor::zv_splitterStateName = "splitterState";
 ZChemicalElementProprtyEditor::ZChemicalElementProprtyEditor(QWidget *parent)
     : ZBaseDialog(QString("ZChemicalElementProprtyEditor"), parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zh_createActions();
     zh_createComponents();
@@ -957,7 +957,7 @@ void ZChemicalElementProprtyEditor::zh_savePropertyDataToFile()
     QString msg = tr("File \"%1\" have been saved successfully.").arg(fileDataPath);
 
     QMessageBox msgBox;
-    msgBox.setWindowTitle(qApp->property("glAppProduct").toString());
+    msgBox.setWindowTitle(qApp->applicationDisplayName());
     msgBox.setText(msg);
     msgBox.setInformativeText(tr("Do you want to set the file as default chemical element properties source or reset source file to default?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Reset);

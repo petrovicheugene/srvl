@@ -121,7 +121,7 @@ bool ZBaseDialog::zh_openDialogSettingsGroup(QSettings* settings)
         return false;
     }
     // open version group
-    QString verString = qApp->property("glAppVersion").toString();
+    QString verString = qApp->applicationVersion();
     if(!verString.isEmpty())
     {
         settings->beginGroup(verString);

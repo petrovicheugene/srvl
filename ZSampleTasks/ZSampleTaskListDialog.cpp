@@ -4,6 +4,7 @@
 #include "ZSampleTaskDialog2.h"
 #include "ZMeasuringTaskInitStruct.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -120,7 +121,7 @@ void ZSampleTaskListDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SampleTaskListDialog");
 
     vData = settings.value("dialogGeometry");
@@ -136,7 +137,7 @@ void ZSampleTaskListDialog::zh_restoreSettings()
 void ZSampleTaskListDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SampleTaskListDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

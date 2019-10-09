@@ -1374,7 +1374,7 @@ void ZCalibrationListDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("CalibrationListDialog");
 
     vData = settings.value("dialogGeometry");
@@ -1414,7 +1414,7 @@ void ZCalibrationListDialog::zh_restoreSettings()
 void ZCalibrationListDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("CalibrationListDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

@@ -4,6 +4,7 @@
 #include "ZMeasuringConditionsDialog.h"
 #include "ZReadOnlyStyledItemDelegate.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -273,7 +274,7 @@ void ZMeasuringConditionsListDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("MeasuringConditionsListDialog");
 
     vData = settings.value("dialogGeometry");
@@ -289,7 +290,7 @@ void ZMeasuringConditionsListDialog::zh_restoreSettings()
 void ZMeasuringConditionsListDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("MeasuringConditionsListDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

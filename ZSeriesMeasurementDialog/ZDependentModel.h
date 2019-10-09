@@ -6,7 +6,7 @@
 //======================================================
 
 //======================================================
-class ZDependentModel : public QAbstractTableModel
+class ZDependentModel : public  QAbstractTableModel
 {
     Q_OBJECT
 public:

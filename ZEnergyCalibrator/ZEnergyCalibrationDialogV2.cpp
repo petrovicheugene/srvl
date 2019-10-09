@@ -13,6 +13,7 @@
 #include "ZSpectrumTableDelegate.h"
 #include "ZVerticalLineGraphicsItem.h"
 
+#include <QApplication>
 #include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
@@ -349,7 +350,7 @@ void ZEnergyCalibrationDialogV2::zh_loadSpectrumData(QMap<quint8, QList<ZSpeSpec
 //void ZEnergyCalibrationDialogV2::zh_restoreLineColorList()
 //{
 //    QSettings settings;
-//    settings.beginGroup(glAppVersion);
+//    settings.beginGroup(qApp->applicationVersion());
 //    settings.beginGroup(zv_settingsGroupName);
 
 //    int size = settings.beginReadArray(zv_lineColorListSectionName);
@@ -378,7 +379,7 @@ void ZEnergyCalibrationDialogV2::zh_loadSpectrumData(QMap<quint8, QList<ZSpeSpec
 void ZEnergyCalibrationDialogV2::zh_restoreSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
 
     QVariant vData = settings.value(zv_geometrySectionName);
@@ -425,7 +426,7 @@ void ZEnergyCalibrationDialogV2::zh_restoreSettings()
 void ZEnergyCalibrationDialogV2::zh_saveSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
     settings.setValue(zv_geometrySectionName, QVariant(saveGeometry()));
 

@@ -355,7 +355,7 @@ bool ZXMLCalibrationIOHandler::zp_getCalibrationFromString(QString& calibrationS
 bool ZXMLCalibrationIOHandler::zp_getCalibrationFromFile(QFile& file,
                                                          ZCalibration* calibration)
 {
-    if(calibration == 0)
+    if(calibration == nullptr)
     {
         return false;
     }

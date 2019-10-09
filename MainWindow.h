@@ -125,6 +125,8 @@ private:
 
 
     QAction* zv_exitAction;       /*!< TODO: describe */
+    QMenu* zv_languageMenu;
+
 //    QAction* zv_previewAndPrintAction;
     QAction* zv_aboutAction;    /*!< TODO: describe */
     QAction* zv_aboutQtAction;
@@ -200,6 +202,9 @@ private:
     void zh_appendActionsToMenu(QMenu* menu);
 
     void zh_createResultTextDocument(QTextDocument& textDoc) const;
+
+    void zh_appLanguageControl();
+    void zh_fillLanguageMenu();
 
 };
 //============================================================

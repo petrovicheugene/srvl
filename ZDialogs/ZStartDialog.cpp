@@ -26,7 +26,7 @@
 //=========================================================
 ZStartDialog::ZStartDialog(QWidget *parent) : QDialog(parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zv_editedRow = -1;
     zh_createComponents();
@@ -241,7 +241,7 @@ void ZStartDialog::zh_checkAndStoreDatabase(const QString &name,
 void ZStartDialog::zh_loadDatabaseList()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     int size = settings.beginReadArray(zv_databaseArrayCapture);
     QString name;
     QString path;
@@ -266,7 +266,7 @@ void ZStartDialog::zh_loadDatabaseList()
 void ZStartDialog::zh_saveDatabaseList() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
 
     settings.beginWriteArray(zv_databaseArrayCapture);
     QString name;

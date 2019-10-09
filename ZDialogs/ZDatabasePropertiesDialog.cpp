@@ -23,7 +23,7 @@ ZDatabasePropertiesDialog::ZDatabasePropertiesDialog(const QString& name,
                                                      const QString& path,
                                                      QWidget *parent) : QDialog(parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zh_createComponents();
     zh_createConnections();
@@ -110,7 +110,7 @@ void ZDatabasePropertiesDialog::zh_createConnections()
 void ZDatabasePropertiesDialog::zh_restoreSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
 
     QVariant vData = settings.value(zv_defaultDatabaseFolderSectionName);
@@ -141,7 +141,7 @@ void ZDatabasePropertiesDialog::zh_restoreSettings()
 void ZDatabasePropertiesDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
     settings.setValue(zv_defaultDatabaseFolderSectionName, QVariant(zv_databaseFolderPath));
     settings.endGroup();

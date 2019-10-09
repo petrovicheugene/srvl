@@ -23,7 +23,7 @@ ZPasswordChangeDialog::ZPasswordChangeDialog(QWidget *parent) :
     setWindowTitle(tr("Password settings"));
 
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("AppSettings");
     QVariant vPassword = settings.value("pw");
     settings.endGroup();
@@ -160,7 +160,7 @@ void ZPasswordChangeDialog::mf_changePassword()
 //    return;
 
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("AppSettings");
     settings.setValue("pw", QVariant(byteArray));
     settings.endGroup();

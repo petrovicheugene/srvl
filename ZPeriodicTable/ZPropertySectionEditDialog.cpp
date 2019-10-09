@@ -17,7 +17,7 @@ ZPropertySectionEditDialog::ZPropertySectionEditDialog(const QStringList& branch
                                                        bool selectedVisible,
                                                        QWidget *parent) : ZBaseDialog("ZPropertySectionEditDialog", parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zh_createComponents();
     zh_createConnections();

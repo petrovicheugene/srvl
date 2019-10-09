@@ -5,6 +5,7 @@
 #include "ZSampleTaskTreeWidget.h"
 #include "ZSampleTaskTreeModel.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -329,7 +330,7 @@ void ZSampleTaskDialog2::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SampleTaskDialog");
 
     vData = settings.value("dialogGeometry");
@@ -345,7 +346,7 @@ void ZSampleTaskDialog2::zh_restoreSettings()
 void ZSampleTaskDialog2::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SampleTaskDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

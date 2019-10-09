@@ -10,6 +10,7 @@
 #include "ZControlAction.h"
 #include "ZNumericDelegate.h"
 
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -221,7 +222,7 @@ void ZChemicalTaskDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("ChemicalTaskDialog");
 
     vData = settings.value("dialogGeometry");
@@ -237,7 +238,7 @@ void ZChemicalTaskDialog::zh_restoreSettings()
 void ZChemicalTaskDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("ChemicalTaskDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

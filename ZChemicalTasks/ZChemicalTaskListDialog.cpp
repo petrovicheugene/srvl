@@ -8,6 +8,7 @@
 #include "ZControlAction.h"
 #include "ZReadOnlyStyledItemDelegate.h"
 
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QHeaderView>
@@ -202,7 +203,7 @@ void ZChemicalTaskListDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("ChemicalTaskListDialog");
 
     vData = settings.value("dialogGeometry");
@@ -224,7 +225,7 @@ void ZChemicalTaskListDialog::zh_restoreSettings()
 void ZChemicalTaskListDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("ChemicalTaskListDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

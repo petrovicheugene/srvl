@@ -567,7 +567,6 @@ void ZMeasuringResultTableModel::zh_recalcColumnCount()
             }
         }
 
-
         currentSampleMeasuringConditionsStringList = zv_measuringManager->zp_measuringConditionsStringListForSample(row);
         QString measuringConditions;
         for(int c = 0; c < currentSampleMeasuringConditionsStringList.count(); c++)

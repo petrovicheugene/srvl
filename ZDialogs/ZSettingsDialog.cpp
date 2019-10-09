@@ -5,6 +5,7 @@
 #include "ZDeviceSettingsWidget.h"
 #include "ZCommonSettingsWidget.h"
 
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -103,7 +104,7 @@ void ZSettingsDialog::zh_createConnections()
 void ZSettingsDialog::zh_saveSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SettingsDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));
@@ -117,7 +118,7 @@ void ZSettingsDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SettingsDialog");
 
     vData = settings.value("dialogGeometry");

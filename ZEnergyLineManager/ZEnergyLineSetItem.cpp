@@ -259,7 +259,7 @@ void ZEnergyLineSetItem::zh_saveVisibility()
 //======================================================
 void ZEnergyLineSetItem::zh_openSettingsGroup(QSettings& settings)
 {
-    settings.beginGroup(qApp->property("glAppVersion").toString());
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsSectionName);
     settings.beginGroup(QString::number(zv_ZNumber));
 }

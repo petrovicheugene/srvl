@@ -130,7 +130,7 @@ QString ZEnergyLineSelectionDialog::zp_energyLineName() const
 void ZEnergyLineSelectionDialog::zh_saveSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
     settings.setValue(zv_geometrySectionName, QVariant(saveGeometry()));
     if(zv_mainSplitter)
@@ -144,7 +144,7 @@ void ZEnergyLineSelectionDialog::zh_saveSettings()
 void ZEnergyLineSelectionDialog::zh_restoreSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(zv_settingsGroupName);
 
     QVariant vData = settings.value(zv_geometrySectionName);

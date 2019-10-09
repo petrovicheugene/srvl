@@ -13,7 +13,7 @@ class ZPlotGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit ZPlotGraphicsView(QWidget *parent = 0);
+    explicit ZPlotGraphicsView(QWidget *parent = nullptr);
 
     // FUNC
     QRectF zp_currentVisibleSceneRect() const;

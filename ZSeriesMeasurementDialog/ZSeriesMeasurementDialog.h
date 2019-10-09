@@ -84,7 +84,7 @@ private:
 
     // VARS
     QSqlRelationalTableModel* zv_seriesListTableModel;
-    ZSeriesTableModel* zv_seriesTableModel;
+    ZSeriesTableModel* zv_seriesResultModel;
     ZDependentModelController* zv_seriesTableModelController;
 
     QSplitter* zv_mainSplitter;

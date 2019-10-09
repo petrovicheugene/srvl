@@ -4,6 +4,7 @@
 #include "ZSeriesTaskListManager.h"
 #include "ZSeriesTaskTableWidget.h"
 
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -123,7 +124,7 @@ void ZSeriesTaskListDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SeriesTaskListDialog");
 
     vData = settings.value("dialogGeometry");
@@ -139,7 +140,7 @@ void ZSeriesTaskListDialog::zh_restoreSettings()
 void ZSeriesTaskListDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SeriesTaskListDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

@@ -3,6 +3,7 @@
 #include "ZClickableLabel.h"
 #include "ZGeneral.h"
 
+#include <QApplication>
 #include <QCloseEvent>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -15,8 +16,8 @@ ZWidgetWithSidebar::ZWidgetWithSidebar(const QString &objectName,
                                        QWidget *parent) : QFrame(parent)
 {
     zv_sideBarOnLeft = sideBarOnLeft;
-    zv_sideBarWidget = 0;
-    zv_mainWidget = 0;
+    zv_sideBarWidget = nullptr;
+    zv_mainWidget = nullptr;
     hideToolTipString = zv_sideBarOnLeft? tr("Hide left panel") : tr("Hide right panel");
     showToolTipString = zv_sideBarOnLeft? tr("Show left panel") : tr("Show right panel");
 
@@ -32,8 +33,8 @@ ZWidgetWithSidebar::ZWidgetWithSidebar(const QString &title,
                                        bool sideBarIsOnLeft,
                                        QWidget *parent) : QFrame(parent)
 {
-    zv_sideBarWidget = 0;
-    zv_mainWidget = 0;
+    zv_sideBarWidget = nullptr;
+    zv_mainWidget = nullptr;
     setObjectName(objectName);
     zh_createComponents(title);
     zh_createConnections();
@@ -43,7 +44,7 @@ ZWidgetWithSidebar::ZWidgetWithSidebar(const QString &title,
 //=======================================================
 bool ZWidgetWithSidebar::zp_setMainWidget(QWidget* mainWidget)
 {
-    if(mainWidget == 0 || zv_mainWidget != 0 || !(zv_splitter->count() < 2))
+    if(mainWidget == nullptr || zv_mainWidget != nullptr || !(zv_splitter->count() < 2))
     {
         return false;
     }
@@ -58,7 +59,7 @@ bool ZWidgetWithSidebar::zp_setMainWidget(QWidget* mainWidget)
 //=======================================================
 bool ZWidgetWithSidebar::zp_setSidebarWidget(QWidget* sideBarWidget)
 {
-    if(sideBarWidget == 0 || zv_sideBarWidget != 0 || !(zv_splitter->count() < 2))
+    if(sideBarWidget == nullptr || zv_sideBarWidget != nullptr || !(zv_splitter->count() < 2))
     {
         return false;
     }
@@ -180,7 +181,7 @@ void ZWidgetWithSidebar::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(this->objectName());
 
     vData = settings.value("splitterGeometry");
@@ -197,7 +198,7 @@ void ZWidgetWithSidebar::zh_restoreSettings()
 void ZWidgetWithSidebar::zp_saveSettings()
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup(this->objectName());
 
     settings.setValue("splitterGeometry", QVariant::fromValue<QByteArray>(zv_splitter->saveState()));

@@ -27,17 +27,16 @@ extern const qreal gl_currentSpectrumZValue = 3;
 extern const qreal gl_defaultWindowZValue = 1;
 extern const qreal gl_currentWindowZValue = 4;
 
-
 //====================================================
 ZPlotter::ZPlotter(QWidget *parent) : QWidget(parent)
 {
-    zv_rulerWidget = 0;
-    zv_plotView = 0;
-    zv_verticalScrollBar = 0;
-    zv_horizontalScrollBar = 0;
-    zv_plotScene = 0;
-    zv_rulersAndGreedManager = 0;
-    zv_dashBoard = 0;
+    zv_rulerWidget = nullptr;
+    zv_plotView = nullptr;
+    zv_verticalScrollBar = nullptr;
+    zv_horizontalScrollBar = nullptr;
+    zv_plotScene = nullptr;
+    zv_rulersAndGreedManager = nullptr;
+    zv_dashBoard = nullptr;
 
     zv_verticalAbsMax = 0;
     zv_autoDefineVerticalAbsMax = true;
@@ -395,7 +394,7 @@ void ZPlotter::zp_clearItemsExeptType(int type)
 //====================================================
 void ZPlotter::zp_addItem(QGraphicsItem * item)
 {
-    if(item == 0)
+    if(item == nullptr)
     {
         return;
     }
@@ -446,7 +445,7 @@ QList<QGraphicsItem*> ZPlotter::zp_itemListForType(int type) const
 //====================================================
 int ZPlotter::zp_itemCount() const
 {
-    if(zv_plotScene == 0)
+    if(zv_plotScene == nullptr)
     {
         return 0;
     }
@@ -785,8 +784,8 @@ void ZPlotter::zh_createComponents()
     zv_verticalScrollBar = new QScrollBar(Qt::Vertical, this);
     zv_horizontalScrollBar = new QScrollBar(Qt::Horizontal, this);
     zv_plotScene = new ZPlotGraphicsScene(this);
-    zv_plotView = new ZPlotGraphicsView(0);
-    zv_rulerWidget = new ZRulerWidget(0);
+    zv_plotView = new ZPlotGraphicsView(nullptr);
+    zv_rulerWidget = new ZRulerWidget(nullptr);
     zv_rulersAndGreedManager = new ZRulersAndGridManager(this);
     zv_dashBoard = new ZHorizontalDashBoard(this);
     zv_rulerWidget->zp_setPlotView(zv_plotView);
@@ -926,7 +925,7 @@ bool ZPlotter::zh_recalcVerticalDistortionFactors(qreal distortionValue)
 //====================================================
 void ZPlotter::zh_recalcRulesAndItemCoordinates()
 {
-    if(zv_rulersAndGreedManager != 0)
+    if(zv_rulersAndGreedManager != nullptr)
     {
         zv_rulersAndGreedManager->zp_recalcRulesAndGrid();
         zv_rulerWidget->update();

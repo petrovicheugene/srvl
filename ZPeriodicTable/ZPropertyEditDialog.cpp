@@ -11,7 +11,7 @@
 ZPropertyEditDialog::ZPropertyEditDialog(QWidget *parent)
     : ZBaseDialog("ZPropertyEditDialog", parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zh_createComponents();
     zh_createConnections();

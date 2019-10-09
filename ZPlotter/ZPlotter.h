@@ -22,7 +22,7 @@ class ZPlotter : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ZPlotter(QWidget *parent = 0);
+    explicit ZPlotter(QWidget *parent = nullptr);
 
     // ZPlotGraphicsScene* zp_plotScene();
 

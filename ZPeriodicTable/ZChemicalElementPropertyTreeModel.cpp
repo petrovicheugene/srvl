@@ -1082,7 +1082,7 @@ bool ZChemicalElementPropertyTreeModel::zh_openDialogSettingsGroup(QSettings* se
         return false;
     }
     // open version group
-    QString verString = qApp->property("glAppVersion").toString();
+    QString verString = qApp->applicationVersion();
     if(!verString.isEmpty())
     {
         settings->beginGroup(verString);

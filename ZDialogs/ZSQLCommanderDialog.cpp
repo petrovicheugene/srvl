@@ -311,7 +311,7 @@ void ZSQLCommanderDialog::zh_restoreSettings()
 {
     QSettings settings;
     QVariant vData;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SQLCommanderDialog");
 
     vData = settings.value("dialogGeometry");
@@ -345,7 +345,7 @@ void ZSQLCommanderDialog::zh_restoreSettings()
 void ZSQLCommanderDialog::zh_saveSettings() const
 {
     QSettings settings;
-    settings.beginGroup(glAppVersion);
+    settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("SQLCommanderDialog");
 
     settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));

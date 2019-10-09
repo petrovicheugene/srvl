@@ -22,7 +22,7 @@
 ZSeriesMeasurementDialog::ZSeriesMeasurementDialog(QWidget *parent)
     : ZBaseDialog("ZSeriesMeasurementDialog", parent)
 {
-    setWindowTitle(qApp->property("glAppProduct").toString());
+    setWindowTitle(qApp->applicationDisplayName());
 
     zv_plotter = nullptr;
 
@@ -56,7 +56,7 @@ void ZSeriesMeasurementDialog::zh_createComponents()
     zv_seriesListTableModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Operator")));
     zv_seriesListTableModel->setHeaderData(4, Qt::Horizontal, QVariant(tr("Task")));
 
-    zv_seriesTableModel = new ZSeriesTableModel(this);
+    zv_seriesResultModel = new ZSeriesTableModel(this);
     zv_seriesTableModelController = new ZDependentModelController(this);
 
     // create main splitter
@@ -85,13 +85,17 @@ void ZSeriesMeasurementDialog::zh_createConnections()
             this, &ZSeriesMeasurementDialog::zh_onResetSortButtonClick);
 
     zv_seriesTableModelController->zp_setView(zv_seriesListView);
-    zv_seriesTableModelController->zp_setModel(zv_seriesTableModel);
+    zv_seriesTableModelController->zp_setModel(zv_seriesResultModel);
 
     zv_seriesListView->setModel(zv_seriesListTableModel);
     zv_seriesListView->setItemDelegateForColumn(2, new ZTimeDelegate);
 
     zv_seriesListView->setColumnHidden(0, true);
     zv_seriesListView->setSortingEnabled(true);
+
+    zv_seriesResultView->setModel(zv_seriesResultModel);
+
+
 }
 //======================================================
 void ZSeriesMeasurementDialog::zh_saveSettings()

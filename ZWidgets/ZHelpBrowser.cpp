@@ -15,7 +15,7 @@ int ZHelpBrowser::zv_refCount = 0;
 ZHelpBrowser::ZHelpBrowser(const QStringList& pathList, const QUrl& doc, QWidget *parent ) :
     QDialog(parent)
 {
-    QString winTitle = QString("%1 - %2").arg(qApp->property("glAppProduct").toString(),
+    QString winTitle = QString("%1 - %2").arg(qApp->applicationDisplayName(),
                                               tr("Help"));
     setWindowTitle(winTitle);
 
@@ -98,7 +98,7 @@ ZHelpBrowser* ZHelpBrowser::zp_instance(const QStringList &pathList, const QUrl 
     {
         zv_this = new ZHelpBrowser(pathList, doc, parent);
         QSettings settings;
-        settings.beginGroup(qApp->property("glAppVersion").toString());
+        settings.beginGroup(qApp->applicationVersion());
 
         QVariant vData = settings.value("help geometry");
 
@@ -119,12 +119,12 @@ void ZHelpBrowser::zp_freeInstance()
     if(zv_refCount < 1)
     {
         QSettings settings;
-        settings.beginGroup(qApp->property("glAppVersion").toString());
+        settings.beginGroup(qApp->applicationVersion());
         settings.setValue("help geometry", saveGeometry());
         settings.endGroup();
 
         delete this;
-        zv_this = 0;
+        zv_this = nullptr;
     }
 }
 //==============================================
