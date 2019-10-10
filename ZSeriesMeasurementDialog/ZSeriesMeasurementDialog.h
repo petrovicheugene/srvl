@@ -3,6 +3,7 @@
 #define ZSERIESMEASUREMENTDIALOG_H
 //======================================================
 #include "ZBaseDialog.h"
+
 #include <QApplication>
 #include <QStyledItemDelegate>
 #include <QTime>

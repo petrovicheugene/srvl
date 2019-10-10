@@ -17,13 +17,13 @@ public:
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
 
     // override FUNCS
-    virtual Qt::ItemFlags	flags(const QModelIndex & index) const;
-    QModelIndex index(int row, int column, const QModelIndex &parent) const;
-    virtual int	columnCount(const QModelIndex & parent = QModelIndex()) const;
-    virtual int	rowCount(const QModelIndex & parent = QModelIndex()) const;
-    virtual QVariant	data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+    virtual Qt::ItemFlags flags(const QModelIndex & index) const;
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    virtual int columnCount(const QModelIndex & parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
     virtual bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-    virtual QVariant	headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
     // custom funcs
     int zp_spectrumColumnCount() const;
@@ -61,8 +61,8 @@ private:
     QStringList zv_chemicalStringList;
     QStringList zv_measuringConditionsStringList;
     QList<QPair<quint8, int> > zv_measuringConditionsList;
-
     int zv_concentrationDisplayPrecisioin;
+
     // FUNCS
     void zh_recalcColumnCount();
     void zh_repaintAllSpectra();

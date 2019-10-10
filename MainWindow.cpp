@@ -844,29 +844,42 @@ void MainWindow::zh_onCalibrationsAction()
 //============================================================
 void MainWindow::zh_onChemicalElementTasksAction()
 {
-    ZChemicalTaskListDialog dialog;
-    dialog.exec();
+    ZChemicalTaskListDialog* dialog = new ZChemicalTaskListDialog;
+    dialog->setWindowFlags(Qt::Tool);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(this, &QMainWindow::destroyed,
+            dialog, &ZSeriesMeasurementDialog::close);
+    dialog->show();
 }
 //============================================================
 void MainWindow::zh_onSampleTasksAction()
 {
-    ZSampleTaskListDialog dialog;
-    dialog.exec();
+    ZSampleTaskListDialog* dialog = new ZSampleTaskListDialog;
+    dialog->setWindowFlags(Qt::Tool);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(this, &QMainWindow::destroyed,
+            dialog, &ZSeriesMeasurementDialog::close);
+    dialog->show();
 }
 //============================================================
 void MainWindow::zh_onSeriesMeasurementAction()
 {
-    ZSeriesMeasurementDialog dialog;
-    dialog.exec();
+    ZSeriesMeasurementDialog* dialog = new ZSeriesMeasurementDialog;
+    dialog->setWindowFlags(Qt::Tool);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(this, &QMainWindow::destroyed,
+            dialog, &ZSeriesMeasurementDialog::close);
+    dialog->show();
 }
 //============================================================
 void MainWindow::zh_onRunSQLCommandAction() const
 {
-    ZSQLCommanderDialog dialog;
-    dialog.setWindowFlags(Qt::Tool);
-
-    dialog.exec();
-
+    ZSQLCommanderDialog* dialog = new ZSQLCommanderDialog;
+    dialog->setWindowFlags(Qt::Tool);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(this, &QMainWindow::destroyed,
+            dialog, &ZSeriesMeasurementDialog::close);
+    dialog->show();
 }
 //============================================================
 void MainWindow::zh_onSettingsAction()

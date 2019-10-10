@@ -340,6 +340,23 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
     return false;
 }
 //=====================================================
+bool ZSample::zp_setConcentration(const QString& chemical, double concentration)
+{
+    for(int i = 0; i < zv_chemicalConcentrationList.count(); i++)
+    {
+        if( zv_chemicalConcentrationList[i].zv_chemical == chemical)
+        {
+            zv_chemicalConcentrationList[i].zv_concentration = concentration;
+            //zv_chemicalConcentrationList[i].zv_calibrationId = chemicalConcentration.zv_calibrationId;
+            // notify measuring manager
+            emit zg_concentrationChanged();
+            return true;
+        }
+    }
+
+    return false;
+}
+//=====================================================
 ZSpeSpectrum* ZSample::zp_spectrumForMeasuringConditions(quint8 gainFactor, int exposition) const
 {
     for(int s = 0; s < zv_spectrumList.count(); s++)

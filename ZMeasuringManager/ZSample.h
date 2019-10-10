@@ -78,6 +78,8 @@ public:
 
     ZSpeSpectrum* zp_spectrumForId(qint64 id);
 
+    bool zp_setConcentration(const QString& chemical, double concentration);
+
 signals:
 
     void zg_inquirySpeListClear(SampleTaskSetFlag& flag) const;

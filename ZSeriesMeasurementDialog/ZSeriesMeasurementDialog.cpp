@@ -1,9 +1,10 @@
 //======================================================
 #include "ZSeriesMeasurementDialog.h"
 
+#include "ZDependentModelController.h"
 #include "ZPlotter.h"
 #include "ZSeriesTableModel.h"
-#include "ZDependentModelController.h"
+#include "ZSpectrumTableDelegate.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -92,9 +93,15 @@ void ZSeriesMeasurementDialog::zh_createConnections()
 
     zv_seriesListView->setColumnHidden(0, true);
     zv_seriesListView->setSortingEnabled(true);
+    zv_seriesListView->setAlternatingRowColors(true);
 
     zv_seriesResultView->setModel(zv_seriesResultModel);
 
+    ZSpectrumTableDelegate* spectrumTableDelegate = new ZSpectrumTableDelegate(zv_seriesResultView);
+    zv_seriesResultView->viewport()->installEventFilter(spectrumTableDelegate);
+    zv_seriesResultView->setItemDelegate(spectrumTableDelegate);
+
+    zv_seriesResultView->setAlternatingRowColors(true);
 
 }
 //======================================================

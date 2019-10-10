@@ -4,6 +4,7 @@
 #include "ZSpectrumPaintData.h"
 #include "ZGeneral.h"
 
+#include <QDebug>
 #include <QPainter>
 #include <QStyle>
 #include <QApplication>
@@ -166,7 +167,7 @@ bool ZSpectrumTableDelegate::editorEvent ( QEvent * event,
                                            const QStyleOptionViewItem & option,
                                            const QModelIndex & index )
 {
-    if(!index.isValid() || model == 0 || event->type() != QEvent::MouseButtonRelease)
+    if(!index.isValid() || model == nullptr || event->type() != QEvent::MouseButtonRelease)
     {
         return QStyledItemDelegate::editorEvent(event,
                                                 model,
@@ -227,7 +228,7 @@ bool ZSpectrumTableDelegate::eventFilter(QObject *object, QEvent *event)
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         //
         QTableView* itemView = qobject_cast<QTableView*>(parent());
-        if(itemView == 0)
+        if(itemView == nullptr)
         {
             return QStyledItemDelegate::eventFilter(object, event);
         }
@@ -245,7 +246,7 @@ bool ZSpectrumTableDelegate::eventFilter(QObject *object, QEvent *event)
             return QStyledItemDelegate::eventFilter(object, event);
         }
 
-        if((itemView->itemDelegateForColumn(itemIndex.column()) != 0
+        if((itemView->itemDelegateForColumn(itemIndex.column()) != nullptr
             && itemView->itemDelegateForColumn(itemIndex.column()) != this)
                 || (itemView->itemDelegate()) != this)
         {
@@ -264,7 +265,7 @@ bool ZSpectrumTableDelegate::eventFilter(QObject *object, QEvent *event)
         }
         else
         {
-            int pm = itemView->style()->pixelMetric(QStyle::PM_SmallIconSize, 0, itemView);
+            int pm = itemView->style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, itemView);
             newOption.decorationSize = QSize(pm, pm);
         }
 

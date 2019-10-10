@@ -886,7 +886,7 @@ void ZMeasuringManager::zh_calcSpectrumCommonProperties(quint8 gainFactor, int e
         }
     }
 
-    // find spectrum properties  and  redefine
+    // find and redefine spectrum properties
     ZSpectrumCommonProperties properties;
     for(int i = 0; i < zv_spectrumCommonPropertiesList.count(); i++)
     {
