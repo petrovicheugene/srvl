@@ -218,6 +218,54 @@ QVariant ZSeriesTableModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 //======================================================
+QList<QPair<quint8, int> > ZSeriesTableModel::zp_sampleMeasuringConditionsListForRow(int row) const
+{
+    if(row < 0 || row >= rowCount())
+    {
+        return QList<QPair<quint8, int> >();
+    }
+
+    return zv_sampleList.at(row)->zp_sampleMeasuringConditionsList();
+}
+//======================================================
+ZSpeSpectrum* ZSeriesTableModel::zp_spectrumForMeasuringConditionsForRow(int row,
+                                                                         quint8 gainFactor, int exposition) const
+{
+    if(row < 0 || row >= rowCount())
+    {
+        return nullptr;
+    }
+
+    return zv_sampleList.at(row)->zp_spectrumForMeasuringConditions(gainFactor, exposition);
+}
+//======================================================
+ZSpeSpectrum* ZSeriesTableModel::zp_spectrumForIndex(const QModelIndex& index) const
+{
+    if(!index.isValid() || zv_measuringConditionsList.isEmpty() || index.row() < 0 || index.row() >= rowCount() ||
+            index.column() < 2 || index.column() >= zv_measuringConditionsList.count() + 2)
+    {
+        return nullptr;
+    }
+    QPair<quint8, int>  conditions = zv_measuringConditionsList.value(index.column() - 2);
+    ZSpeSpectrum* spectrum = zv_sampleList.at(index.row())->zp_spectrumForMeasuringConditions(conditions.first,
+                                                                                              conditions.second);
+
+    return spectrum;
+}
+//======================================================
+bool ZSeriesTableModel::zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const
+{
+    foreach(ZSample* sample, zv_sampleList)
+    {
+        if(sample->zp_spectrumVisibilityForSpectrumId(spectrumId, visibility))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+//======================================================
 void ZSeriesTableModel::zp_reload(qint64 id)
 {
     beginResetModel();

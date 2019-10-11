@@ -1,16 +1,21 @@
 //======================================================
 #include "ZSeriesMeasurementDialog.h"
+#include "ZGeneral.h"
 
 #include "ZDependentModelController.h"
 #include "ZPlotter.h"
 #include "ZSeriesTableModel.h"
 #include "ZSpectrumTableDelegate.h"
+#include "ZSpectrumGraphicsItem.h"
+#include "ZSpeSpectrum.h"
+
 
 #include <QApplication>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMetaObject>
 #include <QPushButton>
 #include <QSettings>
 #include <QSplitter>
@@ -25,6 +30,7 @@ ZSeriesMeasurementDialog::ZSeriesMeasurementDialog(QWidget *parent)
 {
     setWindowTitle(qApp->applicationDisplayName());
 
+    zv_boundingRectTopFactor = 1.05;
     zv_plotter = nullptr;
 
     zh_createComponents();
@@ -103,6 +109,11 @@ void ZSeriesMeasurementDialog::zh_createConnections()
 
     zv_seriesResultView->setAlternatingRowColors(true);
 
+    connect(zv_seriesResultModel, &QAbstractTableModel::modelReset,
+            this, &ZSeriesMeasurementDialog::zh_onModelReset);
+    connect(zv_seriesResultView->selectionModel(), &QItemSelectionModel::currentChanged,
+            this, &ZSeriesMeasurementDialog::zh_onCurrentChange);
+
 }
 //======================================================
 void ZSeriesMeasurementDialog::zh_saveSettings()
@@ -153,6 +164,131 @@ void ZSeriesMeasurementDialog::zh_onResetSortButtonClick()
     zv_seriesListView->sortByColumn(0, Qt::DescendingOrder);
 }
 //======================================================
+void ZSeriesMeasurementDialog::zh_onModelReset()
+{
+    // current plotter state
+    qreal distortionFactor;
+    qreal distortionCorrectionFactor;
+    zv_plotter->zp_verticalDistortionFactors(distortionFactor, distortionCorrectionFactor);
+    bool isPlotScaled = zv_plotter->zp_isPlotScaled();
+
+    // clear all previous spectra
+    zv_plotter->zp_clearItemsForType(SpectrumItemType);
+
+    //
+    ZSpectrumGraphicsItem* spectrumItem;
+    ZSpeSpectrum* spectrum;
+
+    for(int row = 0; row < zv_seriesResultModel->rowCount(); row++)
+    {
+        QList<QPair<quint8, int> > measuringConditions = zv_seriesResultModel->zp_sampleMeasuringConditionsListForRow(row);
+        for(int m = 0; m < measuringConditions.count(); m++)
+        {
+            spectrum =
+                    zv_seriesResultModel->zp_spectrumForMeasuringConditionsForRow(row, measuringConditions.at(m).first,
+                                                                                  measuringConditions.at(m).second);
+
+            spectrumItem = new ZSpectrumGraphicsItem(spectrum,
+                                                     zv_boundingRectTopFactor,
+                                                     distortionFactor,
+                                                     distortionCorrectionFactor);
+            connect(spectrum, &ZSpeSpectrum::zg_visibleChanged,
+                    this, &ZSeriesMeasurementDialog::zh_onVisibleSpectrumChange);
+            zv_plotter->zp_addItem(spectrumItem);
+        }
+
+        //        for(int s = 0; s < zv_seriesResultModel->zp_spectrumCountForRow(row); s++)
+        //        {
+        ////            spectrum = zv_spectrumModel->zp_spectrumForRow(row);
+        ////            spectrumItem = new ZSpectrumGraphicsItem(spectrum,
+        ////                                                     zv_boundingRectTopFactor,
+        ////                                                     distortionFactor,
+        ////                                                     distortionCorrectionFactor);
+        ////            zv_plotter->zp_addItem(spectrumItem);
+
+        //        }
+    }
+
+    if(!isPlotScaled)
+    {
+        zv_plotter->zp_fitInBoundingRect();
+        //            QMetaObject::invokeMethod(zv_plotter, "zp_fitInBoundingRect",
+        //                                      Qt::QueuedConnection);
+    }
+
+    //    QRectF boundingRect = zv_plotter->zp_boundingRect();
+    //    ZVerticalLineGraphicsItem::zp_setTopAndButtonMargins(boundingRect.top(),boundingRect.bottom());
+    //    zh_updateVerticalLines();
+}
+//======================================================
+void ZSeriesMeasurementDialog::zh_onVisibleSpectrumChange(bool visible)
+{
+    ZSpeSpectrum* spectrum = dynamic_cast<ZSpeSpectrum*>(sender());
+    if(!spectrum)
+    {
+        return;
+    }
+
+    // get spectrum graphic item if it exists
+    ZSpectrumGraphicsItem* spectrumItem = nullptr;
+    QList<QGraphicsItem*> spectrumList = zv_plotter->zp_itemListForType(SpectrumItemType);
+    for(int sp = 0; sp < spectrumList.count(); sp++)
+    {
+        spectrumItem = qgraphicsitem_cast<ZSpectrumGraphicsItem*>(spectrumList.at(sp));
+        if(spectrumItem != nullptr && spectrumItem->zp_spectrumId() == spectrum->zp_spectrumId())
+        {
+            // spectrumItem found
+            break;
+        }
+
+        // reset spectrum item pointer and go on
+        spectrumItem = nullptr;
+        continue;
+    }
+
+    if(spectrumItem != nullptr)
+    {
+        if(!spectrumItem->zp_isSpectrumCurrent())
+        {
+            spectrumItem->setVisible(spectrum->zp_isSpectrumVisible());
+        }
+    }
+}
+//======================================================
+void ZSeriesMeasurementDialog::zh_onCurrentChange(const QModelIndex& current,
+                                                  const QModelIndex& previous)
+{
+    ZSpeSpectrum* spectrum = zv_seriesResultModel->zp_spectrumForIndex(current);
+    qint64 spectrumId = -1;
+    bool spectrumVisibility = false;
+
+    if(spectrum)
+    {
+        spectrumId = spectrum->zp_spectrumId();
+    }
+
+    ZSpectrumGraphicsItem::zp_setCurrentSpectrumId(spectrumId);
+
+    ZSpectrumGraphicsItem* spectrumItem = nullptr;
+    QList<QGraphicsItem*> spectrumList = zv_plotter->zp_itemListForType(SpectrumItemType);
+
+    for(int sp = 0; sp < spectrumList.count(); sp++)
+    {
+        spectrumItem = qgraphicsitem_cast<ZSpectrumGraphicsItem*>(spectrumList.at(sp));
+        if(!spectrumItem)
+        {
+            continue;
+        }
+
+        if(!zv_seriesResultModel->zp_spectrumVisibility(spectrumItem->zp_spectrumId(), spectrumVisibility))
+        {
+            spectrumVisibility = false;
+        }
+
+        spectrumItem->zp_updateCurrentSpectrum(spectrumVisibility);
+    }
+}
+//======================================================
 QWidget* ZSeriesMeasurementDialog::zh_createTablesWidget()
 {
     zv_tableSplitter = new QSplitter(this);
@@ -179,12 +315,12 @@ QWidget* ZSeriesMeasurementDialog::zh_createSeriesListViewWidget()
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     mainLayout->addWidget(buttonBox);
 
-//    zv_filterButton = new QPushButton(this);
-//    zv_filterButton->setText("F");
-//    zv_filterButton->setFlat(true);
-//    zv_filterButton->setCheckable(true);
-//    zv_filterButton->setFocusPolicy(Qt::NoFocus);
-//    buttonBox->addButton(zv_filterButton, QDialogButtonBox::ActionRole);
+    //    zv_filterButton = new QPushButton(this);
+    //    zv_filterButton->setText("F");
+    //    zv_filterButton->setFlat(true);
+    //    zv_filterButton->setCheckable(true);
+    //    zv_filterButton->setFocusPolicy(Qt::NoFocus);
+    //    buttonBox->addButton(zv_filterButton, QDialogButtonBox::ActionRole);
 
     zv_sortButton = new QPushButton(this);
     zv_sortButton->setText("S");

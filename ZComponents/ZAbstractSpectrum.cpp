@@ -77,7 +77,11 @@ bool ZAbstractSpectrum::zp_isSpectrumVisible() const
 //==========================================================
 void ZAbstractSpectrum::zp_setSpectrumVisible(bool visible)
 {
-    zv_visible = visible;
+    if(zv_visible != visible)
+    {
+        zv_visible = visible;
+        emit zg_visibleChanged(zv_visible);
+    }
 }
 //==========================================================
 bool ZAbstractSpectrum::zp_isSpectrumChecked() const

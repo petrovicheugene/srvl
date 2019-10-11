@@ -15,7 +15,7 @@ public:
                           qreal boundingRectTopFactor,
                           qreal distortionFactor,
                           qreal distortionCorrectionFactor,
-                          QGraphicsItem * parent = 0);
+                          QGraphicsItem * parent = nullptr);
     QRectF boundingRect() const override;
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
     QPainterPath shape() const override;
@@ -36,10 +36,10 @@ public:
 protected:
 
     // FUNCS
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void focusInEvent(QFocusEvent *event);
-    void focusOutEvent(QFocusEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
 
 private:
 

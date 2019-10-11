@@ -69,6 +69,10 @@ public:
     void zp_setCompleted(bool completed);
     bool zp_isCompleted() const;
 
+signals:
+
+    void zg_visibleChanged(bool visible) const;
+
 protected:
 
     // VARS

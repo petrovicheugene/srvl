@@ -7,6 +7,7 @@
 //======================================================
 class ZSample;
 class ZSampleTask;
+class ZSpeSpectrum;
 //======================================================
 class ZSeriesTableModel : public ZDependentModel
 {
@@ -15,13 +16,17 @@ public:
     explicit ZSeriesTableModel(QObject *parent = nullptr);
     ~ ZSeriesTableModel() override;
 
-    virtual Qt::ItemFlags flags(const QModelIndex & index) const;
+    virtual Qt::ItemFlags flags(const QModelIndex & index) const override;
     virtual int	columnCount(const QModelIndex & parent = QModelIndex()) const override;
     virtual int	rowCount(const QModelIndex & parent = QModelIndex()) const override;
     virtual QVariant	data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex & index, const QVariant & value, int role) override;
     virtual QVariant	headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+    QList<QPair<quint8, int> > zp_sampleMeasuringConditionsListForRow(int row) const;
+    ZSpeSpectrum* zp_spectrumForMeasuringConditionsForRow(int row, quint8 gainFactor, int exposition) const;
+    ZSpeSpectrum* zp_spectrumForIndex(const QModelIndex& index) const;
+    bool zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const;
 
 signals:
 

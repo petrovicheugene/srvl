@@ -75,6 +75,9 @@ private slots:
 
     void zh_onCloseButtonClick();
     void zh_onResetSortButtonClick();
+    void zh_onModelReset();
+    void zh_onVisibleSpectrumChange(bool visible);
+    void zh_onCurrentChange(const QModelIndex &current, const QModelIndex &previous);
 
 protected:
 
@@ -94,6 +97,7 @@ private:
     const QString zv_tableSplitterStateName = "tableSplitterState";
 
 
+    double zv_boundingRectTopFactor;
     QTableView* zv_seriesListView;
     QTableView* zv_seriesResultView;
     ZPlotter* zv_plotter;
@@ -108,6 +112,7 @@ private:
     void zh_createConnections();
     QWidget* zh_createSeriesListViewWidget();
     QWidget* zh_createTablesWidget();
+
 };
 //======================================================
 #endif // ZSERIESMEASUREMENTDIALOG_H
