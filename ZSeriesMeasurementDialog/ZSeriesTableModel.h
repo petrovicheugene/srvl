@@ -26,6 +26,7 @@ public:
     QList<QPair<quint8, int> > zp_sampleMeasuringConditionsListForRow(int row) const;
     ZSpeSpectrum* zp_spectrumForMeasuringConditionsForRow(int row, quint8 gainFactor, int exposition) const;
     ZSpeSpectrum* zp_spectrumForIndex(const QModelIndex& index) const;
+    ZSpeSpectrum* zp_spectrumForId(qint64 id) const;
     bool zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const;
 
 signals:

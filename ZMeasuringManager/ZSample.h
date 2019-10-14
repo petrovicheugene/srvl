@@ -48,6 +48,7 @@ public:
     bool zp_addMeasuringConditions(int gainFactor, int exposition);
     bool zp_setSpectrum(ZSpeSpectrum*spectrum, int gainFactor, int exposition);
     bool zp_setSpectrumData(QList<quint32> speDataList,
+                            const QList<double> &energyCalibration,
                             quint8 gainFactor,
                             int exposition, quint32 time, quint32 deadTime,
                             bool finished);

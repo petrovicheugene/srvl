@@ -550,7 +550,12 @@ void ZMeasuringController::zh_processMeasurementResults()
             speDataList.append(*(zv_buffer + i));
         }
 
+        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+
+
         zv_currentSampleTask->zp_handleSpectrumData(speDataList,
+                                                    currentSpectrumEnergyCalibration,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second,
                                                     zv_Time,
@@ -561,8 +566,6 @@ void ZMeasuringController::zh_processMeasurementResults()
                                                                                      zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
         emit zg_currentSpectrumId(measuredSpectrumId);
 
-        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
-                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
         emit zg_currentEnergyCalibration(currentSpectrumEnergyCalibration);
 
         // continue measurement
@@ -616,7 +619,11 @@ void ZMeasuringController::zh_processMeasurementResults()
             speDataList.append(*(zv_buffer + i));
         }
 
+        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
+                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
+
         zv_currentSampleTask->zp_handleSpectrumData(speDataList,
+                                                    currentSpectrumEnergyCalibration,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
                                                     zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second,
                                                     zv_Time,
@@ -626,8 +633,6 @@ void ZMeasuringController::zh_processMeasurementResults()
                                                                                      zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
         emit zg_currentSpectrumId(measuredSpectrumId);
 
-        QList<double> currentSpectrumEnergyCalibration = zv_currentSampleTask->zp_spectrumEnergyCalibrationForConditions(zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).first,
-                                                                                                                         zv_currentMeasuringConditions.at(zv_currentMeasuringIndex).second);
         emit zg_currentEnergyCalibration(currentSpectrumEnergyCalibration);
 
         break;

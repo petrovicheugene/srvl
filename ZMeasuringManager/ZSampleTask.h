@@ -112,6 +112,7 @@ public:
 
     void zp_measuringFinished();
     void zp_handleSpectrumData(QList<quint32> speDataList,
+                               const QList<double> &energyCalibration,
                                quint8 gainFactor,
                                int exposition, quint32 time, quint32 deadTime,
                                bool finished);

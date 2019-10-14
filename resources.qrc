@@ -79,6 +79,7 @@
         <file>ZImages/Qt-logo.png</file>
         <file>ZImages/exit-1.png</file>
         <file>ZImages/earthGlobe-16.png</file>
+        <file>ZImages/sorting_256-green.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>SQL/srvlab.sql</file>

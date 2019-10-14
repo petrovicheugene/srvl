@@ -277,9 +277,10 @@ bool ZSample::zp_setSpectrum(ZSpeSpectrum *spectrum, int gainFactor, int exposit
 }
 //=====================================================
 bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
+                                 const QList<double>& energyCalibration,
                                  quint8 gainFactor,
                                  int exposition,
-                                 quint32 time,
+                                 quint32 time, // alive time
                                  quint32 deadTime,
                                  bool finished)
 {
@@ -297,6 +298,7 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
             // assign the new spectrum
             ZSpeSpectrum* spectrum = zv_spectrumList[s].second;
             spectrum->zp_setSpectrumData(speDataList);
+            spectrum->zp_setEnergyCalibration(energyCalibration);
             spectrum->zp_setCompleted(finished);
 
             emit zg_spectrumDataChanged(gainFactor, exposition);
@@ -307,7 +309,7 @@ bool ZSample::zp_setSpectrumData(QList<quint32> speDataList,
                 spectrum->zp_setExposition(exposition);
                 spectrum->zp_setGainFactor(gainFactor);
                 spectrum->zp_setAliveTime(static_cast<quint32>(exposition) - (deadTime / 1000));
-                //spectrum->zp_setEnergyUnit("kEv");
+                 //spectrum->zp_setEnergyUnit("kEv");
 
                 QList<ZChemicalConcentration> chemicalConcentrationList;
                 zv_sampleTask->zp_calcConcentrations(gainFactor,

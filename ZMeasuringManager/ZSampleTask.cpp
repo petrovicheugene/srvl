@@ -269,6 +269,7 @@ void ZSampleTask::zp_measuringFinished()
 }
 //=================================================
 void ZSampleTask::zp_handleSpectrumData(QList<quint32> speDataList,
+                                        const QList<double>& energyCalibration,
                                         quint8 gainFactor,
                                         int exposition,
                                         quint32 time,
@@ -277,7 +278,9 @@ void ZSampleTask::zp_handleSpectrumData(QList<quint32> speDataList,
 {
     if(zv_currentSample)
     {
-        zv_currentSample->zp_setSpectrumData(speDataList, gainFactor, exposition, time,
+        zv_currentSample->zp_setSpectrumData(speDataList,
+                                             energyCalibration,
+                                             gainFactor, exposition, time,
                                              deadTime, finished);
     }
 }

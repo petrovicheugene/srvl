@@ -1,6 +1,6 @@
 //======================================================
-#ifndef ZCHEMICALELEMENTENERGYLINEWIDGET_H
-#define ZCHEMICALELEMENTENERGYLINEWIDGET_H
+#ifndef ZENERGYLINETABLEWIDGET_H
+#define ZENERGYLINETABLEWIDGET_H
 //======================================================
 #include <QWidget>
 
@@ -69,4 +69,4 @@ private:
 
 };
 //======================================================
-#endif // ZCHEMICALELEMENTENERGYLINEWIDGET_H
+#endif // ZENERGYLINETABLEWIDGET_H

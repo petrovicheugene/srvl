@@ -16,7 +16,7 @@ class ZPlotterDataManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ZPlotterDataManager(QObject *parent = 0);
+    explicit ZPlotterDataManager(QObject *parent = nullptr);
 
     void zp_connectToMeasuringManager(ZMeasuringManager* measuringManager);
     void zp_connectToPlotter(ZPlotter* plotter);
@@ -39,7 +39,6 @@ public slots:
     void zp_onEnergyLineOperation(QString elementSymbol, QString lineName,
                                   EnergyLineOperationType operationType);
     void zp_onPlotterViewPortRectChange(QRectF rect);
-
 
 private slots:
 

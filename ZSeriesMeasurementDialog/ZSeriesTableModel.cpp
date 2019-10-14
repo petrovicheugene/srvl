@@ -253,6 +253,21 @@ ZSpeSpectrum* ZSeriesTableModel::zp_spectrumForIndex(const QModelIndex& index) c
     return spectrum;
 }
 //======================================================
+ZSpeSpectrum* ZSeriesTableModel::zp_spectrumForId(qint64 id) const
+{
+    ZSpeSpectrum* spectrum = nullptr;
+    foreach(ZSample* sample, zv_sampleList)
+    {
+        spectrum = sample->zp_spectrumForId(id);
+        if(spectrum)
+        {
+            return spectrum;
+        }
+    }
+
+    return nullptr;
+}
+//======================================================
 bool ZSeriesTableModel::zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const
 {
     foreach(ZSample* sample, zv_sampleList)
