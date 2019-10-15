@@ -654,6 +654,7 @@ QWidget* ZSeriesMeasurementDialog::zh_createSeriesListViewWidget()
 
     zv_sortButton = new QPushButton(this);
     zv_sortButton->setIcon(QIcon(":images/ZImages/sorting_256-green.png"));
+    zv_sortButton->setToolTip(tr("Reset sorting"));
     // ZImages/sorting_256-green.png
     zv_sortButton->setFlat(true);
     // zv_sortButton->setCheckable(true);

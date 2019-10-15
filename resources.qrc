@@ -90,6 +90,8 @@
     <qresource prefix="/translators">
         <file>qtbase_en.qm</file>
         <file>qtbase_ru.qm</file>
+        <file>SRVLab_en.qm</file>
+        <file>SRVLab_en.ts</file>
         <file>SRVLab_ru.qm</file>
         <file>SRVLab_ru.ts</file>
     </qresource>
