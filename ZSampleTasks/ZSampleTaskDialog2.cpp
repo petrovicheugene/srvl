@@ -565,13 +565,13 @@ bool ZSampleTaskDialog2::zh_writeSampleTaskToDatabase()
     {
         index = zv_sampleTaskTreeModel->index(mc, 0, QModelIndex());
         item = zv_sampleTaskTreeModel->zp_itemForIndex(index);
-        if(item == 0 || item->zp_itemType() != ZSampleTaskTreeItemOptions::IT_MEASURING_CONDITIONS)
+        if(item == nullptr || item->zp_itemType() != ZSampleTaskTreeItemOptions::IT_MEASURING_CONDITIONS)
         {
             continue;
         }
 
         mcItem = qobject_cast<ZSampleTaskTreeMeasuringConditionsItem*>(item);
-        if(mcItem == 0)
+        if(mcItem == nullptr)
         {
             continue;
         }

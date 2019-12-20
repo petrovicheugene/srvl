@@ -20,7 +20,7 @@
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QDebug>
-
+#include <math.h>
 //====================================================
 extern const qreal gl_defaultSpectrumZValue = 2;
 extern const qreal gl_currentSpectrumZValue = 3;

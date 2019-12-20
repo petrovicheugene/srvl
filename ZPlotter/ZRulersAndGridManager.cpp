@@ -8,14 +8,14 @@
 #include <QPoint>
 #include <QPointF>
 #include <QDebug>
-
+#include <math.h>
 //========================================================
 ZRulersAndGridManager::ZRulersAndGridManager(ZPlotter *parent) : QObject(parent)
 {
     zv_minVpMarkInterval = 0;
     zv_markIntervalList << 1 << 2 << 5 << 10;
-    zv_plotView = 0;
-    zv_rulerWidget = 0;
+    zv_plotView = nullptr;
+    zv_rulerWidget = nullptr;
     zv_minimalVerticalScaleInterval = 1.0;
     zv_minimalHorizontalScaleInterval = 1.0;
     zv_minimalScratchVpInterval = 10;
@@ -97,7 +97,7 @@ qreal ZRulersAndGridManager::zp_minimalHorizontalScaleInterval()
 //========================================================
 void ZRulersAndGridManager::zp_recalcRulesAndGrid()
 {
-    if(zv_plotView == 0)
+    if(zv_plotView == nullptr)
     {
         zv_XRulePointList.clear();
         zv_YRulePointList.clear();
@@ -156,7 +156,7 @@ void ZRulersAndGridManager::zh_recalcBottomRule()
 
     if(zv_viewportGlobalRect.left() != zv_viewportGlobalRect.right()
             && zv_viewportSceneRect.left() - zv_viewportSceneRect.right() != 0.0
-            && zv_rulerWidget != 0)
+            && zv_rulerWidget != nullptr)
     {
         int maxVpMarkInterval = zv_rulerWidget->zp_maxMarkWidth() * 2 ;
         qreal maxScMarkInterval = zv_plotView->mapToScene(QPoint(maxVpMarkInterval,0)).x()
@@ -389,8 +389,8 @@ void ZRulersAndGridManager::zh_recalcLeftRule()
 
 
     if(zv_viewportGlobalRect.top() != zv_viewportGlobalRect.bottom()
-            && zv_viewportSceneRect.top() != zv_viewportSceneRect.bottom()
-            && zv_rulerWidget != 0)
+            && zv_viewportSceneRect.top() - zv_viewportSceneRect.bottom() != 0.0
+            && zv_rulerWidget != nullptr)
     {
 
         zv_minVpMarkInterval = zv_rulerWidget->zp_maxMarkHeight() * 3 ;

@@ -124,7 +124,7 @@ void ZMeasuringConditionsDialog::zh_createConnections()
     connect(zv_gainFactorSpinBox, SIGNAL(valueChanged(int)),
             zv_messageLabel, SLOT(clear()));
     connect(zv_expositionSpinBox, SIGNAL(valueChanged(int)),
-            this, SLOT(zh_resetMessageLabel()));
+            this, SLOT(zh_resetMessageLabel(int)));
 }
 //=======================================================
 void ZMeasuringConditionsDialog::zh_onOkButtonClick()
