@@ -6,11 +6,12 @@
 #include <QPainter>
 #include <QDebug>
 #include <QPixmap>
+#include <math.h>
 //=========================================================
 ZRulerWidget::ZRulerWidget(QWidget *parent) : QWidget(parent)
 {
-    zv_plot = 0;
-    zv_rulersAndGreedManager = 0;
+    zv_plot = nullptr;
+    zv_rulersAndGreedManager = nullptr;
     zv_formatSet << 'f' << 'g' << 'e' << 'E' << 'G';
     //    zv_rightRulerProperty.visibility = false;
     //    zv_topRulerProperty.visibility = false;
@@ -23,7 +24,7 @@ ZRulerWidget::ZRulerWidget(QWidget *parent) : QWidget(parent)
 //=========================================================
 void ZRulerWidget::zp_setPlotView(QWidget* plot)
 {
-    if(plot != 0)
+    if(plot != nullptr)
     {
         plot->setParent(this);
         zv_plot = plot;

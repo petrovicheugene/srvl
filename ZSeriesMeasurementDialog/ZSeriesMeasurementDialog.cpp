@@ -27,7 +27,7 @@
 #include <QSqlRelationalTableModel>
 #include <QTableView>
 #include <QVBoxLayout>
-
+#include <math.h>
 //======================================================
 ZSeriesMeasurementDialog::ZSeriesMeasurementDialog(QWidget *parent)
     : ZBaseDialog("ZSeriesMeasurementDialog", parent)

@@ -9,6 +9,7 @@
 #include "ZSpectrumGraphicsItem.h"
 
 #include <QAction>
+#include <math.h>
 //======================================================
 ZPlotterDataManager::ZPlotterDataManager(QObject *parent)
     : QObject(parent)
