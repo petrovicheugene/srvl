@@ -6,11 +6,13 @@
 #include "ZTranslatorManager.h"
 
 #include <QApplication>
-#include <QTextCodec>
+#include <QDir>
+#include <QOperatingSystemVersion>
 #include <QSettings>
 #include <QSplashScreen>
+#include <QTextCodec>
 #include <QTranslator>
-#include <QDir>
+
 //===============================================================
 //extern const QString glAppExeBaseName = APP_EXE_BASE_NAME;
 //extern const QString glAppProduct = APP_PRODUCT;
@@ -327,11 +329,31 @@ int main(int argc, char *argv[])
     ZTranslatorManager languageManager;
     languageManager.zp_installTranslatorsToApplication();
 
-    qApp->setStyleSheet(
-                "QSplitter::handle:vertical {height: 6px; image: url(:/images/ZImages/vSplitterHandle.png);}"
-                "QSplitter::handle:horizontal {width:  6px; image: url(:/images/ZImages/hSplitterHandle.png);}"
-                );
+    qApp->setStyleSheet("QSplitter::handle:vertical {height: 6px; image: "
+                        "url(:/images/ZImages/vSplitterHandle.png);}"
+                        "QSplitter::handle:horizontal {width:  6px; image: "
+                        "url(:/images/ZImages/hSplitterHandle.png);}");
 
+    // horizontal lines on table header views on win10
+    QOperatingSystemVersion currentOS = QOperatingSystemVersion::current();
+    if (currentOS >= QOperatingSystemVersion(QOperatingSystemVersion::Windows10))
+    {
+        qApp->setStyleSheet("QHeaderView::section {"
+                            "border-top:0px solid #D8D8D8;"
+                            "border-left:0px solid #D8D8D8;"
+                            "border-right:1px solid #D8D8D8;"
+                            "border-bottom: 1px solid #D8D8D8;"
+                            "background-color:white;"
+                            "padding:4px;"
+                            "}"
+                            "QTableCornerButton::section {"
+                            "border-top:0px solid #D8D8D8;"
+                            "border-left:0px solid #D8D8D8;"
+                            "border-right:1px solid #D8D8D8;"
+                            "border-bottom: 1px solid #D8D8D8;"
+                            "background-color:white;"
+                            "}");
+    }
 
     //    splash.showMessage("Loading modules...", Qt::AlignBottom | Qt::AlignRight, Qt::white );
     //    a.processEvents();

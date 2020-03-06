@@ -1,6 +1,7 @@
 //===========================================================
 #include "ZUralAdcDeviceConnector.h"
 
+#include <windows.h>
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -8,45 +9,65 @@
 #include <QMetaObject>
 #include <QSettings>
 #include <QStringList>
-#include <windows.h>
 //===========================================================
 // STATIC
 //===========================================================
-QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID> > ZUralAdcDeviceConnector::zv_devicePidVidMap
-= zh_createDevicePidVidMap();
+QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>>
+    ZUralAdcDeviceConnector::zv_devicePidVidMap = zh_createDevicePidVidMap();
 //===========================================================
-QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID> > ZUralAdcDeviceConnector::zh_createDevicePidVidMap()
+QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>>
+ZUralAdcDeviceConnector::zh_createDevicePidVidMap()
 {
-    QMap<QString, QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID> >devicePidVidMap;
+    QMap<QString,
+         QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>>
+        devicePidVidMap;
     // SU
     devicePidVidMap.insert(QString("SU-1"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU1,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_SU1,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("SU-2"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU2,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_SU2,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("SU-6"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_SU6,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_SU6,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     // PU
     devicePidVidMap.insert(QString("PU-2"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU2,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PU2,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-3"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PU3,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-3F"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU3F,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PU3F,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-4"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU4,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PU4,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PU-5"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PU5,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PU5,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
     devicePidVidMap.insert(QString("PW-3"),
-                           QPair<ZUralAdcDeviceConnector::PID, ZUralAdcDeviceConnector::VID>(ZUralAdcDeviceConnector::PID_PW3,
-                                                                                             ZUralAdcDeviceConnector::VID_CYPRESS));
+                           QPair<ZUralAdcDeviceConnector::PID,
+                                 ZUralAdcDeviceConnector::VID>(
+                               ZUralAdcDeviceConnector::PID_PW3,
+                               ZUralAdcDeviceConnector::VID_CYPRESS));
 
     return devicePidVidMap;
 }
@@ -56,11 +77,12 @@ QStringList ZUralAdcDeviceConnector::zp_deviceNameList()
     return zv_devicePidVidMap.keys();
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_pidVidForDeviceName(const QString& deviceName,
-                                                     ZUralAdcDeviceConnector::PID& pid,
-                                                     ZUralAdcDeviceConnector::VID& vid )
+void ZUralAdcDeviceConnector::zp_pidVidForDeviceName(
+    const QString& deviceName,
+    ZUralAdcDeviceConnector::PID& pid,
+    ZUralAdcDeviceConnector::VID& vid)
 {
-    if(!zv_devicePidVidMap.keys().contains(deviceName))
+    if (!zv_devicePidVidMap.keys().contains(deviceName))
     {
         pid = ZUralAdcDeviceConnector::PID_UNDEFINED;
         vid = ZUralAdcDeviceConnector::VID_UNDEFINED;
@@ -76,7 +98,8 @@ void ZUralAdcDeviceConnector::zp_pidVidForDeviceName(const QString& deviceName,
 ZUralAdcDeviceConnector::ZUralAdcDeviceConnector(const QString& libraryFileName,
                                                  bool& ok,
                                                  QString& errorMsg,
-                                                 QObject *parent) : QObject(parent)
+                                                 QObject* parent)
+    : QObject(parent)
 {
     zv_handle = nullptr;
     zh_resetConnectionProperties();
@@ -108,7 +131,6 @@ ZUralAdcDeviceConnector::ZUralAdcDeviceConnector(const QString& libraryFileName,
     zh_ReadCurrentIn = nullptr;
     zh_ReadOperationTimes = nullptr;
 
-
     // load library
     ok = zh_initializeLibrary(libraryFileName, errorMsg);
 
@@ -116,7 +138,6 @@ ZUralAdcDeviceConnector::ZUralAdcDeviceConnector(const QString& libraryFileName,
     zh_createActions();
     zh_createConnections();
     zh_restoreSettings();
-
 }
 //===========================================================
 ZUralAdcDeviceConnector::~ZUralAdcDeviceConnector()
@@ -125,34 +146,24 @@ ZUralAdcDeviceConnector::~ZUralAdcDeviceConnector()
     zh_saveSettings();
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zh_createComponents()
-{
-
-}
+void ZUralAdcDeviceConnector::zh_createComponents() {}
 //===========================================================
-void ZUralAdcDeviceConnector::zh_createActions()
-{
-
-
-}
+void ZUralAdcDeviceConnector::zh_createActions() {}
 //===========================================================
-void ZUralAdcDeviceConnector::zh_createConnections()
-{
-
-}
+void ZUralAdcDeviceConnector::zh_createConnections() {}
 //===========================================================
 void ZUralAdcDeviceConnector::zh_restoreSettings()
 {
     QSettings settings;
     // open version group
     QString verString = qApp->applicationVersion();
-    if(!verString.isEmpty())
+    if (!verString.isEmpty())
     {
         settings.beginGroup(verString);
     }
 
     // close version group
-    if(!verString.isEmpty())
+    if (!verString.isEmpty())
     {
         settings.endGroup();
     }
@@ -163,28 +174,33 @@ void ZUralAdcDeviceConnector::zh_saveSettings()
     QSettings settings;
     // open version group
     QString verString = qApp->applicationVersion();
-    if(!verString.isEmpty())
+    if (!verString.isEmpty())
     {
         settings.beginGroup(verString);
     }
 
-
     // close version group
-    if(!verString.isEmpty())
+    if (!verString.isEmpty())
     {
         settings.endGroup();
     }
 }
 //===========================================================
-bool ZUralAdcDeviceConnector::zh_initializeLibrary(const QString& libraryFileName, QString& errorMsg)
+bool ZUralAdcDeviceConnector::zh_initializeLibrary(
+    const QString& libraryFileName, QString& errorMsg)
 {
     zv_library.setFileName(libraryFileName);
     zv_library.setLoadHints(QLibrary::PreventUnloadHint);
 
-    if(!zv_library.load())
+    try
     {
-        errorMsg = tr("The application cannot load library from file \"%1\".")
-                .arg(zv_library.fileName());
+        zv_library.load();
+    }
+    catch (...)
+    {
+        errorMsg = tr("The application cannot load library from file \"%1\". "
+                      "Error: \"%2\"")
+                       .arg(zv_library.fileName(), zv_library.errorString());
 
         return false;
     }
@@ -278,7 +294,9 @@ void ZUralAdcDeviceConnector::zh_resetConnectionProperties()
     zv_deviceVid = zv_undefinedDevicePidVid;
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , quint16 vid)
+void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res,
+                                                 quint16 pid,
+                                                 quint16 vid)
 {
     //    int pointer = reinterpret_cast<int>((void*)zh_HOpenUSBDriver);
     //    QString m = QString::number(pointer);
@@ -299,7 +317,6 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
 
     //if(!zh_HOpenUSBDriver) zv_unresolvedFunctionList.append("hOpenUSBDriver");
 
-
     //    QLibrary library(zv_library.fileName());
     //    library.setLoadHints(QLibrary::PreventUnloadHint);
 
@@ -311,21 +328,21 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
 
     //    HOpenUSBDriver h_HOpenUSBDriver = (HOpenUSBDriver)QLibrary::resolve(zv_library.fileName(), "hOpenUSBDriver");
     zh_HOpenUSBDriver = nullptr;
-    zh_HOpenUSBDriver = (HOpenUSBDriver)zv_library.resolve("hOpenUSBDriver");
-    if(!zh_HOpenUSBDriver)
+    zh_HOpenUSBDriver = (HOpenUSBDriver) zv_library.resolve("hOpenUSBDriver");
+    if (!zh_HOpenUSBDriver)
     {
         zv_unresolvedFunctionList.append("hOpenUSBDriver");
     }
 
-    if(zh_HOpenUSBDriver == nullptr)
+    if (zh_HOpenUSBDriver == nullptr)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle != nullptr)
+    if (zv_handle != nullptr)
     {
-        if(zv_devicePid == pid && zv_deviceVid == vid)
+        if (zv_devicePid == pid && zv_deviceVid == vid)
         {
             // connection is already exists
             res = SR_TRUE;
@@ -341,7 +358,7 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
 
     zv_handle = zh_HOpenUSBDriver(pid, vid);
 
-    if(!zv_handle)
+    if (!zv_handle)
     {
         // connection has not been established
         res = SR_FALSE;
@@ -350,17 +367,16 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
     }
 
     zh_ReadDeviceUIN = nullptr;
-    zh_ReadDeviceUIN = (ReadDeviceUIN)zv_library.resolve("ReadDeviceUIN");
-    if(!zh_ReadDeviceUIN) zv_unresolvedFunctionList.append("ReadDeviceUIN");
-
+    zh_ReadDeviceUIN = (ReadDeviceUIN) zv_library.resolve("ReadDeviceUIN");
+    if (!zh_ReadDeviceUIN)
+        zv_unresolvedFunctionList.append("ReadDeviceUIN");
 
     zv_devicePid = pid;
     zv_deviceVid = vid;
 
-    if(!zh_ReadDeviceUIN(zv_handle, &zv_deviceUIN))
+    if (!zh_ReadDeviceUIN(zv_handle, &zv_deviceUIN))
     {
         zv_deviceUIN = zv_undefinedDeviceUIN;
-
     }
 
     res = SR_TRUE;
@@ -368,7 +384,7 @@ void ZUralAdcDeviceConnector::zp_connectToDevice(SlotResult& res, quint16 pid , 
 //===========================================================
 void ZUralAdcDeviceConnector::zp_isDeviceConnected(SlotResult& res)
 {
-    if(zv_handle == nullptr )
+    if (zv_handle == nullptr)
     {
         res = SR_FALSE;
     }
@@ -381,22 +397,23 @@ void ZUralAdcDeviceConnector::zp_isDeviceConnected(SlotResult& res)
 void ZUralAdcDeviceConnector::zp_disconnectFromDevice(SlotResult& res)
 {
     zh_CloseUSBDriver = nullptr;
-    zh_CloseUSBDriver = (CloseUSBDriver)zv_library.resolve("CloseUSBDriver");
-    if(!zh_CloseUSBDriver) zv_unresolvedFunctionList.append("CloseUSBDriver");
+    zh_CloseUSBDriver = (CloseUSBDriver) zv_library.resolve("CloseUSBDriver");
+    if (!zh_CloseUSBDriver)
+        zv_unresolvedFunctionList.append("CloseUSBDriver");
 
-    if(!zh_CloseUSBDriver)
+    if (!zh_CloseUSBDriver)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(!zv_handle)
+    if (!zv_handle)
     {
         res = SR_TRUE;
         return;
     }
 
-    if(!zh_CloseUSBDriver(zv_handle))
+    if (!zh_CloseUSBDriver(zv_handle))
     {
         res = SR_FALSE;
         return;
@@ -408,25 +425,27 @@ void ZUralAdcDeviceConnector::zp_disconnectFromDevice(SlotResult& res)
     zh_resetConnectionProperties();
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_checkConnectionQuality(SlotResult& res, quint16* qualityRes)
+void ZUralAdcDeviceConnector::zp_checkConnectionQuality(SlotResult& res,
+                                                        quint16* qualityRes)
 {
     zh_CheckQConnect = nullptr;
-    zh_CheckQConnect = (CheckQConnect)zv_library.resolve("CheckQConnect");
-    if(!zh_CheckQConnect) zv_unresolvedFunctionList.append("CheckQConnect");
+    zh_CheckQConnect = (CheckQConnect) zv_library.resolve("CheckQConnect");
+    if (!zh_CheckQConnect)
+        zv_unresolvedFunctionList.append("CheckQConnect");
 
-    if(!zh_CheckQConnect)
+    if (!zh_CheckQConnect)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_FALSE;
         return;
     }
 
-    if(zh_CheckQConnect(zv_handle, qualityRes))
+    if (zh_CheckQConnect(zv_handle, qualityRes))
     {
         res = SR_TRUE;
     }
@@ -438,7 +457,7 @@ void ZUralAdcDeviceConnector::zp_checkConnectionQuality(SlotResult& res, quint16
 //===========================================================
 void ZUralAdcDeviceConnector::zp_isDeviceUINValid(SlotResult& res)
 {
-    if(zv_deviceUIN == zv_undefinedDeviceUIN)
+    if (zv_deviceUIN == zv_undefinedDeviceUIN)
     {
         res = SR_FALSE;
     }
@@ -448,37 +467,38 @@ void ZUralAdcDeviceConnector::zp_isDeviceUINValid(SlotResult& res)
     }
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_isHardwareButtonDown(SlotResult &res)
+void ZUralAdcDeviceConnector::zp_isHardwareButtonDown(SlotResult& res)
 {
     zh_ButtonInquiry = nullptr;
-    zh_ButtonInquiry = (ButtonInquiry)zv_library.resolve("ButtonInquiry");
-    if(!zh_ButtonInquiry) zv_unresolvedFunctionList.append("ButtonInquiry");
+    zh_ButtonInquiry = (ButtonInquiry) zv_library.resolve("ButtonInquiry");
+    if (!zh_ButtonInquiry)
+        zv_unresolvedFunctionList.append("ButtonInquiry");
 
-//    res = SR_TRUE;
-//    return;
+    //    res = SR_TRUE;
+    //    return;
 
-    if(!zh_ButtonInquiry)
+    if (!zh_ButtonInquiry)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
     }
 
     quint8 funcRes = zh_ButtonInquiry(zv_handle);
-    if(funcRes == 0)
+    if (funcRes == 0)
     {
         res = SR_ERROR;
     }
-    else if(funcRes == 1)
+    else if (funcRes == 1)
     {
         res = SR_TRUE;
     }
-    else if(funcRes == 2)
+    else if (funcRes == 2)
     {
         res = SR_FALSE;
     }
@@ -488,25 +508,28 @@ void ZUralAdcDeviceConnector::zp_isHardwareButtonDown(SlotResult &res)
     }
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_writeGainFactor(quint8 gainFactor, SlotResult &res)
+void ZUralAdcDeviceConnector::zp_writeGainFactor(quint8 gainFactor,
+                                                 SlotResult& res)
 {
     zh_WriteSerialRegister = nullptr;
-    zh_WriteSerialRegister = (WriteSerialRegister)zv_library.resolve("WriteSerialRegister");
-    if(!zh_WriteSerialRegister) zv_unresolvedFunctionList.append("WriteSerialRegister");
+    zh_WriteSerialRegister = (WriteSerialRegister) zv_library.resolve(
+        "WriteSerialRegister");
+    if (!zh_WriteSerialRegister)
+        zv_unresolvedFunctionList.append("WriteSerialRegister");
 
-    if(!zh_WriteSerialRegister)
+    if (!zh_WriteSerialRegister)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
     }
 
-    if(zh_WriteSerialRegister(zv_handle, gainFactor))
+    if (zh_WriteSerialRegister(zv_handle, gainFactor))
     {
         res = SR_TRUE;
     }
@@ -516,25 +539,27 @@ void ZUralAdcDeviceConnector::zp_writeGainFactor(quint8 gainFactor, SlotResult &
     }
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_startExposition(SlotResult &res)
+void ZUralAdcDeviceConnector::zp_startExposition(SlotResult& res)
 {
     zh_StartExposition = nullptr;
-    zh_StartExposition = (StartExposition)zv_library.resolve("StartExposition");
-    if(!zh_StartExposition) zv_unresolvedFunctionList.append("StartExposition");
+    zh_StartExposition = (StartExposition) zv_library.resolve(
+        "StartExposition");
+    if (!zh_StartExposition)
+        zv_unresolvedFunctionList.append("StartExposition");
 
-    if(!zh_StartExposition)
+    if (!zh_StartExposition)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
     }
 
-    if(zh_StartExposition(zv_handle))
+    if (zh_StartExposition(zv_handle))
     {
         res = SR_TRUE;
     }
@@ -544,25 +569,26 @@ void ZUralAdcDeviceConnector::zp_startExposition(SlotResult &res)
     }
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_stopExposition(SlotResult &res, quint32 x)
+void ZUralAdcDeviceConnector::zp_stopExposition(SlotResult& res, quint32 x)
 {
     zh_StopIsoStream = nullptr;
-    zh_StopIsoStream = (StopIsoStream)zv_library.resolve("StopIsoStream");
-    if(!zh_StopIsoStream) zv_unresolvedFunctionList.append("StopIsoStream");
+    zh_StopIsoStream = (StopIsoStream) zv_library.resolve("StopIsoStream");
+    if (!zh_StopIsoStream)
+        zv_unresolvedFunctionList.append("StopIsoStream");
 
-    if(!zh_StopIsoStream)
+    if (!zh_StopIsoStream)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
     }
 
-    if(zh_StopIsoStream(zv_handle, x))
+    if (zh_StopIsoStream(zv_handle, x))
     {
         res = SR_TRUE;
     }
@@ -572,24 +598,26 @@ void ZUralAdcDeviceConnector::zp_stopExposition(SlotResult &res, quint32 x)
     }
 }
 //===========================================================
-void ZUralAdcDeviceConnector::zp_readResultBuffer(quint32* pBuffer, // buffer
-                                                  quint32* pLoad, // average load
-                                                  quint32* pDeadTime, // dead time tics increament (1tic = 100392 mcs)
-                                                  quint32* pCountEvent, // new event increment
-                                                  quint32* pTime, // new event time increment
-                                                  SlotResult &res)
+void ZUralAdcDeviceConnector::zp_readResultBuffer(
+    quint32* pBuffer,     // buffer
+    quint32* pLoad,       // average load
+    quint32* pDeadTime,   // dead time tics increament (1tic = 100392 mcs)
+    quint32* pCountEvent, // new event increment
+    quint32* pTime,       // new event time increment
+    SlotResult& res)
 {
     zh_ReadIsoBuffer = nullptr;
-    zh_ReadIsoBuffer = (ReadIsoBuffer)zv_library.resolve("ReadIsoBuffer");
-    if(!zh_ReadIsoBuffer) zv_unresolvedFunctionList.append("ReadIsoBuffer");
+    zh_ReadIsoBuffer = (ReadIsoBuffer) zv_library.resolve("ReadIsoBuffer");
+    if (!zh_ReadIsoBuffer)
+        zv_unresolvedFunctionList.append("ReadIsoBuffer");
 
-    if(!zh_ReadIsoBuffer)
+    if (!zh_ReadIsoBuffer)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
@@ -601,7 +629,7 @@ void ZUralAdcDeviceConnector::zp_readResultBuffer(quint32* pBuffer, // buffer
                                       pDeadTime,
                                       pCountEvent,
                                       pTime);
-    if(funcRes != 0xFF)
+    if (funcRes != 0xFF)
     {
         res = SR_TRUE;
     }
@@ -612,25 +640,27 @@ void ZUralAdcDeviceConnector::zp_readResultBuffer(quint32* pBuffer, // buffer
 }
 //===========================================================
 void ZUralAdcDeviceConnector::zp_clearResultBuffer(quint32* pBuffer,
-                                                   quint32* bufferSize, SlotResult &res)
+                                                   quint32* bufferSize,
+                                                   SlotResult& res)
 {
     zh_ClearBufferUSB = nullptr;
-    zh_ClearBufferUSB = (ClearBufferUSB)zv_library.resolve("ClearBufferUSB");
-    if(!zh_ClearBufferUSB) zv_unresolvedFunctionList.append("ClearBufferUSB");
+    zh_ClearBufferUSB = (ClearBufferUSB) zv_library.resolve("ClearBufferUSB");
+    if (!zh_ClearBufferUSB)
+        zv_unresolvedFunctionList.append("ClearBufferUSB");
 
-    if(!zh_ClearBufferUSB)
+    if (!zh_ClearBufferUSB)
     {
         res = SR_FUNCTION_UNRESOLVED;
         return;
     }
 
-    if(zv_handle == nullptr)
+    if (zv_handle == nullptr)
     {
         res = SR_ERROR;
         return;
     }
 
-    if(zh_ClearBufferUSB(zv_handle, pBuffer, bufferSize))
+    if (zh_ClearBufferUSB(zv_handle, pBuffer, bufferSize))
     {
         res = SR_TRUE;
     }
