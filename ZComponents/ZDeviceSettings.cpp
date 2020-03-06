@@ -17,6 +17,8 @@ ZDeviceSettings::ZDeviceSettings()
     zv_sampleShiftImpulseDuration = 0;
     zv_expositionDelayTime = 0;
 
+    int r;
+
 }
 //=========================================================
 QDataStream& operator << (QDataStream& out, const ZDeviceSettings& settings)

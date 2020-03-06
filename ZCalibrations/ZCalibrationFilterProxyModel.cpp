@@ -3,15 +3,14 @@
 //========================================================
 ZCalibrationFilterProxyModel::ZCalibrationFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
 {
-
     zv_id = -1;
 }
 //========================================================
 void ZCalibrationFilterProxyModel::zp_setMeasuringConditionsFilter(int id)
 {
     zv_id = id;
-//    zv_gainFactorFilter = gainFactor;
-//    zv_expositionFilter = exposition;
+    //    zv_gainFactorFilter = gainFactor;
+    //    zv_expositionFilter = exposition;
     invalidateFilter();
 }
 //========================================================

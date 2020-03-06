@@ -22,7 +22,6 @@ public:
     int zv_sampleShiftImpulseDuration;
     int zv_expositionDelayTime;
 
-
 //    // STATIC
 //    static const QString zv_manualConnectionString;
 //    static const QString zv_applicationString;
