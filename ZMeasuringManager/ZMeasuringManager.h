@@ -208,7 +208,6 @@ public:
     QDateTime zp_currentMeasuringFinishDateTime() const;
     QString zp_currentSeriesName() const;
 
-
 signals:
 
     void zg_connectionState(QString connectionState, QMessageBox::Icon) const;

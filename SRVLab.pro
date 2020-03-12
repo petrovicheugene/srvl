@@ -107,6 +107,7 @@ INCLUDEPATH += ZDialogs \
 
 SOURCES += main.cpp\
         MainWindow.cpp \
+    ZComponents/ZDashboardSettings.cpp \
     ZComponents/ZTranslatorManager.cpp \
     ZDialogs/ZStartDialog.cpp \
     ZDialogs/ZDatabasePropertiesDialog.cpp \
@@ -130,12 +131,11 @@ SOURCES += main.cpp\
     ZSeriesMeasurementDialog/ZDependentModel.cpp \
     ZSeriesMeasurementDialog/ZDependentModelController.cpp \
     ZSeriesMeasurementDialog/ZSeriesTableModel.cpp \
+    ZWidgets/ZDashboard.cpp \
     ZWidgets/ZProcessTimeRoundIndicator.cpp \
     ZWidgets/QRoundProgressBar.cpp \
     ZDialogs/ZSettingsDialog.cpp \
-    ZWidgets/ZDashboard.cpp \
     ZComponents/ZAbstractTerm.cpp \
-    ZComponents/ZDashboardSettings.cpp \
     ZComponents/ZAppSettings.cpp \
     ZWidgets/ZAbstractProcessTimeIndicator.cpp \
     ZWidgets/ZProcessTimeClassicIndicator.cpp \
@@ -256,6 +256,7 @@ SOURCES += main.cpp\
     ZSeriesMeasurementDialog/ZSeriesMeasurementDialog.cpp
 
 HEADERS  += MainWindow.h \
+    ZComponents/ZDashboardSettings.h \
     ZComponents/ZSpectrumCommonProperties.h \
     ZComponents/ZTranslatorManager.h \
     ZDialogs/ZStartDialog.h \
@@ -282,11 +283,10 @@ HEADERS  += MainWindow.h \
     ZSeriesMeasurementDialog/ZDependentModel.h \
     ZSeriesMeasurementDialog/ZDependentModelController.h \
     ZSeriesMeasurementDialog/ZSeriesTableModel.h \
+    ZWidgets/ZDashboard.h \
     ZWidgets/ZProcessTimeRoundIndicator.h \
     ZWidgets/QRoundProgressBar.h \
     ZDialogs/ZSettingsDialog.h \
-    ZWidgets/ZDashboard.h \
-    ZComponents/ZDashboardSettings.h \
     ZComponents/ZAppSettings.h \
     ZWidgets/ZAbstractProcessTimeIndicator.h \
     ZWidgets/ZProcessTimeClassicIndicator.h \

@@ -1,7 +1,7 @@
 //==========================================================
 #include "ZMeasuringCommonWidget.h"
-#include "ZGeneral.h"
 #include "ZDashboard.h"
+#include "ZGeneral.h"
 #include "ZMeasuringManager.h"
 #include "ZMeasuringResultTableModel.h"
 #include "ZMeasuringResultTableWidget.h"
@@ -79,11 +79,14 @@ void ZMeasuringCommonWidget::zp_connectToMeasuringManager(ZMeasuringManager* mea
     //    connect(zv_measuringManager, &ZMeasuringManager::zg_inquirySelectedSpectrumMap,
     //            this, &ZMeasuringCommonWidget::zp_selectedModelIndexList);
 
-
-    connect(zv_dashboard, &ZDashboard::zg_startSeries,
-            zv_measuringManager, &ZMeasuringManager::zp_startSeries);
-    connect(zv_dashboard, &ZDashboard::zg_stopSeries,
-            zv_measuringManager, &ZMeasuringManager::zp_stopSeries);
+    connect(zv_dashboard,
+            &ZDashboard::zg_startSeries,
+            zv_measuringManager,
+            &ZMeasuringManager::zp_startSeries);
+    connect(zv_dashboard,
+            &ZDashboard::zg_stopSeries,
+            zv_measuringManager,
+            &ZMeasuringManager::zp_stopSeries);
     connect(zv_measuringManager, &ZMeasuringManager::zg_measuringStateChanged,
             this, &ZMeasuringCommonWidget::zp_setMeasuringState, Qt::QueuedConnection);
 
@@ -138,9 +141,10 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
     //    oldMainLayout->removeWidget(zv_tableWidget);
 
     // new layout
-    ZDashboardSettings::DashboardLocation dashboardLocation =  zv_dashboard->zp_location();
+    ZDashboardSettings::DashboardLocation dashboardLocation
+        = zv_dashboard->zp_location();
     QLayout* newMainLayout;
-    if(dashboardLocation == ZDashboardSettings::DBL_LEFT)
+    if (dashboardLocation == ZDashboardSettings::DBL_LEFT)
     {
         zv_dashboard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         newMainLayout = new QHBoxLayout;
@@ -148,7 +152,7 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
         //        newMainLayout->addWidget(zv_sideBarTableWidget);
         newMainLayout->addWidget(zv_measuringResultTableWidget);
     }
-    else if(dashboardLocation == ZDashboardSettings::DBL_RIGHT)
+    else if (dashboardLocation == ZDashboardSettings::DBL_RIGHT)
     {
         zv_dashboard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         newMainLayout = new QHBoxLayout;
@@ -156,7 +160,7 @@ void ZMeasuringCommonWidget::zh_rebuildLayout()
         newMainLayout->addWidget(zv_measuringResultTableWidget);
         newMainLayout->addWidget(zv_dashboard);
     }
-    else if(dashboardLocation == ZDashboardSettings::DBL_TOP)
+    else if (dashboardLocation == ZDashboardSettings::DBL_TOP)
     {
         zv_dashboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         newMainLayout = new QVBoxLayout;
