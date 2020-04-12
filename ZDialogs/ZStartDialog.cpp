@@ -542,8 +542,10 @@ void ZStartDialog::zh_onRemoveDatabase()
         zh_findDublicateRows(currentDBPath, dublicateRecordList);
     }
 
-    qSort(selectedRowList);
-    qSort(dublicateRecordList);
+    // qSort(selectedRowList);
+    // qSort(dublicateRecordList);
+    std::sort(selectedRowList.begin(), selectedRowList.end());
+    std::sort(dublicateRecordList.begin(), dublicateRecordList.end());
 
     bool deleteFiles = messageBox.checkBox()->isChecked();
 
@@ -568,7 +570,9 @@ void ZStartDialog::zh_onRemoveDatabase()
                 selectedRowList.append(row);
             }
         }
-        qSort(selectedRowList);
+
+        // qSort(selectedRowList);
+        std::sort(selectedRowList.begin(), selectedRowList.end());
     }
 
     QString filePath;

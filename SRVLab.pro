@@ -128,6 +128,7 @@ SOURCES += main.cpp\
     ZComponents/ZEquationSettingsData.cpp \
     ZComponents/ZNormaSettingsData.cpp \
     ZComponents/ZQrealToStringConverter.cpp \
+    ZMeasuringManager/ZAddSampleSpectrumOnlyDialog.cpp \
     ZSeriesMeasurementDialog/ZDependentModel.cpp \
     ZSeriesMeasurementDialog/ZDependentModelController.cpp \
     ZSeriesMeasurementDialog/ZSeriesTableModel.cpp \
@@ -280,6 +281,7 @@ HEADERS  += MainWindow.h \
     ZComponents/ZEquationSettingsData.h \
     ZComponents/ZNormaSettingsData.h \
     ZComponents/ZQrealToStringConverter.h \
+    ZMeasuringManager/ZAddSampleSpectrumOnlyDialog.h \
     ZSeriesMeasurementDialog/ZDependentModel.h \
     ZSeriesMeasurementDialog/ZDependentModelController.h \
     ZSeriesMeasurementDialog/ZSeriesTableModel.h \

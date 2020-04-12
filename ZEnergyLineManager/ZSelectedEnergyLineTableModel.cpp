@@ -256,7 +256,8 @@ void ZSelectedEnergyLineTableModel::zh_updateColumns()
         }
     }
 
-    qSort(newColumnHeaderList);
+    // qSort(newColumnHeaderList);
+    std::sort(newColumnHeaderList.begin(), newColumnHeaderList.end());
 
     // remove all columns except 0
     if(columnCount() > 1)

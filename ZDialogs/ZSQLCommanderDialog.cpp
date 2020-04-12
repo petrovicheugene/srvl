@@ -438,7 +438,8 @@ void ZSQLCommanderDialog::zh_removeRows()
         }
     }
 
-    qSort(selectedRowList);
+    // qSort(selectedRowList);
+    std::sort(selectedRowList.begin(), selectedRowList.end());
 
     for(int i = selectedRowList.count() - 1; i >= 0; i--)
     {
