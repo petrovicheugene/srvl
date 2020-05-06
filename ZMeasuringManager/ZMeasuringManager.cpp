@@ -639,7 +639,7 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleActions() const
     actionList.append(zv_loadSeriesAction);
     actionList.append(nullptr);
     actionList.append(zv_addSamplesToSeriesAction);
-    actionList.append(zv_addSamplesSpectrumOnlyToSeriesAction);
+    //actionList.append(zv_addSamplesSpectrumOnlyToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
     //    actionList.append(nullptr);
     //    actionList.append(zv_saveSpectraToFilesAction);
@@ -657,7 +657,7 @@ QList<ZControlAction*> ZMeasuringManager::zp_sampleContextActions() const
     actionList.append(zv_loadSeriesAction);
     actionList.append(nullptr);
     actionList.append(zv_addSamplesToSeriesAction);
-    actionList.append(zv_addSamplesSpectrumOnlyToSeriesAction);
+    //actionList.append(zv_addSamplesSpectrumOnlyToSeriesAction);
     actionList.append(zv_removeSamplesFromSeriesAction);
     actionList.append(nullptr);
     actionList.append(zv_saveSpectraToFilesAction);
@@ -734,7 +734,7 @@ void ZMeasuringManager::zp_appendActionsToMenu(QMenu* menu) const
         menu->addSeparator();
 
         menu->addAction(zv_addSamplesToSeriesAction);
-        menu->addAction(zv_addSamplesSpectrumOnlyToSeriesAction);
+        //menu->addAction(zv_addSamplesSpectrumOnlyToSeriesAction);
         menu->addAction(zv_removeSamplesFromSeriesAction);
         menu->addSeparator();
 

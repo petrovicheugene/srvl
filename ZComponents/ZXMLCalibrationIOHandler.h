@@ -23,13 +23,14 @@ public:
     static QString zp_getCalibrationSaveFile(const QString& calibrationFolderPath);
     static QString zp_checkDirPath(const QString& calibrationFolderPath);
 
-    bool zp_getCalibrationXMLByteArrayFromFile(QFile&file, QByteArray& calibrationXMLByteArray);
-    bool zp_getCalibrationFromByteArray(QByteArray& byteArray, ZCalibration*calibration);
-
-    bool zp_getCalibrationFromString(QString&, ZCalibration*);
-    bool zp_getCalibrationFromFile(QFile&, ZCalibration *);
+    bool zp_getCalibrationFromFile(QFile&, ZCalibration*);
     bool zp_writeCalibrationToFile(QFile&file, const ZCalibration*calibration);
 
+    bool zp_getCalibrationXMLByteArrayFromFile(
+        QFile& file, QByteArray& calibrationXMLByteArray);
+    bool zp_getCalibrationFromByteArray(QByteArray& byteArray,
+                                        ZCalibration* calibration);
+    bool zp_getCalibrationFromString(QString&, ZCalibration*);
 
     QString zp_message() const;
 
@@ -50,7 +51,7 @@ private:
     ZRawWindow zv_rawWindow;
     QString zv_message;
 
-    const QString zv_magicString = qApp->organizationName() + " 7D385RTNOW9SH31JZQL";
+    const QString zv_magicString = qApp->organizationName()  + " 7D385RTNOW9SH31JZQL";
     // elment names
     const QString zv_ROOT = "root";
     const QString zv_TYPE = "type";
@@ -88,6 +89,7 @@ private:
     const QString zv_FRACTIONAL_BASE_NORMALIZER = "fractional_base_normalizer";
 
     const QString zv_CUSTOM_STRING = "custom_string";
+    const QString zv_DESCRIPTION = "description";
     const QString zv_INTERCEPT = "intercept";
 
     const QString zv_YES = "yes";
@@ -101,7 +103,6 @@ private:
                             QXmlStreamReader&);
     bool zh_checkfilePath(const QString& path) const;
 
-    // bool zh_getCalibration(QXmlStreamReader& reader, ZCalibration* calibration);
 
 };
 //==========================================================

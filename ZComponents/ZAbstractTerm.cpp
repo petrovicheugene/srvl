@@ -3,6 +3,7 @@
 #include "ZGeneral.h"
 #include "ZCalibrationWindow.h"
 #include "ZCalibration.h"
+//#include "ZSpectrumArray.h"
 #include <QPointer>
 //============================================================
 // STATIC
@@ -79,9 +80,10 @@ ZAbstractTerm::TermState ZAbstractTerm::zp_termStateFromString(const QString& st
 //============================================================
 // END STATIC
 //============================================================
-ZAbstractTerm::ZAbstractTerm(ZCalibration *parent) : QObject(parent)
+ZAbstractTerm::ZAbstractTerm(ZCalibration *calibration) :
+      QObject(calibration)
 {
-    zh_connectToCalibration(parent);
+    zh_connectToCalibration(calibration);
     zv_type = TT_NOT_DEFINED;
     zv_termState = TS_CONST_EXCLUDED;
     // zp_setTermFactor(0.0); // zv_termFactorString = 0;
@@ -175,6 +177,51 @@ bool ZAbstractTerm::zp_setPrecision(int precision)
     return true;
 }
 //============================================================
+//void ZAbstractTerm::zp_calcAverageTermValueAndTermValueList(const ZSpectrumArray* array)
+//{
+//    zv_unnormalizedValueList.clear();
+
+//    if(!array)
+//    {
+//        zv_averageValue = 0;
+//        emit zg_termValuesChanged();
+//        return;
+//    }
+
+//    qint64 value;
+//    qint64 summaryValue = 0;
+//    int checkedSpectrum = 0;
+//    for(int s = 0; s < array->zp_spectrumCount(); s++)
+//    {
+//        if(!array->zp_spectrum(s)->zp_isSpectrumChecked())
+//        {
+//            continue;
+//        }
+
+//        if(!zp_calcTermVariablePart(array->zp_spectrum(s), value))
+//        {
+//            value = 0;
+//        }
+//        zv_unnormalizedValueList.append(value);
+//        summaryValue += value;
+//        checkedSpectrum++;
+//    }
+
+//    qreal averageValue;
+//    if(checkedSpectrum > 0)
+//    {
+//        averageValue = (qreal)summaryValue / (qreal)checkedSpectrum;
+//    }
+//    else
+//    {
+//        averageValue = 0;
+//    }
+
+//    zv_averageValue = averageValue;
+//    emit zg_termValuesChanged();
+
+//}
+//============================================================
 QString ZAbstractTerm::zp_termName() const
 {
     return zv_name;
@@ -239,21 +286,21 @@ void ZAbstractTerm::zh_connectToNormalizer(ZTermNormalizer* normalizer)
 {
     connect(normalizer, &ZTermNormalizer::zg_normalizerChanged,
             this, &ZAbstractTerm::zh_normalizerChanged);
-    //    connect(this, &ZAbstractTerm::zg_inquiryIsNormalizerValid,
+    //    connect(this, &ZAbstractTerm::zg_requestIsNormalizerValid,
     //            normalizer, &ZTermNormalizer::zp_isValid);
-    //    connect(this, &ZAbstractTerm::zg_inquiryNormalizerValue,
+    //    connect(this, &ZAbstractTerm::zg_requestNormalizerValue,
     //            normalizer, &ZTermNormalizer::zp_value);
 
 }
 //============================================================
 void ZAbstractTerm::zh_connectToCalibration(ZCalibration* calibration)
 {
-    connect(this, &ZAbstractTerm::zg_inquiryForDelete,
+    connect(this, &ZAbstractTerm::zg_requestForDelete,
             calibration, &ZCalibration::zh_removeTerm);
 
     connect(calibration, &ZCalibration::zg_normalizerChanged,
             this, &ZAbstractTerm::zh_normalizerChanged);
-    //    connect(this, &ZAbstractTerm::zg_inquiryNormalizerValue,
+    //    connect(this, &ZAbstractTerm::zg_requestNormalizerValue,
     //            calibration, &ZCalibration::zh_normalizerValue);
     connect(this, &ZAbstractTerm::zg_termNameChanged,
             calibration, &ZCalibration::zh_onTermNameChange);
@@ -272,6 +319,6 @@ void ZAbstractTerm::zh_normalizerChanged()
 //============================================================
 void ZAbstractTerm::zh_onWindowDestroying()
 {
-    emit zg_inquiryForDelete(this);
+    emit zg_requestForDelete(this);
 }
 //============================================================
