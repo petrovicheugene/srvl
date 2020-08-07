@@ -63,6 +63,12 @@ void ZAddSampleDialog::zh_createActions()
     zv_reviewSampleTaskAction = new ZControlAction(this);
     zv_reviewSampleTaskAction->setEnabled(false);
     zv_reviewSampleTaskAction->setText(tr("Review"));
+
+    zv_removeSampleTaskAction = new ZControlAction(this);
+    zv_removeSampleTaskAction->setEnabled(false);
+    zv_removeSampleTaskAction->setText(tr("Remove"));
+    zv_removeSampleTaskAction->setIcon(QIcon(":/images/ZImages/delete-8"));
+    zv_removeSampleTaskAction->setToolTip(tr("Remove selected sample tasks"));
 }
 //======================================================
 void ZAddSampleDialog::zh_createComponents()
@@ -167,6 +173,7 @@ void ZAddSampleDialog::zh_createConnections()
     QList<ZControlAction*> actionList;
     actionList.append(zv_newSampleTaskAction);
     actionList.append(zv_copySampleTaskAction);
+    actionList.append(zv_removeSampleTaskAction);
     // actionList.append(zv_reviewSampleTaskAction);
     zv_sampleTaskTableWidget->zp_appendButtonActions(actionList);
 
@@ -190,6 +197,10 @@ void ZAddSampleDialog::zh_createConnections()
             &ZControlAction::triggered,
             this,
             &ZAddSampleDialog::zh_onEditSampleTaskButtonClick);
+    connect(zv_removeSampleTaskAction,
+            &ZControlAction::triggered,
+            this,
+            &ZAddSampleDialog::zh_onRemoveSampleTaskButtonClick);
     connect(zv_reviewSampleTaskAction,
             &ZControlAction::triggered,
             this,
@@ -368,6 +379,8 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
     zh_saveNewSampleTaskToDatabase(dialog);
 }
 //======================================================
+void ZAddSampleDialog::zh_onRemoveSampleTaskButtonClick() {}
+//======================================================
 void ZAddSampleDialog::zh_saveNewSampleTaskToDatabase(ZSampleTaskDialog2& dialog)
 {
 }
@@ -467,6 +480,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 {
     // previously set edit and review button disabled
     zv_copySampleTaskAction->setEnabled(false);
+    zv_removeSampleTaskAction->setEnabled(false);
     zv_reviewSampleTaskAction->setEnabled(false);
 
     QModelIndex currentIndex = zv_sampleTaskTableWidget->zp_tableView()
@@ -540,6 +554,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 
     zv_sampleNameLineEdit->setText(vData.toString());
     zv_copySampleTaskAction->setEnabled(true);
+    zv_removeSampleTaskAction->setEnabled(true);
     zv_reviewSampleTaskAction->setEnabled(true);
 }
 //======================================================
