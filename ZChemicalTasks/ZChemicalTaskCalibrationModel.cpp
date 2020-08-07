@@ -528,7 +528,7 @@ bool ZChemicalTaskCalibrationModel::zp_moveRowUp(int row)
         return false;
     }
 
-    zv_calibrationItemList.swap(row, row - 1);
+    zv_calibrationItemList.swapItemsAt(row, row - 1);
 
     QModelIndex topLeft = index(row - 1, 0);
     QModelIndex bottomRight = index(row, columnCount() - 1);
@@ -543,7 +543,7 @@ bool ZChemicalTaskCalibrationModel::zp_moveRowDown(int row)
         return false;
     }
 
-    zv_calibrationItemList.swap(row, row + 1);
+    zv_calibrationItemList.swapItemsAt(row, row + 1);
 
     QModelIndex topLeft = index(row, 0);
     QModelIndex bottomRight = index(row + 1, columnCount() - 1);

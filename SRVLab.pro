@@ -75,7 +75,6 @@ CONFIG(debug, debug|release) {
     TARGET=$${PRODUCT_FILE_BASE_NAME}
 }
 
-
 TRANSLATIONS = $${PRODUCT_FILE_BASE_NAME}_ru.ts \
 $${PRODUCT_FILE_BASE_NAME}_en.ts \
 $${PRODUCT_FILE_BASE_NAME}_kk.ts

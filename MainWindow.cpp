@@ -308,7 +308,7 @@ void MainWindow::zh_createMenu()
   QMenuBar* rightMenu = new QMenuBar(this);
   QFont font = rightMenu->font();
   QFontMetrics fm(font);
-  rightMenu->setMinimumWidth(qRound(static_cast<double>(fm.width("Operator")) * 3));
+  rightMenu->setMinimumWidth(qRound(static_cast<double>(fm.horizontalAdvance("Operator")) * 3));
   zv_operatorMenu = rightMenu->addMenu(tr("Operator"));
   connect(zv_operatorMenu, &QMenu::aboutToShow,
           this, &MainWindow::zh_createOperatorMenu);
@@ -424,14 +424,16 @@ void MainWindow::zh_assignOperator()
   {
     QFont font = zv_operatorMenu->font();
     QFontMetrics fm(font);
-    zv_operatorMenu->setMinimumWidth(qRound(static_cast<double>(fm.width("Operator")) * 3));
+    zv_operatorMenu->setMinimumWidth(
+        qRound(static_cast<double>(fm.horizontalAdvance("Operator")) * 3));
     zv_operatorMenu->setTitle(tr("Operator"));
   }
   else
   {
     QFont font = zv_operatorMenu->font();
     QFontMetrics fm(font);
-    zv_operatorMenu->setMinimumWidth(qRound(static_cast<double>(fm.width(action->text())) * 3));
+    zv_operatorMenu->setMinimumWidth(
+        qRound(static_cast<double>(fm.horizontalAdvance(action->text())) * 3));
     zv_operatorMenu->setTitle(action->text());
   }
 }

@@ -323,11 +323,11 @@ private:
     qint64 zv_seriesId;
 
     ZMeasuringState zv_currentMeasuringState;
+    int zv_lastColorIndex;
 
     // FUNCS
     bool zh_checkColor(QColor color);
     void zh_createColorList();
-    int zv_lastColorIndex;
 
     void zh_createActions();
     void zh_createComponents();
@@ -371,12 +371,15 @@ private:
 
     void zh_assignNewSeriesId();
     void zh_saveSampleMeasurementResult();
-    bool zh_recordSeriesId();
-    bool zh_findNewIdInTable(const QString& tableName, int& newId);
+    bool zh_recordSeriesId(QString* errorMsg = nullptr);
+    bool zh_findNewIdInTable(const QString& tableName, int& newId, QString* errorMsg = nullptr);
 
     bool zh_findSpectraSampleTaskId(int measurementConditionsId,
                                     int& sampleTaskId);
-    bool zh_createNewSpectraSampleTaskRecord(int measurementConditionsId,
+    bool zh_createNewSpectraSampleTaskRecord(const QString& sampleTaskName,
+                                             const QString& sampleTaskNameTemplate,
+                                             const QString& sampleTaskDescription,
+                                             int measurementConditionsId,
                                              int& sampleTaskId);
 
     bool zh_findMeasurementConditionId(int gainFactor,

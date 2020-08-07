@@ -359,7 +359,7 @@ QSize ZNumericEditor::sizeHint() const
     QFontMetrics fm(this->font());
     QString maxString = QString::number(zv_max, 'f', 15);
     QString minString = QString::number(zv_min, 'f', 15);
-    int stringWidth = qMax(fm.width(maxString), fm.width(minString));
+    int stringWidth = qMax(fm.horizontalAdvance(maxString), fm.horizontalAdvance(minString));
     QStyleOptionComplex opt;
     opt.initFrom(this);
     int upDownButtonWidth = this->style()->subControlRect(QStyle::CC_SpinBox, &opt, QStyle::SC_SpinBoxDown, this).width();

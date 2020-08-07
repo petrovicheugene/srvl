@@ -382,15 +382,15 @@ void ZChemicalElementButton::zh_recalcViewPortRectSize(QSize boundingViewPortSiz
 void ZChemicalElementButton::zh_recalcPropertyWindowRects()
 {
     QFontMetrics fontMetrics(zh_symbolFont());
-    zv_symbolWindowRect.setWidth(fontMetrics.width(zv_symbol));
+    zv_symbolWindowRect.setWidth(fontMetrics.horizontalAdvance(zv_symbol));
     zv_symbolWindowRect.setHeight(fontMetrics.height());
 
     fontMetrics = QFontMetrics(zh_zNumberFont());
-    zv_zNumberWindowRect.setWidth(fontMetrics.width(QString::number(zv_zNumber)));
+    zv_zNumberWindowRect.setWidth(fontMetrics.horizontalAdvance(QString::number(zv_zNumber)));
     zv_zNumberWindowRect.setHeight(fontMetrics.height());
 
     fontMetrics = QFontMetrics(zh_nameFont());
-    zv_nameWindowRect.setWidth(fontMetrics.width(zv_name));
+    zv_nameWindowRect.setWidth(fontMetrics.horizontalAdvance(zv_name));
     zv_nameWindowRect.setHeight(fontMetrics.height());
 }
 //======================================================

@@ -87,7 +87,7 @@ void ZAbstractProcessTimeIndicator::zh_recalcTimeLabelMinWidth()
     QFontMetrics fontMetrics(font);
 
     // 59 h 59 m 59 s
-    int width = fontMetrics.width(zh_convertTimeToString(59*(60*60 + 60 + 1) ));
+    int width = fontMetrics.horizontalAdvance(zh_convertTimeToString(59 * (60 * 60 + 60 + 1)));
 
     zv_timeLeftLabel->setMinimumWidth(width);
     zv_processDurationLabel->setMinimumWidth(width);

@@ -17,6 +17,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QPointer>
+#include <QRandomGenerator>
 #include <QStringList>
 //=========================================================
 // STATIC
@@ -2411,10 +2412,10 @@ QList<QColor> ZCalibration::zp_createColorList()
 
     while (colorList.count() < 1500)
     {
-        qsrand(QDateTime::currentMSecsSinceEpoch() + 500);
-        red = ((qrand() % 24) * 10) + 15;
-        green = ((qrand() % 24) * 10) + 15;
-        blue = ((qrand() % 24) * 10) + 15;
+        //qsrand(QDateTime::currentMSecsSinceEpoch() + 500);
+        red = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
+        green = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
+        blue = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
 
         color = QColor(red, green, blue);
         if (ZCalibration::checkColor(color))
