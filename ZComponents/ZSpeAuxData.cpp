@@ -9,7 +9,7 @@ ZSpeAuxData::ZSpeAuxData()
     zv_time = QTime();
     zv_exposition = -1;
     zv_aliveTime = -1;
-    zv_energyUnit = QString();
+    zv_energyUnit = QString("kEv");
     zv_energyK0 = 0;
     zv_energyK1 = 0;
     zv_energyK2 = 0;
@@ -18,12 +18,19 @@ ZSpeAuxData::ZSpeAuxData()
     zv_peakWidthK0 = 0;
     zv_peakWidthK1 = 0;
     zv_peakWidthK2 = 0;
-
+    zv_srvN = "0";
 }
 //=================================================
 void ZSpeAuxData::zp_setSrvN(const QString& srvN)
 {
-    zv_srvN = srvN;
+    if (srvN.isEmpty())
+    {
+        zv_srvN = "0";
+    }
+    else
+    {
+        zv_srvN = srvN;
+    }
 }
 //=================================================
 bool ZSpeAuxData::zp_setDate(const QString& string)
@@ -234,7 +241,7 @@ void ZSpeAuxData::zp_setComment(int lineNumber, const QString& comment)
 //=================================================
 QString ZSpeAuxData::zp_comment(int lineNumber) const
 {
-    return zv_commentMap.value(lineNumber, QString());
+    return zv_commentMap.value(lineNumber, QString("0"));
 }
 //=================================================
 QString ZSpeAuxData::zp_srvN() const

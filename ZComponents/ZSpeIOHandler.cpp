@@ -328,10 +328,11 @@ bool ZSpeIOHandler::zp_saveSpectrumToFile(QFile& file, ZSpeSpectrum* spectrum)
             ts << Qt::endl << QString::number(spectrum->zp_speAuxData()->zp_peakWidthK2(), 'E', 14);
             break;
         case 18:
-            ts << Qt::endl << QString("");
+
+            ts << endl << QString("0");
             break;
         case 19:
-            ts << Qt::endl << QString("");
+            ts << endl << QString("0");
             break;
         }
     }
