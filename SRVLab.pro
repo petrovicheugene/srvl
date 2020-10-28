@@ -14,7 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #Application version
 RC_ICONS = "ZImages/SRVLab-8.ico"
 
-VER_MAJ=1
+VER_MAJ=2
 VER_MIN=0
 VER_PAT=0
 
@@ -75,7 +75,6 @@ CONFIG(debug, debug|release) {
     TARGET=$${PRODUCT_FILE_BASE_NAME}
 }
 
-
 TRANSLATIONS = $${PRODUCT_FILE_BASE_NAME}_ru.ts \
 $${PRODUCT_FILE_BASE_NAME}_en.ts \
 $${PRODUCT_FILE_BASE_NAME}_kk.ts
@@ -108,6 +107,8 @@ INCLUDEPATH += ZDialogs \
 SOURCES += main.cpp\
         MainWindow.cpp \
     ZComponents/ZDashboardSettings.cpp \
+    ZComponents/ZMathExpressionHandler.cpp \
+    ZComponents/ZMathExpressionVariableListMaker.cpp \
     ZComponents/ZTranslatorManager.cpp \
     ZDialogs/ZStartDialog.cpp \
     ZDialogs/ZDatabasePropertiesDialog.cpp \
@@ -128,6 +129,7 @@ SOURCES += main.cpp\
     ZComponents/ZEquationSettingsData.cpp \
     ZComponents/ZNormaSettingsData.cpp \
     ZComponents/ZQrealToStringConverter.cpp \
+    ZMeasuringManager/ZAddSampleSpectrumOnlyDialog.cpp \
     ZSeriesMeasurementDialog/ZDependentModel.cpp \
     ZSeriesMeasurementDialog/ZDependentModelController.cpp \
     ZSeriesMeasurementDialog/ZSeriesTableModel.cpp \
@@ -257,6 +259,9 @@ SOURCES += main.cpp\
 
 HEADERS  += MainWindow.h \
     ZComponents/ZDashboardSettings.h \
+    ZComponents/ZMathExpressionHandler.h \
+    ZComponents/ZMathExpressionVariableListMaker.h \
+    ZComponents/ZRawSpectrumArray.h \
     ZComponents/ZSpectrumCommonProperties.h \
     ZComponents/ZTranslatorManager.h \
     ZDialogs/ZStartDialog.h \
@@ -280,6 +285,7 @@ HEADERS  += MainWindow.h \
     ZComponents/ZEquationSettingsData.h \
     ZComponents/ZNormaSettingsData.h \
     ZComponents/ZQrealToStringConverter.h \
+    ZMeasuringManager/ZAddSampleSpectrumOnlyDialog.h \
     ZSeriesMeasurementDialog/ZDependentModel.h \
     ZSeriesMeasurementDialog/ZDependentModelController.h \
     ZSeriesMeasurementDialog/ZSeriesTableModel.h \

@@ -1,36 +1,36 @@
 //======================================================
 #include "ZAddSampleDialog.h"
-#include "ZGeneral.h"
-#include "ZSampleTaskDialog2.h"
 #include "ZControlAction.h"
-#include "ZReadOnlyStyledItemDelegate.h"
+#include "ZGeneral.h"
 #include "ZMeasuringTaskInitStruct.h"
+#include "ZReadOnlyStyledItemDelegate.h"
+#include "ZSampleTaskDialog2.h"
 #include "ZSampleTaskTableWidget.h"
 
 #include <QApplication>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 
-#include <QGroupBox>
 #include <QDialogButtonBox>
 #include <QEvent>
 #include <QFrame>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMouseEvent>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QSettings>
 #include <QSpinBox>
-#include <QSqlTableModel>
-#include <QSqlRecord>
 #include <QSqlError>
 #include <QSqlField>
+#include <QSqlRecord>
+#include <QSqlTableModel>
 #include <QTableView>
 //======================================================
-ZAddSampleDialog::ZAddSampleDialog(QWidget *parent) : QDialog(parent)
+ZAddSampleDialog::ZAddSampleDialog(QWidget* parent) : QDialog(parent)
 {
     setWindowTitle(tr("Samples"));
     setWindowFlags(Qt::Tool);
@@ -60,33 +60,44 @@ void ZAddSampleDialog::zh_createActions()
     zv_copySampleTaskAction->setIcon(QIcon(":/images/ZImages/copy-8"));
     zv_copySampleTaskAction->setToolTip(tr("Copy current sample task"));
 
-
     zv_reviewSampleTaskAction = new ZControlAction(this);
     zv_reviewSampleTaskAction->setEnabled(false);
     zv_reviewSampleTaskAction->setText(tr("Review"));
 
+    zv_removeSampleTaskAction = new ZControlAction(this);
+    zv_removeSampleTaskAction->setEnabled(false);
+    zv_removeSampleTaskAction->setText(tr("Remove"));
+    zv_removeSampleTaskAction->setIcon(QIcon(":/images/ZImages/delete-8"));
+    zv_removeSampleTaskAction->setToolTip(tr("Remove selected sample tasks"));
 }
 //======================================================
 void ZAddSampleDialog::zh_createComponents()
 {
     // task model
-    zv_sampleTaskTableModel  = new QSqlTableModel(this);
+    zv_sampleTaskTableModel = new QSqlTableModel(this);
     zv_sampleTaskTableModel->setTable("sample_tasks");
     zv_sampleTaskTableModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     zv_sampleTaskTableModel->select();
 
-    zv_sampleTaskTableModel->setHeaderData(0, Qt::Horizontal, QVariant(tr("Id")));
-    zv_sampleTaskTableModel->setHeaderData(1, Qt::Horizontal, QVariant(tr("Name")));
-    zv_sampleTaskTableModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Description")));
+    zv_sampleTaskTableModel->setHeaderData(0,
+                                           Qt::Horizontal,
+                                           QVariant(tr("Id")));
+    zv_sampleTaskTableModel->setHeaderData(1,
+                                           Qt::Horizontal,
+                                           QVariant(tr("Name")));
+    zv_sampleTaskTableModel->setHeaderData(3,
+                                           Qt::Horizontal,
+                                           QVariant(tr("Description")));
 
-            QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     QLabel* label;
     QHBoxLayout* levelLayout;
 
     zv_sampleTaskTableWidget = new ZSampleTaskTableWidget(this);
-    zv_sampleTaskTableWidget->zp_setCaption(glCreateCaption(tr("Sample tasks:")));
+    zv_sampleTaskTableWidget->zp_setCaption(
+        glCreateCaption(tr("Sample tasks:")));
     mainLayout->addWidget(zv_sampleTaskTableWidget);
 
     // Sample name
@@ -119,6 +130,9 @@ void ZAddSampleDialog::zh_createComponents()
     zv_messageLabel->setWordWrap(true);
     mainLayout->addWidget(zv_messageLabel);
 
+    int minWidth = zv_sampleNameLineEdit->sizeHint().width();
+    zv_quantitySpinBox->setMinimumWidth(minWidth);
+
     // basement
     // Separator
     QFrame* line = new QFrame(this);
@@ -142,7 +156,7 @@ void ZAddSampleDialog::zh_createConnections()
     zv_sampleTaskTableWidget->zp_setModel(zv_sampleTaskTableModel);
     // set read only delegate
     QTableView* sampleTaskTable = zv_sampleTaskTableWidget->zp_tableView();
-    if(sampleTaskTable->itemDelegate())
+    if (sampleTaskTable->itemDelegate())
     {
         delete sampleTaskTable->itemDelegate();
     }
@@ -159,32 +173,51 @@ void ZAddSampleDialog::zh_createConnections()
     QList<ZControlAction*> actionList;
     actionList.append(zv_newSampleTaskAction);
     actionList.append(zv_copySampleTaskAction);
+    actionList.append(zv_removeSampleTaskAction);
     // actionList.append(zv_reviewSampleTaskAction);
     zv_sampleTaskTableWidget->zp_appendButtonActions(actionList);
 
-    connect(sampleTaskTable->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &ZAddSampleDialog::zh_onSelectionChange);
-    connect(zv_okButton, &QPushButton::clicked,
-            this, &ZAddSampleDialog::zh_onOkButtonClick);
-    connect(zv_cancelButton, &QPushButton::clicked,
-            this, &ZAddSampleDialog::reject);
-    connect(zv_newSampleTaskAction, &ZControlAction::triggered,
-            this, &ZAddSampleDialog::zh_onNewSampleTaskButtonClick);
-    connect(zv_copySampleTaskAction, &ZControlAction::triggered,
-            this, &ZAddSampleDialog::zh_onEditSampleTaskButtonClick);
-    connect(zv_reviewSampleTaskAction, &ZControlAction::triggered,
-            this, &ZAddSampleDialog::zh_onReviewSampleTaskButtonClick);
-    connect(zv_sampleNameLineEdit, &QLineEdit::textChanged,
-            this, &ZAddSampleDialog::zh_onSampleNameChange);
-
+    connect(sampleTaskTable->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            this,
+            &ZAddSampleDialog::zh_onSelectionChange);
+    connect(zv_okButton,
+            &QPushButton::clicked,
+            this,
+            &ZAddSampleDialog::zh_onOkButtonClick);
+    connect(zv_cancelButton,
+            &QPushButton::clicked,
+            this,
+            &ZAddSampleDialog::reject);
+    connect(zv_newSampleTaskAction,
+            &ZControlAction::triggered,
+            this,
+            &ZAddSampleDialog::zh_onNewSampleTaskButtonClick);
+    connect(zv_copySampleTaskAction,
+            &ZControlAction::triggered,
+            this,
+            &ZAddSampleDialog::zh_onEditSampleTaskButtonClick);
+    connect(zv_removeSampleTaskAction,
+            &ZControlAction::triggered,
+            this,
+            &ZAddSampleDialog::zh_onRemoveSampleTaskButtonClick);
+    connect(zv_reviewSampleTaskAction,
+            &ZControlAction::triggered,
+            this,
+            &ZAddSampleDialog::zh_onReviewSampleTaskButtonClick);
+    connect(zv_sampleNameLineEdit,
+            &QLineEdit::textChanged,
+            this,
+            &ZAddSampleDialog::zh_onSampleNameChange);
 }
 //======================================================
-bool ZAddSampleDialog::eventFilter(QObject *object, QEvent *event)
+bool ZAddSampleDialog::eventFilter(QObject* object, QEvent* event)
 {
-    if(object == zv_sampleTaskTableWidget->zp_tableView()->viewport() && event->type() == QEvent::MouseButtonDblClick)
+    if (object == zv_sampleTaskTableWidget->zp_tableView()->viewport()
+        && event->type() == QEvent::MouseButtonDblClick)
     {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-        if(mouseEvent && mouseEvent->button() == Qt::LeftButton)
+        if (mouseEvent && mouseEvent->button() == Qt::LeftButton)
         {
             zh_onOkButtonClick();
             return true;
@@ -202,7 +235,7 @@ void ZAddSampleDialog::zh_restoreSettings()
     settings.beginGroup("AddSampleDialog");
 
     vData = settings.value("dialogGeometry");
-    if(vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
+    if (vData.isValid() && !vData.isNull() && vData.canConvert<QByteArray>())
     {
         this->restoreGeometry(vData.value<QByteArray>());
     }
@@ -217,7 +250,8 @@ void ZAddSampleDialog::zh_saveSettings() const
     settings.beginGroup(qApp->applicationVersion());
     settings.beginGroup("AddSampleDialog");
 
-    settings.setValue("dialogGeometry", QVariant::fromValue<QByteArray>(this->saveGeometry()));
+    settings.setValue("dialogGeometry",
+                      QVariant::fromValue<QByteArray>(this->saveGeometry()));
 
     settings.endGroup();
     settings.endGroup();
@@ -228,41 +262,43 @@ QString ZAddSampleDialog::zp_sampleName() const
     return zv_sampleNameLineEdit->text().trimmed();
 }
 //======================================================
-void ZAddSampleDialog::zh_checkTaskName(int sampleTaskId, const QString& taskName, bool& res) const
+void ZAddSampleDialog::zh_checkTaskName(int sampleTaskId,
+                                        const QString& taskName,
+                                        bool& res) const
 {
     QModelIndex index;
     QVariant vData;
-    for(int row = 0; row < zv_sampleTaskTableModel->rowCount(); row++)
+    for (int row = 0; row < zv_sampleTaskTableModel->rowCount(); row++)
     {
         index = zv_sampleTaskTableModel->index(row, 1);
-        if(!index.isValid())
+        if (!index.isValid())
         {
             continue;
         }
 
         vData = index.data(Qt::DisplayRole);
-        if(!vData.isValid() || !vData.canConvert<QString>())
+        if (!vData.isValid() || !vData.canConvert<QString>())
         {
             continue;
         }
 
-        if(vData.toString() == taskName)
+        if (vData.toString() == taskName)
         {
             // check id
             index = zv_sampleTaskTableModel->index(row, 0);
-            if(!index.isValid())
+            if (!index.isValid())
             {
                 res = false;
                 return;
             }
 
             vData = index.data(Qt::DisplayRole);
-            if(!vData.isValid() || !vData.canConvert<int>())
+            if (!vData.isValid() || !vData.canConvert<int>())
             {
                 res = false;
                 return;
             }
-            if(vData.toInt() == sampleTaskId)
+            if (vData.toInt() == sampleTaskId)
             {
                 continue;
             }
@@ -288,7 +324,7 @@ int ZAddSampleDialog::zp_sampleTaskId() const
 void ZAddSampleDialog::zh_onOkButtonClick()
 {
     // Check data
-    if(!zh_checkData())
+    if (!zh_checkData())
     {
         return;
     }
@@ -302,7 +338,7 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
 
     // get current sample task id
     int row = zv_sampleTaskTableWidget->zp_tableView()->currentIndex().row();
-    if(row < 0 || row >= zv_sampleTaskTableModel->rowCount())
+    if (row < 0 || row >= zv_sampleTaskTableModel->rowCount())
     {
         QString msg = "Sample task is not selected.";
         zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
@@ -312,7 +348,7 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
     // get current record
     QSqlRecord record = zv_sampleTaskTableModel->record(row);
 
-    if(record.isEmpty())
+    if (record.isEmpty())
     {
         QString msg = "Cannot get current record from sample task table.";
         zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
@@ -322,7 +358,7 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
     // id from record
     bool ok;
     int currentSampleTaskId = record.value(0).toInt(&ok);
-    if(!ok)
+    if (!ok)
     {
         QString msg = "Cannot get sample task id from current record.";
         zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
@@ -330,12 +366,12 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
     }
 
     ZSampleTaskDialog2 dialog(zv_sampleTaskTableModel);
-    if(!dialog.zp_loadSampleTask(currentSampleTaskId))
+    if (!dialog.zp_loadSampleTask(currentSampleTaskId))
     {
         return;
     }
 
-    if(!dialog.exec())
+    if (!dialog.exec())
     {
         return;
     }
@@ -343,15 +379,13 @@ void ZAddSampleDialog::zh_onEditSampleTaskButtonClick()
     zh_saveNewSampleTaskToDatabase(dialog);
 }
 //======================================================
+void ZAddSampleDialog::zh_onRemoveSampleTaskButtonClick() {}
+//======================================================
 void ZAddSampleDialog::zh_saveNewSampleTaskToDatabase(ZSampleTaskDialog2& dialog)
 {
-
 }
 //======================================================
-void ZAddSampleDialog::zh_onReviewSampleTaskButtonClick() const
-{
-
-}
+void ZAddSampleDialog::zh_onReviewSampleTaskButtonClick() const {}
 //======================================================
 void ZAddSampleDialog::zh_onNewSampleTaskButtonClick() const
 {
@@ -360,7 +394,7 @@ void ZAddSampleDialog::zh_onNewSampleTaskButtonClick() const
     //    connect(&dialog, &ZSampleTaskDialog2::zg_checkTaskName,
     //            this, &ZAddSampleDialog::zh_checkTaskName);
 
-    if(!dialog.exec())
+    if (!dialog.exec())
     {
         return;
     }
@@ -373,18 +407,19 @@ void ZAddSampleDialog::zh_onNewSampleTaskButtonClick() const
 //======================================================
 bool ZAddSampleDialog::zh_removeSampleTaskFromTable(int row)
 {
-    if(row >= zv_sampleTaskTableModel->rowCount())
+    if (row >= zv_sampleTaskTableModel->rowCount())
     {
         return false;
     }
 
-    if(row < 0)
+    if (row < 0)
     {
         // last row
         row = zv_sampleTaskTableModel->rowCount() - 1;
     }
 
-    if(!zv_sampleTaskTableModel->removeRow(zv_sampleTaskTableModel->rowCount()-1))
+    if (!zv_sampleTaskTableModel->removeRow(zv_sampleTaskTableModel->rowCount()
+                                            - 1))
     {
         return false;
     }
@@ -430,8 +465,8 @@ bool ZAddSampleDialog::zh_checkData()
     //        return false;
     //    }
 
-    if(zv_sampleNameLineEdit->text() == zv_noSelectedTaskString
-            || zv_sampleNameLineEdit->text().isEmpty())
+    if (zv_sampleNameLineEdit->text() == zv_noSelectedTaskString
+        || zv_sampleNameLineEdit->text().isEmpty())
     {
         msg = tr("Sample name template is invalid.");
         zv_messageLabel->setText(QString("<font color=red>%1</font>").arg(msg));
@@ -445,11 +480,13 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 {
     // previously set edit and review button disabled
     zv_copySampleTaskAction->setEnabled(false);
+    zv_removeSampleTaskAction->setEnabled(false);
     zv_reviewSampleTaskAction->setEnabled(false);
 
-    QModelIndex currentIndex = zv_sampleTaskTableWidget->zp_tableView()->currentIndex();
-    if(!currentIndex.isValid() || currentIndex.row() < 0
-            || currentIndex.row() >= zv_sampleTaskTableModel->rowCount())
+    QModelIndex currentIndex = zv_sampleTaskTableWidget->zp_tableView()
+                                   ->currentIndex();
+    if (!currentIndex.isValid() || currentIndex.row() < 0
+        || currentIndex.row() >= zv_sampleTaskTableModel->rowCount())
     {
         zv_selectedSampleTaskId = -1;
         // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -461,7 +498,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 
     // id
     currentIndex = zv_sampleTaskTableModel->index(row, 0);
-    if(!currentIndex.isValid())
+    if (!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
         // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -469,7 +506,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
         return;
     }
     QVariant vData = currentIndex.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<int>())
+    if (!vData.isValid() || !vData.canConvert<int>())
     {
         zv_selectedSampleTaskId = -1;
         // zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -480,7 +517,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 
     // task name
     currentIndex = zv_sampleTaskTableModel->index(row, 1);
-    if(!currentIndex.isValid())
+    if (!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
         //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -488,7 +525,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
         return;
     }
     vData = currentIndex.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<QString>())
+    if (!vData.isValid() || !vData.canConvert<QString>())
     {
         zv_selectedSampleTaskId = -1;
         //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -499,7 +536,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 
     // sample name template
     currentIndex = zv_sampleTaskTableModel->index(row, 2);
-    if(!currentIndex.isValid())
+    if (!currentIndex.isValid())
     {
         zv_selectedSampleTaskId = -1;
         //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -507,7 +544,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
         return;
     }
     vData = currentIndex.data(Qt::DisplayRole);
-    if(!vData.isValid() || !vData.canConvert<QString>())
+    if (!vData.isValid() || !vData.canConvert<QString>())
     {
         zv_selectedSampleTaskId = -1;
         //zv_taskNameLineEdit->setText(zv_noSelectedTaskString);
@@ -517,7 +554,7 @@ void ZAddSampleDialog::zh_updateSeletedTaskPropertiesStrings()
 
     zv_sampleNameLineEdit->setText(vData.toString());
     zv_copySampleTaskAction->setEnabled(true);
+    zv_removeSampleTaskAction->setEnabled(true);
     zv_reviewSampleTaskAction->setEnabled(true);
-
 }
 //======================================================

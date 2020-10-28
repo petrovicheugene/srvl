@@ -44,6 +44,7 @@ private slots:
     void zh_onOkButtonClick();
     void zh_onNewSampleTaskButtonClick() const;
     void zh_onEditSampleTaskButtonClick();
+    void zh_onRemoveSampleTaskButtonClick();
     void zh_onReviewSampleTaskButtonClick() const;
     void zh_onSelectionChange(const QItemSelection &current, const QItemSelection &previous);
     void zh_onSampleNameChange(const QString& text);
@@ -55,6 +56,7 @@ private:
     ZControlAction* zv_newSampleTaskAction;
     ZControlAction* zv_copySampleTaskAction;
     ZControlAction* zv_reviewSampleTaskAction;
+    ZControlAction* zv_removeSampleTaskAction;
 
     QPushButton* zv_okButton;
     QPushButton* zv_cancelButton;

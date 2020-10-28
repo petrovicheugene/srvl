@@ -463,8 +463,9 @@ void ZChemicalTaskDialog::zh_onRemoveCalibrationsAction()
         selectedRowList.append(index.row());
     }
 
-    qSort(selectedRowList);
-    for(int i = 0; i < selectedRowList.count(); i++)
+    // qSort(selectedRowList);
+    std::sort(selectedRowList.begin(), selectedRowList.end());
+    for (int i = 0; i < selectedRowList.count(); i++)
     {
         zv_chemicalTaskCalibrationModel->removeRows(selectedRowList.at(i), 1);
     }

@@ -159,8 +159,8 @@ bool ZCalibrationListDialog::zp_selectedCalibrationIdList(QList<int>& calibratio
         }
     }
 
-    qSort(rowList);
-
+    // qSort(rowList);
+    std::sort(rowList.begin(), rowList.end());
     // get selected calibration id list
     QModelIndex index;
     QVariant vData;

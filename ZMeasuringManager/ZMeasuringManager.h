@@ -2,16 +2,16 @@
 #ifndef ZMEASURINGMANAGER_H
 #define ZMEASURINGMANAGER_H
 //======================================================
+#include "ZAppSettings.h"
+#include "ZSpectrumCommonProperties.h"
 #include <QCloseEvent>
 #include <QColor>
 #include <QDateTime>
+#include <QDebug>
+#include <QList>
 #include <QMessageBox>
 #include <QModelIndexList>
 #include <QObject>
-#include <QList>
-#include <QDebug>
-#include "ZAppSettings.h"
-#include "ZSpectrumCommonProperties.h"
 
 //======================================================
 class ZControlAction;
@@ -27,8 +27,12 @@ class ZSpeSpectrum;
 class ZMeasuringState
 {
 public:
-
-    enum MeasuringAction {MA_STOPPED, MA_RUNNING, MA_SUSPENDED};
+    enum MeasuringAction
+    {
+        MA_STOPPED,
+        MA_RUNNING,
+        MA_SUSPENDED
+    };
     ZMeasuringState()
     {
         zv_measuringAction = MA_STOPPED;
@@ -46,11 +50,11 @@ public:
         zv_sampleDuration = 0;
     }
 
-    MeasuringAction zp_measuringAction() {return zv_measuringAction;}
+    MeasuringAction zp_measuringAction() { return zv_measuringAction; }
     void zp_setMeasuringAction(MeasuringAction measuringAction)
     {
         zv_measuringAction = measuringAction;
-        if(zv_measuringAction == MA_STOPPED)
+        if (zv_measuringAction == MA_STOPPED)
         {
             zv_currentSampleName = QString();
             zv_currentSampleRow = -1;
@@ -60,48 +64,30 @@ public:
         }
     }
 
-    QString zp_currentSeriesName() const {return zv_currentSeriesName;}
-    void zp_setSeriesName(const QString& name)
-    {
-        zv_currentSeriesName = name;
-    }
+    QString zp_currentSeriesName() const { return zv_currentSeriesName; }
+    void zp_setSeriesName(const QString& name) { zv_currentSeriesName = name; }
 
-    qint64 zp_currentSeriesTaskId() const {return zv_currentSeriesTaskId;}
-    void zp_setSeriesTaskId(qint64 id)
-    {
-        zv_currentSeriesTaskId = id;
-    }
+    qint64 zp_currentSeriesTaskId() const { return zv_currentSeriesTaskId; }
+    void zp_setSeriesTaskId(qint64 id) { zv_currentSeriesTaskId = id; }
 
-    QString zp_currentSampleName() {return zv_currentSampleName;}
+    QString zp_currentSampleName() { return zv_currentSampleName; }
     void zp_setCurrentSampleName(const QString& sampleName)
     {
         zv_currentSampleName = sampleName;
     }
 
-    bool zp_seriesResultsDirty() {return zv_seriesResultsDirty;}
-    void zp_setSeriesResultsDirty(bool dirty)
-    {
-        zv_seriesResultsDirty = dirty;
-    }
-    bool zp_seriesTaskDirty() {return zv_seriesTaskDirty;}
-    void zp_setSeriesTaskDirty(bool dirty)
-    {
-        zv_seriesTaskDirty = dirty;
-    }
+    bool zp_seriesResultsDirty() { return zv_seriesResultsDirty; }
+    void zp_setSeriesResultsDirty(bool dirty) { zv_seriesResultsDirty = dirty; }
+    bool zp_seriesTaskDirty() { return zv_seriesTaskDirty; }
+    void zp_setSeriesTaskDirty(bool dirty) { zv_seriesTaskDirty = dirty; }
 
-    int zp_currentSampleRow(){return zv_currentSampleRow;}
-    void zp_incrementSampleRow()
-    {
-        zv_currentSampleRow++;
-    }
+    int zp_currentSampleRow() { return zv_currentSampleRow; }
+    void zp_incrementSampleRow() { zv_currentSampleRow++; }
 
-    int zp_seriesTimePassed() {return zv_seriesTimePassed;}
-    void zp_setSeriesTimePassed(int passed)
-    {
-        zv_seriesTimePassed = passed;
-    }
+    int zp_seriesTimePassed() { return zv_seriesTimePassed; }
+    void zp_setSeriesTimePassed(int passed) { zv_seriesTimePassed = passed; }
 
-    qint64 zp_sampleTimePassed() {return zv_sampleTimePassedMs;}
+    qint64 zp_sampleTimePassed() { return zv_sampleTimePassedMs; }
     void zp_setSampleTimePassed(qint64 passedMs)
     {
         zv_sampleTimePassedMs = passedMs;
@@ -111,20 +97,13 @@ public:
         zv_sampleTimePassedMs += passedMs;
     }
 
-    int zp_seriesDuration() {return zv_seriesDuration;}
-    void zp_setSeriesDuration(int duration)
-    {
-        zv_seriesDuration = duration;
-    }
+    int zp_seriesDuration() { return zv_seriesDuration; }
+    void zp_setSeriesDuration(int duration) { zv_seriesDuration = duration; }
 
-    int zp_sampleDuration() {return zv_sampleDuration;}
-    void zp_setSampleDuration(int duration)
-    {
-        zv_sampleDuration = duration;
-    }
+    int zp_sampleDuration() { return zv_sampleDuration; }
+    void zp_setSampleDuration(int duration) { zv_sampleDuration = duration; }
 
 private:
-
     // VARS
     MeasuringAction zv_measuringAction;
 
@@ -140,7 +119,6 @@ private:
 
     int zv_seriesDuration;
     int zv_sampleDuration;
-
 };
 Q_DECLARE_METATYPE(ZMeasuringState)
 //======================================================
@@ -148,25 +126,28 @@ class ZMeasuringManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ZMeasuringManager(QObject *parent = nullptr);
+    explicit ZMeasuringManager(QObject* parent = nullptr);
     ~ZMeasuringManager() override;
 
     //    enum MeasuringState {MS_STOPPED,
     //                         MS_SUSPENDED,
     //                         MS_ACTIVE};
 
-    enum SampleOperationType {SOT_SAMPLE_ABOUT_TO_BE_INSERTED,
-                              SOT_SAMPLE_INSERTED,
-                              SOT_SAMPLE_ABOUT_TO_BE_REMOVED,
-                              SOT_SAMPLE_REMOVED,
-                              SOT_CONDITIONS_ABOUT_TO_BE_INSERTED,
-                              SOT_CONDITIONS_INSERTED,
-                              SOT_CONDITIONS_ABOUT_TO_BE_REMOVED,
-                              SOT_CONDITIONS_REMOVED,
-                              SOT_SPECTRUM_CHANGED,
-                              SOT_SPECTRUM_VISIBILITY_CHANGED,
-                              SOT_CONCENTRATIONS_CHANGED,
-                              SOT_SPECTRUM_PROPERTIES_CHANGED};
+    enum SampleOperationType
+    {
+        SOT_SAMPLE_ABOUT_TO_BE_INSERTED,
+        SOT_SAMPLE_INSERTED,
+        SOT_SAMPLE_ABOUT_TO_BE_REMOVED,
+        SOT_SAMPLE_REMOVED,
+        SOT_CONDITIONS_ABOUT_TO_BE_INSERTED,
+        SOT_CONDITIONS_INSERTED,
+        SOT_CONDITIONS_ABOUT_TO_BE_REMOVED,
+        SOT_CONDITIONS_REMOVED,
+        SOT_SPECTRUM_CHANGED,
+        SOT_SPECTRUM_VISIBILITY_CHANGED,
+        SOT_CONCENTRATIONS_CHANGED,
+        SOT_SPECTRUM_PROPERTIES_CHANGED
+    };
     // FUNCS
     void zp_applyAppSettings(const ZAppSettings& appSettings);
     QList<ZControlAction*> zp_sampleActions() const;
@@ -185,11 +166,14 @@ public:
     int zp_sampleTaskId(int sampleIndex) const;
     QStringList zp_chemicalListForSample(int sampleIndex) const;
     QStringList zp_measuringConditionsStringListForSample(int sampleIndex) const;
-    QList<QPair<quint8, int> > zp_measuringConditionsListForSample(int sampleIndex) const;
+    QList<QPair<quint8, int>> zp_measuringConditionsListForSample(
+        int sampleIndex) const;
     QString zp_seriesTaskName() const;
     ZMeasuringState zp_currentMeasuringState() const;
 
-    bool zp_concentration(int row, const QString &chemical, double &concentration);
+    bool zp_concentration(int row,
+                          const QString& chemical,
+                          double& concentration);
 
     QList<quint32> zp_spectrumData(int row, int gainFactor, int exposition);
     ZSpeSpectrum* zp_spectrum(int row, quint8 gainFactor, int exposition);
@@ -197,8 +181,14 @@ public:
     int zp_arrayMaxIntensity(int gainFactor, int exposition) const;
 
     QColor zp_spectrumColor(int sampleRow, int gainFactor, int exposition) const;
-    bool zp_spectrumVisibility(int sampleRow, int gainFactor, int exposition, bool& visibility) const;
-    bool zp_setSpectrumVisibility(int sampleRow, int gainFactor, int exposition, bool visibility);
+    bool zp_spectrumVisibility(int sampleRow,
+                               int gainFactor,
+                               int exposition,
+                               bool& visibility) const;
+    bool zp_setSpectrumVisibility(int sampleRow,
+                                  int gainFactor,
+                                  int exposition,
+                                  bool visibility);
     bool zp_spectrumVisibility(qint64 spectrumId, bool& visibility) const;
     bool zp_libraryState() const;
     //bool zp_connectionState() const;
@@ -212,14 +202,18 @@ signals:
 
     void zg_connectionState(QString connectionState, QMessageBox::Icon) const;
     void zg_message(const QString& msg, QMessageBox::Icon) const;
-    void zg_sampleOperation(SampleOperationType, int first = -1, int last = -1) const;
+    void zg_sampleOperation(SampleOperationType,
+                            int first = -1,
+                            int last = -1) const;
     void zg_inquirySelectedSampleList(QList<int>&);
-    void zg_inquirySelectedSpectrumMap(QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
+    void zg_inquirySelectedSpectrumMap(
+        QMap<QPair<quint8, int>, QList<ZSpeSpectrum*>>& spectrumMap) const;
 
-    void zg_inquiryMeasuringConditionsAndSpectrumForIndex(const QModelIndex& currentIndex,
-                                                          quint8& gainFactor,
-                                                          int& exposition,
-                                                          const ZSpeSpectrum*& spectrum) const;
+    void zg_inquiryMeasuringConditionsAndSpectrumForIndex(
+        const QModelIndex& currentIndex,
+        quint8& gainFactor,
+        int& exposition,
+        const ZSpeSpectrum*& spectrum) const;
 
     //    void zg_seriesTaskNameChanged(const QString& taskName) const;
     //    void zg_seriesTaskNameDirtyChanged(bool dirty) const;
@@ -231,7 +225,8 @@ signals:
                                   quint32 deadTimeMs,
                                   quint32 spectrumIntensityIntegral) const;
 
-    void zg_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList) const;
+    void zg_currentEnergyCalibrationChanged(
+        QList<double> energyCalibrationFactorList) const;
     void zg_inquiryCurrentVisibleSceneRect(QRectF& sceneRect) const;
 
     //void zg_currentSpectrumChanged(int row, int conditionsIndex);
@@ -249,13 +244,15 @@ public slots:
     void zp_startSeries();
     void zp_stopSeries();
     void zh_onCurrentSpectrumChange(qint64 spectrumId);
-    void zh_currentEnergyCalibrationChanged(QList<double> energyCalibrationFactorList);
+    void zh_currentEnergyCalibrationChanged(
+        QList<double> energyCalibrationFactorList);
 
 private slots:
 
     // action slots:
     void zh_onSaveSeriesAction();
     void zh_onLoadSeriesAction();
+    void zh_onAddSamplesSpectrumOnlyToSeriesAction();
     void zh_onAddSamplesToSeriesAction();
     void zh_onRemoveSamplesFromSeriesAction();
     void zh_onLoadSpectraFromFilesAction();
@@ -274,21 +271,18 @@ private slots:
     void zh_notifyMeasuringStateChanged();
     void zh_onCurrentSpectrumMeasuring(qint64 currentMeasuredSpectrumId);
     void zh_onCurrentEnergyCalibration(QList<double> energyCalibrationFactorList);
-    void zh_onEnergyCalibrationChange(int gainFactor,
-                                      const QList<double>& energyCalibrationFactorList);
+    void zh_onEnergyCalibrationChange(
+        int gainFactor, const QList<double>& energyCalibrationFactorList);
 
     // sample measuring
     void zh_onSampleMeasuringFinish();
     void zh_onSpectrumDataChange(quint8 gainFactor, int exposition);
     void zh_onConcentrationChange();
 
-
 protected:
-
     void timerEvent(QTimerEvent* event) override;
 
 private:
-
     // VARS
     ZUralAdcDeviceConnector* zv_UralAdcDeviceConnector;
     ZMeasuringController* zv_measuringController;
@@ -302,6 +296,7 @@ private:
 
     ZControlAction* zv_addSamplesToSeriesAction;
     ZControlAction* zv_removeSamplesFromSeriesAction;
+    ZControlAction* zv_addSamplesSpectrumOnlyToSeriesAction;
 
     ZControlAction* zv_energyCalibrationAction;
     ZControlAction* zv_spectrumInfoAction;
@@ -328,20 +323,22 @@ private:
     qint64 zv_seriesId;
 
     ZMeasuringState zv_currentMeasuringState;
+    int zv_lastColorIndex;
 
     // FUNCS
     bool zh_checkColor(QColor color);
     void zh_createColorList();
-    int zv_lastColorIndex;
 
     void zh_createActions();
     void zh_createComponents();
     void zh_createConnections();
     void zh_restoreSettings();
     void zh_saveSettings() const;
-    bool zh_createLibraryFromResources(const QString& libraryFileName, QString &errorMsg);
+    bool zh_createLibraryFromResources(const QString& libraryFileName,
+                                       QString& errorMsg);
 
-    int zh_createSample(const QString& sampleName, ZSampleTask *sampleTask); // returns sample index in array
+    int zh_createSample(const QString& sampleName,
+                        ZSampleTask* sampleTask); // returns sample index in array
     void zh_clearSampleList();
     void zh_resetMeasuringResults();
 
@@ -355,23 +352,42 @@ private:
                                int sampleQuantity,
                                QString defaultSampleName = QString());
 
+    bool zh_addSamplesToSeries(int gainFactor,
+                               int exposition,
+                               int sampleQuantity,
+                               QString defaultSampleName);
+
     void zh_clearSeriesTask();
     bool zh_loadSeriesTask(int seriesTaskId);
 
     void zh_calcSpectrumCommonProperties(quint8 gainFactor, int exposition);
 
-    bool zh_connectToDevice(QString deviceName );
+    bool zh_connectToDevice(QString deviceName);
     void zh_setConnectionActionsEnable(bool enabling);
     void zh_recalcSeriesMeasuringTotalDuration();
 
-//    void zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
-//                                  QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
+    //    void zh_getSpectraFromIndexes(const QModelIndexList& selectedIndexes,
+    //                                  QMap< QPair<quint8, int>, QList<ZSpeSpectrum*> >& spectrumMap) const;
 
     void zh_assignNewSeriesId();
     void zh_saveSampleMeasurementResult();
-    bool zh_recordSeriesId();
-    bool zh_findNewIdInTable(const QString& tableName, int& newId);
+    bool zh_recordSeriesId(QString* errorMsg = nullptr);
+    bool zh_findNewIdInTable(const QString& tableName, int& newId, QString* errorMsg = nullptr);
 
+    bool zh_findSpectraSampleTaskId(int measurementConditionsId,
+                                    int& sampleTaskId);
+    bool zh_createNewSpectraSampleTaskRecord(const QString& sampleTaskName,
+                                             const QString& sampleTaskNameTemplate,
+                                             const QString& sampleTaskDescription,
+                                             int measurementConditionsId,
+                                             int& sampleTaskId);
+
+    bool zh_findMeasurementConditionId(int gainFactor,
+                                                int exposition,
+                                                int& id);
+    bool zh_createNewMeasuremnetConditionsRecord(int gainFactor,
+                                                 int exposition,
+                                                 int& id);
 };
 //======================================================
 #endif // ZMEASURINGMANAGER_H

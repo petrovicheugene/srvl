@@ -567,7 +567,7 @@ void ZRulerWidget::resizeEvent(QResizeEvent* event)
         QRect infoLabelRect = zv_bottomRulerProperty.ruleLabelRect;
         infoLabelRect.setLeft(geometryRect.left());
         QFontMetrics fm(this->font());
-        int ruleLabelWidth = fm.width(zv_bottomRulerProperty.ruleLabel);
+        int ruleLabelWidth = fm.horizontalAdvance(zv_bottomRulerProperty.ruleLabel);
         infoLabelRect.setRight(geometryRect.center().x() - ruleLabelWidth);
         zv_infoLabel->setGeometry(infoLabelRect);
     }
@@ -644,7 +644,8 @@ void ZRulerWidget::zh_paintLeftRule(QPainter* painter)
                             + zv_leftRulerProperty.K0;
                 }
                 QString mark = QString::number(markValue, zv_leftRulerProperty.format, zv_leftRulerProperty.precision);
-                markRect = QRect(QPoint(0, 0), QSize(fontMetrics.width(mark), zv_maxMarkHeight));
+                markRect = QRect(QPoint(0, 0),
+                                 QSize(fontMetrics.horizontalAdvance(mark), zv_maxMarkHeight));
                 markRect.moveCenter(QPoint(zv_leftRulerProperty.markRect.right()
                                            - zv_leftRulerProperty.scratchLineSize
                                            - zv_leftRulerProperty.markOffsetFromScratch
@@ -715,7 +716,8 @@ void ZRulerWidget::zh_paintRightRule(QPainter* painter)
                 }
 
                 QString mark = QString::number(markValue, zv_rightRulerProperty.format, zv_rightRulerProperty.precision);
-                markRect = QRect(QPoint(0, 0), QSize(fontMetrics.width(mark), zv_maxMarkHeight));
+                markRect = QRect(QPoint(0, 0),
+                                 QSize(fontMetrics.horizontalAdvance(mark), zv_maxMarkHeight));
                 markRect.moveCenter(QPoint(zv_rightRulerProperty.markRect.left()
                                            + zv_rightRulerProperty.scratchLineSize
                                            + zv_rightRulerProperty.markOffsetFromScratch
@@ -783,7 +785,8 @@ void ZRulerWidget::zh_paintTopRule(QPainter* painter)
                 }
 
                 QString mark = QString::number(markValue, zv_topRulerProperty.format, zv_topRulerProperty.precision);
-                markRect = QRect(QPoint(0, 0), QSize(fontMetrics.width(mark), zv_maxMarkHeight));
+                markRect = QRect(QPoint(0, 0),
+                                 QSize(fontMetrics.horizontalAdvance(mark), zv_maxMarkHeight));
                 markRect.moveCenter(QPoint(x, zv_topRulerProperty.markRect.bottom()
                                            - zv_topRulerProperty.scratchLineSize
                                            - zv_topRulerProperty.markOffsetFromScratch
@@ -847,7 +850,8 @@ void ZRulerWidget::zh_paintBottomRule(QPainter* painter)
                 }
 
                 QString mark = QString::number(markValue, zv_bottomRulerProperty.format, zv_bottomRulerProperty.precision);
-                markRect = QRect(QPoint(0, 0), QSize(fontMetrics.width(mark), zv_maxMarkHeight));
+                markRect = QRect(QPoint(0, 0),
+                                 QSize(fontMetrics.horizontalAdvance(mark), zv_maxMarkHeight));
                 markRect.moveCenter(QPoint(x, zv_bottomRulerProperty.markRect.top()
                                            + zv_bottomRulerProperty.scratchLineSize
                                            + zv_bottomRulerProperty.markOffsetFromScratch
@@ -879,7 +883,7 @@ void ZRulerWidget::zh_recalcRuleSizes()
     QString maxString = QString::number(-5.555555555555E-99, 'f', precision);
 
     QFontMetrics fm(font());
-    zv_maxMarkWidth = fm.width(maxString);
+    zv_maxMarkWidth = fm.horizontalAdvance(maxString);
     zv_maxMarkHeight = fm.height();
 
     // horizontal offset
@@ -888,11 +892,11 @@ void ZRulerWidget::zh_recalcRuleSizes()
 
     f.setPixelSize(zv_leftRulerProperty.fontSize);
     fm = QFontMetrics(font());
-    zv_leftRulerProperty.markOffsetFromScratch = fm.width("8");
+    zv_leftRulerProperty.markOffsetFromScratch = fm.horizontalAdvance("8");
 
     f.setPixelSize(zv_rightRulerProperty.fontSize);
     fm = QFontMetrics(font());
-    zv_rightRulerProperty.markOffsetFromScratch = fm.width("8");
+    zv_rightRulerProperty.markOffsetFromScratch = fm.horizontalAdvance("8");
 
     // mark line sizes
     zv_topRulerProperty.markLineSize = zv_maxMarkHeight * 1.5;

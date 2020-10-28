@@ -10,13 +10,14 @@ class ZAbstractSpectrum;
 class ZCalibrationWindow;
 class ZTermNormalizer;
 class ZCalibration;
+class ZSpectrumArray;
 //============================================================
 class ZAbstractTerm : public QObject
 {
     Q_OBJECT
     friend  class ZCalibration;
 public:
-    explicit ZAbstractTerm(ZCalibration*);
+    explicit ZAbstractTerm(ZCalibration* calibration);
 
     // VARS
     enum TermType {TT_NOT_DEFINED,
@@ -48,6 +49,7 @@ public:
 
     ZAbstractTerm::TermState zp_termState() const;
     bool zp_setTermState(ZAbstractTerm::TermState);
+    void zp_setWindowMap(const QMap<QString, int>& windowMap);
 
     // STATIC
     static bool zp_setPrecision(int);
@@ -56,13 +58,12 @@ public:
     static ZAbstractTerm::TermType zp_termTypeFromString(const QString&);
     static ZAbstractTerm::TermState zp_termStateFromString(const QString&);
 
-
 signals:
 
- //   void zg_inquiryNormalizerValue(qreal&);
+ //   void zg_requestNormalizerValue(qreal&);
     void zg_termWindowMarginChanged();
     void zg_termNameChanged() const;
-    void zg_inquiryForDelete(ZAbstractTerm*);
+    void zg_requestForDelete(ZAbstractTerm*);
     void zg_termStateChanged(ZAbstractTerm::TermState) const;
    // void zg_termValuesChanged() const;
 
@@ -88,6 +89,7 @@ protected:
     qreal zv_termFactor;
     TermState zv_termState;
     QString zv_name;
+
     //    QList<qint64> zv_unnormalizedValueList;
     //    qreal zv_averageValue;
     // FUNCS

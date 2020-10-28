@@ -66,7 +66,7 @@ void ZTextGraphicsItem::zh_recalcShapeAndBoundingRect()
 {
     QFontMetrics fm(zv_font);
     //zv_boundingRect = fm.boundingRect(zv_text);
-    zv_boundingRect = QRect(0,0, fm.width(zv_text), fm.height());
+    zv_boundingRect = QRect(0, 0, fm.horizontalAdvance(zv_text), fm.height());
     zv_boundingRect.moveCenter(zv_boundingRect.topLeft());
 
     QPainterPath newShapePainterPath;

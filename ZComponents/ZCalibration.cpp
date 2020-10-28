@@ -1,23 +1,31 @@
 //=========================================================
 #include "ZCalibration.h"
 #include "ZAbstractSpectrum.h"
-#include "ZSimpleTerm.h"
-#include "ZQuadraticTerm.h"
-#include "ZMixedTerm.h"
 #include "ZCustomTerm.h"
 #include "ZEquationSettingsData.h"
-#include "ZTermNormalizer.h"
 #include "ZGeneral.h"
+#include "ZMathExpressionHandler.h"
+#include "ZMathExpressionVariableListMaker.h"
+#include "ZMixedTerm.h"
 #include "ZQrealToStringConverter.h"
+#include "ZQuadraticTerm.h"
+#include "ZRawTerm.h"
+#include "ZSimpleTerm.h"
+#include "ZTermNormalizer.h"
 
-#include <QFileInfo>
+#include <QDebug>
 #include <QDir>
+#include <QFileInfo>
 #include <QPointer>
+#include <QRandomGenerator>
+#include <QStringList>
 //=========================================================
 // STATIC
 //=========================================================
-const QString ZCalibration::simplePolynomEquationString(ZCalibration::zh_initPlynomialEquationString());
-const QString ZCalibration::fractionalEquationString(ZCalibration::zh_initFractionalEquationString1());
+const QString ZCalibration::simplePolynomEquationString(
+    ZCalibration::zh_initPlynomialEquationString());
+const QString ZCalibration::fractionalEquationString(
+    ZCalibration::zh_initFractionalEquationString1());
 const QString ZCalibration::zv_defaultWindowName(QObject::tr("Peak #"));
 
 bool ZCalibration::zv_useBaseTermInFractionalEquationByDefault = false;
@@ -25,8 +33,8 @@ QList<QColor> ZCalibration::zv_colorList = ZCalibration::zp_createColorList();
 qint64 ZCalibration::zv_lastCalibrationId = 0;
 int ZCalibration::zv_lastColorIndex = 0;
 int ZCalibration::zv_precision = 15;
-QMap<ZCalibration::EquationType, QString> ZCalibration::zv_eqationTypeStringMap =
-        ZCalibration::zh_initEquationTypeStringMap();
+QMap<ZCalibration::EquationType, QString> ZCalibration::zv_eqationTypeStringMap
+    = ZCalibration::zh_initEquationTypeStringMap();
 //=========================================================
 QMap<ZCalibration::EquationType, QString> ZCalibration::zh_initEquationTypeStringMap()
 {
@@ -39,85 +47,88 @@ QMap<ZCalibration::EquationType, QString> ZCalibration::zh_initEquationTypeStrin
 //=========================================================
 QString ZCalibration::zh_initPlynomialEquationString()
 {
-    QString simplePolynomEquationString = "<table border=0 cellspacing=0 cellpadding=0>"
-                                          "<tr>"
-                                          "<td></td>"
-                                          "<td align=center><sub><i>n</i></sub></td>"
-                                          "<td></td>"
-                                          "</tr>"
+    QString simplePolynomEquationString
+        = "<table border=0 cellspacing=0 cellpadding=0>"
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sub><i>n</i></sub></td>"
+          "<td></td>"
+          "</tr>"
 
-                                          "<tr>"
-                                          "<td valign=middle>C=</td>"
-                                          "<td valign=middle align=center>\u2211</td>"
-                                          "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub></td>"
-                                          "</tr>"
+          "<tr>"
+          "<td valign=middle>C=</td>"
+          "<td valign=middle align=center>\u2211</td>"
+          "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub></td>"
+          "</tr>"
 
-                                          "<tr>"
-                                          "<td></td>"
-                                          "<td align=center><sup><i>i</i> = 1</sup></td>"
-                                          "<td></td>"
-                                          "</tr>"
-                                          "</table>";
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sup><i>i</i> = 1</sup></td>"
+          "<td></td>"
+          "</tr>"
+          "</table>";
     return simplePolynomEquationString;
 }
 //=========================================================
 QString ZCalibration::zh_initFractionalEquationString()
 {
-    QString fractionalEquationString = "<table border=0 cellspacing=0 cellpadding=0>"
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td></td>"
-                                       "<td>a<sub><i>base</i></sub>*X<sub><i>base</i></sub></td>"
-                                       "</tr>"
+    QString fractionalEquationString
+        = "<table border=0 cellspacing=0 cellpadding=0>"
+          "<tr>"
+          "<td></td>"
+          "<td></td>"
+          "<td>a<sub><i>base</i></sub>*X<sub><i>base</i></sub></td>"
+          "</tr>"
 
-                                       "<tr>"
-                                       "<td>C= </td>"
-                                       "<td><hr></td>"
-                                       "<td><hr></td>"
-                                       "</tr>"
+          "<tr>"
+          "<td>C= </td>"
+          "<td><hr></td>"
+          "<td><hr></td>"
+          "</tr>"
 
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td align=center><sub><i>n</i></sub></td>"
-                                       "<td></td>"
-                                       "<td></td>"
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sub><i>n</i></sub></td>"
+          "<td></td>"
+          "<td></td>"
 
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td valign=middle align=center>\u2211</td>"
-                                       "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub></td>"
-                                       "</tr>"
+          "<tr>"
+          "<td></td>"
+          "<td valign=middle align=center>\u2211</td>"
+          "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub></td>"
+          "</tr>"
 
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td align=center><sup><i>i</i> = 1</sup></td>"
-                                       "<td></td>"
-                                       "</tr>"
-                                       "</table>";
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sup><i>i</i> = 1</sup></td>"
+          "<td></td>"
+          "</tr>"
+          "</table>";
     return fractionalEquationString;
 }
 //=========================================================
 QString ZCalibration::zh_initFractionalEquationString1()
 {
-    QString fractionalEquationString = "<table border=0 cellspacing=0 cellpadding=0>"
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td align=center><sub><i>n</i></sub></td>"
-                                       "<td></td>"
-                                       "</tr>"
+    QString fractionalEquationString
+        = "<table border=0 cellspacing=0 cellpadding=0>"
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sub><i>n</i></sub></td>"
+          "<td></td>"
+          "</tr>"
 
-                                       "<tr>"
-                                       "<td valign=middle>C= a<sub><i>base</i></sub>*X<sub><i>base</i></sub> / (</td>"
-                                       "<td valign=middle align=center>\u2211</td>"
-                                       "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub>)</td>"
-                                       "</tr>"
+          "<tr>"
+          "<td valign=middle>C= a<sub><i>base</i></sub>*X<sub><i>base</i></sub> / (</td>"
+          "<td valign=middle align=center>\u2211</td>"
+          "<td valign=middle>(a<sub><i>i</i></sub>*X<sub><i>i</i></sub>) + a<sub>0</sub>)</td>"
+          "</tr>"
 
-                                       "<tr>"
-                                       "<td></td>"
-                                       "<td align=center><sup><i>i</i> = 1</sup></td>"
-                                       "<td></td>"
-                                       "</tr>"
-                                       "</table>";
+          "<tr>"
+          "<td></td>"
+          "<td align=center><sup><i>i</i> = 1</sup></td>"
+          "<td></td>"
+          "</tr>"
+          "</table>";
     return fractionalEquationString;
 }
 //=========================================================
@@ -128,7 +139,7 @@ QString ZCalibration::zp_equationTypeString(ZCalibration::EquationType type)
 //=========================================================
 ZCalibration::EquationType ZCalibration::zp_equationTypeFromString(const QString& typestring)
 {
-    if(!zv_eqationTypeStringMap.values().contains(typestring))
+    if (!zv_eqationTypeStringMap.values().contains(typestring))
     {
         return ZCalibration::ET_NOT_DEFINED;
     }
@@ -138,15 +149,14 @@ ZCalibration::EquationType ZCalibration::zp_equationTypeFromString(const QString
 // END STATIC
 //=========================================================
 //=========================================================
-ZCalibration::ZCalibration(const QString& name, QObject *parent) : QObject(parent)
+ZCalibration::ZCalibration(const QString& name, QObject* parent) : QObject(parent)
 {
     zv_visibility = false;
     zv_useBaseTermInFractionalEquation = zv_useBaseTermInFractionalEquationByDefault;
 
     QFileInfo fileInfo(name);
-    if(fileInfo.exists())
+    if (fileInfo.exists())
     {
-
         zv_baseName = fileInfo.baseName();
         zv_suffix = fileInfo.completeSuffix();
         zv_path = fileInfo.absolutePath();
@@ -161,23 +171,22 @@ ZCalibration::ZCalibration(const QString& name, QObject *parent) : QObject(paren
     }
 
     zv_color = zv_colorList.value(zv_lastColorIndex++);
-    if(zv_lastColorIndex >= zv_colorList.count())
+    if (zv_lastColorIndex >= zv_colorList.count())
     {
         zv_lastColorIndex = 0;
     }
 
     zv_exposition = 0;
-//    zv_energyCalibrationFactorK0 = 0;
-//    zv_energyCalibrationFactorK1 = 0;
-//    zv_energyCalibrationFactorK2 = 0;
+    //    zv_energyCalibrationFactorK0 = 0;
+    //    zv_energyCalibrationFactorK1 = 0;
+    //    zv_energyCalibrationFactorK2 = 0;
     zv_gainFactor = 0;
-//    zv_energyUnit = "not defined";
+    //    zv_energyUnit = "not defined";
 
     zv_calibrationId = zv_lastCalibrationId++;
     zv_chemElement = glDefaultChemElementString;
-    zv_termNormalizer  = new ZTermNormalizer(this);
+    zv_termNormalizer = new ZTermNormalizer(this);
     zv_baseTermNormalizer = new ZTermNormalizer(this);
-
 
     zv_equationType = ET_POLYNOMIAL;
     zp_setEquationIntercept(0.0);
@@ -185,7 +194,8 @@ ZCalibration::ZCalibration(const QString& name, QObject *parent) : QObject(paren
     zv_dateTime = QDateTime::currentDateTime();
 }
 //=========================================================
-ZCalibration::ZCalibration(const ZCalibration *calibration, const QString& name, QObject *parent)  : QObject(parent)
+ZCalibration::ZCalibration(const ZCalibration* calibration, const QString& name, QObject* parent)
+    : QObject(parent)
 {
     zv_visibility = false;
     zv_useBaseTermInFractionalEquation = calibration->zv_useBaseTermInFractionalEquationByDefault;
@@ -196,22 +206,22 @@ ZCalibration::ZCalibration(const ZCalibration *calibration, const QString& name,
     zv_dirty = true;
 
     zv_color = zv_colorList.value(zv_lastColorIndex++);
-    if(zv_lastColorIndex >= zv_colorList.count())
+    if (zv_lastColorIndex >= zv_colorList.count())
     {
         zv_lastColorIndex = 0;
     }
 
     zv_exposition = calibration->zv_exposition;
-//    zv_energyCalibrationFactorK0 =  calibration->zv_energyCalibrationFactorK0;
-//    zv_energyCalibrationFactorK1 = calibration->zv_energyCalibrationFactorK1;
-//    zv_energyCalibrationFactorK2 = calibration->zv_energyCalibrationFactorK2;
+    //    zv_energyCalibrationFactorK0 =  calibration->zv_energyCalibrationFactorK0;
+    //    zv_energyCalibrationFactorK1 = calibration->zv_energyCalibrationFactorK1;
+    //    zv_energyCalibrationFactorK2 = calibration->zv_energyCalibrationFactorK2;
     zv_gainFactor = calibration->zv_gainFactor;
-//    zv_energyUnit = calibration->zv_energyUnit;
+    //    zv_energyUnit = calibration->zv_energyUnit;
 
     zv_calibrationId = zv_lastCalibrationId++;
     zv_chemElement = calibration->zv_chemElement;
 
-    zv_termNormalizer  = new ZTermNormalizer(this);
+    zv_termNormalizer = new ZTermNormalizer(this);
     zv_baseTermNormalizer = new ZTermNormalizer(this);
 
     zv_equationType = calibration->zv_equationType;
@@ -221,10 +231,7 @@ ZCalibration::ZCalibration(const ZCalibration *calibration, const QString& name,
     zv_dateTime = QDateTime::currentDateTime();
 }
 //=========================================================
-ZCalibration::~ZCalibration()
-{
-
-}
+ZCalibration::~ZCalibration() {}
 //=========================================================
 QDateTime ZCalibration::zp_dateTime() const
 {
@@ -238,7 +245,7 @@ QString ZCalibration::zp_baseName() const
 //=========================================================
 void ZCalibration::zp_setBaseName(const QString& name)
 {
-    if(name == zv_baseName || name.isEmpty())
+    if (name == zv_baseName || name.isEmpty())
     {
         return;
     }
@@ -276,19 +283,19 @@ QString ZCalibration::zp_path() const
 //=========================================================
 void ZCalibration::zp_setPath(const QString& path)
 {
-    if(path == zv_path || path.isEmpty())
+    if (path == zv_path || path.isEmpty())
     {
         return;
     }
     QFileInfo fileInfo(path);
-    if(fileInfo.absoluteFilePath().isEmpty())
+    if (fileInfo.absoluteFilePath().isEmpty())
     {
         return;
     }
 
     zv_path = fileInfo.absolutePath();
 
-    if(fileInfo.isFile())
+    if (fileInfo.isFile())
     {
         zv_baseName = fileInfo.baseName();
         zv_suffix = fileInfo.completeSuffix();
@@ -306,7 +313,7 @@ QString ZCalibration::zp_chemElement() const
 //=========================================================
 bool ZCalibration::zp_setChemElement(const QString& chemElement)
 {
-    if(chemElement.isEmpty())
+    if (chemElement.isEmpty())
     {
         return false;
     }
@@ -327,7 +334,7 @@ bool ZCalibration::zp_setChemElement(const QString& chemElement)
 //    zv_energyUnit = energyUnit;
 
 //}
-//=========================================================
+////=========================================================
 //void ZCalibration::zp_setEnergyCalibrationK0(qreal K0)
 //{
 //    zv_energyCalibrationFactorK0 = K0;
@@ -342,7 +349,7 @@ bool ZCalibration::zp_setChemElement(const QString& chemElement)
 //{
 //    zv_energyCalibrationFactorK2 = K2;
 //}
-////=========================================================
+//=========================================================
 //void ZCalibration::zp_setEnergyUnit(const QString& energyUnit)
 //{
 //    zv_energyUnit = energyUnit;
@@ -395,7 +402,7 @@ bool ZCalibration::zp_isVisible() const
 //=========================================================
 void ZCalibration::zp_setVisible(bool visibility)
 {
-    if(visibility != zv_visibility)
+    if (visibility != zv_visibility)
     {
         zv_visibility = visibility;
         emit zg_visibilityChanged(zv_visibility);
@@ -423,40 +430,40 @@ qint64 ZCalibration::zp_calibrationId() const
     return zv_calibrationId;
 }
 //=========================================================
-bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum, qreal& concentration)
+bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum,
+                                        qreal& concentration)
 {
     concentration = 0;
-    if(spectrum == nullptr || zv_equationType == ET_NOT_DEFINED)
+    if (spectrum == 0 || zv_equationType == ET_NOT_DEFINED)
     {
         return false;
     }
 
     // calc norma
-    if(!zv_termNormalizer->zp_calcAndSetNormaValue(spectrum))
+    if (!zv_termNormalizer->zp_calcAndSetNormaValue(spectrum))
     {
         return false;
     }
 
     // calc polynom
     qreal value;
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
         // exclude base term if !zv_useBaseTermInFractionalEquation
-        if(zv_equationType == ET_FRACTIONAL
-                && !zv_useBaseTermInFractionalEquation
-                && zv_termList.at(t)->zp_termId() == zv_baseTermId)
+        if (zv_equationType == ET_FRACTIONAL && !zv_useBaseTermInFractionalEquation
+            && zv_termList.at(t)->zp_termId() == zv_baseTermId)
         {
             continue;
         }
 
         // calc all terms
-        if(!zv_termList.at(t)->zp_calcValue(spectrum, value))
+        if (!zv_termList.at(t)->zp_calcValue(spectrum, value))
         {
             return false;
         }
 
         // normalize terms (zv_termNormalizer defines nesessary)
-        if(!zv_termNormalizer->zp_normalizeValue(value))
+        if (!zv_termNormalizer->zp_normalizeValue(value))
         {
             return false;
         }
@@ -465,16 +472,16 @@ bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum,
 
     concentration += zv_intercept;
 
-    if(zv_equationType == ET_FRACTIONAL)
+    if (zv_equationType == ET_FRACTIONAL)
     {
         // concentration goes to denominator. check out it
-        if(concentration == 0.0)
+        if (concentration == 0)
         {
             return false;
         }
 
         // calc nominator
-        if(!zp_calcBaseTermValue(spectrum, value))
+        if (!zp_calcBaseTermValue(spectrum, value))
         {
             return false;
         }
@@ -485,31 +492,38 @@ bool ZCalibration::zp_calcConcentration(const ZAbstractSpectrum* const spectrum,
     return true;
 }
 //=========================================================
-int ZCalibration::zp_createNewCalibrationWindow(int firstChannel, int lastChannel,
-                                                ZCalibrationWindow::WindowType windowType)
+int ZCalibration::zp_createNewCalibrationWindow(int firstChannel,
+                                                int lastChannel,
+                                                ZCalibrationWindow::WindowType windowType,
+                                                QString windowName)
 {
     int windowNewIndex = -1;
-    int maxWindowNumber = 1;
-    for(int i = 0; i < zv_windowList.count(); i++)
-    {
-        QString name = zv_windowList.at(i)->zp_windowName();
 
-        QString digitalPart = name.mid(zv_defaultWindowName.count());
-        bool ok;
-        int number = digitalPart.toInt(&ok);
-        if(!ok)
+    if (windowName.isEmpty())
+    {
+        int windowNumber = zv_windowList.count() + 1;
+        for (int i = 0; i < zv_windowList.count(); i++)
         {
-            continue;
+            QString name = zv_windowList.at(i)->zp_windowName();
+            QString digitalPart = name.mid(zv_defaultWindowName.count());
+            bool ok;
+            int number = digitalPart.toInt(&ok);
+            if (!ok)
+            {
+                continue;
+            }
+
+            if (number >= windowNumber)
+            {
+                windowNumber = ++number;
+            }
         }
-        if(number >= maxWindowNumber)
-        {
-            maxWindowNumber = ++number;
-        }
+
+        windowName = zv_defaultWindowName + QString::number(windowNumber);
     }
-    QString nextName = zv_defaultWindowName + QString::number(maxWindowNumber);
 
     windowNewIndex = zv_windowList.count();
-    ZCalibrationWindow* calibrationWindow = new ZCalibrationWindow(nextName,
+    ZCalibrationWindow* calibrationWindow = new ZCalibrationWindow(windowName,
                                                                    windowType,
                                                                    firstChannel,
                                                                    lastChannel,
@@ -522,7 +536,7 @@ int ZCalibration::zp_createNewCalibrationWindow(int firstChannel, int lastChanne
     zv_windowList.append(calibrationWindow);
     emit zg_windowOperation(WOT_END_INSERT_WINDOWS, windowNewIndex, windowNewIndex);
 
-    if(calibrationWindow->zp_windowType() == ZCalibrationWindow::WT_PEAK)
+    if (calibrationWindow->zp_windowType() == ZCalibrationWindow::WT_PEAK)
     {
         zh_createTermsForWindow(calibrationWindow);
     }
@@ -539,16 +553,15 @@ int ZCalibration::zp_createNewCalibrationWindow(const ZRawWindow& rawWindow)
     int windowNewIndex = zv_windowList.count();
     bool ok;
     int firstChannel = rawWindow.firstChannel.toInt(&ok);
-    if(!ok)
+    if (!ok)
     {
         firstChannel = 0;
     }
     int lastChannel = rawWindow.lastChannel.toInt(&ok);
-    if(!ok)
+    if (!ok)
     {
         lastChannel = 0;
     }
-
 
     ZCalibrationWindow* calibrationWindow = new ZCalibrationWindow(rawWindow.name,
                                                                    rawWindow.windowType,
@@ -563,7 +576,7 @@ int ZCalibration::zp_createNewCalibrationWindow(const ZRawWindow& rawWindow)
     zv_windowList.append(calibrationWindow);
     emit zg_windowOperation(WOT_END_INSERT_WINDOWS, windowNewIndex, windowNewIndex);
 
-    if(calibrationWindow->zp_windowType() == ZCalibrationWindow::WT_PEAK)
+    if (calibrationWindow->zp_windowType() == ZCalibrationWindow::WT_PEAK)
     {
         zh_createTermsForWindow(calibrationWindow);
     }
@@ -575,29 +588,29 @@ int ZCalibration::zp_createNewCalibrationWindow(const ZRawWindow& rawWindow)
 void ZCalibration::zh_createTermsForWindow(const ZCalibrationWindow* window)
 {
     // creation simple
-    int windowIndex = zv_windowList.indexOf(const_cast<ZCalibrationWindow*>( window));
+    int windowIndex = zv_windowList.indexOf(const_cast<ZCalibrationWindow*>(window));
 
-    if(!zh_windowHasTerms(window, ZAbstractTerm::TT_SIMPLE))
+    if (!zh_windowHasTerms(window, ZAbstractTerm::TT_SIMPLE))
     {
         // define newTermIndex;
         int newTermIndex = -1;
         const ZCalibrationWindow* currentWindow;
 
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
+            if (zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
             {
                 continue;
             }
 
             const ZSimpleTerm* simpleTerm = qobject_cast<const ZSimpleTerm*>(zv_termList.at(t));
-            if(!simpleTerm)
+            if (!simpleTerm)
             {
                 continue;
             }
 
             currentWindow = simpleTerm->zp_window();
-            if(zv_windowList.indexOf(const_cast<ZCalibrationWindow*>(currentWindow)) > windowIndex)
+            if (zv_windowList.indexOf(const_cast<ZCalibrationWindow*>(currentWindow)) > windowIndex)
             {
                 break;
             }
@@ -616,34 +629,35 @@ void ZCalibration::zh_createTermsForWindow(const ZCalibrationWindow* window)
     }
 
     // quadratic
-    if(!zh_windowHasTerms(window, ZAbstractTerm::TT_QUADRATIC))
+    if (!zh_windowHasTerms(window, ZAbstractTerm::TT_QUADRATIC))
     {
         // define newTermIndex;
         int newTermIndex = -1;
         int lastSimpleTermIndex = -1;
         const ZCalibrationWindow* currentWindow;
 
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE)
+            if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE)
             {
                 lastSimpleTermIndex = t;
                 continue;
             }
 
-            if(zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_QUADRATIC)
+            if (zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_QUADRATIC)
             {
                 continue;
             }
 
-            const ZQuadraticTerm* simpleTerm = qobject_cast<const ZQuadraticTerm*>(zv_termList.at(t));
-            if(!simpleTerm)
+            const ZQuadraticTerm* simpleTerm = qobject_cast<const ZQuadraticTerm*>(
+                zv_termList.at(t));
+            if (!simpleTerm)
             {
                 continue;
             }
 
             currentWindow = simpleTerm->zp_window();
-            if(zv_windowList.indexOf(const_cast<ZCalibrationWindow*>(currentWindow)) > windowIndex)
+            if (zv_windowList.indexOf(const_cast<ZCalibrationWindow*>(currentWindow)) > windowIndex)
             {
                 break;
             }
@@ -651,7 +665,7 @@ void ZCalibration::zh_createTermsForWindow(const ZCalibrationWindow* window)
             newTermIndex = t;
         }
 
-        if(newTermIndex < 0)
+        if (newTermIndex < 0)
         {
             newTermIndex = lastSimpleTermIndex + 1;
         }
@@ -664,7 +678,7 @@ void ZCalibration::zh_createTermsForWindow(const ZCalibrationWindow* window)
         ZQuadraticTerm* quadraticTerm = new ZQuadraticTerm(window, this);
         // insertion
         emit zg_termOperation(TOT_BEGIN_INSERT_TERM, newTermIndex, newTermIndex);
-        zv_termList.insert(newTermIndex, quadraticTerm );
+        zv_termList.insert(newTermIndex, quadraticTerm);
         emit zg_termOperation(TOT_END_INSERT_TERM, newTermIndex, newTermIndex);
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -672,16 +686,17 @@ void ZCalibration::zh_createTermsForWindow(const ZCalibrationWindow* window)
     }
 }
 //=========================================================
-bool ZCalibration::zh_windowHasTerms(const ZCalibrationWindow* window, ZAbstractTerm::TermType type) const
+bool ZCalibration::zh_windowHasTerms(const ZCalibrationWindow* window,
+                                     ZAbstractTerm::TermType type) const
 {
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termType() != type)
+        if (zv_termList.at(t)->zp_termType() != type)
         {
             continue;
         }
 
-        if(zv_termList.at(t)->zp_termBelongsToWindow(window))
+        if (zv_termList.at(t)->zp_termBelongsToWindow(window))
         {
             return true;
         }
@@ -692,14 +707,14 @@ bool ZCalibration::zh_windowHasTerms(const ZCalibrationWindow* window, ZAbstract
 //=========================================================
 int ZCalibration::zh_termIndex(const ZAbstractTerm* term) const
 {
-    if(!term)
+    if (!term)
     {
         return -1;
     }
 
-    for(int i = 0; i < zv_termList.count(); i++)
+    for (int i = 0; i < zv_termList.count(); i++)
     {
-        if(zv_termList.at(i) == term)
+        if (zv_termList.at(i) == term)
         {
             return i;
         }
@@ -710,9 +725,10 @@ int ZCalibration::zh_termIndex(const ZAbstractTerm* term) const
 //=========================================================
 void ZCalibration::zh_chopTailZeroesFromInterceptString()
 {
-    for(int i = zv_interceptString.count() - 1; i > 0; i--)
+    for (int i = zv_interceptString.count() - 1; i > 0; i--)
     {
-        if(zv_interceptString.at(i) != '0' || (zv_interceptString.at(i - 1) == '.' || zv_interceptString.at(i - 1) == ',' ))
+        if (zv_interceptString.at(i) != '0'
+            || (zv_interceptString.at(i - 1) == '.' || zv_interceptString.at(i - 1) == ','))
         {
             break;
         }
@@ -722,9 +738,9 @@ void ZCalibration::zh_chopTailZeroesFromInterceptString()
 //=========================================================
 qreal* ZCalibration::zh_termFactorPointer(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
-        return nullptr;
+        return 0;
     }
 
     return zv_termList.value(termIndex)->zh_termFactorPointer();
@@ -732,22 +748,22 @@ qreal* ZCalibration::zh_termFactorPointer(int termIndex) const
 //=========================================================
 int ZCalibration::zh_findNextTermIndex(ZAbstractTerm::TermType termType) const
 {
-    if(termType == ZAbstractTerm::TT_SIMPLE)
+    if (termType == ZAbstractTerm::TT_SIMPLE)
     {
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
+            if (zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
             {
                 return t;
             }
         }
     }
-    else if(termType == ZAbstractTerm::TT_QUADRATIC)
+    else if (termType == ZAbstractTerm::TT_QUADRATIC)
     {
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC)
+            if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC)
             {
                 continue;
             }
@@ -755,13 +771,13 @@ int ZCalibration::zh_findNextTermIndex(ZAbstractTerm::TermType termType) const
             return t;
         }
     }
-    else if(termType == ZAbstractTerm::TT_MIXED)
+    else if (termType == ZAbstractTerm::TT_MIXED)
     {
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED)
+            if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED)
             {
                 continue;
             }
@@ -769,14 +785,14 @@ int ZCalibration::zh_findNextTermIndex(ZAbstractTerm::TermType termType) const
             return t;
         }
     }
-    else if(termType == ZAbstractTerm::TT_CUSTOM)
+    else if (termType == ZAbstractTerm::TT_CUSTOM)
     {
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED
-                    || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_CUSTOM)
+            if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_SIMPLE
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_QUADRATIC
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED
+                || zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_CUSTOM)
             {
                 continue;
             }
@@ -790,31 +806,31 @@ int ZCalibration::zh_findNextTermIndex(ZAbstractTerm::TermType termType) const
 //=========================================================
 bool ZCalibration::zp_termFactor(int termIndex, qreal& factor) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         factor = 0;
         return false;
     }
 
-    factor =  zv_termList.at(termIndex)->zp_termFactor();
+    factor = zv_termList.at(termIndex)->zp_termFactor();
     return true;
 }
 //=========================================================
 QList<int> ZCalibration::zp_termWindowIndexList(int termIndex) const
 {
     QList<int> indexList;
-    if(termIndex < 0 || termIndex >= zv_termList.count())
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return indexList;
     }
 
     QList<qint64> windowsIdList = zv_termList.at(termIndex)->zp_termWindowIdList();
 
-    for(int i = 0; i < windowsIdList.count(); i++)
+    for (int i = 0; i < windowsIdList.count(); i++)
     {
-        for(int w = 0; w < zv_windowList.count(); w++)
+        for (int w = 0; w < zv_windowList.count(); w++)
         {
-            if(zv_windowList.at(w)->zp_windowId() == windowsIdList.at(i))
+            if (zv_windowList.at(w)->zp_windowId() == windowsIdList.at(i))
             {
                 indexList.append(w);
                 break;
@@ -825,16 +841,41 @@ QList<int> ZCalibration::zp_termWindowIndexList(int termIndex) const
     return indexList;
 }
 //=========================================================
+QMap<QString, int> ZCalibration::zp_termWindowIndexMap(int termIndex) const
+{
+    QMap<QString, int> indexMap;
+    if (termIndex < 0 || termIndex >= zv_termList.count())
+    {
+        return indexMap;
+    }
+
+    QList<qint64> windowsIdList = zv_termList.at(termIndex)->zp_termWindowIdList();
+
+    for (int i = 0; i < windowsIdList.count(); i++)
+    {
+        for (int w = 0; w < zv_windowList.count(); w++)
+        {
+            if (zv_windowList.at(w)->zp_windowId() == windowsIdList.at(i))
+            {
+                //              indexList.append(w);
+                break;
+            }
+        }
+    }
+
+    return indexMap;
+}
+//=========================================================
 QStringList ZCalibration::zp_termWindowsNameList(int termIndex) const
 {
     QList<int> termIndexList = zp_termWindowIndexList(termIndex);
-    if(termIndexList.isEmpty())
+    if (termIndexList.isEmpty())
     {
         return QStringList();
     }
 
     QStringList termWindowsNameList;
-    for(int w = 0; w < termIndexList.count(); w++)
+    for (int w = 0; w < termIndexList.count(); w++)
     {
         termWindowsNameList.append(zv_windowList.at(termIndexList.at(w))->zp_windowName());
     }
@@ -844,7 +885,7 @@ QStringList ZCalibration::zp_termWindowsNameList(int termIndex) const
 //=========================================================
 QString ZCalibration::zp_termFactorString(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return "0.0";
     }
@@ -854,7 +895,7 @@ QString ZCalibration::zp_termFactorString(int termIndex) const
 //=========================================================
 bool ZCalibration::zp_termFactorString(int termIndex, QString& factorString) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         factorString = "0.0";
         return false;
@@ -866,12 +907,12 @@ bool ZCalibration::zp_termFactorString(int termIndex, QString& factorString) con
 //=========================================================
 bool ZCalibration::zp_setTermFactorString(int termIndex, const QString& factorString)
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return false;
     }
 
-    if(zv_termList.at(termIndex)->zh_setTermFactor(factorString))
+    if (zv_termList.at(termIndex)->zh_setTermFactor(factorString))
     {
         emit zg_termOperation(TOT_TERM_FACTOR_CHANGED, termIndex, termIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -881,16 +922,18 @@ bool ZCalibration::zp_setTermFactorString(int termIndex, const QString& factorSt
     return false;
 }
 //=========================================================
-bool ZCalibration::zp_termVariablePart(int termIndex, const ZAbstractSpectrum* spectrum,  qreal& value) const
+bool ZCalibration::zp_termVariablePart(int termIndex,
+                                       const ZAbstractSpectrum* spectrum,
+                                       qreal& value) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() || !spectrum)
+    if (termIndex < 0 || termIndex >= zv_termList.count() || !spectrum)
     {
         return false;
     }
 
     value = 0.0;
     bool res = zv_termList.at(termIndex)->zp_calcTermVariablePart(spectrum, value);
-    if(res)
+    if (res)
     {
         res = zv_termNormalizer->zp_normalizeValue(spectrum, value);
     }
@@ -901,7 +944,7 @@ bool ZCalibration::zp_termVariablePart(int termIndex, const ZAbstractSpectrum* s
 bool ZCalibration::zp_calcBaseTermValue(const ZAbstractSpectrum* spectrum, qreal& value) const
 {
     value = 0.0;
-    if(zv_baseTermId < 0)
+    if (zv_baseTermId < 0)
     {
         return false;
     }
@@ -909,17 +952,17 @@ bool ZCalibration::zp_calcBaseTermValue(const ZAbstractSpectrum* spectrum, qreal
     //qreal baseTermValue = std::numeric_limits<double>::quiet_NaN();
     //qreal baseNormaValue = std::numeric_limits<double>::quiet_NaN();
 
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termId() == zv_baseTermId)
+        if (zv_termList.at(t)->zp_termId() == zv_baseTermId)
         {
-            if(!zv_termList.at(t)->zp_calcTermVariablePart(spectrum, value))
+            if (!zv_termList.at(t)->zp_calcTermVariablePart(spectrum, value))
             {
                 return false;
             }
             // baseTerm - ok
 
-            if(!zv_baseTermNormalizer->zp_normalizeValue(spectrum, value))
+            if (!zv_baseTermNormalizer->zp_normalizeValue(spectrum, value))
             {
                 return false;
             }
@@ -933,19 +976,19 @@ bool ZCalibration::zp_calcBaseTermValue(const ZAbstractSpectrum* spectrum, qreal
 //=========================================================
 bool ZCalibration::zp_createMixedTerms(int termIndex)
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count())
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return false;
     }
 
-    if(zv_termList.at(termIndex)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
+    if (zv_termList.at(termIndex)->zp_termType() != ZAbstractTerm::TT_SIMPLE)
     {
         return false;
     }
 
     //  get window from simple term
     ZSimpleTerm* baseTerm = qobject_cast<ZSimpleTerm*>(zv_termList.at(termIndex));
-    if(!baseTerm)
+    if (!baseTerm)
     {
         return false;
     }
@@ -953,30 +996,32 @@ bool ZCalibration::zp_createMixedTerms(int termIndex)
     const ZCalibrationWindow* baseWindow = baseTerm->zp_window();
     ZMixedTerm* mixedTerm;
     QList<ZAbstractTerm*> mixedTermList;
-    for(int w = 0; w < zv_windowList.count(); w++)
+    for (int w = 0; w < zv_windowList.count(); w++)
     {
-        if(zv_windowList.at(w) == baseWindow || zv_windowList.at(w)->zp_windowType() != ZCalibrationWindow::WT_PEAK)
+        if (zv_windowList.at(w) == baseWindow
+            || zv_windowList.at(w)->zp_windowType() != ZCalibrationWindow::WT_PEAK)
         {
             continue;
         }
 
         // check existing mixed terms
         bool termExists = false;
-        for(int t = 0; t < zv_termList.count(); t++)
+        for (int t = 0; t < zv_termList.count(); t++)
         {
-            if(zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_MIXED)
+            if (zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_MIXED)
             {
                 continue;
             }
 
-            if(zv_termList.at(t)->zp_termBelongsToWindow(baseWindow) && zv_termList.at(t)->zp_termBelongsToWindow(zv_windowList.at(w)))
+            if (zv_termList.at(t)->zp_termBelongsToWindow(baseWindow)
+                && zv_termList.at(t)->zp_termBelongsToWindow(zv_windowList.at(w)))
             {
                 termExists = true;
                 break;
             }
         }
 
-        if(termExists)
+        if (termExists)
         {
             continue;
         }
@@ -986,31 +1031,31 @@ bool ZCalibration::zp_createMixedTerms(int termIndex)
         mixedTermList.append(mixedTerm);
     }
 
-    if(mixedTermList.isEmpty())
+    if (mixedTermList.isEmpty())
     {
         return false;
     }
 
     // define first custom term
     int t = 0;
-    for(; t < zv_termList.count(); t++)
+    for (; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_CUSTOM)
+        if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_CUSTOM)
         {
             break;
         }
     }
 
     // insert new term
-    if(mixedTermList.isEmpty())
+    if (mixedTermList.isEmpty())
     {
         return false;
     }
 
     emit zg_termOperation(TOT_BEGIN_INSERT_TERM, t, t + mixedTermList.count() - 1);
-    for(int i = 0; i < mixedTermList.count(); i++)
+    for (int i = 0; i < mixedTermList.count(); i++)
     {
-        zv_termList.insert(t+i , mixedTermList.at(i));
+        zv_termList.insert(t + i, mixedTermList.at(i));
     }
     emit zg_termOperation(TOT_END_INSERT_TERM, t, t + mixedTermList.count() - 1);
     zv_dirty = true;
@@ -1022,15 +1067,15 @@ bool ZCalibration::zp_createMixedTerms(int termIndex)
 //=========================================================
 bool ZCalibration::zp_removeMixedTerms()
 {
-    for(int t = zv_termList.count() - 1; t >= 0; t--)
+    for (int t = zv_termList.count() - 1; t >= 0; t--)
     {
-        if(zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_MIXED)
+        if (zv_termList.at(t)->zp_termType() != ZAbstractTerm::TT_MIXED)
         {
             continue;
         }
 
         emit zg_termOperation(TOT_BEGIN_REMOVE_TERM, t, t);
-        delete zv_termList.takeAt(t);
+        zv_termList.takeAt(t)->deleteLater();
         emit zg_termOperation(TOT_END_REMOVE_TERM, t, t);
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1040,23 +1085,129 @@ bool ZCalibration::zp_removeMixedTerms()
     return true;
 }
 //=========================================================
+bool ZCalibration::zp_removeCustomTerm(int termIndex)
+{
+    if (termIndex < 0 || termIndex >= zv_termList.count())
+    {
+        return false;
+    }
+
+    ZAbstractTerm* term = zv_termList.value(termIndex, nullptr);
+    if (!term || term->zp_termType() != ZAbstractTerm::TT_CUSTOM)
+    {
+        return false;
+    }
+
+    emit zg_termOperation(TOT_BEGIN_REMOVE_TERM, termIndex, termIndex);
+    zv_termList.takeAt(termIndex)->deleteLater();
+    emit zg_termOperation(TOT_END_REMOVE_TERM, termIndex, termIndex);
+    zv_dirty = true;
+    zv_dateTime = QDateTime::currentDateTime();
+    emit zg_dirtyChanged(zv_dirty);
+    return true;
+}
+//=========================================================
+void ZCalibration::zp_updateCustomTerm(bool& res, ZRawCustomTerm& rawTerm)
+{
+    if (rawTerm.termType != ZAbstractTerm::TT_CUSTOM)
+    {
+        res = false;
+        emit zg_message(tr("Updated term type is not \"Custom\"!"));
+        return;
+    }
+
+    if (!zh_checkCustomString(rawTerm))
+    {
+        res = false;
+        return;
+    }
+
+    // create a new term
+    int id = zp_applyRawTerm(rawTerm);
+    res = id < 0 ? false : true;
+    rawTerm.termId = id;
+}
+//=========================================================
+void ZCalibration::zp_calcWindowIntensity(const QString& windowName,
+                                          const QObject* spectrumObject,
+                                          qreal& intensityValue,
+                                          bool useBuffer,
+                                          bool* ok)
+{
+    if (windowName.isEmpty())
+    {
+        if (ok)
+        {
+            *ok = false;
+        }
+    }
+
+    for (auto window : zv_windowList)
+    {
+        if (window->zp_windowName() == windowName)
+        {
+            window->zp_calcWindowIntensity(spectrumObject, intensityValue, useBuffer, ok);
+            return;
+        }
+    }
+
+    if (ok)
+    {
+        *ok = false;
+    }
+}
+//=========================================================
+int ZCalibration::zp_createCustomTerm(ZAbstractTerm::TermState termState,
+                                      const QString& name,
+                                      const QString& equation,
+                                      const QString& description,
+                                      const QString& termFactor)
+{
+    // define next term index
+    int termIndex = zh_findNextTermIndex(ZAbstractTerm::TT_CUSTOM);
+
+    ZCustomTerm* customTerm = new ZCustomTerm(this);
+    customTerm->zp_setTermState(termState);
+    customTerm->zp_setName(name);
+    customTerm->zp_setExpression(equation);
+    customTerm->zp_setDescription(description);
+    customTerm->zh_setTermFactor(termFactor);
+
+    connect(customTerm,
+            &ZCustomTerm::zs_calcWindowIntensity,
+            this,
+            &ZCalibration::zp_calcWindowIntensity);
+    connect(customTerm,
+            &ZCustomTerm::zs_errorReport,
+            this,
+            &ZCalibration::zg_message);
+
+    emit zg_termOperation(TOT_BEGIN_INSERT_TERM, termIndex, termIndex);
+    zv_termList.insert(termIndex, customTerm);
+    emit zg_termOperation(TOT_END_INSERT_TERM, termIndex, termIndex);
+    zv_dirty = true;
+    zv_dateTime = QDateTime::currentDateTime();
+    emit zg_dirtyChanged(zv_dirty);
+
+    return termIndex;
+}
+//=========================================================
 int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
                                 ZAbstractTerm::TermType termType,
                                 ZAbstractTerm::TermState termState,
-                                const QString &termFactor)
+                                const QString& termFactor)
 {
-
     // define next term index
     int termIndex = zh_findNextTermIndex(termType);
     ZAbstractTerm* term = nullptr;
-    if(termType == ZAbstractTerm::TT_SIMPLE)
+    if (termType == ZAbstractTerm::TT_SIMPLE)
     {
-        if(windowIndexList.isEmpty())
+        if (windowIndexList.isEmpty())
         {
             return -1;
         }
         ZCalibrationWindow* window = zv_windowList.value(windowIndexList.at(0));
-        if(window->zp_windowType() != ZCalibrationWindow::WT_PEAK)
+        if (window->zp_windowType() != ZCalibrationWindow::WT_PEAK)
         {
             return -1;
         }
@@ -1067,16 +1218,15 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
         //        emit zg_termOperation(TOT_BEGIN_INSERT_TERM, termIndex, termIndex);
         //        zv_termList.insert(termIndex, simpleTerm);
         //        emit zg_termOperation(TOT_END_INSERT_TERM, termIndex, termIndex);
-
     }
-    else if(termType == ZAbstractTerm::TT_QUADRATIC)
+    else if (termType == ZAbstractTerm::TT_QUADRATIC)
     {
-        if(windowIndexList.isEmpty())
+        if (windowIndexList.isEmpty())
         {
             return -1;
         }
         ZCalibrationWindow* window = zv_windowList.value(windowIndexList.at(0));
-        if(window->zp_windowType() != ZCalibrationWindow::WT_PEAK)
+        if (window->zp_windowType() != ZCalibrationWindow::WT_PEAK)
         {
             return -1;
         }
@@ -1085,20 +1235,20 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
         term->zp_setTermState(termState);
         term->zh_setTermFactor(termFactor);
     }
-    else if(termType == ZAbstractTerm::TT_MIXED)
+    else if (termType == ZAbstractTerm::TT_MIXED)
     {
-        if(windowIndexList.count() != 2)
+        if (windowIndexList.count() != 2)
         {
             return -1;
         }
 
         ZCalibrationWindow* window1 = zv_windowList.value(windowIndexList.at(0));
-        if(window1->zp_windowType() != ZCalibrationWindow::WT_PEAK)
+        if (window1->zp_windowType() != ZCalibrationWindow::WT_PEAK)
         {
             return -1;
         }
         ZCalibrationWindow* window2 = zv_windowList.value(windowIndexList.at(1));
-        if(window2->zp_windowType() != ZCalibrationWindow::WT_PEAK)
+        if (window2->zp_windowType() != ZCalibrationWindow::WT_PEAK)
         {
             return -1;
         }
@@ -1106,12 +1256,7 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
         term->zp_setTermState(termState);
         term->zh_setTermFactor(termFactor);
     }
-    else if(termType == ZAbstractTerm::TT_CUSTOM)
-    {
-        return -1;
-        // term = new ZCustomTerm(this);
-    }
-    else if(termType == ZAbstractTerm::TT_NOT_DEFINED)
+    else if (termType == ZAbstractTerm::TT_NOT_DEFINED)
     {
         return -1;
     }
@@ -1126,56 +1271,225 @@ int ZCalibration::zp_createTerm(QList<int>& windowIndexList,
     return termIndex;
 }
 //=========================================================
-int ZCalibration::zp_createTerm(const ZRawTerm& rawTerm)
+int ZCalibration::zp_applyRawTerm(ZRawTerm& rawTerm)
 {
-    // check out is the term already exist
-    for(int t = 0; t < zv_termList.count(); t++)
+    int termIndex = -1;
+    if (rawTerm.termType == ZAbstractTerm::TT_CUSTOM)
     {
-        if(rawTerm.name == zv_termList.at(t)->zp_termName()
-                && rawTerm.termType == zv_termList.at(t)->zp_termType())
+        ZRawCustomTerm* customTerm = static_cast<ZRawCustomTerm*>(&rawTerm);
+        if (customTerm->termId >= 0)
         {
-            QList<qint64> termWindowIdList =  zv_termList.at(t)->zp_termWindowIdList();
-            if(termWindowIdList.count() == rawTerm.windowList.count())
-            {
-                bool res = true;
-                foreach(qint64 id, termWindowIdList)
-                {
-                    if(!rawTerm.windowList.contains(zp_calibrationWindowNameForId(id)))
-                    {
-                        res = false;
-                        break;
-                    }
-                }
-
-                // term exists. set parameters to it
-                if(res)
-                {
-                    zv_termList.at(t)->zp_setTermState(rawTerm.termState);
-                    zv_termList.at(t)->zh_setTermFactor(rawTerm.factor) ;
-                    return t;
-                }
-            }
+            termIndex = zh_termIndexForTermId(customTerm->termId);
         }
     }
 
-    // create windowIndexList
-    QList<int> windowIndexList;
+    if (termIndex < 0)
+    {
+        termIndex = zh_termIndexForRawTerm(rawTerm);
+    }
+
+    if (termIndex >= 0)
+    {
+        zh_updateExistingTerm(termIndex, rawTerm);
+        return termIndex;
+    }
+    else
+    {
+        // new term
+        termIndex = zh_createNewTerm(rawTerm);
+    }
+
+    return termIndex;
+}
+//=========================================================
+int ZCalibration::zh_createNewTerm(ZRawTerm& rawTerm)
+{
+    if (rawTerm.termType == ZAbstractTerm::TT_CUSTOM)
+    {
+        ZRawCustomTerm* rawCustomTerm = static_cast<ZRawCustomTerm*>(&rawTerm);
+
+        return zp_createCustomTerm(rawCustomTerm->termState,
+                                   rawCustomTerm->name,
+                                   rawCustomTerm->customString,
+                                   rawCustomTerm->descriptionString,
+                                   rawCustomTerm->factor);
+    }
+    else
+    {
+        QList<int> windowIndexList;
+
+        if (!zh_createWindowIndexList(windowIndexList, rawTerm))
+        {
+            return -1;
+        }
+        return zp_createTerm(windowIndexList, rawTerm.termType, rawTerm.termState, rawTerm.factor);
+    }
+}
+//=========================================================
+bool ZCalibration::zh_createWindowIndexList(QMap<QString, int>& windowIndexMap, ZRawTerm& rawTerm)
+{
+    if (!zh_checkCustomString(rawTerm))
+    {
+        return false;
+    }
+
+    // else
+    //{
     int index;
-    foreach(QString windowName, rawTerm.windowList)
+    foreach (QString windowName, rawTerm.windowList)
     {
         index = zp_windowIndexForName(windowName);
-        if(index < 0 || index >= zv_windowList.count())
+        if (index < 0 || index >= zv_windowList.count())
         {
             // TODO error msg
-            return -1;
+            continue;
+        }
+        windowIndexMap.insert(windowName, index);
+    }
+    //}
+
+    return true;
+}
+//=========================================================
+bool ZCalibration::zh_checkCustomString(ZRawTerm& rawTerm)
+{
+    if (rawTerm.termType == ZAbstractTerm::TT_CUSTOM)
+    {
+        ZMathExpressionHandler mathExpressionHandler;
+        ZMathExpressionVariableListMaker mathExpressionVariableListMaker;
+        connect(&mathExpressionHandler,
+                &ZMathExpressionHandler::zs_requestVariableValue,
+                &mathExpressionVariableListMaker,
+                &ZMathExpressionVariableListMaker::zp_insertVariableValue);
+        connect(&mathExpressionHandler,
+                &ZMathExpressionHandler::zs_errorReport,
+                &mathExpressionVariableListMaker,
+                &ZMathExpressionVariableListMaker::zp_setError);
+        connect(&mathExpressionVariableListMaker,
+                &ZMathExpressionVariableListMaker::zs_variableCheckRequest,
+                this,
+                &ZCalibration::zh_windowIsExist);
+
+        double res;
+        if (!mathExpressionHandler.zp_calculateExpression(rawTerm.customString, res))
+        {
+            QString error;
+            int errorStartPos;
+            int errorEndPos;
+            mathExpressionVariableListMaker.zp_error(error, errorStartPos, errorEndPos);
+
+            emit zg_message(
+                error
+                + tr(" (position %1)")
+                      .arg(QString::number(errorStartPos), QString::number(errorStartPos)));
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//=========================================================
+bool ZCalibration::zh_createWindowIndexList(QList<int>& windowIndexList, ZRawTerm& rawTerm)
+{
+    if (!zh_checkCustomString(rawTerm))
+    {
+        return false;
+    }
+
+    // else
+    //{
+    int index;
+    foreach (QString windowName, rawTerm.windowList)
+    {
+        index = zp_windowIndexForName(windowName);
+        if (index < 0 || index >= zv_windowList.count())
+        {
+            // TODO error msg
+            continue;
         }
         windowIndexList.append(index);
     }
+    //}
 
-    return zp_createTerm(windowIndexList,
-                         rawTerm.termType,
-                         rawTerm.termState,
-                         rawTerm.factor);
+    return true;
+}
+//=========================================================
+bool ZCalibration::zh_updateExistingTerm(int termIndex, ZRawTerm& rawTerm)
+{
+    bool res = false;
+    if (rawTerm.termType == ZAbstractTerm::TT_CUSTOM)
+    {
+        ZRawCustomTerm* rawCustomTerm = static_cast<ZRawCustomTerm*>(&rawTerm);
+
+        ZCustomTerm* customTerm = static_cast<ZCustomTerm*>(zv_termList[termIndex]);
+        customTerm->zp_setName(rawCustomTerm->name);
+        customTerm->zp_setExpression(rawCustomTerm->customString);
+        customTerm->zp_setDescription(rawCustomTerm->descriptionString);
+        res = true;
+
+        zv_dirty = true;
+        zv_dateTime = QDateTime::currentDateTime();
+        emit zg_dirtyChanged(zv_dirty);
+    }
+    else
+    {
+        zv_termList[termIndex]->zp_setTermState(rawTerm.termState);
+        zv_termList[termIndex]->zh_setTermFactor(rawTerm.factor);
+        res = true;
+    }
+
+
+
+    return res;
+}
+//=========================================================
+int ZCalibration::zh_termIndexForRawTerm(const ZRawTerm& rawTerm) const
+{
+    // check out is the term already exist
+    for (int t = 0; t < zv_termList.count(); t++)
+    {
+        if (rawTerm.name == zv_termList.at(t)->zp_termName()
+            && rawTerm.termType == zv_termList.at(t)->zp_termType())
+        {
+            //            QList<qint64> termWindowIdList = zv_termList.at(t)->zp_termWindowIdList();
+            //            if (termWindowIdList.count() == rawTerm.windowList.count())
+            //            {
+            //                bool res = true;
+            //                foreach (qint64 id, termWindowIdList)
+            //                {
+            //                    if (!rawTerm.windowList.contains(zp_calibrationWindowNameForId(id)))
+            //                    {
+            //                        res = false;
+            //                        break;
+            //                    }
+            //                }
+
+            //                // term exists.
+            //                if (res)
+            //                {
+            //                    return t;
+            //                }
+            //            }
+            return t;
+        }
+    }
+
+    return -1;
+}
+//=========================================================
+int ZCalibration::zh_termIndexForTermId(qint64 termId) const
+{
+    for (int t = 0; t < zv_termList.count(); t++)
+    {
+        if (zv_termList.at(t)->zp_termId() == termId)
+        {
+            return t;
+        }
+    }
+
+    return -1;
 }
 //=========================================================
 ZTermNormalizer::NormaType ZCalibration::zp_normaType() const
@@ -1186,7 +1500,7 @@ ZTermNormalizer::NormaType ZCalibration::zp_normaType() const
 bool ZCalibration::zp_setNormaType(ZTermNormalizer::NormaType type)
 {
     bool res = zv_termNormalizer->zp_setNormaType(type);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1198,7 +1512,7 @@ bool ZCalibration::zp_setNormaType(ZTermNormalizer::NormaType type)
 bool ZCalibration::zp_setNormaCustomString(const QString& customString)
 {
     bool res = zv_termNormalizer->zp_setCustomNormaString(customString);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1220,7 +1534,7 @@ ZTermNormalizer::NormaType ZCalibration::zp_baseTermNormaType() const
 bool ZCalibration::zp_setBaseTermNormaType(ZTermNormalizer::NormaType type)
 {
     bool res = zv_baseTermNormalizer->zp_setNormaType(type);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1232,7 +1546,7 @@ bool ZCalibration::zp_setBaseTermNormaType(ZTermNormalizer::NormaType type)
 bool ZCalibration::zp_setBaseTermNormaCustomString(const QString& customString)
 {
     bool res = zv_baseTermNormalizer->zp_setCustomNormaString(customString);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1250,7 +1564,7 @@ bool ZCalibration::zp_setBaseTermNormalizerParameters(ZTermNormalizer::NormaType
                                                       const QString& customString)
 {
     bool res = zv_baseTermNormalizer->zp_setNormalizerParameters(type, customString);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         zv_dateTime = QDateTime::currentDateTime();
@@ -1266,11 +1580,16 @@ ZCalibration::EquationType ZCalibration::zp_equationType() const
 //=========================================================
 bool ZCalibration::zp_setEquationType(ZCalibration::EquationType type)
 {
-    if(zv_equationType == type)
+    if (zv_equationType == type)
     {
         return false;
     }
     zv_equationType = type;
+    if (zv_equationType == ET_POLYNOMIAL)
+    {
+        zv_baseTermId = -1;
+    }
+
     zv_dateTime = QDateTime::currentDateTime();
     zv_dirty = true;
     emit zg_dirtyChanged(zv_dirty);
@@ -1285,7 +1604,7 @@ qreal ZCalibration::zp_equationIntercept() const
 //=========================================================
 bool ZCalibration::zp_setEquationIntercept(qreal value)
 {
-    if(zv_intercept - value == 0.0)
+    if (zv_intercept == value)
     {
         return false;
     }
@@ -1310,7 +1629,7 @@ bool ZCalibration::zp_setEquationInterceptString(const QString& interceptString)
 {
     bool ok;
     qreal intercept = interceptString.toDouble(&ok);
-    if(!ok)
+    if (!ok)
     {
         return false;
     }
@@ -1319,7 +1638,7 @@ bool ZCalibration::zp_setEquationInterceptString(const QString& interceptString)
     zv_dateTime = QDateTime::currentDateTime();
     emit zg_dirtyChanged(zv_dirty);
     bool res = zp_setEquationIntercept(intercept);
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         emit zg_dirtyChanged(zv_dirty);
@@ -1329,29 +1648,30 @@ bool ZCalibration::zp_setEquationInterceptString(const QString& interceptString)
 //=========================================================
 QString ZCalibration::zp_baseTermDisplayString() const
 {
-    if(zv_baseTermId < 0)
+    if (zv_baseTermId < 0)
     {
         return QString();
     }
 
     QString baseTermString;
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termId() == zv_baseTermId)
+        if (zv_termList.at(t)->zp_termId() == zv_baseTermId)
         {
             baseTermString = zv_termList.at(t)->zp_termName();
             break;
         }
     }
 
-    if(zv_baseTermNormalizer->zp_normaType() != ZTermNormalizer::NT_NONE)
+    if (zv_baseTermNormalizer->zp_normaType() != ZTermNormalizer::NT_NONE)
     {
-        QString normaTypeString = ZTermNormalizer::zp_normaTypeString(zv_baseTermNormalizer->zp_normaType());
+        QString normaTypeString = ZTermNormalizer::zp_normaTypeString(
+            zv_baseTermNormalizer->zp_normaType());
 
-        if(zv_baseTermNormalizer->zp_normaType() == ZTermNormalizer::NT_COHERENT_INCOHERENT
-                || zv_baseTermNormalizer->zp_normaType() == ZTermNormalizer::NT_INCOHERENT_COHERENT)
+        if (zv_baseTermNormalizer->zp_normaType() == ZTermNormalizer::NT_COHERENT_INCOHERENT
+            || zv_baseTermNormalizer->zp_normaType() == ZTermNormalizer::NT_INCOHERENT_COHERENT)
         {
-            normaTypeString = "("+normaTypeString+")";
+            normaTypeString = "(" + normaTypeString + ")";
         }
 
         baseTermString = baseTermString + "/" + normaTypeString;
@@ -1362,15 +1682,15 @@ QString ZCalibration::zp_baseTermDisplayString() const
 //=========================================================
 QString ZCalibration::zp_baseTermString() const
 {
-    if(zv_baseTermId < 0)
+    if (zv_baseTermId < 0)
     {
         return QString();
     }
 
     QString baseTermString;
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termId() == zv_baseTermId)
+        if (zv_termList.at(t)->zp_termId() == zv_baseTermId)
         {
             baseTermString = zv_termList.at(t)->zp_termName();
             break;
@@ -1387,14 +1707,20 @@ qint64 ZCalibration::zp_baseTermId() const
 //=========================================================
 bool ZCalibration::zp_setBaseTermId(qint64 id)
 {
-    if(zv_baseTermId == id)
+    if (zv_equationType == ET_POLYNOMIAL)
+    {
+        zv_baseTermId = -1;
+        return true;
+    }
+
+    if (zv_baseTermId == id)
     {
         return false;
     }
 
-    for(int i = 0; i < zv_termList.count(); i++)
+    for (int i = 0; i < zv_termList.count(); i++)
     {
-        if(zv_termList.at(i)->zp_termId() == id)
+        if (zv_termList.at(i)->zp_termId() == id)
         {
             zv_baseTermId = id;
             zv_dirty = true;
@@ -1412,14 +1738,14 @@ bool ZCalibration::zp_setBaseTermId(qint64 id)
 //=========================================================
 int ZCalibration::zp_baseTermIndex() const
 {
-    if(zv_baseTermId < 0)
+    if (zv_baseTermId < 0)
     {
         return -1;
     }
 
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termId() == zv_baseTermId)
+        if (zv_termList.at(t)->zp_termId() == zv_baseTermId)
         {
             return t;
         }
@@ -1429,9 +1755,9 @@ int ZCalibration::zp_baseTermIndex() const
 //=========================================================
 bool ZCalibration::zp_setBaseTermFromName(const QString& baseTermName)
 {
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termName() == baseTermName)
+        if (zv_termList.at(t)->zp_termName() == baseTermName)
         {
             zv_baseTermId = zv_termList.at(t)->zp_termId();
             return true;
@@ -1441,21 +1767,20 @@ bool ZCalibration::zp_setBaseTermFromName(const QString& baseTermName)
     return false;
 }
 //=========================================================
-void ZCalibration::zp_createEquationDataForEquationRecalc(QMap<int, qreal*>& factorMap, qreal*& freeTermPtr)
+void ZCalibration::zp_createEquationDataForEquationRecalc(QMap<int, qreal*>& factorMap,
+                                                          qreal*& freeTermPtr)
 {
     ZAbstractTerm::TermState termState;
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_equationType == ET_FRACTIONAL
-                && !zv_useBaseTermInFractionalEquation
-                && zv_termList.value(t)->zv_termId == zv_baseTermId )
+        if (zv_equationType == ET_FRACTIONAL && !zv_useBaseTermInFractionalEquation
+            && zv_termList.value(t)->zv_termId == zv_baseTermId)
         {
             continue;
         }
 
         termState = zv_termList.value(t)->zv_termState;
-        if(termState == ZAbstractTerm::TS_CONST_INCLUDED
-                || termState == ZAbstractTerm::TS_INCLUDED)
+        if (termState == ZAbstractTerm::TS_CONST_INCLUDED || termState == ZAbstractTerm::TS_INCLUDED)
         {
             factorMap.insert(t, zv_termList.value(t)->zh_termFactorPointer());
         }
@@ -1471,7 +1796,7 @@ void ZCalibration::zh_notifyCalibrationRecalc()
     zv_interceptString = ZQrealToStringConverter::zp_convert(zv_intercept);
 
     // conform equation terms
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
         zv_termList.value(t)->zh_conformStringWithValue();
     }
@@ -1482,9 +1807,9 @@ void ZCalibration::zh_notifyCalibrationRecalc()
 void ZCalibration::zp_resetEquationTerms()
 {
     bool res = false;
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList[t]->zv_termFactor != 0.0)
+        if (zv_termList[t]->zv_termFactor != 0.0)
         {
             res = res || true;
         }
@@ -1493,9 +1818,9 @@ void ZCalibration::zp_resetEquationTerms()
     }
 
     emit zg_termOperation(TOT_TERM_FACTOR_CHANGED, 0, zv_termList.count() - 1);
-    res = res || zp_setEquationIntercept(0.0);
+    res = res && zp_setEquationIntercept(0.0);
 
-    if(res)
+    if (res)
     {
         zv_dirty = true;
         emit zg_dirtyChanged(zv_dirty);
@@ -1541,7 +1866,7 @@ void ZCalibration::zp_setDateTime(QDateTime dateTime)
 void ZCalibration::zh_onTermNameChange()
 {
     ZAbstractTerm* term = qobject_cast<ZAbstractTerm*>(sender());
-    if(term == nullptr)
+    if (term == 0)
     {
         return;
     }
@@ -1557,7 +1882,7 @@ void ZCalibration::zh_onTermNameChange()
 void ZCalibration::zh_onTermWindowMarginChange()
 {
     ZAbstractTerm* term = qobject_cast<ZAbstractTerm*>(sender());
-    if(!term)
+    if (!term)
     {
         return;
     }
@@ -1570,12 +1895,12 @@ void ZCalibration::zh_onTermWindowMarginChange()
 //=========================================================
 void ZCalibration::zh_removeTerm(ZAbstractTerm* term)
 {
-    for(int i = 0; i < zv_termList.count(); i ++)
+    for (int i = 0; i < zv_termList.count(); i++)
     {
-        if(zv_termList.at(i) == term)
+        if (zv_termList.at(i) == term)
         {
             emit zg_termOperation(TOT_BEGIN_REMOVE_TERM, i, i);
-            delete zv_termList.takeAt(i);
+            zv_termList.takeAt(i)->deleteLater();
             emit zg_termOperation(TOT_END_REMOVE_TERM, i, i);
             zv_dirty = true;
             zv_dateTime = QDateTime::currentDateTime();
@@ -1587,13 +1912,13 @@ void ZCalibration::zh_removeTerm(ZAbstractTerm* term)
 //=========================================================
 void ZCalibration::zh_onNormalizerChange()
 {
-    if(sender() == zv_termNormalizer)
+    if (sender() == zv_termNormalizer)
     {
         emit zg_normalizerChanged();
         zv_dirty = true;
         emit zg_dirtyChanged(zv_dirty);
     }
-    else if(sender() == zv_baseTermNormalizer)
+    else if (sender() == zv_baseTermNormalizer)
     {
         // TODO create signal base term changed and emit
         zv_dirty = true;
@@ -1604,9 +1929,9 @@ void ZCalibration::zh_onNormalizerChange()
 //=========================================================
 bool ZCalibration::zh_isWindowExist(const QString& windowName)
 {
-    for(int i = 0; i < zv_windowList.count(); i++)
+    for (int i = 0; i < zv_windowList.count(); i++)
     {
-        if(zv_windowList.at(i)->zp_windowName() == windowName)
+        if (zv_windowList.at(i)->zp_windowName() == windowName)
         {
             return true;
         }
@@ -1617,7 +1942,7 @@ bool ZCalibration::zh_isWindowExist(const QString& windowName)
 //=========================================================
 bool ZCalibration::zp_isCalibrationWindowVisible(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return false;
     }
@@ -1627,15 +1952,15 @@ bool ZCalibration::zp_isCalibrationWindowVisible(int windowIndex) const
 //=========================================================
 bool ZCalibration::zp_setCalibrationWindowVisible(int windowIndex, bool visibility)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return false;
     }
 
     bool res = zv_windowList[windowIndex]->zp_setWindowVisible(visibility);
-    if(res)
+    if (res)
     {
-        emit zg_windowOperation(WOT_WINDOW_CHANGED, windowIndex, windowIndex);
+        emit zg_windowOperation(WOT_WINDOW_VISIBLE_CHANGED, windowIndex, windowIndex);
     }
     return res;
 }
@@ -1647,7 +1972,7 @@ int ZCalibration::zp_calibrationWindowCount() const
 //=========================================================
 QString ZCalibration::zp_calibrationWindowName(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return QString();
     }
@@ -1657,9 +1982,9 @@ QString ZCalibration::zp_calibrationWindowName(int windowIndex) const
 //=========================================================
 const ZCalibrationWindow* ZCalibration::zp_calibrationWindow(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
-        return nullptr;
+        return 0;
     }
 
     return zv_windowList.at(windowIndex);
@@ -1667,9 +1992,9 @@ const ZCalibrationWindow* ZCalibration::zp_calibrationWindow(int windowIndex) co
 //=========================================================
 QString ZCalibration::zp_calibrationWindowNameForId(qint64 windowId) const
 {
-    for(int w = 0; w < zv_windowList.count(); w++)
+    for (int w = 0; w < zv_windowList.count(); w++)
     {
-        if(zv_windowList.at(w)->zp_windowId() == windowId)
+        if (zv_windowList.at(w)->zp_windowId() == windowId)
         {
             return zv_windowList.at(w)->zp_windowName();
         }
@@ -1680,13 +2005,13 @@ QString ZCalibration::zp_calibrationWindowNameForId(qint64 windowId) const
 //=========================================================
 bool ZCalibration::zp_setCalibrationWindowName(int windowIndex, const QString& name)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return false;
     }
 
     bool res = zv_windowList[windowIndex]->zp_setWindowName(name);
-    if(res)
+    if (res)
     {
         emit zg_windowOperation(WOT_WINDOW_CHANGED, windowIndex, windowIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -1698,7 +2023,7 @@ bool ZCalibration::zp_setCalibrationWindowName(int windowIndex, const QString& n
 //=========================================================
 ZCalibrationWindow::WindowType ZCalibration::zp_calibrationWindowType(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return ZCalibrationWindow::WT_NOT_DEFINED;
     }
@@ -1708,16 +2033,16 @@ ZCalibrationWindow::WindowType ZCalibration::zp_calibrationWindowType(int window
 //=========================================================
 bool ZCalibration::zp_setCalibrationWindowType(int windowIndex, ZCalibrationWindow::WindowType type)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return false;
     }
 
     bool res = zv_windowList[windowIndex]->zp_setWindowType(type);
-    if(res)
+    if (res)
     {
         emit zg_windowOperation(WOT_WINDOW_CHANGED, windowIndex, windowIndex);
-        if(type == ZCalibrationWindow::WT_PEAK)
+        if (type == ZCalibrationWindow::WT_PEAK)
         {
             zh_createTermsForWindow(zv_windowList.at(windowIndex));
         }
@@ -1730,7 +2055,7 @@ bool ZCalibration::zp_setCalibrationWindowType(int windowIndex, ZCalibrationWind
 //=========================================================
 int ZCalibration::zp_calibrationWindowFirstChannel(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return 0;
     }
@@ -1740,13 +2065,13 @@ int ZCalibration::zp_calibrationWindowFirstChannel(int windowIndex) const
 //=========================================================
 bool ZCalibration::zp_setCalibrationWindowFirstChannel(int windowIndex, int channel)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return 0;
     }
 
     bool res = zv_windowList[windowIndex]->zp_setWindowFirstChannel(channel);
-    if(res)
+    if (res)
     {
         emit zg_windowOperation(WOT_WINDOW_CHANGED, windowIndex, windowIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -1758,7 +2083,7 @@ bool ZCalibration::zp_setCalibrationWindowFirstChannel(int windowIndex, int chan
 //=========================================================
 int ZCalibration::zp_calibrationWindowLastChannel(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return 0;
     }
@@ -1768,13 +2093,13 @@ int ZCalibration::zp_calibrationWindowLastChannel(int windowIndex) const
 //=========================================================
 bool ZCalibration::zp_setCalibrationWindowLastChannel(int windowIndex, int channel)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return 0;
     }
 
     bool res = zv_windowList[windowIndex]->zp_setWindowLastChannel(channel);
-    if(res)
+    if (res)
     {
         emit zg_windowOperation(WOT_WINDOW_CHANGED, windowIndex, windowIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -1786,7 +2111,7 @@ bool ZCalibration::zp_setCalibrationWindowLastChannel(int windowIndex, int chann
 //=========================================================
 qint64 ZCalibration::zp_calibrationWindowId(int windowIndex) const
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return 0.0;
     }
@@ -1794,28 +2119,32 @@ qint64 ZCalibration::zp_calibrationWindowId(int windowIndex) const
     return zv_windowList.at(windowIndex)->zp_windowId();
 }
 //=========================================================
+void ZCalibration::zh_windowIsExist(const QString& windowName, bool& res) const
+{
+    res = zp_windowIndexForName(windowName) >= 0;
+}
+//=========================================================
 int ZCalibration::zp_windowIndexForName(const QString& windowName) const
 {
-    for(int w  = 0; w < zv_windowList.count(); w++)
+    for (int w = 0; w < zv_windowList.count(); w++)
     {
-        if(zv_windowList.at(w)->zp_windowName() == windowName)
+        if (zv_windowList.at(w)->zp_windowName() == windowName)
         {
             return w;
         }
     }
-
     return -1;
 }
 //=========================================================
 bool ZCalibration::zp_removeCalibrationWindow(int windowIndex)
 {
-    if(windowIndex < 0 || windowIndex >= zv_windowList.count())
+    if (windowIndex < 0 || windowIndex >= zv_windowList.count())
     {
         return false;
     }
 
     emit zg_windowOperation(WOT_BEGIN_REMOVE_WINDOWS, windowIndex, windowIndex);
-    delete zv_windowList.takeAt(windowIndex);
+    zv_windowList.takeAt(windowIndex)->deleteLater();
     emit zg_windowOperation(WOT_END_REMOVE_WINDOWS, windowIndex, windowIndex);
     zv_dateTime = QDateTime::currentDateTime();
     zv_dirty = true;
@@ -1826,7 +2155,7 @@ bool ZCalibration::zp_removeCalibrationWindow(int windowIndex)
 //=========================================================
 void ZCalibration::zp_removeCalibrationWindows()
 {
-    for(int w = zv_windowList.count() - 1; w >= 0; w--)
+    for (int w = zv_windowList.count() - 1; w >= 0; w--)
     {
         zp_removeCalibrationWindow(w);
     }
@@ -1839,22 +2168,46 @@ int ZCalibration::zp_termCount() const
 //=========================================================
 QString ZCalibration::zp_termDisplayName(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return QString();
     }
 
     QString termName = zv_termList.at(termIndex)->zp_termName();
-    if(zv_termNormalizer->zp_normaType() != ZTermNormalizer::NT_NONE)
+    if (zv_termNormalizer->zp_normaType() != ZTermNormalizer::NT_NONE)
     {
         termName += " / N";
     }
     return termName;
 }
 //=========================================================
+QString ZCalibration::zp_termExpression(int termIndex) const
+{
+    if (termIndex < 0 || termIndex >= zv_termList.count()
+        || zv_termList.value(termIndex)->zp_termType() != ZAbstractTerm::TT_CUSTOM)
+    {
+        return QString();
+    }
+
+    ZCustomTerm* customTerm = static_cast<ZCustomTerm*>(zv_termList.at(termIndex));
+    return customTerm->zp_expression();
+}
+//=========================================================
+QString ZCalibration::zp_termDescription(int termIndex) const
+{
+    if (termIndex < 0 || termIndex >= zv_termList.count()
+        || zv_termList.value(termIndex)->zp_termType() != ZAbstractTerm::TT_CUSTOM)
+    {
+        return QString();
+    }
+
+    ZCustomTerm* customTerm = static_cast<ZCustomTerm*>(zv_termList.at(termIndex));
+    return customTerm->zp_description();
+}
+//=========================================================
 QString ZCalibration::zp_termName(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return QString();
     }
@@ -1865,7 +2218,7 @@ QString ZCalibration::zp_termName(int termIndex) const
 //=========================================================
 ZAbstractTerm::TermType ZCalibration::zp_termType(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return ZAbstractTerm::TT_NOT_DEFINED;
     }
@@ -1875,9 +2228,9 @@ ZAbstractTerm::TermType ZCalibration::zp_termType(int termIndex) const
 //=========================================================
 bool ZCalibration::zp_mixedTermExists() const
 {
-    for(int t = 0; t < zv_termList.count(); t++)
+    for (int t = 0; t < zv_termList.count(); t++)
     {
-        if(zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED)
+        if (zv_termList.at(t)->zp_termType() == ZAbstractTerm::TT_MIXED)
         {
             return true;
         }
@@ -1888,7 +2241,7 @@ bool ZCalibration::zp_mixedTermExists() const
 //=========================================================
 qint64 ZCalibration::zp_termId(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count())
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return -1;
     }
@@ -1896,16 +2249,15 @@ qint64 ZCalibration::zp_termId(int termIndex) const
     return zv_termList.at(termIndex)->zp_termId();
 }
 //=========================================================
-bool ZCalibration::zp_setTermState(int termIndex,
-                                   ZAbstractTerm::TermState zp_termState)
+bool ZCalibration::zp_setTermState(int termIndex, ZAbstractTerm::TermState zp_termState)
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count())
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return false;
     }
 
     bool res = zv_termList.at(termIndex)->zp_setTermState(zp_termState);
-    if(res)
+    if (res)
     {
         emit zg_termOperation(TOT_TERM_STATE_CHANGED, termIndex, termIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -1918,12 +2270,12 @@ bool ZCalibration::zp_setTermState(int termIndex,
 //=========================================================
 ZAbstractTerm::TermState ZCalibration::zp_termStateForDisplay(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return ZAbstractTerm::TS_NOT_DEFINED;
     }
 
-    if(zv_termList.at(termIndex)->zp_termId() == zv_baseTermId && zv_equationType == ET_FRACTIONAL)
+    if (zv_termList.at(termIndex)->zp_termId() == zv_baseTermId && zv_equationType == ET_FRACTIONAL)
     {
         return ZAbstractTerm::TS_BASE;
     }
@@ -1933,7 +2285,7 @@ ZAbstractTerm::TermState ZCalibration::zp_termStateForDisplay(int termIndex) con
 //=========================================================
 ZAbstractTerm::TermState ZCalibration::zp_termState(int termIndex) const
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return ZAbstractTerm::TS_NOT_DEFINED;
     }
@@ -1941,45 +2293,81 @@ ZAbstractTerm::TermState ZCalibration::zp_termState(int termIndex) const
     return zv_termList.at(termIndex)->zp_termState();
 }
 //=========================================================
+QString ZCalibration::zp_termCustomString(int termIndex) const
+{
+    if (termIndex < 0 || termIndex >= zv_termList.count()
+        || zv_termList.value(termIndex)->zp_termType() != ZAbstractTerm::TT_CUSTOM)
+    {
+        return QString();
+    }
+
+    ZCustomTerm* customTerm = static_cast<ZCustomTerm*>(zv_termList.value(termIndex));
+
+    return customTerm->zp_expression();
+}
+//=========================================================
 void ZCalibration::zp_setNextUsersTermState(int termIndex)
 {
-    if(termIndex < 0 || termIndex >= zv_termList.count() )
+    if (termIndex < 0 || termIndex >= zv_termList.count())
     {
         return;
     }
 
-    if(zv_termList.at(termIndex)->zp_termId() == zv_baseTermId
-            && zv_equationType == ET_FRACTIONAL)
+    if (zv_termList.at(termIndex)->zp_termId() == zv_baseTermId && zv_equationType == ET_FRACTIONAL)
     {
         return;
     }
 
     ZAbstractTerm::TermState state = zv_termList.at(termIndex)->zp_termState();
     bool res = false;
-    switch(state)
-    {
-    case ZAbstractTerm::TS_CONST_INCLUDED:
-        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_EXAM_WAITING);
-        break;
-    case ZAbstractTerm::TS_EXAM_WAITING:
-        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
-        break;
-    case ZAbstractTerm::TS_INCLUDED:
-        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
-        break;
-    case ZAbstractTerm::TS_EXCEPTED:
-        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
-        break;
-    case ZAbstractTerm::TS_CONST_EXCLUDED:
-        res =zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_INCLUDED);
-        break;
-    case ZAbstractTerm::TS_BASE:
-    case ZAbstractTerm::TS_NOT_DEFINED:
+//    switch (state)
+//    {
+//    case ZAbstractTerm::TS_CONST_INCLUDED:
+//        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_EXAM_WAITING);
+//        break;
+//    case ZAbstractTerm::TS_EXAM_WAITING:
+//        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+//        break;
+//    case ZAbstractTerm::TS_INCLUDED:
+//        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+//        break;
+//    case ZAbstractTerm::TS_EXCEPTED:
+//        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+//        break;
+//    case ZAbstractTerm::TS_CONST_EXCLUDED:
+//        res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_INCLUDED);
+//        break;
+//    case ZAbstractTerm::TS_BASE:
+//    case ZAbstractTerm::TS_NOT_DEFINED:
 //    default:
-        return;
-    }
+//        return;
+//    }
 
-    if(res)
+        switch (state)
+        {
+        case ZAbstractTerm::TS_CONST_INCLUDED:
+            res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+            break;
+        case ZAbstractTerm::TS_EXAM_WAITING:
+            res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+            break;
+        case ZAbstractTerm::TS_INCLUDED:
+            res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+            break;
+        case ZAbstractTerm::TS_EXCEPTED:
+            res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_EXCLUDED);
+            break;
+        case ZAbstractTerm::TS_CONST_EXCLUDED:
+            res = zv_termList.at(termIndex)->zp_setTermState(ZAbstractTerm::TS_CONST_INCLUDED);
+            break;
+        case ZAbstractTerm::TS_BASE:
+        case ZAbstractTerm::TS_NOT_DEFINED:
+        default:
+            return;
+        }
+
+
+    if (res)
     {
         emit zg_termOperation(TOT_TERM_STATE_CHANGED, termIndex, termIndex);
         zv_dateTime = QDateTime::currentDateTime();
@@ -1990,7 +2378,7 @@ void ZCalibration::zp_setNextUsersTermState(int termIndex)
 //=========================================================
 bool ZCalibration::checkColor(QColor color)
 {
-    if(!color.isValid() || zv_colorList.contains(color))
+    if (!color.isValid() || zv_colorList.contains(color))
     {
         return false;
     }
@@ -1998,12 +2386,14 @@ bool ZCalibration::checkColor(QColor color)
     int colorSumm = color.red() + color.green() + color.blue();
     int averageVol = colorSumm / 3;
 
-    if(colorSumm > 450)
+    if (colorSumm > 450)
     {
         return false;
     }
 
-    if(abs(averageVol - color.red()) + abs(averageVol - color.green()) + abs(averageVol - color.blue()) < 90)
+    if (abs(averageVol - color.red()) + abs(averageVol - color.green())
+            + abs(averageVol - color.blue())
+        < 90)
     {
         return false;
     }
@@ -2020,15 +2410,15 @@ QList<QColor> ZCalibration::zp_createColorList()
 
     QList<QColor> colorList;
 
-    while(colorList.count() < 1500)
+    while (colorList.count() < 1500)
     {
-        qsrand(static_cast<uint>(QDateTime::currentMSecsSinceEpoch() + 500));
-        red = ((qrand() % 24) * 10) + 15;
-        green = ((qrand() % 24) * 10) + 15;
-        blue = ((qrand() % 24) * 10) +15;
+        //qsrand(QDateTime::currentMSecsSinceEpoch() + 500);
+        red = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
+        green = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
+        blue = ((QRandomGenerator::global()->generate() % 24) * 10) + 15;
 
         color = QColor(red, green, blue);
-        if(ZCalibration::checkColor(color))
+        if (ZCalibration::checkColor(color))
         {
             colorList << color;
         }
@@ -2036,4 +2426,3 @@ QList<QColor> ZCalibration::zp_createColorList()
     return colorList;
 }
 //======================================================
-
